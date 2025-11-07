@@ -1,0 +1,9 @@
+uuid: f65ce00c-a669-4cf1-8609-576264ea79c0
+langcode: es
+status: true
+dependencies: {  }
+id: dermatologist
+label: Dermatólogo
+weight: -4
+is_admin: null
+permissions: {  }

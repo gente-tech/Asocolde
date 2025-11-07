@@ -1,0 +1,25 @@
+uuid: b3ff3ff8-d81d-47ba-8456-a03cc84441d5
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_metatags
+    - node.type.webform
+  module:
+    - field_config_cardinality
+    - metatag
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: node.webform.field_metatags
+field_name: field_metatags
+entity_type: node
+bundle: webform
+label: Metatags
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: metatag

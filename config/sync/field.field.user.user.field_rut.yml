@@ -1,0 +1,35 @@
+uuid: afa2fadc-0e87-407a-831f-296a7bd9f656
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_rut
+  module:
+    - field_config_cardinality
+    - file
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_rut
+field_name: field_rut
+entity_type: user
+bundle: user
+label: RUT
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: rut
+  file_extensions: 'jpg jpeg png doc docx pdf'
+  max_filesize: ''
+  description_field: false
+field_type: file

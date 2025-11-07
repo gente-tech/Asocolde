@@ -1,0 +1,8 @@
+uuid: f44d4368-0399-4a95-80b3-a695bb339ce8
+langcode: es
+status: true
+dependencies: {  }
+name: 'Categorías Artículo'
+vid: article
+description: ''
+weight: 0

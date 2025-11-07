@@ -1,0 +1,21 @@
+uuid: 2441ba25-41a8-445e-ae2c-f840c6d8bc62
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_correspondence
+  module:
+    - options
+    - user
+id: user.user.field_correspondence
+field_name: field_correspondence
+entity_type: user
+bundle: user
+label: '¿Dónde desea recibir su correspondencia?'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

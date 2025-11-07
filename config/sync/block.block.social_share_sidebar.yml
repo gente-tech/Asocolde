@@ -1,0 +1,34 @@
+uuid: a58bbdb0-fb0b-4aae-8cf9-c1479f634255
+langcode: es
+status: false
+dependencies:
+  config:
+    - system.menu.social-network
+  module:
+    - block_visibility_groups
+    - system
+  theme:
+    - asocolderma_b5
+id: social_share_sidebar
+theme: asocolderma_b5
+region: menu_sidebar_first
+weight: -23
+provider: null
+plugin: 'system_menu_block:social-network'
+settings:
+  id: 'system_menu_block:social-network'
+  label: 'Redes sociales'
+  label_display: '0'
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  request_path:
+    id: request_path
+    negate: true
+    pages: '<front>'

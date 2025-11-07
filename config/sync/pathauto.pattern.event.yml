@@ -1,0 +1,22 @@
+uuid: 647468da-1173-4b85-9265-ea6cc9173388
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+id: event
+label: Evento
+type: 'canonical_entities:node'
+pattern: 'congresos-eventos/[node:title]'
+selection_criteria:
+  30921cf7-f984-491f-bfc5-ff551a861188:
+    id: 'entity_bundle:node'
+    negate: false
+    uuid: 30921cf7-f984-491f-bfc5-ff551a861188
+    context_mapping:
+      node: node
+    bundles:
+      event: event
+selection_logic: and
+weight: -5
+relationships: {  }

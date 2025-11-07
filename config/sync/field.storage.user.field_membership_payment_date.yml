@@ -1,0 +1,20 @@
+uuid: 0bd70b79-b629-4b41-a05c-f26987ba3181
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_membership_payment_date
+field_name: field_membership_payment_date
+entity_type: user
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,34 @@
+uuid: f53443c3-f460-4ca8-a42d-287eac5ee1c2
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_disease_type
+    - node.type.frequent_question
+    - taxonomy.vocabulary.diseases_types
+  module:
+    - field_config_cardinality
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '-1'
+id: node.frequent_question.field_disease_type
+field_name: field_disease_type
+entity_type: node
+bundle: frequent_question
+label: 'Tipo enfermedad'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      diseases_types: diseases_types
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

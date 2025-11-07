@@ -1,0 +1,961 @@
+uuid: 6b131f5c-dec7-449a-9ad4-1d4c81c17b4b
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.field.user.user.commerce_remote_id
+    - field.field.user.user.field_address_home
+    - field.field.user.user.field_address_office
+    - field.field.user.user.field_admission_application
+    - field.field.user.user.field_associate_number_1
+    - field.field.user.user.field_associate_number_2
+    - field.field.user.user.field_awards_distinctions
+    - field.field.user.user.field_birthday
+    - field.field.user.user.field_book_chapter_points
+    - field.field.user.user.field_book_editor_points
+    - field.field.user.user.field_camec_score
+    - field.field.user.user.field_city
+    - field.field.user.user.field_civil_status
+    - field.field.user.user.field_congress_specialties
+    - field.field.user.user.field_content_website_points
+    - field.field.user.user.field_correspondence
+    - field.field.user.user.field_country
+    - field.field.user.user.field_courses_diplomas
+    - field.field.user.user.field_cv
+    - field.field.user.user.field_date_postgraduate
+    - field.field.user.user.field_date_subspecialty
+    - field.field.user.user.field_department
+    - field.field.user.user.field_dermatologist_recertified
+    - field.field.user.user.field_document_file
+    - field.field.user.user.field_document_number
+    - field.field.user.user.field_document_type
+    - field.field.user.user.field_editorial
+    - field.field.user.user.field_first_name
+    - field.field.user.user.field_first_surname
+    - field.field.user.user.field_geolocation_office
+    - field.field.user.user.field_journal_committee_points
+    - field.field.user.user.field_journal_editor_points
+    - field.field.user.user.field_laser
+    - field.field.user.user.field_legal_terms
+    - field.field.user.user.field_magazine_points
+    - field.field.user.user.field_mail_personal
+    - field.field.user.user.field_mail_public
+    - field.field.user.user.field_master_doctor
+    - field.field.user.user.field_medical_speciality
+    - field.field.user.user.field_medicine_school
+    - field.field.user.user.field_member_committee_points
+    - field.field.user.user.field_member_directorate_points
+    - field.field.user.user.field_member_scicommittee_points
+    - field.field.user.user.field_membership
+    - field.field.user.user.field_membership_expiration_date
+    - field.field.user.user.field_membership_payment_date
+    - field.field.user.user.field_national_congress
+    - field.field.user.user.field_notification_user
+    - field.field.user.user.field_notifications
+    - field.field.user.user.field_office_description
+    - field.field.user.user.field_office_hours
+    - field.field.user.user.field_office_images
+    - field.field.user.user.field_other_activities
+    - field.field.user.user.field_phone_home
+    - field.field.user.user.field_phone_mobile
+    - field.field.user.user.field_phone_mobile_office
+    - field.field.user.user.field_phone_office
+    - field.field.user.user.field_phone_one
+    - field.field.user.user.field_phone_two
+    - field.field.user.user.field_points_congress
+    - field.field.user.user.field_points_scientific
+    - field.field.user.user.field_points_work
+    - field.field.user.user.field_postgraduate_certificate
+    - field.field.user.user.field_postgraduate_diploma
+    - field.field.user.user.field_president_directorate
+    - field.field.user.user.field_professional_card
+    - field.field.user.user.field_profile
+    - field.field.user.user.field_profile_directory
+    - field.field.user.user.field_publications_books
+    - field.field.user.user.field_publications_journals
+    - field.field.user.user.field_publications_web
+    - field.field.user.user.field_recertificate
+    - field.field.user.user.field_recommendation_1
+    - field.field.user.user.field_recommendation_2
+    - field.field.user.user.field_research_points
+    - field.field.user.user.field_rethus
+    - field.field.user.user.field_rut
+    - field.field.user.user.field_scientific_works_points
+    - field.field.user.user.field_second_name
+    - field.field.user.user.field_second_surname
+    - field.field.user.user.field_services_show
+    - field.field.user.user.field_services_specialties
+    - field.field.user.user.field_sex
+    - field.field.user.user.field_social_share
+    - field.field.user.user.field_subspecialty
+    - field.field.user.user.field_subspecialty_years
+    - field.field.user.user.field_tags
+    - field.field.user.user.field_tags_evaluators
+    - field.field.user.user.field_teacher_activity
+    - field.field.user.user.field_type_associated
+    - field.field.user.user.field_undergraduate_certificate
+    - field.field.user.user.field_undergraduate_diploma
+    - field.field.user.user.field_university_degree
+    - field.field.user.user.field_university_residence
+    - field.field.user.user.field_university_subspecialty
+    - field.field.user.user.field_university_undergraduate
+    - field.field.user.user.field_website
+    - field.field.user.user.field_years_residency
+    - field.field.user.user.user_picture
+    - image.style.thumbnail
+  module:
+    - datetime
+    - file
+    - geolocation
+    - image
+    - link
+    - options
+    - social_media
+    - telephone
+    - user
+_core:
+  default_config_hash: mZLyuWM9CQx2ZJVqFGSbzgFnHzudVbHBYmdU256A5Wk
+id: user.user.default
+targetEntityType: user
+bundle: user
+mode: default
+content:
+  field_address_home:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 15
+    region: content
+  field_address_office:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 28
+    region: content
+  field_admission_application:
+    type: file_default
+    label: above
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 61
+    region: content
+  field_associate_number_1:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 59
+    region: content
+  field_associate_number_2:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 60
+    region: content
+  field_awards_distinctions:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 96
+    region: content
+  field_birthday:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 13
+    region: content
+  field_book_chapter_points:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 79
+    region: content
+  field_book_editor_points:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 80
+    region: content
+  field_camec_score:
+    type: file_default
+    label: above
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 72
+    region: content
+  field_city:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 9
+    region: content
+  field_civil_status:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 14
+    region: content
+  field_congress_specialties:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 74
+    region: content
+  field_content_website_points:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 78
+    region: content
+  field_correspondence:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 19
+    region: content
+  field_country:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 22
+    region: content
+  field_courses_diplomas:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 90
+    region: content
+  field_cv:
+    type: file_default
+    label: above
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 63
+    region: content
+  field_date_postgraduate:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 54
+    region: content
+  field_date_subspecialty:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 57
+    region: content
+  field_department:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 21
+    region: content
+  field_dermatologist_recertified:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 32
+    region: content
+  field_document_file:
+    type: file_default
+    label: above
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 62
+    region: content
+  field_document_number:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 23
+    region: content
+  field_document_type:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 50
+    region: content
+  field_editorial:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 99
+    region: content
+  field_first_name:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_first_surname:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_geolocation_office:
+    type: geolocation_latlng
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 24
+    region: content
+  field_journal_committee_points:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 76
+    region: content
+  field_journal_editor_points:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 81
+    region: content
+  field_laser:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 37
+    region: content
+  field_legal_terms:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 27
+    region: content
+  field_magazine_points:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 75
+    region: content
+  field_mail_personal:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 49
+    region: content
+  field_mail_public:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 10
+    region: content
+  field_master_doctor:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 95
+    region: content
+  field_medical_speciality:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 38
+    region: content
+  field_medicine_school:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 33
+    region: content
+  field_member_committee_points:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 82
+    region: content
+  field_member_directorate_points:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 85
+    region: content
+  field_member_scicommittee_points:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 83
+    region: content
+  field_membership:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 48
+    region: content
+  field_membership_expiration_date:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 88
+    region: content
+  field_membership_payment_date:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 87
+    region: content
+  field_national_congress:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 73
+    region: content
+  field_notification_user:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 98
+    region: content
+  field_notifications:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 43
+    region: content
+  field_office_description:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 89
+    region: content
+  field_office_hours:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 40
+    region: content
+  field_office_images:
+    type: image
+    label: above
+    settings:
+      image_link: ''
+      image_style: ''
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 41
+    region: content
+  field_other_activities:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 97
+    region: content
+  field_phone_home:
+    type: telephone_link
+    label: above
+    settings:
+      title: ''
+    third_party_settings: {  }
+    weight: 16
+    region: content
+  field_phone_mobile:
+    type: telephone_link
+    label: above
+    settings:
+      title: ''
+    third_party_settings: {  }
+    weight: 17
+    region: content
+  field_phone_mobile_office:
+    type: telephone_link
+    label: above
+    settings:
+      title: ''
+    third_party_settings: {  }
+    weight: 20
+    region: content
+  field_phone_office:
+    type: telephone_link
+    label: above
+    settings:
+      title: ''
+    third_party_settings: {  }
+    weight: 18
+    region: content
+  field_phone_one:
+    type: telephone_link
+    label: above
+    settings:
+      title: ''
+    third_party_settings: {  }
+    weight: 29
+    region: content
+  field_phone_two:
+    type: telephone_link
+    label: above
+    settings:
+      title: ''
+    third_party_settings: {  }
+    weight: 30
+    region: content
+  field_points_congress:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 46
+    region: content
+  field_points_scientific:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 45
+    region: content
+  field_points_work:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 47
+    region: content
+  field_postgraduate_certificate:
+    type: file_default
+    label: above
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 67
+    region: content
+  field_postgraduate_diploma:
+    type: file_default
+    label: above
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 66
+    region: content
+  field_president_directorate:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 84
+    region: content
+  field_professional_card:
+    type: file_default
+    label: above
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 71
+    region: content
+  field_profile:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 42
+    region: content
+  field_profile_directory:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 26
+    region: content
+  field_publications_books:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 91
+    region: content
+  field_publications_journals:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 92
+    region: content
+  field_publications_web:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 93
+    region: content
+  field_recertificate:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 25
+    region: content
+  field_recommendation_1:
+    type: file_default
+    label: above
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 69
+    region: content
+  field_recommendation_2:
+    type: file_default
+    label: above
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 70
+    region: content
+  field_research_points:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 77
+    region: content
+  field_rethus:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 52
+    region: content
+  field_rut:
+    type: file_default
+    label: above
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 64
+    region: content
+  field_scientific_works_points:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 86
+    region: content
+  field_second_name:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_second_surname:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  field_services_show:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 44
+    region: content
+  field_services_specialties:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 31
+    region: content
+  field_sex:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 7
+    region: content
+  field_social_share:
+    type: social_media_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 34
+    region: content
+  field_subspecialty:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 56
+    region: content
+  field_subspecialty_years:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 58
+    region: content
+  field_tags:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 39
+    region: content
+  field_tags_evaluators:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 100
+    region: content
+  field_teacher_activity:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 94
+    region: content
+  field_type_associated:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 12
+    region: content
+  field_undergraduate_certificate:
+    type: file_default
+    label: above
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 68
+    region: content
+  field_undergraduate_diploma:
+    type: file_default
+    label: above
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 65
+    region: content
+  field_university_degree:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 8
+    region: content
+  field_university_residence:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 36
+    region: content
+  field_university_subspecialty:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 55
+    region: content
+  field_university_undergraduate:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 51
+    region: content
+  field_website:
+    type: link
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 11
+    region: content
+  field_years_residency:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 53
+    region: content
+  member_for:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  user_picture:
+    type: image
+    label: hidden
+    settings:
+      image_link: content
+      image_style: thumbnail
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden:
+  commerce_remote_id: true
+  customer_profiles: true
+  langcode: true

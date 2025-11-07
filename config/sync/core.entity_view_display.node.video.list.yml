@@ -1,0 +1,104 @@
+uuid: a301ebfc-e908-41b9-961a-c3d3815fb661
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.list
+    - field.field.node.video.body
+    - field.field.node.video.field_disease_type
+    - field.field.node.video.field_metatags
+    - field.field.node.video.field_note_type
+    - field.field.node.video.field_social_share
+    - field.field.node.video.field_source
+    - field.field.node.video.field_tags
+    - field.field.node.video.field_video
+    - image.style.article_list
+    - node.type.video
+  module:
+    - ds
+    - layout_builder
+    - media
+    - text
+    - user
+third_party_settings:
+  layout_builder:
+    enabled: false
+    allow_custom: false
+  ds:
+    layout:
+      id: layout_twocol_section
+      library: layout_builder/twocol_section
+      disable_css: false
+      entity_classes: all_classes
+      settings:
+        label: ''
+        column_widths: 50-50
+    regions:
+      first:
+        - field_video
+      second:
+        - node_title
+        - body
+        - field_tags
+        - node_link
+    fields:
+      node_link:
+        plugin_id: node_link
+        weight: 4
+        label: hidden
+        formatter: default
+        settings:
+          'link text': 'Ir al video'
+          'link class': ''
+          wrapper: ''
+          class: ''
+      node_title:
+        plugin_id: node_title
+        weight: 1
+        label: hidden
+        formatter: default
+        settings:
+          link: true
+          'link class': ''
+          wrapper: h2
+          class: ''
+id: node.video.list
+targetEntityType: node
+bundle: video
+mode: list
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 300
+    third_party_settings: {  }
+    weight: 2
+    region: second
+  field_tags:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 3
+    region: second
+  field_video:
+    type: media_thumbnail
+    label: hidden
+    settings:
+      image_link: content
+      image_style: article_list
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 0
+    region: first
+hidden:
+  field_disease_type: true
+  field_metatags: true
+  field_note_type: true
+  field_social_share: true
+  field_source: true
+  langcode: true
+  links: true

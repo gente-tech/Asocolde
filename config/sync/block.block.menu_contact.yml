@@ -1,0 +1,34 @@
+uuid: ffa83804-0e93-4021-9f24-472fe07cafc1
+langcode: es
+status: true
+dependencies:
+  config:
+    - system.menu.contact
+  module:
+    - block_visibility_groups
+    - system
+  theme:
+    - asocolderma_b5
+id: menu_contact
+theme: asocolderma_b5
+region: footer_top_left
+weight: -26
+provider: null
+plugin: 'system_menu_block:contact'
+settings:
+  id: 'system_menu_block:contact'
+  label: 'Información general'
+  label_display: visible
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  request_path:
+    id: request_path
+    negate: true
+    pages: '<front>'

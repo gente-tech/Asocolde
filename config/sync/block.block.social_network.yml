@@ -1,0 +1,25 @@
+uuid: d3840a40-7f6b-4712-8b83-e0824fb6527d
+langcode: es
+status: true
+dependencies:
+  config:
+    - system.menu.social-network
+  module:
+    - system
+  theme:
+    - asocolderma_b5
+id: social_network
+theme: asocolderma_b5
+region: footer_top_left
+weight: -24
+provider: null
+plugin: 'system_menu_block:social-network'
+settings:
+  id: 'system_menu_block:social-network'
+  label: 'Redes sociales'
+  label_display: visible
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility: {  }

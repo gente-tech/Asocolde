@@ -1,0 +1,25 @@
+uuid: 33c4eab5-0ca3-448c-891f-3c0aa050af1f
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_metatags
+    - node.type.section
+  module:
+    - field_config_cardinality
+    - metatag
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: node.section.field_metatags
+field_name: field_metatags
+entity_type: node
+bundle: section
+label: Metatags
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: metatag

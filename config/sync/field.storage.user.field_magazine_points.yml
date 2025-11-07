@@ -1,0 +1,20 @@
+uuid: e837c6bc-0ba4-49ac-b0f7-4a727b54b985
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_magazine_points
+field_name: field_magazine_points
+entity_type: user
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

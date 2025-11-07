@@ -1,0 +1,34 @@
+uuid: c30e4ce3-518d-48b3-a9ab-15b645a72678
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_points_congress
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_points_congress
+field_name: field_points_congress
+entity_type: user
+bundle: user
+label: 'Congresos Nacionales e Internacionales, publicaciones, actividades docentes, maestrías/doctorados, otras.'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

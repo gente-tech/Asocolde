@@ -1,0 +1,30 @@
+uuid: 47415e49-c0dd-492e-b64f-556cf129db16
+langcode: es
+status: true
+dependencies:
+  module:
+    - eck
+    - options
+id: membership.field_membership_status
+field_name: field_membership_status
+entity_type: membership
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: no_vinculado
+      label: 'No vinculado'
+    -
+      value: revision
+      label: 'En revisión'
+    -
+      value: pagado
+      label: Pagado
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

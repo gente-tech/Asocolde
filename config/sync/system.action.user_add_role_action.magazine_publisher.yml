@@ -1,0 +1,14 @@
+uuid: 3e0f56db-face-4bf8-94c6-d3dd8d552bc5
+langcode: es
+status: true
+dependencies:
+  config:
+    - user.role.magazine_publisher
+  module:
+    - user
+id: user_add_role_action.magazine_publisher
+label: 'Añade el rol Artículos revistas al(los) usuario(s) seleccionado(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: magazine_publisher

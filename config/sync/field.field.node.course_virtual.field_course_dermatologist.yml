@@ -1,0 +1,23 @@
+uuid: 3c7c3247-0385-4298-ae8f-2748824cfb2f
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_course_dermatologist
+    - node.type.course_virtual
+id: node.course_virtual.field_course_dermatologist
+field_name: field_course_dermatologist
+entity_type: node
+bundle: course_virtual
+label: 'Curso para dermatólogo'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: Si
+  off_label: 'No'
+field_type: boolean

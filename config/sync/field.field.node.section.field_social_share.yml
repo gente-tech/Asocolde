@@ -1,0 +1,29 @@
+uuid: d9154383-04c5-4e6d-9a24-c7b39abb4c57
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_social_share
+    - node.type.section
+  module:
+    - field_config_cardinality
+    - social_media
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: node.section.field_social_share
+field_name: field_social_share
+entity_type: node
+bundle: section
+label: 'Social share'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: social_media

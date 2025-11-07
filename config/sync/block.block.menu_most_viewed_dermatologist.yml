@@ -1,0 +1,42 @@
+uuid: efb910cd-470f-4346-92de-bc73c7f1f3bf
+langcode: es
+status: false
+dependencies:
+  config:
+    - system.menu.most-viewed-dermatologist
+  module:
+    - block_visibility_groups
+    - system
+    - user
+  theme:
+    - asocolderma_b5
+id: menu_most_viewed_dermatologist
+theme: asocolderma_b5
+region: menu_sidebar_first
+weight: -24
+provider: null
+plugin: 'system_menu_block:most-viewed-dermatologist'
+settings:
+  id: 'system_menu_block:most-viewed-dermatologist'
+  label: 'Lo más visto'
+  label_display: visible
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      authenticated: authenticated
+  request_path:
+    id: request_path
+    negate: true
+    pages: '<front>'

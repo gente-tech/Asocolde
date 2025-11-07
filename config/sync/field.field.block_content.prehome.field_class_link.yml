@@ -1,0 +1,28 @@
+uuid: 6586eceb-4d37-4e9c-837d-292a9e3e88ea
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_content.type.prehome
+    - field.storage.block_content.field_class_link
+  module:
+    - field_config_cardinality
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: block_content.prehome.field_class_link
+field_name: field_class_link
+entity_type: block_content
+bundle: prehome
+label: 'Clases enlace'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

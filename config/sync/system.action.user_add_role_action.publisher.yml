@@ -1,0 +1,14 @@
+uuid: 6c31e92e-2595-4217-be95-4aa0b0b23083
+langcode: es
+status: true
+dependencies:
+  config:
+    - user.role.publisher
+  module:
+    - user
+id: user_add_role_action.publisher
+label: 'Añade el rol Publicador asocolderma al(los) usuario(s) seleccionado(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: publisher

@@ -1,0 +1,25 @@
+uuid: 25d0a2c5-3e7d-42bd-b392-2bf5e8558117
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_answer
+    - node.type.frequent_question
+  module:
+    - field_config_cardinality
+    - text
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: node.frequent_question.field_answer
+field_name: field_answer
+entity_type: node
+bundle: frequent_question
+label: 'Respuesta del dermatólogo'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

@@ -1,0 +1,20 @@
+uuid: 1b4cb991-2638-428e-af47-1464fbd5cb5a
+langcode: es
+status: true
+dependencies:
+  module:
+    - eck
+    - taxonomy
+id: banner_home.field_banner_location
+field_name: field_banner_location
+entity_type: banner_home
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

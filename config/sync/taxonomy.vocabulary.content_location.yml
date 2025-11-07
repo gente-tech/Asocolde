@@ -1,0 +1,8 @@
+uuid: 49c19ad0-9269-4202-b018-da28a3a2f22c
+langcode: es
+status: true
+dependencies: {  }
+name: 'Ubicación contenido'
+vid: content_location
+description: ''
+weight: 0

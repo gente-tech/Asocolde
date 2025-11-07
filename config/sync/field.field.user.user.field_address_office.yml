@@ -1,0 +1,20 @@
+uuid: e6cbb0f1-adcd-47cc-985d-df815d267473
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_address_office
+  module:
+    - user
+id: user.user.field_address_office
+field_name: field_address_office
+entity_type: user
+bundle: user
+label: 'Dirección Consultorio'
+description: 'Descripción del consultorio a mostrar en el despliegue del doctor.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

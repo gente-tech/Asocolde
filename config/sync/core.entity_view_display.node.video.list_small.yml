@@ -1,0 +1,84 @@
+uuid: 25a91191-1525-4583-aed0-d0024d46625b
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.list_small
+    - field.field.node.video.body
+    - field.field.node.video.field_disease_type
+    - field.field.node.video.field_metatags
+    - field.field.node.video.field_note_type
+    - field.field.node.video.field_social_share
+    - field.field.node.video.field_source
+    - field.field.node.video.field_tags
+    - field.field.node.video.field_video
+    - image.style.list_small
+    - node.type.video
+  module:
+    - ds
+    - layout_builder
+    - media
+    - options
+    - user
+third_party_settings:
+  layout_builder:
+    enabled: false
+    allow_custom: false
+  ds:
+    layout:
+      id: layout_twocol_section
+      library: layout_builder/twocol_section
+      disable_css: false
+      entity_classes: all_classes
+      settings:
+        label: ''
+        column_widths: 50-50
+    regions:
+      first:
+        - field_video
+      second:
+        - node_title
+        - field_source
+    fields:
+      node_title:
+        plugin_id: node_title
+        weight: 1
+        label: hidden
+        formatter: default
+        settings:
+          link: true
+          'link class': ''
+          wrapper: h2
+          class: ''
+id: node.video.list_small
+targetEntityType: node
+bundle: video
+mode: list_small
+content:
+  field_source:
+    type: list_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: second
+  field_video:
+    type: media_thumbnail
+    label: hidden
+    settings:
+      image_link: content
+      image_style: list_small
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 0
+    region: first
+hidden:
+  body: true
+  field_disease_type: true
+  field_metatags: true
+  field_note_type: true
+  field_social_share: true
+  field_tags: true
+  langcode: true
+  links: true

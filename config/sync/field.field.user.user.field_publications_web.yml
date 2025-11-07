@@ -1,0 +1,32 @@
+uuid: caf89cc3-2a54-422f-ac13-d7acc0553aae
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_publications_web
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_publications_web
+field_name: field_publications_web
+entity_type: user
+bundle: user
+label: 'Publicaciones en la Web'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

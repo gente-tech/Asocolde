@@ -1,0 +1,10 @@
+uuid: 85c2194c-079a-4d73-9319-d9cce4dd8a7b
+langcode: es
+status: true
+dependencies: {  }
+id: newspaper
+label: 'Contenido Revista'
+icon_uuid: null
+icon_default: null
+description: ''
+behavior_plugins: {  }

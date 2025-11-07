@@ -1,0 +1,11 @@
+uuid: a8c69423-31d0-46f3-986c-2224d425ddb9
+langcode: es
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_variation_type.membership
+id: commerce_product_variation.membership
+target_entity_type_id: commerce_product_variation
+target_bundle: membership
+default_langcode: site_default
+language_alterable: false

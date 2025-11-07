@@ -1,0 +1,32 @@
+uuid: 196fda7f-311c-45da-b415-c601694228dc
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_membership_payment_date
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_membership_payment_date
+field_name: field_membership_payment_date
+entity_type: user
+bundle: user
+label: 'Fecha pago afiliación'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

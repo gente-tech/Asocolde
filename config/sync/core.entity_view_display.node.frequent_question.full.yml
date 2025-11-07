@@ -1,0 +1,94 @@
+uuid: b90d89d4-d0b4-4c3b-beea-477b7a45b6d2
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.full
+    - field.field.node.frequent_question.body
+    - field.field.node.frequent_question.field_answer
+    - field.field.node.frequent_question.field_disease_type
+    - field.field.node.frequent_question.field_metatags
+    - node.type.frequent_question
+  module:
+    - ds
+    - layout_builder
+    - metatag
+    - text
+    - user
+third_party_settings:
+  layout_builder:
+    enabled: false
+    allow_custom: false
+  ds:
+    layout:
+      id: bs_1col
+      library: null
+      disable_css: false
+      entity_classes: all_classes
+      settings:
+        label: ''
+        layout:
+          wrapper: div
+          classes:
+            row: row
+          add_layout_class: 1
+          attributes: ''
+        regions:
+          main:
+            wrapper: div
+            classes:
+              col-sm-12: col-sm-12
+            add_region_classes: 1
+            attributes: ''
+    regions:
+      main:
+        - asocol_tools
+        - body
+        - field_answer
+        - field_disease_type
+        - field_metatags
+    fields:
+      asocol_tools:
+        plugin_id: asocol_tools
+        weight: 0
+        label: hidden
+        formatter: default
+id: node.frequent_question.full
+targetEntityType: node
+bundle: frequent_question
+mode: full
+content:
+  body:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: main
+  field_answer:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: main
+  field_disease_type:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: false
+    third_party_settings:
+      ds:
+        ds_limit: ''
+    weight: 3
+    region: main
+  field_metatags:
+    type: metatag_empty_formatter
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 4
+    region: main
+hidden:
+  langcode: true
+  links: true

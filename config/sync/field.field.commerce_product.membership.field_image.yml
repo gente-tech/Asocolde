@@ -1,0 +1,46 @@
+uuid: 9284784a-3b0a-4379-b9d5-198415519e0d
+langcode: es
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_type.membership
+    - field.storage.commerce_product.field_image
+  module:
+    - field_config_cardinality
+    - image
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: commerce_product.membership.field_image
+field_name: field_image
+entity_type: commerce_product
+bundle: membership
+label: Imagen
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: membership
+  file_extensions: 'png gif jpg jpeg svg'
+  max_filesize: ''
+  max_resolution: ''
+  min_resolution: ''
+  alt_field: true
+  alt_field_required: true
+  title_field: false
+  title_field_required: false
+  default_image:
+    uuid: 8cf1e5ac-c4f4-4bb3-a62a-8c9869578605
+    alt: ''
+    title: ''
+    width: 200
+    height: 200
+field_type: image

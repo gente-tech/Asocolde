@@ -1,0 +1,14 @@
+uuid: fd0e923d-cd7a-4e95-a0f2-834fb6c5772a
+langcode: es
+status: true
+dependencies:
+  config:
+    - user.role.assistant
+  module:
+    - user
+id: user_remove_role_action.assistant
+label: 'Elimina el rol Asistente de revista al(los) usuario(s) seleccionado(s)'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: assistant

@@ -1,0 +1,121 @@
+uuid: 41244a49-802f-4c18-9ef7-ead4a4984923
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.notification.teaser
+    - eck.eck_type.notification.notification
+    - field.field.notification.notification.field_description
+    - field.field.notification.notification.field_image
+  module:
+    - advanced_text_formatter
+    - ds
+    - image
+    - layout_builder
+third_party_settings:
+  ds:
+    layout:
+      id: bs_2col
+      library: null
+      disable_css: false
+      entity_classes: all_classes
+      settings:
+        label: ''
+        layout:
+          wrapper: div
+          classes:
+            row: row
+          add_layout_class: 1
+          attributes: ''
+        regions:
+          left:
+            wrapper: div
+            classes:
+              col-sm-3: col-sm-3
+            add_region_classes: 1
+            attributes: ''
+          right:
+            wrapper: div
+            classes:
+              col-sm-9: col-sm-9
+            add_region_classes: 1
+            attributes: ''
+    regions:
+      left:
+        - field_image
+      right:
+        - title
+        - field_description
+        - created
+  layout_builder:
+    enabled: false
+    allow_custom: false
+id: notification.notification.teaser
+targetEntityType: notification
+bundle: notification
+mode: teaser
+content:
+  created:
+    type: timestamp_ago
+    label: hidden
+    settings:
+      future_format: '@interval hence'
+      past_format: '@interval ago'
+      granularity: 1
+    third_party_settings: {  }
+    weight: 3
+    region: right
+  field_description:
+    type: advanced_text
+    label: hidden
+    settings:
+      trim_length: '100'
+      ellipsis: '1'
+      word_boundary: '1'
+      filter: limit_html
+      format: plain_text
+      allowed_html:
+        - a
+        - b
+        - br
+        - dd
+        - dl
+        - dt
+        - em
+        - i
+        - li
+        - ol
+        - p
+        - strong
+        - u
+        - ul
+      use_summary: 0
+      token_replace: 0
+      link_to_entity: 0
+      autop: 0
+    third_party_settings: {  }
+    weight: 2
+    region: right
+  field_image:
+    type: image
+    label: hidden
+    settings:
+      image_link: ''
+      image_style: ''
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 0
+    region: left
+  title:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: right
+hidden:
+  changed: true
+  langcode: true
+  uid: true

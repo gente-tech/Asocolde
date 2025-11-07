@@ -1,0 +1,20 @@
+uuid: efb9be5e-136e-418d-86f8-849935ecb3ac
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_congress_specialties
+field_name: field_congress_specialties
+entity_type: user
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

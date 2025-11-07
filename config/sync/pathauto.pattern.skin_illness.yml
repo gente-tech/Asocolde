@@ -1,0 +1,22 @@
+uuid: 21a406e4-ad3b-4011-a647-d87e35e07d47
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+id: skin_illness
+label: 'Enfermedad de la piel'
+type: 'canonical_entities:node'
+pattern: 'enfermedades-de-la-piel/[node:title]'
+selection_criteria:
+  34c3dbae-5e72-4e0d-b624-ac5621eb21b5:
+    id: 'entity_bundle:node'
+    negate: false
+    uuid: 34c3dbae-5e72-4e0d-b624-ac5621eb21b5
+    context_mapping:
+      node: node
+    bundles:
+      skin_illness: skin_illness
+selection_logic: and
+weight: -5
+relationships: {  }

@@ -1,0 +1,28 @@
+uuid: 48b7e25c-2688-4afc-b0cc-f23ece21ce94
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_rethus
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_rethus
+field_name: field_rethus
+entity_type: user
+bundle: user
+label: 'Registro médico'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

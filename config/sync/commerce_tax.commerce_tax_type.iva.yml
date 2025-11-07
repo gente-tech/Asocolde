@@ -1,0 +1,24 @@
+uuid: 198d8148-064e-43e2-bbb5-a7e77e85d87f
+langcode: es
+status: true
+dependencies: {  }
+id: iva
+label: Iva
+plugin: custom
+configuration:
+  display_inclusive: true
+  display_label: vat
+  round: true
+  rates:
+    -
+      id: 37b9cb3e-1e04-46ec-b6fe-fd8d837780c0
+      label: Iva
+      percentage: '0.19'
+  territories:
+    -
+      country_code: CO
+      administrative_area: ''
+      locality: null
+      dependent_locality: null
+conditions: {  }
+conditionOperator: AND

@@ -1,0 +1,11 @@
+uuid: 87f56b99-3377-4c34-b6d8-cd74af524c7f
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.news_magazine
+id: node.news_magazine
+target_entity_type_id: node
+target_bundle: news_magazine
+default_langcode: site_default
+language_alterable: false

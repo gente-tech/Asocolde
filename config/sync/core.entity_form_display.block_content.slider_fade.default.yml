@@ -1,0 +1,51 @@
+uuid: f4e8ab4e-1f84-4e27-a756-c80e10a91e67
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_content.type.slider_fade
+    - field.field.block_content.slider_fade.body
+    - field.field.block_content.slider_fade.field_image
+    - image.style.thumbnail
+  module:
+    - image
+    - text
+id: block_content.slider_fade.default
+targetEntityType: block_content
+bundle: slider_fade
+mode: default
+content:
+  body:
+    type: text_textarea_with_summary
+    weight: 26
+    region: content
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+      show_summary: false
+    third_party_settings: {  }
+  field_image:
+    type: image_image
+    weight: 27
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+  info:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+hidden: {  }

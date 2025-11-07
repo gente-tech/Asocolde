@@ -1,0 +1,375 @@
+uuid: 7a51ff98-62bd-4312-b7d8-07e60d02c6e5
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.user.referee
+    - field.field.user.user.commerce_remote_id
+    - field.field.user.user.field_address_home
+    - field.field.user.user.field_address_office
+    - field.field.user.user.field_admission_application
+    - field.field.user.user.field_associate_number_1
+    - field.field.user.user.field_associate_number_2
+    - field.field.user.user.field_awards_distinctions
+    - field.field.user.user.field_birthday
+    - field.field.user.user.field_book_chapter_points
+    - field.field.user.user.field_book_editor_points
+    - field.field.user.user.field_camec_score
+    - field.field.user.user.field_city
+    - field.field.user.user.field_civil_status
+    - field.field.user.user.field_congress_specialties
+    - field.field.user.user.field_content_website_points
+    - field.field.user.user.field_correspondence
+    - field.field.user.user.field_country
+    - field.field.user.user.field_courses_diplomas
+    - field.field.user.user.field_cv
+    - field.field.user.user.field_date_postgraduate
+    - field.field.user.user.field_date_subspecialty
+    - field.field.user.user.field_department
+    - field.field.user.user.field_dermatologist_recertified
+    - field.field.user.user.field_document_file
+    - field.field.user.user.field_document_number
+    - field.field.user.user.field_document_type
+    - field.field.user.user.field_editorial
+    - field.field.user.user.field_first_name
+    - field.field.user.user.field_first_surname
+    - field.field.user.user.field_geolocation_office
+    - field.field.user.user.field_journal_committee_points
+    - field.field.user.user.field_journal_editor_points
+    - field.field.user.user.field_laser
+    - field.field.user.user.field_legal_terms
+    - field.field.user.user.field_magazine_points
+    - field.field.user.user.field_mail_personal
+    - field.field.user.user.field_mail_public
+    - field.field.user.user.field_master_doctor
+    - field.field.user.user.field_medical_speciality
+    - field.field.user.user.field_medicine_school
+    - field.field.user.user.field_member_committee_points
+    - field.field.user.user.field_member_directorate_points
+    - field.field.user.user.field_member_scicommittee_points
+    - field.field.user.user.field_membership
+    - field.field.user.user.field_membership_expiration_date
+    - field.field.user.user.field_membership_payment_date
+    - field.field.user.user.field_national_congress
+    - field.field.user.user.field_notification_user
+    - field.field.user.user.field_notifications
+    - field.field.user.user.field_office_description
+    - field.field.user.user.field_office_hours
+    - field.field.user.user.field_office_images
+    - field.field.user.user.field_other_activities
+    - field.field.user.user.field_phone_home
+    - field.field.user.user.field_phone_mobile
+    - field.field.user.user.field_phone_mobile_office
+    - field.field.user.user.field_phone_office
+    - field.field.user.user.field_phone_one
+    - field.field.user.user.field_phone_two
+    - field.field.user.user.field_points_congress
+    - field.field.user.user.field_points_scientific
+    - field.field.user.user.field_points_work
+    - field.field.user.user.field_postgraduate_certificate
+    - field.field.user.user.field_postgraduate_diploma
+    - field.field.user.user.field_president_directorate
+    - field.field.user.user.field_professional_card
+    - field.field.user.user.field_profile
+    - field.field.user.user.field_profile_directory
+    - field.field.user.user.field_publications_books
+    - field.field.user.user.field_publications_journals
+    - field.field.user.user.field_publications_web
+    - field.field.user.user.field_recertificate
+    - field.field.user.user.field_recommendation_1
+    - field.field.user.user.field_recommendation_2
+    - field.field.user.user.field_research_points
+    - field.field.user.user.field_rethus
+    - field.field.user.user.field_rut
+    - field.field.user.user.field_scientific_works_points
+    - field.field.user.user.field_second_name
+    - field.field.user.user.field_second_surname
+    - field.field.user.user.field_services_show
+    - field.field.user.user.field_services_specialties
+    - field.field.user.user.field_sex
+    - field.field.user.user.field_social_share
+    - field.field.user.user.field_subspecialty
+    - field.field.user.user.field_subspecialty_years
+    - field.field.user.user.field_tags
+    - field.field.user.user.field_tags_evaluators
+    - field.field.user.user.field_teacher_activity
+    - field.field.user.user.field_type_associated
+    - field.field.user.user.field_undergraduate_certificate
+    - field.field.user.user.field_undergraduate_diploma
+    - field.field.user.user.field_university_degree
+    - field.field.user.user.field_university_residence
+    - field.field.user.user.field_university_subspecialty
+    - field.field.user.user.field_university_undergraduate
+    - field.field.user.user.field_website
+    - field.field.user.user.field_years_residency
+    - field.field.user.user.user_picture
+    - image.style.tab_sidebar
+  module:
+    - advanced_text_formatter
+    - ds
+    - field_group
+    - image
+    - layout_builder
+    - user
+third_party_settings:
+  layout_builder:
+    enabled: false
+    allow_custom: false
+  ds:
+    layout:
+      id: bs_2col
+      library: null
+      disable_css: false
+      entity_classes: all_classes
+      settings:
+        label: ''
+        layout:
+          wrapper: div
+          classes:
+            row: row
+          add_layout_class: 1
+          attributes: ''
+        regions:
+          left:
+            wrapper: div
+            classes:
+              col-sm-4: col-sm-4
+            add_region_classes: 1
+            attributes: ''
+          right:
+            wrapper: div
+            classes:
+              col-sm-8: col-sm-8
+            add_region_classes: 1
+            attributes: ''
+    regions:
+      left:
+        - user_picture
+      right:
+        - group_full_name
+        - field_first_name
+        - field_university_degree
+        - field_second_name
+        - user_tags_evaluators
+        - field_first_surname
+        - field_second_surname
+    fields:
+      user_tags_evaluators:
+        plugin_id: user_tags_evaluators
+        weight: 3
+        label: hidden
+        formatter: default
+  field_group:
+    group_full_name:
+      children:
+        - field_first_name
+        - field_second_name
+        - field_first_surname
+        - field_second_surname
+      label: 'Full Name'
+      parent_name: ''
+      region: right
+      weight: 1
+      format_type: html_element
+      format_settings:
+        classes: info-dr
+        show_empty_fields: false
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+_core:
+  default_config_hash: mZLyuWM9CQx2ZJVqFGSbzgFnHzudVbHBYmdU256A5Wk
+id: user.user.referee
+targetEntityType: user
+bundle: user
+mode: referee
+content:
+  field_first_name:
+    type: advanced_text
+    label: hidden
+    settings:
+      trim_length: 600
+      ellipsis: 1
+      word_boundary: 1
+      token_replace: 0
+      filter: input
+      format: plain_text
+      allowed_html: '<a> <b> <br> <dd> <dl> <dt> <em> <i> <li> <ol> <p> <strong> <u> <ul>'
+      autop: 0
+      use_summary: 0
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 2
+    region: right
+  field_first_surname:
+    type: advanced_text
+    label: hidden
+    settings:
+      trim_length: 600
+      ellipsis: 1
+      word_boundary: 1
+      token_replace: 0
+      filter: input
+      format: plain_text
+      allowed_html: '<a> <b> <br> <dd> <dl> <dt> <em> <i> <li> <ol> <p> <strong> <u> <ul>'
+      autop: 0
+      use_summary: 0
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 4
+    region: right
+  field_second_name:
+    type: advanced_text
+    label: hidden
+    settings:
+      trim_length: 600
+      ellipsis: 1
+      word_boundary: 1
+      token_replace: 0
+      filter: input
+      format: plain_text
+      allowed_html: '<a> <b> <br> <dd> <dl> <dt> <em> <i> <li> <ol> <p> <strong> <u> <ul>'
+      autop: 0
+      use_summary: 0
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 3
+    region: right
+  field_second_surname:
+    type: advanced_text
+    label: hidden
+    settings:
+      trim_length: 600
+      ellipsis: 1
+      word_boundary: 1
+      token_replace: 0
+      filter: input
+      format: plain_text
+      allowed_html: '<a> <b> <br> <dd> <dl> <dt> <em> <i> <li> <ol> <p> <strong> <u> <ul>'
+      autop: 0
+      use_summary: 0
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 5
+    region: right
+  field_university_degree:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: false
+    third_party_settings: {  }
+    weight: 2
+    region: right
+  user_picture:
+    type: image
+    label: hidden
+    settings:
+      image_link: content
+      image_style: tab_sidebar
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 0
+    region: left
+hidden:
+  commerce_remote_id: true
+  customer_profiles: true
+  field_address_home: true
+  field_address_office: true
+  field_admission_application: true
+  field_associate_number_1: true
+  field_associate_number_2: true
+  field_awards_distinctions: true
+  field_birthday: true
+  field_book_chapter_points: true
+  field_book_editor_points: true
+  field_camec_score: true
+  field_city: true
+  field_civil_status: true
+  field_congress_specialties: true
+  field_content_website_points: true
+  field_correspondence: true
+  field_country: true
+  field_courses_diplomas: true
+  field_cv: true
+  field_date_postgraduate: true
+  field_date_subspecialty: true
+  field_department: true
+  field_dermatologist_recertified: true
+  field_document_file: true
+  field_document_number: true
+  field_document_type: true
+  field_editorial: true
+  field_geolocation_office: true
+  field_journal_committee_points: true
+  field_journal_editor_points: true
+  field_laser: true
+  field_legal_terms: true
+  field_magazine_points: true
+  field_mail_personal: true
+  field_mail_public: true
+  field_master_doctor: true
+  field_medical_speciality: true
+  field_medicine_school: true
+  field_member_committee_points: true
+  field_member_directorate_points: true
+  field_member_scicommittee_points: true
+  field_membership: true
+  field_membership_expiration_date: true
+  field_membership_payment_date: true
+  field_national_congress: true
+  field_notification_user: true
+  field_notifications: true
+  field_office_description: true
+  field_office_hours: true
+  field_office_images: true
+  field_other_activities: true
+  field_phone_home: true
+  field_phone_mobile: true
+  field_phone_mobile_office: true
+  field_phone_office: true
+  field_phone_one: true
+  field_phone_two: true
+  field_points_congress: true
+  field_points_scientific: true
+  field_points_work: true
+  field_postgraduate_certificate: true
+  field_postgraduate_diploma: true
+  field_president_directorate: true
+  field_professional_card: true
+  field_profile: true
+  field_profile_directory: true
+  field_publications_books: true
+  field_publications_journals: true
+  field_publications_web: true
+  field_recertificate: true
+  field_recommendation_1: true
+  field_recommendation_2: true
+  field_research_points: true
+  field_rethus: true
+  field_rut: true
+  field_scientific_works_points: true
+  field_services_show: true
+  field_services_specialties: true
+  field_sex: true
+  field_social_share: true
+  field_subspecialty: true
+  field_subspecialty_years: true
+  field_tags: true
+  field_tags_evaluators: true
+  field_teacher_activity: true
+  field_type_associated: true
+  field_undergraduate_certificate: true
+  field_undergraduate_diploma: true
+  field_university_residence: true
+  field_university_subspecialty: true
+  field_university_undergraduate: true
+  field_website: true
+  field_years_residency: true
+  langcode: true
+  member_for: true

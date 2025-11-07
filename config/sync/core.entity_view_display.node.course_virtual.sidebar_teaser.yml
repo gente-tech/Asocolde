@@ -1,0 +1,84 @@
+uuid: aae30807-6bc9-4313-8c77-42cef0c6ded5
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.sidebar_teaser
+    - field.field.node.course_virtual.body
+    - field.field.node.course_virtual.field_course_dermatologist
+    - field.field.node.course_virtual.field_image
+    - field.field.node.course_virtual.field_social_share
+    - field.field.node.course_virtual.field_source
+    - field.field.node.course_virtual.field_url
+    - image.style.thumbnail
+    - node.type.course_virtual
+  module:
+    - ds
+    - image
+    - options
+    - user
+third_party_settings:
+  ds:
+    layout:
+      id: ds_2col_fluid
+      library: ds/ds_2col_fluid
+      disable_css: false
+      entity_classes: all_classes
+      settings:
+        classes:
+          layout_class: {  }
+        wrappers:
+          left: div
+          right: div
+        outer_wrapper: div
+        attributes: ''
+        link_attribute: ''
+        link_custom: ''
+        label: ''
+    regions:
+      left:
+        - field_image
+      right:
+        - 'node_title_external link'
+        - field_source
+    fields:
+      'node_title_external link':
+        plugin_id: 'node_title_external link'
+        weight: 1
+        label: hidden
+        formatter: default
+        settings:
+          link: '1'
+          'link class': ''
+          wrapper: h4
+          class: ''
+id: node.course_virtual.sidebar_teaser
+targetEntityType: node
+bundle: course_virtual
+mode: sidebar_teaser
+content:
+  field_image:
+    type: image
+    label: hidden
+    settings:
+      image_link: ''
+      image_style: thumbnail
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 0
+    region: left
+  field_source:
+    type: list_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: right
+hidden:
+  body: true
+  field_course_dermatologist: true
+  field_social_share: true
+  field_url: true
+  langcode: true
+  links: true

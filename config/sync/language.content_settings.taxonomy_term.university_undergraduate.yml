@@ -1,0 +1,11 @@
+uuid: fac0a611-c75b-47fe-b88a-5a07b06aba45
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.university_undergraduate
+id: taxonomy_term.university_undergraduate
+target_entity_type_id: taxonomy_term
+target_bundle: university_undergraduate
+default_langcode: site_default
+language_alterable: false

@@ -1,0 +1,8 @@
+uuid: 91b76d8c-7d7f-450c-aa3f-f8989ac65e7c
+langcode: es
+status: true
+dependencies: {  }
+name: 'Universidad de residencia'
+vid: university_residence
+description: ''
+weight: 0

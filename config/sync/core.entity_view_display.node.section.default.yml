@@ -1,0 +1,49 @@
+uuid: e128f553-0be9-41e6-be99-e6aa91257c92
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.field.node.section.field_body_class
+    - field.field.node.section.field_metatags
+    - field.field.node.section.field_social_share
+    - field.field.node.section.layout_builder__layout
+    - node.type.section
+  module:
+    - metatag
+    - social_media
+    - user
+id: node.section.default
+targetEntityType: node
+bundle: section
+mode: default
+content:
+  field_body_class:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 103
+    region: content
+  field_metatags:
+    type: metatag_empty_formatter
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  field_social_share:
+    type: social_media_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  langcode: true
+  layout_builder__layout: true

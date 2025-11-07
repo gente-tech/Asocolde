@@ -1,0 +1,28 @@
+uuid: 774af3b3-1abd-48e8-9ecb-a7857577bf82
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_content.type.prehome
+    - field.storage.block_content.field_title
+  module:
+    - field_config_cardinality
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: block_content.prehome.field_title
+field_name: field_title
+entity_type: block_content
+bundle: prehome
+label: Título
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

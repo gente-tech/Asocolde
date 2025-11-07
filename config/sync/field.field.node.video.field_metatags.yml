@@ -1,0 +1,25 @@
+uuid: 8ec7c757-ff3e-4f30-a097-f249aa3f2fa3
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_metatags
+    - node.type.video
+  module:
+    - field_config_cardinality
+    - metatag
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: node.video.field_metatags
+field_name: field_metatags
+entity_type: node
+bundle: video
+label: Metatags
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: metatag

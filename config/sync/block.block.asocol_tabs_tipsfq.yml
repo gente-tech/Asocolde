@@ -1,0 +1,38 @@
+uuid: dedb10d2-5778-4348-b179-cd084b2cb826
+langcode: es
+status: true
+dependencies:
+  module:
+    - asocol
+    - block_visibility_groups
+    - system
+    - user
+  theme:
+    - asocolderma_b5
+id: asocol_tabs_tipsfq
+theme: asocolderma_b5
+region: sidebar_second
+weight: -19
+provider: null
+plugin: asocol_tips_fq_doctor
+settings:
+  id: asocol_tips_fq_doctor
+  label: 'Asocol Tabs Tips Fq'
+  label_display: '0'
+  provider: asocol
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      anonymous: anonymous
+  request_path:
+    id: request_path
+    negate: true
+    pages: "<front>\r\n/pacientes"

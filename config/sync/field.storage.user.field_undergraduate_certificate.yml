@@ -1,0 +1,23 @@
+uuid: 7393e1a9-03d4-4b1d-aaa8-593d19e6d7c2
+langcode: es
+status: true
+dependencies:
+  module:
+    - file
+    - user
+id: user.field_undergraduate_certificate
+field_name: field_undergraduate_certificate
+entity_type: user
+type: file
+settings:
+  target_type: file
+  display_field: false
+  display_default: false
+  uri_scheme: public
+module: file
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

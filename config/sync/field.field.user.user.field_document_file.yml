@@ -1,0 +1,35 @@
+uuid: f39306ad-ccfb-4d7f-8ffa-ce50f6e87ba4
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_document_file
+  module:
+    - field_config_cardinality
+    - file
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_document_file
+field_name: field_document_file
+entity_type: user
+bundle: user
+label: 'Documento de identificación adjunto'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: document
+  file_extensions: 'jpg jpeg png doc docx pdf'
+  max_filesize: ''
+  description_field: false
+field_type: file

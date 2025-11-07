@@ -1,0 +1,28 @@
+uuid: 1cbdf56c-b7c3-4d88-b4a5-eb728d26acfe
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_mail_personal
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_mail_personal
+field_name: field_mail_personal
+entity_type: user
+bundle: user
+label: 'Correo electrónico personal'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: email

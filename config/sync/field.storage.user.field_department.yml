@@ -1,0 +1,21 @@
+uuid: cf2cf234-de65-483e-99c9-15c10844d5c2
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_department
+field_name: field_department
+entity_type: user
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

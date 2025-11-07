@@ -1,0 +1,29 @@
+uuid: b2a69cc9-d285-45ed-b4bd-cae55af0aa05
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_type
+    - node.type.microsite
+    - taxonomy.vocabulary.microsite
+id: node.microsite.field_type
+field_name: field_type
+entity_type: node
+bundle: microsite
+label: 'Categoria micrositio'
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      microsite: microsite
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

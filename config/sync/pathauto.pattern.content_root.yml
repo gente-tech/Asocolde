@@ -1,0 +1,24 @@
+uuid: 5e865c61-3fc7-48de-b499-05bba773e061
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+id: content_root
+label: 'Contenidos Raíz'
+type: 'canonical_entities:node'
+pattern: '[node:title]'
+selection_criteria:
+  a75fe14d-e86d-46d9-a50e-31b1fdb9ffc7:
+    id: 'entity_bundle:node'
+    negate: false
+    uuid: a75fe14d-e86d-46d9-a50e-31b1fdb9ffc7
+    context_mapping:
+      node: node
+    bundles:
+      frequent_question: frequent_question
+      page: page
+      webform: webform
+selection_logic: and
+weight: -5
+relationships: {  }

@@ -1,0 +1,15 @@
+uuid: f99a830a-3f75-4359-bc08-0269c26ff923
+langcode: es
+status: true
+dependencies: {  }
+name: scale
+label: scale(1200)
+effects:
+  2c1cc62d-ccd2-4124-8075-2982ebe4d9ba:
+    uuid: 2c1cc62d-ccd2-4124-8075-2982ebe4d9ba
+    id: image_scale
+    weight: 1
+    data:
+      width: 1200
+      height: null
+      upscale: true

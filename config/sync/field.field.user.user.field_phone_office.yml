@@ -1,0 +1,21 @@
+uuid: dc1b81a5-ab4f-4426-b920-5939d530fbf0
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_phone_office
+  module:
+    - telephone
+    - user
+id: user.user.field_phone_office
+field_name: field_phone_office
+entity_type: user
+bundle: user
+label: 'Teléfono del consultorio'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: telephone

@@ -1,0 +1,8 @@
+uuid: 86df35e7-1e5a-4ea8-a942-10d330ef511b
+langcode: es
+status: true
+dependencies: {  }
+id: compose
+label: 'Bloque compuesto '
+revision: 0
+description: ''

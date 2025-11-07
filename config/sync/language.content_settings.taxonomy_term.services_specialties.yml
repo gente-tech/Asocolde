@@ -1,0 +1,11 @@
+uuid: d115301f-59ab-4880-8000-7cb263e435e2
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.services_specialties
+id: taxonomy_term.services_specialties
+target_entity_type_id: taxonomy_term
+target_bundle: services_specialties
+default_langcode: site_default
+language_alterable: false

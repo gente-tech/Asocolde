@@ -1,0 +1,8 @@
+uuid: a2e41764-72d7-461f-b038-e79150a8f3d0
+langcode: es
+status: true
+dependencies: {  }
+id: menu-prehome-left
+label: 'Menu Prehome Izquierdo'
+description: ''
+locked: false

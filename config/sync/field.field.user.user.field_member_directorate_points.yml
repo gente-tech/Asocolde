@@ -1,0 +1,34 @@
+uuid: 23821b1d-726f-4889-9673-40970164f56a
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_member_directorate_points
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_member_directorate_points
+field_name: field_member_directorate_points
+entity_type: user
+bundle: user
+label: 'Miembro de Junta Directiva AsoColDerma (15 puntos X periodo)'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: Puntos
+  suffix: ''
+field_type: integer

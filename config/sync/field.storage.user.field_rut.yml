@@ -1,0 +1,23 @@
+uuid: 19d7f7a7-1259-4c61-a715-0fbdfc9890f3
+langcode: es
+status: true
+dependencies:
+  module:
+    - file
+    - user
+id: user.field_rut
+field_name: field_rut
+entity_type: user
+type: file
+settings:
+  target_type: file
+  display_field: false
+  display_default: false
+  uri_scheme: public
+module: file
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

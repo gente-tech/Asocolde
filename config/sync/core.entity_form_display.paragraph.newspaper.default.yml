@@ -1,0 +1,54 @@
+uuid: 4b13a71f-e2f5-4b09-a155-6b821d2d3d70
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.newspaper.field_image
+    - field.field.paragraph.newspaper.field_link
+    - field.field.paragraph.newspaper.field_subtitle
+    - field.field.paragraph.newspaper.field_title
+    - image.style.thumbnail
+    - paragraphs.paragraphs_type.newspaper
+  module:
+    - image
+    - link
+id: paragraph.newspaper.default
+targetEntityType: paragraph
+bundle: newspaper
+mode: default
+content:
+  field_image:
+    type: image_image
+    weight: 0
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+  field_link:
+    type: link_default
+    weight: 1
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+  field_subtitle:
+    type: string_textfield
+    weight: 3
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_title:
+    type: string_textfield
+    weight: 2
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

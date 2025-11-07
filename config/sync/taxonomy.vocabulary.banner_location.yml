@@ -1,0 +1,8 @@
+uuid: 43108651-29e4-4c5d-94aa-139deca611cd
+langcode: es
+status: true
+dependencies: {  }
+name: 'Ubicación Banner'
+vid: banner_location
+description: ''
+weight: 0

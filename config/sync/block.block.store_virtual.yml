@@ -1,0 +1,34 @@
+uuid: 2ce27acb-cc28-4487-8f9c-66dc4c8a25c9
+langcode: es
+status: true
+dependencies:
+  config:
+    - system.menu.store-virtual
+  module:
+    - block_visibility_groups
+    - system
+  theme:
+    - asocolderma_b5
+id: store_virtual
+theme: asocolderma_b5
+region: content
+weight: -27
+provider: null
+plugin: 'system_menu_block:store-virtual'
+settings:
+  id: 'system_menu_block:store-virtual'
+  label: 'Tienda Virtual'
+  label_display: '0'
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  request_path:
+    id: request_path
+    negate: false
+    pages: "/cart\r\n/tienda-virtual\r\n/tienda-virtual/*"

@@ -1,0 +1,30 @@
+uuid: d690b10a-089e-4a0b-9194-2e80e5322877
+langcode: es
+status: true
+dependencies:
+  module:
+    - asocol
+    - block_visibility_groups
+    - system
+  theme:
+    - asocolderma_b5
+id: asocolhomelink
+theme: asocolderma_b5
+region: sidebar_first
+weight: -26
+provider: null
+plugin: asocol_home_link
+settings:
+  id: asocol_home_link
+  label: 'Asocol Home Link'
+  label_display: '0'
+  provider: asocol
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  request_path:
+    id: request_path
+    negate: true
+    pages: '<front>'

@@ -1,0 +1,24 @@
+uuid: 7563e9b4-7774-4525-a9d8-e0e44be1ecb6
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_legal_terms
+  module:
+    - user
+id: user.user.field_legal_terms
+field_name: field_legal_terms
+entity_type: user
+bundle: user
+label: 'Aceptación términos legales'
+description: 'Acepto los <a href="/terminos-legales" target="_blank">Términos legales</a> del sitio Web'
+required: true
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

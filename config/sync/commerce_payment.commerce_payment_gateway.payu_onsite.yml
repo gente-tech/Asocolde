@@ -1,0 +1,24 @@
+uuid: bee1b2ad-71f3-4a41-90a8-751f814e9229
+langcode: es
+status: false
+dependencies:
+  module:
+    - commerce_payu_colombia
+id: payu_onsite
+label: 'Tarjeta de crédito y débito'
+weight: -10
+plugin: commerce_payu_colombia_onsite
+configuration:
+  display_label: 'Commerce PayU Latam Colombia (On-site)'
+  mode: test
+  payment_method_types:
+    - credit_card
+  collect_billing_information: true
+  account_id: '512321'
+  api_key: 4Vj8eK4rloUd272L48hsrarnUA
+  api_login: pRRXKOl8ikMmt9u
+  merchant_id: '508029'
+  endpoint_prod: 'https://sandbox.api.payulatam.com/payments-api/4.0/service.cgi'
+  endpoint_test: 'https://api.payulatam.com/payments-api/4.0/service.cgi'
+conditions: {  }
+conditionOperator: AND

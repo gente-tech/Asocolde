@@ -1,0 +1,29 @@
+uuid: 1603bb7c-5e8e-4995-a548-470232c35143
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_disease_type
+    - node.type.article
+    - taxonomy.vocabulary.diseases_types
+id: node.article.field_disease_type
+field_name: field_disease_type
+entity_type: node
+bundle: article
+label: 'Tipo enfermedad'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      diseases_types: diseases_types
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

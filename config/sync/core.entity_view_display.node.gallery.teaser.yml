@@ -1,0 +1,90 @@
+uuid: a288c0c8-6025-4b32-9efc-a0c7e2d33915
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.gallery.body
+    - field.field.node.gallery.comment
+    - field.field.node.gallery.field_disease_type
+    - field.field.node.gallery.field_image
+    - field.field.node.gallery.field_metatags
+    - field.field.node.gallery.field_note_type
+    - field.field.node.gallery.field_social_share
+    - field.field.node.gallery.field_source
+    - field.field.node.gallery.field_tags
+    - image.style.course_list
+    - node.type.gallery
+  module:
+    - ds
+    - image
+    - options
+    - social_media
+    - user
+third_party_settings:
+  ds:
+    layout:
+      id: layout_onecol
+      library: layout_discovery/onecol
+      disable_css: false
+      entity_classes: all_classes
+      settings:
+        label: ''
+    regions:
+      content:
+        - field_image
+        - node_title
+        - field_source
+        - field_social_share
+    fields:
+      node_title:
+        plugin_id: node_title
+        weight: 1
+        label: hidden
+        formatter: default
+        settings:
+          link: true
+          'link class': ''
+          wrapper: h2
+          class: ''
+id: node.gallery.teaser
+targetEntityType: node
+bundle: gallery
+mode: teaser
+content:
+  field_image:
+    type: image
+    label: hidden
+    settings:
+      image_link: content
+      image_style: course_list
+      image_loading:
+        attribute: lazy
+    third_party_settings:
+      ds:
+        ds_limit: '1'
+    weight: 0
+    region: content
+  field_social_share:
+    type: social_media_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_source:
+    type: list_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+hidden:
+  body: true
+  comment: true
+  field_disease_type: true
+  field_metatags: true
+  field_note_type: true
+  field_tags: true
+  langcode: true
+  links: true

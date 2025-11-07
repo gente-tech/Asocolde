@@ -1,0 +1,30 @@
+uuid: 9f47fd33-0ade-4d8d-945d-fcce2ed1672f
+langcode: es
+status: true
+dependencies:
+  module:
+    - asocol
+    - block_visibility_groups
+    - system
+  theme:
+    - asocolderma_b5
+id: asocol_search
+theme: asocolderma_b5
+region: nav_branding
+weight: 0
+provider: null
+plugin: asocol_search
+settings:
+  id: asocol_search
+  label: 'Asocol Search'
+  label_display: '0'
+  provider: asocol
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  request_path:
+    id: request_path
+    negate: true
+    pages: '<front>'

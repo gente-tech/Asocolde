@@ -1,0 +1,9 @@
+uuid: b0b0d871-b59c-48bb-b46d-b3f5c0727819
+langcode: es
+status: true
+dependencies:
+  config:
+    - eck.eck_entity_type.dermatology_school
+name: 'Escuela de dermatología'
+type: dermatology_school
+description: ''

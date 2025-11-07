@@ -1,0 +1,20 @@
+uuid: afed6a7c-8465-484d-9d03-a0a8eb6d8a30
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_points_congress
+field_name: field_points_congress
+entity_type: user
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

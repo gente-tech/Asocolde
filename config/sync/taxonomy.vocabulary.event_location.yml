@@ -1,0 +1,8 @@
+uuid: 0c5225f2-f657-4cb7-be6e-a72bf371971b
+langcode: es
+status: true
+dependencies: {  }
+name: 'Ubicaciones Home Eventos'
+vid: event_location
+description: ''
+weight: 0

@@ -1,0 +1,15 @@
+uuid: f4b3372d-bdbe-4a7a-921c-855b1fbd3ca3
+langcode: es
+status: true
+dependencies: {  }
+name: scale2
+label: 'Escale (117x88)'
+effects:
+  c989c679-e6c7-489a-b99e-5e7a54f7ed64:
+    uuid: c989c679-e6c7-489a-b99e-5e7a54f7ed64
+    id: image_scale
+    weight: 1
+    data:
+      width: 117
+      height: 88
+      upscale: true

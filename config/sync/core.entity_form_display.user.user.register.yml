@@ -1,0 +1,668 @@
+uuid: 59d0d14f-b77a-489d-b6de-d21947d62d00
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_form_mode.user.register
+    - field.field.user.user.commerce_remote_id
+    - field.field.user.user.field_address_home
+    - field.field.user.user.field_address_office
+    - field.field.user.user.field_admission_application
+    - field.field.user.user.field_associate_number_1
+    - field.field.user.user.field_associate_number_2
+    - field.field.user.user.field_awards_distinctions
+    - field.field.user.user.field_birthday
+    - field.field.user.user.field_book_chapter_points
+    - field.field.user.user.field_book_editor_points
+    - field.field.user.user.field_camec_score
+    - field.field.user.user.field_city
+    - field.field.user.user.field_civil_status
+    - field.field.user.user.field_congress_specialties
+    - field.field.user.user.field_content_website_points
+    - field.field.user.user.field_correspondence
+    - field.field.user.user.field_country
+    - field.field.user.user.field_courses_diplomas
+    - field.field.user.user.field_cv
+    - field.field.user.user.field_date_postgraduate
+    - field.field.user.user.field_date_subspecialty
+    - field.field.user.user.field_department
+    - field.field.user.user.field_dermatologist_recertified
+    - field.field.user.user.field_document_file
+    - field.field.user.user.field_document_number
+    - field.field.user.user.field_document_type
+    - field.field.user.user.field_editorial
+    - field.field.user.user.field_first_name
+    - field.field.user.user.field_first_surname
+    - field.field.user.user.field_geolocation_office
+    - field.field.user.user.field_journal_committee_points
+    - field.field.user.user.field_journal_editor_points
+    - field.field.user.user.field_laser
+    - field.field.user.user.field_legal_terms
+    - field.field.user.user.field_magazine_points
+    - field.field.user.user.field_mail_personal
+    - field.field.user.user.field_mail_public
+    - field.field.user.user.field_master_doctor
+    - field.field.user.user.field_medical_speciality
+    - field.field.user.user.field_medicine_school
+    - field.field.user.user.field_member_committee_points
+    - field.field.user.user.field_member_directorate_points
+    - field.field.user.user.field_member_scicommittee_points
+    - field.field.user.user.field_membership
+    - field.field.user.user.field_membership_expiration_date
+    - field.field.user.user.field_membership_payment_date
+    - field.field.user.user.field_national_congress
+    - field.field.user.user.field_notification_user
+    - field.field.user.user.field_notifications
+    - field.field.user.user.field_office_description
+    - field.field.user.user.field_office_hours
+    - field.field.user.user.field_office_images
+    - field.field.user.user.field_other_activities
+    - field.field.user.user.field_phone_home
+    - field.field.user.user.field_phone_mobile
+    - field.field.user.user.field_phone_mobile_office
+    - field.field.user.user.field_phone_office
+    - field.field.user.user.field_phone_one
+    - field.field.user.user.field_phone_two
+    - field.field.user.user.field_points_congress
+    - field.field.user.user.field_points_scientific
+    - field.field.user.user.field_points_work
+    - field.field.user.user.field_postgraduate_certificate
+    - field.field.user.user.field_postgraduate_diploma
+    - field.field.user.user.field_president_directorate
+    - field.field.user.user.field_professional_card
+    - field.field.user.user.field_profile
+    - field.field.user.user.field_profile_directory
+    - field.field.user.user.field_publications_books
+    - field.field.user.user.field_publications_journals
+    - field.field.user.user.field_publications_web
+    - field.field.user.user.field_recertificate
+    - field.field.user.user.field_recommendation_1
+    - field.field.user.user.field_recommendation_2
+    - field.field.user.user.field_research_points
+    - field.field.user.user.field_rethus
+    - field.field.user.user.field_rut
+    - field.field.user.user.field_scientific_works_points
+    - field.field.user.user.field_second_name
+    - field.field.user.user.field_second_surname
+    - field.field.user.user.field_services_show
+    - field.field.user.user.field_services_specialties
+    - field.field.user.user.field_sex
+    - field.field.user.user.field_social_share
+    - field.field.user.user.field_subspecialty
+    - field.field.user.user.field_subspecialty_years
+    - field.field.user.user.field_tags
+    - field.field.user.user.field_tags_evaluators
+    - field.field.user.user.field_teacher_activity
+    - field.field.user.user.field_type_associated
+    - field.field.user.user.field_undergraduate_certificate
+    - field.field.user.user.field_undergraduate_diploma
+    - field.field.user.user.field_university_degree
+    - field.field.user.user.field_university_residence
+    - field.field.user.user.field_university_subspecialty
+    - field.field.user.user.field_university_undergraduate
+    - field.field.user.user.field_website
+    - field.field.user.user.field_years_residency
+    - field.field.user.user.user_picture
+  module:
+    - asocol
+    - datetime
+    - geolocation_google_maps
+    - path
+    - telephone
+    - user
+_core:
+  default_config_hash: FaQ9Ptcpxpg30AtiqRDtl_8zbJArHP1LPfug_s59TOA
+id: user.user.register
+targetEntityType: user
+bundle: user
+mode: register
+content:
+  account:
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_address_home:
+    type: string_textfield
+    weight: 8
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_birthday:
+    type: datetime_default
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_city:
+    type: entity_reference_autocomplete
+    weight: 13
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_civil_status:
+    type: string_textfield
+    weight: 7
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_correspondence:
+    type: options_buttons
+    weight: 11
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_country:
+    type: entity_reference_autocomplete
+    weight: 15
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_department:
+    type: string_textfield
+    weight: 14
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_document_number:
+    type: string_textfield
+    weight: 16
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_first_name:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_first_surname:
+    type: string_textfield
+    weight: 3
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_geolocation_office:
+    type: geolocation_googlegeocoder
+    weight: 17
+    region: content
+    settings:
+      auto_client_location: ''
+      auto_client_location_marker: '0'
+      allow_override_map_settings: 0
+      hide_textfield_form: true
+      centre:
+        client_location:
+          enable: true
+          weight: 0
+          map_center_id: client_location
+        fit_bounds:
+          enable: true
+          weight: 0
+          settings:
+            reset_zoom: false
+            min_zoom: null
+          map_center_id: fit_bounds
+        fixed_boundaries:
+          enable: false
+          weight: 0
+          settings:
+            south: ''
+            west: ''
+            north: ''
+            east: ''
+          map_center_id: fixed_boundaries
+        fixed_value:
+          enable: false
+          weight: 0
+          settings:
+            location_option_id: fixed_value
+            latitude: null
+            longitude: null
+          map_center_id: location_plugins
+        ipstack:
+          enable: false
+          weight: 0
+          settings:
+            location_option_id: ipstack
+            access_key: ''
+          map_center_id: location_plugins
+      google_map_settings:
+        map_features:
+          control_geocoder:
+            weight: -100
+            settings:
+              position: TOP_LEFT
+              geocoder: google_geocoding_api
+              settings:
+                label: Address
+                description: 'Enter an address to be localized.'
+                autocomplete_min_length: 1
+                component_restrictions:
+                  route: ''
+                  country: ''
+                  administrative_area: ''
+                  locality: ''
+                  postal_code: ''
+                boundary_restriction:
+                  south: ''
+                  west: ''
+                  north: ''
+                  east: ''
+                region: ''
+            enabled: true
+          google_maps_layer_bicycling:
+            weight: 0
+            enabled: false
+          client_location_indicator:
+            weight: 0
+            enabled: false
+          context_popup:
+            weight: 0
+            settings:
+              content:
+                value: ''
+                format: full_html
+            enabled: false
+          drawing:
+            weight: 0
+            settings:
+              polyline: false
+              strokeColor: '#FF0000'
+              strokeOpacity: '0.8'
+              strokeWeight: '2'
+              geodesic: false
+              polygon: false
+              fillColor: '#FF0000'
+              fillOpacity: '0.35'
+            enabled: false
+          geolocation_google_maps_control_directions:
+            weight: 0
+            settings:
+              position: RIGHT_CENTER
+              behavior: default
+              origin_source: exposed
+              origin_static_value: ''
+              destination_source: exposed
+              destination_static_value: ''
+              travel_mode: exposed
+              directions_container: below
+              directions_container_custom_id: ''
+            enabled: false
+          map_disable_tilt:
+            weight: 0
+            enabled: false
+          map_disable_poi:
+            weight: 0
+            enabled: false
+          map_disable_user_interaction:
+            weight: 0
+            enabled: false
+          geolocation_shapes:
+            weight: 0
+            settings:
+              remove_markers: false
+              polyline: true
+              polyline_title: ''
+              strokeColor: '#FF0000'
+              strokeOpacity: 0.8
+              strokeWidth: '2'
+              polygon: false
+              polygon_title: ''
+              fillColor: '#FF0000'
+              fillOpacity: 0.35
+            enabled: false
+          control_fullscreen:
+            weight: 0
+            settings:
+              position: RIGHT_CENTER
+              behavior: default
+            enabled: false
+          control_loading_indicator:
+            weight: 0
+            settings:
+              position: TOP_LEFT
+              loading_label: Loading
+            enabled: false
+          control_locate:
+            weight: 0
+            settings:
+              position: TOP_LEFT
+            enabled: true
+          control_maptype:
+            weight: 0
+            settings:
+              position: RIGHT_BOTTOM
+              behavior: default
+              style: DEFAULT
+            enabled: true
+          control_recenter:
+            weight: 0
+            settings:
+              position: TOP_LEFT
+            enabled: true
+          control_rotate:
+            weight: 0
+            settings:
+              position: RIGHT_CENTER
+              behavior: default
+            enabled: false
+          control_streetview:
+            weight: 0
+            settings:
+              position: RIGHT_CENTER
+              behavior: default
+            enabled: false
+          control_zoom:
+            weight: 0
+            settings:
+              position: RIGHT_CENTER
+              behavior: default
+              style: LARGE
+            enabled: true
+          map_restriction:
+            weight: 0
+            settings:
+              north: ''
+              south: ''
+              east: ''
+              west: ''
+              strict: true
+            enabled: false
+          map_type_style:
+            weight: 0
+            settings:
+              style: '[]'
+            enabled: false
+          marker_clusterer:
+            weight: 0
+            settings:
+              image_path: ''
+              styles: ''
+              max_zoom: 15
+              minimum_cluster_size: 2
+              zoom_on_click: true
+              average_center: false
+              grid_size: 60
+            enabled: false
+          marker_icon:
+            weight: 0
+            settings:
+              marker_icon_path: ''
+              anchor:
+                x: 0
+                'y': 0
+              origin:
+                x: 0
+                'y': 0
+              label_origin:
+                x: 0
+                'y': 0
+              size:
+                width: null
+                height: null
+              scaled_size:
+                width: null
+                height: null
+            enabled: false
+          marker_infobubble:
+            weight: 0
+            settings:
+              close_other: 1
+              close_button: 0
+              close_button_src: ''
+              shadow_style: 0
+              padding: 10
+              border_radius: 8
+              border_width: 2
+              border_color: '#039be5'
+              background_color: '#fff'
+              min_width: null
+              max_width: 550
+              min_height: null
+              max_height: null
+              arrow_style: 2
+              arrow_position: 30
+              arrow_size: 10
+            enabled: false
+          marker_infowindow:
+            weight: 0
+            settings:
+              info_window_solitary: true
+              disable_auto_pan: true
+              info_auto_display: false
+              max_width: null
+            enabled: true
+          marker_label:
+            weight: 0
+            settings:
+              color: ''
+              font_family: ''
+              font_size: ''
+              font_weight: ''
+            enabled: false
+          marker_opacity:
+            weight: 0
+            settings:
+              opacity: !!float 1
+            enabled: false
+          geolocation_marker_scroll_to_id:
+            weight: 0
+            settings:
+              scroll_target_id: ''
+            enabled: false
+          marker_zoom_to_animate:
+            weight: 0
+            settings:
+              marker_zoom_anchor_id: ''
+            enabled: false
+          spiderfying:
+            weight: 0
+            settings:
+              spiderfiable_marker_path: /modules/contrib/geolocation/modules/geolocation_google_maps/images/marker-plus.svg
+              markersWontMove: true
+              markersWontHide: false
+              keepSpiderfied: true
+              ignoreMapClick: false
+              nearbyDistance: 20
+              circleSpiralSwitchover: 9
+              circleFootSeparation: 23
+              spiralFootSeparation: 26
+              spiralLengthStart: 11
+              spiralLengthFactor: 4
+              legWeight: 1.5
+            enabled: false
+          google_maps_layer_traffic:
+            weight: 0
+            enabled: false
+          google_maps_layer_transit:
+            weight: 0
+            enabled: false
+        type: ROADMAP
+        zoom: 10
+        minZoom: 0
+        maxZoom: 20
+        height: 400px
+        width: 100%
+        gestureHandling: auto
+    third_party_settings: {  }
+  field_legal_terms:
+    type: asocol_boolean_checkbox_display
+    weight: 20
+    region: content
+    settings:
+      display_label: description
+    third_party_settings: {  }
+  field_phone_home:
+    type: telephone_default
+    weight: 10
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_phone_mobile:
+    type: telephone_default
+    weight: 6
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_phone_mobile_office:
+    type: telephone_default
+    weight: 12
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_phone_office:
+    type: telephone_default
+    weight: 9
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_profile_directory:
+    type: boolean_checkbox
+    weight: 19
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_recertificate:
+    type: boolean_checkbox
+    weight: 18
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_sex:
+    type: options_select
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_type_associated:
+    type: options_select
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  language:
+    weight: 21
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 23
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  timezone:
+    weight: 22
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  commerce_remote_id: true
+  contact: true
+  customer_profiles: true
+  field_address_office: true
+  field_admission_application: true
+  field_associate_number_1: true
+  field_associate_number_2: true
+  field_awards_distinctions: true
+  field_book_chapter_points: true
+  field_book_editor_points: true
+  field_camec_score: true
+  field_congress_specialties: true
+  field_content_website_points: true
+  field_courses_diplomas: true
+  field_cv: true
+  field_date_postgraduate: true
+  field_date_subspecialty: true
+  field_dermatologist_recertified: true
+  field_document_file: true
+  field_document_type: true
+  field_editorial: true
+  field_journal_committee_points: true
+  field_journal_editor_points: true
+  field_laser: true
+  field_magazine_points: true
+  field_mail_personal: true
+  field_mail_public: true
+  field_master_doctor: true
+  field_medical_speciality: true
+  field_medicine_school: true
+  field_member_committee_points: true
+  field_member_directorate_points: true
+  field_member_scicommittee_points: true
+  field_membership: true
+  field_membership_expiration_date: true
+  field_membership_payment_date: true
+  field_national_congress: true
+  field_notification_user: true
+  field_notifications: true
+  field_office_description: true
+  field_office_hours: true
+  field_office_images: true
+  field_other_activities: true
+  field_phone_one: true
+  field_phone_two: true
+  field_points_congress: true
+  field_points_scientific: true
+  field_points_work: true
+  field_postgraduate_certificate: true
+  field_postgraduate_diploma: true
+  field_president_directorate: true
+  field_professional_card: true
+  field_profile: true
+  field_publications_books: true
+  field_publications_journals: true
+  field_publications_web: true
+  field_recommendation_1: true
+  field_recommendation_2: true
+  field_research_points: true
+  field_rethus: true
+  field_rut: true
+  field_scientific_works_points: true
+  field_second_name: true
+  field_second_surname: true
+  field_services_show: true
+  field_services_specialties: true
+  field_social_share: true
+  field_subspecialty: true
+  field_subspecialty_years: true
+  field_tags: true
+  field_tags_evaluators: true
+  field_teacher_activity: true
+  field_undergraduate_certificate: true
+  field_undergraduate_diploma: true
+  field_university_degree: true
+  field_university_residence: true
+  field_university_subspecialty: true
+  field_university_undergraduate: true
+  field_website: true
+  field_years_residency: true
+  langcode: true
+  user_picture: true

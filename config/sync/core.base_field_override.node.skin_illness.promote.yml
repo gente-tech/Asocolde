@@ -1,0 +1,22 @@
+uuid: fcf2b4dc-618b-46a0-afef-cd05c6948df1
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.skin_illness
+id: node.skin_illness.promote
+field_name: promote
+entity_type: node
+bundle: skin_illness
+label: 'Promoted to front page'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

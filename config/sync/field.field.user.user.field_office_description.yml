@@ -1,0 +1,28 @@
+uuid: 13da0f0b-88cf-4bbc-a6e4-838f9ef6a3b1
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_office_description
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_office_description
+field_name: field_office_description
+entity_type: user
+bundle: user
+label: 'Descripción del consultorio'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

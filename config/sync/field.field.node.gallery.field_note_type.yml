@@ -1,0 +1,21 @@
+uuid: adc97c9b-7d87-43bf-9852-278221235d13
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_note_type
+    - node.type.gallery
+  module:
+    - options
+id: node.gallery.field_note_type
+field_name: field_note_type
+entity_type: node
+bundle: gallery
+label: 'Tipo de nota'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

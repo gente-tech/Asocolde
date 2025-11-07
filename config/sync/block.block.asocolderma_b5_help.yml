@@ -1,0 +1,22 @@
+uuid: f00d5cbf-6376-45d0-94eb-4cd0479a1a7e
+langcode: es
+status: true
+dependencies:
+  module:
+    - help
+  theme:
+    - asocolderma_b5
+_core:
+  default_config_hash: 62qHqA88ct35w_cdnnhkOhoss56p1k0OdyYYvawKSmU
+id: asocolderma_b5_help
+theme: asocolderma_b5
+region: content
+weight: -29
+provider: null
+plugin: help_block
+settings:
+  id: help_block
+  label: Help
+  label_display: '0'
+  provider: help
+visibility: {  }

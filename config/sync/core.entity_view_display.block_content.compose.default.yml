@@ -1,0 +1,65 @@
+uuid: 8d934298-1e53-4048-ae9e-fc0be1e35ba7
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_content.type.compose
+    - field.field.block_content.compose.field_block_col1
+    - field.field.block_content.compose.field_block_col2
+  module:
+    - block_field
+    - ds
+third_party_settings:
+  ds:
+    layout:
+      id: bs_2col
+      library: null
+      disable_css: false
+      entity_classes: all_classes
+      settings:
+        label: ''
+        layout:
+          wrapper: div
+          classes:
+            row: row
+          add_layout_class: 1
+          attributes: ''
+        regions:
+          left:
+            wrapper: div
+            classes:
+              col-sm-7: col-sm-7
+            add_region_classes: 1
+            attributes: ''
+          right:
+            wrapper: div
+            classes:
+              col-sm-5: col-sm-5
+            add_region_classes: 1
+            attributes: ''
+    regions:
+      left:
+        - field_block_col1
+      right:
+        - field_block_col2
+id: block_content.compose.default
+targetEntityType: block_content
+bundle: compose
+mode: default
+content:
+  field_block_col1:
+    type: block_field
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: left
+  field_block_col2:
+    type: block_field
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: right
+hidden:
+  langcode: true

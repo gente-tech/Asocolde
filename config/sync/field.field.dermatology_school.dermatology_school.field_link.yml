@@ -1,0 +1,27 @@
+uuid: d459254d-6a24-4157-ba21-ff41a0d165ab
+langcode: es
+status: true
+dependencies:
+  config:
+    - eck.eck_type.dermatology_school.dermatology_school
+    - field.storage.dermatology_school.field_link
+  module:
+    - field_config_cardinality
+    - link
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: dermatology_school.dermatology_school.field_link
+field_name: field_link
+entity_type: dermatology_school
+bundle: dermatology_school
+label: Enlace
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 2
+  link_type: 16
+field_type: link

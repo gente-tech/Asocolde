@@ -1,0 +1,24 @@
+uuid: aae7040e-3243-40e2-908f-51e174409c7e
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_body_class
+    - node.type.section
+  module:
+    - field_config_cardinality
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: node.section.field_body_class
+field_name: field_body_class
+entity_type: node
+bundle: section
+label: 'Clases cargadas en el body'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,42 @@
+uuid: cf15fe1b-956a-4878-9ec2-20545ca603f1
+langcode: es
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_type.default
+    - field.storage.commerce_product.field_image
+  module:
+    - field_config_cardinality
+    - image
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: commerce_product.default.field_image
+field_name: field_image
+entity_type: commerce_product
+bundle: default
+label: Imagen
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: producto
+  file_extensions: 'png gif jpg jpeg'
+  max_filesize: ''
+  max_resolution: ''
+  min_resolution: ''
+  alt_field: true
+  alt_field_required: true
+  title_field: false
+  title_field_required: false
+  default_image:
+    uuid: ''
+    alt: ''
+    title: ''
+    width: null
+    height: null
+field_type: image

@@ -1,0 +1,27 @@
+uuid: a413009a-acb8-4884-a109-086015c230b1
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_note_type
+    - node.type.video
+  module:
+    - field_config_cardinality
+    - options
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: node.video.field_note_type
+field_name: field_note_type
+entity_type: node
+bundle: video
+label: 'Tipo de nota'
+description: ''
+required: true
+translatable: true
+default_value:
+  -
+    value: video
+default_value_callback: ''
+settings: {  }
+field_type: list_string

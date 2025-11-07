@@ -1,0 +1,28 @@
+uuid: 338711fe-2c01-4d68-aff0-6a048b296c67
+langcode: es
+status: true
+dependencies:
+  config:
+    - eck.eck_type.dermatology_school.dermatology_school
+    - field.storage.dermatology_school.field_status
+  module:
+    - field_config_cardinality
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: dermatology_school.dermatology_school.field_status
+field_name: field_status
+entity_type: dermatology_school
+bundle: dermatology_school
+label: Publicado
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

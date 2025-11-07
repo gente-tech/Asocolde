@@ -1,0 +1,36 @@
+uuid: bc90fbd8-a5c6-4ada-b7b3-799f7fcd3e04
+langcode: es
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_variation_type.membership
+    - field.storage.commerce_product_variation.field_increase
+  module:
+    - commerce_price
+    - field_config_cardinality
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: commerce_product_variation.membership.field_increase
+field_name: field_increase
+entity_type: commerce_product_variation
+bundle: membership
+label: Incremento
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    number: '0'
+    currency_code: COP
+    formatted: "COP\_0,00"
+default_value_callback: ''
+settings:
+  available_currencies:
+    - COP
+  allow_negative: false
+field_type: commerce_price

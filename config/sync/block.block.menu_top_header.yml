@@ -1,0 +1,30 @@
+uuid: dd320a02-09ad-4548-a950-4f22431f29c8
+langcode: es
+status: true
+dependencies:
+  config:
+    - system.menu.top-header
+  module:
+    - block_visibility_groups
+    - system
+  theme:
+    - asocolderma_b5
+id: menu_top_header
+theme: asocolderma_b5
+region: header_scroll
+weight: -25
+provider: null
+plugin: 'system_menu_block:top-header'
+settings:
+  id: 'system_menu_block:top-header'
+  label: 'Menu top header'
+  label_display: '0'
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''

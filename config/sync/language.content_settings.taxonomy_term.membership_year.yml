@@ -1,0 +1,11 @@
+uuid: ad97b385-79ef-4670-a542-0f1af796b0ce
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.membership_year
+id: taxonomy_term.membership_year
+target_entity_type_id: taxonomy_term
+target_bundle: membership_year
+default_langcode: site_default
+language_alterable: false

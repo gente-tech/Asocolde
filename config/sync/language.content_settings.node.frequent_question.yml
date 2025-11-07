@@ -1,0 +1,11 @@
+uuid: 26f6284b-51de-43dd-a579-26d3075783ca
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.frequent_question
+id: node.frequent_question
+target_entity_type_id: node
+target_bundle: frequent_question
+default_langcode: site_default
+language_alterable: false

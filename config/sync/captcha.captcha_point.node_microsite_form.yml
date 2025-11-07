@@ -1,0 +1,7 @@
+uuid: 0dbe2c74-c46f-45bc-ac80-527d9f319477
+langcode: es
+status: false
+dependencies: {  }
+formId: node_microsite_form
+captchaType: default
+label: node_microsite_form

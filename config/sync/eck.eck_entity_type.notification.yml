@@ -1,0 +1,10 @@
+uuid: d090069d-1347-4251-a1d1-efb758feed88
+langcode: es
+status: true
+dependencies: {  }
+id: notification
+label: Notification
+uid: true
+created: true
+changed: true
+title: true

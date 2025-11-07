@@ -1,0 +1,68 @@
+uuid: 9105019c-7705-4e8e-b650-450e96eed611
+langcode: es
+status: true
+dependencies:
+  enforced:
+    module:
+      - asocol_migrate
+_core:
+  default_config_hash: 2m2XHkCsx4PQ5BQj554xN_SCR9uw56kKYZWyUQsHS0U
+id: asocolderma_node_event
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags: null
+migration_group: asocolderma
+label: 'Asocolderma node event migration'
+source:
+  plugin: asocolderma_node_event
+  node_type: eventos
+  target: asocol_d7
+process:
+  uid: node_uid
+  type:
+    plugin: default_value
+    default_value: event
+  langcode:
+    plugin: default_value
+    default_value: es
+  status: status
+  title: title
+  created: created
+  changed: changed
+  revision_uid: revision_uid
+  revision_log: log
+  revision_timestamp: timestamp
+  promote:
+    plugin: default_value
+    default_value: 0
+  sticky:
+    plugin: default_value
+    default_value: 0
+  default_langcode:
+    plugin: default_value
+    default_value: 1
+  revision_translation_affected:
+    plugin: default_value
+    default_value: 1
+  field_name: field_nombres
+  field_date_range/value: field_fecha_value1
+  field_date_range/end_value: field_fecha_value2
+  field_home_location:
+    plugin: sub_process
+    source: field_ubicacion_portada
+    process:
+      target_id: tid
+  body: body
+  field_image/target_id: field_image_fid
+  field_image/alt: field_image_alt
+  field_image/title: field_image_title
+  field_type/target_id: field_categoria_del_evento
+  field_tags:
+    plugin: sub_process
+    source: field_tags
+    process:
+      target_id: tid
+destination:
+  plugin: 'entity:node'
+migration_dependencies: null

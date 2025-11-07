@@ -1,0 +1,25 @@
+uuid: 9dd80b19-dfaa-4145-9814-5a4b9fdcd7dc
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_social_share
+  module:
+    - social_media
+    - user
+id: user.user.field_social_share
+field_name: field_social_share
+entity_type: user
+bundle: user
+label: 'Social share'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: social_media

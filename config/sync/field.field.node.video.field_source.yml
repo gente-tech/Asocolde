@@ -1,0 +1,25 @@
+uuid: cdb6d2c9-9722-4a04-953e-fe653a9bd7e5
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_source
+    - node.type.video
+  module:
+    - field_config_cardinality
+    - options
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: node.video.field_source
+field_name: field_source
+entity_type: node
+bundle: video
+label: Fuente
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

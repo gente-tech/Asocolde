@@ -1,0 +1,20 @@
+uuid: ee823cca-0f65-4ae5-aa0b-b832bd1dac98
+langcode: es
+status: true
+dependencies:
+  module:
+    - taxonomy
+    - user
+id: user.field_university_residence
+field_name: field_university_residence
+entity_type: user
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

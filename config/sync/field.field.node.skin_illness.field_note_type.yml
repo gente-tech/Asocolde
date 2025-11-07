@@ -1,0 +1,25 @@
+uuid: 0ae63fc9-5ae0-4105-8d89-4a8f6d8ca1fe
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_note_type
+    - node.type.skin_illness
+  module:
+    - field_config_cardinality
+    - options
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: node.skin_illness.field_note_type
+field_name: field_note_type
+entity_type: node
+bundle: skin_illness
+label: 'Tipo de nota'
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

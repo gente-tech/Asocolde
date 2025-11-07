@@ -1,0 +1,10 @@
+uuid: ea8d6436-5a2d-4d10-92b9-b7cc42d6b46d
+langcode: es
+status: true
+dependencies: {  }
+id: membership
+label: Membership
+traits: {  }
+locked: false
+orderItemType: membership
+generateTitle: false

@@ -1,0 +1,8 @@
+uuid: dd8afbc8-2086-44a0-82e0-b33b0ef60110
+langcode: es
+status: true
+dependencies: {  }
+id: contact
+label: 'Información general'
+description: ''
+locked: false

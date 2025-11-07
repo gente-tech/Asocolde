@@ -1,0 +1,39 @@
+uuid: a6861fb0-8b16-476d-9634-8e96ad611974
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.field.menu_link_content.member-associations.field_image
+    - system.menu.member-associations
+  module:
+    - image
+    - linked_field
+id: menu_link_content.member-associations.default
+targetEntityType: menu_link_content
+bundle: member-associations
+mode: default
+content:
+  children:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_image:
+    type: image
+    label: hidden
+    settings:
+      image_link: ''
+      image_style: ''
+      image_loading:
+        attribute: eager
+    third_party_settings:
+      linked_field:
+        linked: true
+        type: field
+        destination: link
+        advanced:
+          target: _blank
+    weight: 0
+    region: content
+hidden:
+  langcode: true

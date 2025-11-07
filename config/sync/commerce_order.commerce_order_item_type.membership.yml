@@ -1,0 +1,15 @@
+uuid: 47a76b4d-b549-42d7-bd9c-e8b04aece69f
+langcode: es
+status: true
+dependencies:
+  module:
+    - commerce_tax
+third_party_settings:
+  commerce_tax:
+    taxable_type: services
+id: membership
+label: Afiliación
+traits: {  }
+locked: false
+purchasableEntityType: commerce_product_variation
+orderType: default

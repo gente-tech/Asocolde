@@ -1,0 +1,39 @@
+uuid: 8a138f5a-a57b-4333-b540-0084b7da9c1e
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_content.type.link_image
+    - field.storage.block_content.field_link_image
+    - paragraphs.paragraphs_type.link_image
+  module:
+    - entity_reference_revisions
+    - field_config_cardinality
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '-1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: block_content.link_image.field_link_image
+field_name: field_link_image
+entity_type: block_content
+bundle: link_image
+label: 'Enlace con imagen'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      link_image: link_image
+    negate: 0
+    target_bundles_drag_drop:
+      link_image:
+        weight: 2
+        enabled: true
+field_type: entity_reference_revisions

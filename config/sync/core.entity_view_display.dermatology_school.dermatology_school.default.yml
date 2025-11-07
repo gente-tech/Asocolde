@@ -1,0 +1,55 @@
+uuid: 16cd9deb-0fde-4a21-b7a6-c59b1b26e44b
+langcode: es
+status: true
+dependencies:
+  config:
+    - eck.eck_type.dermatology_school.dermatology_school
+    - field.field.dermatology_school.dermatology_school.field_image
+    - field.field.dermatology_school.dermatology_school.field_link
+    - field.field.dermatology_school.dermatology_school.field_status
+    - image.style.scale2
+  module:
+    - image
+    - link
+id: dermatology_school.dermatology_school.default
+targetEntityType: dermatology_school
+bundle: dermatology_school
+mode: default
+content:
+  field_image:
+    type: image
+    label: hidden
+    settings:
+      image_link: ''
+      image_style: scale2
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_link:
+    type: link
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: nofollow
+      target: _blank
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  title:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  changed: true
+  created: true
+  field_status: true
+  langcode: true
+  uid: true

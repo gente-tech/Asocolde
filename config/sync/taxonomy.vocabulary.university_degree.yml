@@ -1,0 +1,8 @@
+uuid: d1852029-c073-4f42-bd38-718c9b1f162f
+langcode: es
+status: true
+dependencies: {  }
+name: 'Título universitario'
+vid: university_degree
+description: ''
+weight: 0

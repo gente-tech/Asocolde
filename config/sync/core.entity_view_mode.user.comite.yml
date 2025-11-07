@@ -1,0 +1,10 @@
+uuid: 96bb5bc8-0d09-41c8-84bd-21ae685b54a5
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.comite
+label: Comite
+targetEntityType: user
+cache: true

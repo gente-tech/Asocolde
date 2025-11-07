@@ -1,0 +1,30 @@
+uuid: cdfcb558-683d-43d8-b728-cd1296b9e0f7
+langcode: es
+status: true
+dependencies:
+  module:
+    - asocol
+    - block_visibility_groups
+    - system
+  theme:
+    - asocolderma_b5
+id: asocol_search_skin_illnes_dermatologist
+theme: asocolderma_b5
+region: sidebar_second
+weight: -26
+provider: null
+plugin: asocol_search_skin_illness
+settings:
+  id: asocol_search_skin_illness
+  label: 'Encuentra aquí la enfermedad de la piel que estas buscando'
+  label_display: visible
+  provider: asocol
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  request_path:
+    id: request_path
+    negate: false
+    pages: /directorio-dermatologos

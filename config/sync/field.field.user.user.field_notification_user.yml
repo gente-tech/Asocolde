@@ -1,0 +1,38 @@
+uuid: db84738a-0f82-4e4b-a43c-7cb20eeb688f
+langcode: es
+status: true
+dependencies:
+  config:
+    - eck.eck_type.notification.notification
+    - field.storage.user.field_notification_user
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '-1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_notification_user
+field_name: field_notification_user
+entity_type: user
+bundle: user
+label: 'Notificaciones Usuario'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:notification'
+  handler_settings:
+    target_bundles:
+      notification: notification
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

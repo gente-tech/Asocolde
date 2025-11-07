@@ -1,0 +1,35 @@
+uuid: 0e29ff47-0095-4b7b-baf2-e5cb39aa9d28
+langcode: es
+status: true
+dependencies:
+  content:
+    - 'block_content:highlight:767d2687-173f-4bed-b42b-106b6662b3dd'
+  module:
+    - block_content
+    - block_visibility_groups
+    - system
+  theme:
+    - asocolderma_b5
+id: highlight_dermatologist_query
+theme: asocolderma_b5
+region: content_column_top_left
+weight: -30
+provider: null
+plugin: 'block_content:767d2687-173f-4bed-b42b-106b6662b3dd'
+settings:
+  id: 'block_content:767d2687-173f-4bed-b42b-106b6662b3dd'
+  label: '¿Por qué consultar un dermatólogo?'
+  label_display: visible
+  provider: block_content
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  request_path:
+    id: request_path
+    negate: false
+    pages: /pacientes

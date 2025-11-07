@@ -1,0 +1,23 @@
+uuid: de7ebfd0-6724-4237-b604-f2c6dd1a65f1
+langcode: es
+status: true
+dependencies:
+  module:
+    - file
+    - user
+id: user.field_camec_score
+field_name: field_camec_score
+entity_type: user
+type: file
+settings:
+  target_type: file
+  display_field: false
+  display_default: false
+  uri_scheme: public
+module: file
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

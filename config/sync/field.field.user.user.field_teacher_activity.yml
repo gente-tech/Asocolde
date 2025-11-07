@@ -1,0 +1,32 @@
+uuid: 08a4206d-d629-4e53-b05a-482f890aba83
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_teacher_activity
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_teacher_activity
+field_name: field_teacher_activity
+entity_type: user
+bundle: user
+label: 'Actividad como Docente'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

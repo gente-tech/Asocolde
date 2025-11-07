@@ -1,0 +1,34 @@
+uuid: 781f4a2b-ebd5-4009-bccd-d5e8881c68c5
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_disease_type
+    - node.type.skin_illness
+    - taxonomy.vocabulary.diseases_types
+  module:
+    - field_config_cardinality
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '-1'
+id: node.skin_illness.field_disease_type
+field_name: field_disease_type
+entity_type: node
+bundle: skin_illness
+label: 'Tipo enfermedad'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      diseases_types: diseases_types
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

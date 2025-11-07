@@ -1,0 +1,22 @@
+uuid: 6017fdf9-2a59-4095-9842-fa331271c222
+langcode: es
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - asocolderma_b5
+_core:
+  default_config_hash: DEnRg0T34o-YAME2GDoH1SUyq81S3jyGcvYDvL0IVp4
+id: asocolderma_b5_content
+theme: asocolderma_b5
+region: content
+weight: -26
+provider: null
+plugin: system_main_block
+settings:
+  id: system_main_block
+  label: 'Main page content'
+  label_display: '0'
+  provider: system
+visibility: {  }

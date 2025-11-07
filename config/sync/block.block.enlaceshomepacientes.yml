@@ -1,0 +1,35 @@
+uuid: 31338d99-a3f5-4231-8c3b-b62ee7de8d0d
+langcode: es
+status: true
+dependencies:
+  content:
+    - 'block_content:link_image:79fa2bbb-dfde-49c1-b431-af0470b32503'
+  module:
+    - block_content
+    - block_visibility_groups
+    - system
+  theme:
+    - asocolderma_b5
+id: enlaceshomepacientes
+theme: asocolderma_b5
+region: content_column_top_left
+weight: -29
+provider: null
+plugin: 'block_content:79fa2bbb-dfde-49c1-b431-af0470b32503'
+settings:
+  id: 'block_content:79fa2bbb-dfde-49c1-b431-af0470b32503'
+  label: 'Enlaces - Home pacientes'
+  label_display: '0'
+  provider: block_content
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  request_path:
+    id: request_path
+    negate: false
+    pages: /pacientes

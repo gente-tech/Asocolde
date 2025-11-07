@@ -1,0 +1,23 @@
+uuid: 2ce18c26-ad18-44ea-bd49-03513d444bc0
+langcode: es
+status: true
+dependencies:
+  module:
+    - file
+    - user
+id: user.field_postgraduate_certificate
+field_name: field_postgraduate_certificate
+entity_type: user
+type: file
+settings:
+  target_type: file
+  display_field: false
+  display_default: false
+  uri_scheme: public
+module: file
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

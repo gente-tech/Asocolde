@@ -1,0 +1,27 @@
+uuid: 2735d076-9e48-43a5-a136-3eabcd24af29
+langcode: es
+status: true
+dependencies:
+  module:
+    - options
+    - user
+id: user.field_correspondence
+field_name: field_correspondence
+entity_type: user
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: office
+      label: Consultorio
+    -
+      value: home
+      label: Residencia
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

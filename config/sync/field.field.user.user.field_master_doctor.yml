@@ -1,0 +1,32 @@
+uuid: 368dfa60-9a28-415e-9857-8da5e19d78ef
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_master_doctor
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_master_doctor
+field_name: field_master_doctor
+entity_type: user
+bundle: user
+label: 'Maestrías o Doctorados'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

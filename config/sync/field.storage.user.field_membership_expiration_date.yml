@@ -1,0 +1,20 @@
+uuid: 9288b1a0-6773-4647-b5ef-e974668a937e
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_membership_expiration_date
+field_name: field_membership_expiration_date
+entity_type: user
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,38 @@
+uuid: 9c519dfb-9b0b-42b0-a36c-69514c66c8db
+langcode: es
+status: true
+dependencies:
+  module:
+    - asocol
+    - block_visibility_groups
+    - system
+    - user
+  theme:
+    - asocolderma_b5
+id: asocoltabsdoctor
+theme: asocolderma_b5
+region: sidebar_second
+weight: -20
+provider: null
+plugin: asocol_tabs_doctor
+settings:
+  id: asocol_tabs_doctor
+  label: 'Asocol Tabs Doctor'
+  label_display: '0'
+  provider: asocol
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      authenticated: authenticated
+  request_path:
+    id: request_path
+    negate: true
+    pages: "/pacientes\r\n/dermatologos\r\n/terminos-legales\r\n<front>"

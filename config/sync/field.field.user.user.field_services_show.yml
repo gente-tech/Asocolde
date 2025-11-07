@@ -1,0 +1,32 @@
+uuid: d05bdec6-7926-4855-9880-71be15514b09
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_services_show
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_services_show
+field_name: field_services_show
+entity_type: user
+bundle: user
+label: 'Mostrar información de servicios que presto a los pacientes'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

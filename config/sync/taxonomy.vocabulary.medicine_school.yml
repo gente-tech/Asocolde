@@ -1,0 +1,8 @@
+uuid: d8a1e34a-b583-4658-8859-e6159c9f426d
+langcode: es
+status: true
+dependencies: {  }
+name: 'Facultad de medicina'
+vid: medicine_school
+description: ''
+weight: 0

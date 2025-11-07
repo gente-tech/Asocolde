@@ -1,0 +1,38 @@
+uuid: dcf11c00-852e-43b9-899f-ad5b5a0afcd4
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_university_undergraduate
+    - taxonomy.vocabulary.university_undergraduate
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_university_undergraduate
+field_name: field_university_undergraduate
+entity_type: user
+bundle: user
+label: 'Universidad de pregrado'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      university_undergraduate: university_undergraduate
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

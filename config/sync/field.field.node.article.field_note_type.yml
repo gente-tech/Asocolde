@@ -1,0 +1,21 @@
+uuid: 7961a8c8-9824-4a7b-ae2c-1dad3d8990e3
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_note_type
+    - node.type.article
+  module:
+    - options
+id: node.article.field_note_type
+field_name: field_note_type
+entity_type: node
+bundle: article
+label: 'Tipo de nota'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

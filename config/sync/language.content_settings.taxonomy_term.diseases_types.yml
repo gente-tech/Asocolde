@@ -1,0 +1,11 @@
+uuid: ad90920d-bf7b-4d75-b14e-84821a515d24
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.diseases_types
+id: taxonomy_term.diseases_types
+target_entity_type_id: taxonomy_term
+target_bundle: diseases_types
+default_langcode: site_default
+language_alterable: false

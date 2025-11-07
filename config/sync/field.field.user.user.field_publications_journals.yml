@@ -1,0 +1,32 @@
+uuid: 4724ac7c-b399-46a9-adbb-ad2630272f23
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_publications_journals
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_publications_journals
+field_name: field_publications_journals
+entity_type: user
+bundle: user
+label: 'Publicaciones en Revistas Científicas'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

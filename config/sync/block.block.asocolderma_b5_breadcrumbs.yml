@@ -1,0 +1,31 @@
+uuid: ef27aa97-b6de-4b40-a248-20aa9a40b6cb
+langcode: es
+status: true
+dependencies:
+  module:
+    - block_visibility_groups
+    - system
+  theme:
+    - asocolderma_b5
+_core:
+  default_config_hash: 0wxU6IbmLKNfIKYkzzXAAPbuLVuO1sP_CvZRjF9yyY0
+id: asocolderma_b5_breadcrumbs
+theme: asocolderma_b5
+region: breadcrumb
+weight: -30
+provider: null
+plugin: system_breadcrumb_block
+settings:
+  id: system_breadcrumb_block
+  label: Breadcrumbs
+  label_display: '0'
+  provider: system
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  request_path:
+    id: request_path
+    negate: true
+    pages: "<front>\r\n/checkout/*\r\n/dermatologos"

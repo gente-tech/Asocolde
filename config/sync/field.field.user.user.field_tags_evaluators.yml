@@ -1,0 +1,38 @@
+uuid: 4ac52f56-cc7a-4b61-82e1-8e4b1b327c97
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_tags_evaluators
+    - taxonomy.vocabulary.peer_evaluators
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '-1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_tags_evaluators
+field_name: field_tags_evaluators
+entity_type: user
+bundle: user
+label: 'Tags Evaluadores'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      peer_evaluators: peer_evaluators
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -1,0 +1,35 @@
+uuid: 98a77dee-a3da-4c72-8b1c-e4c923c667e1
+langcode: es
+status: true
+dependencies:
+  content:
+    - 'block_content:basic:d627d989-96b6-4140-8ff5-e437c28644f4'
+  module:
+    - block_content
+    - block_visibility_groups
+    - system
+  theme:
+    - asocolderma_b5
+id: tituloprehome
+theme: asocolderma_b5
+region: content_top
+weight: -31
+provider: null
+plugin: 'block_content:d627d989-96b6-4140-8ff5-e437c28644f4'
+settings:
+  id: 'block_content:d627d989-96b6-4140-8ff5-e437c28644f4'
+  label: 'Título Prehome'
+  label_display: '0'
+  provider: block_content
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  request_path:
+    id: request_path
+    negate: false
+    pages: "<front>\r\n/node/469"

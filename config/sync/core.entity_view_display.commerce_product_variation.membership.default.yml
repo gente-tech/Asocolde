@@ -1,0 +1,55 @@
+uuid: a090f41b-e389-4604-9704-4d79eceb1f27
+langcode: es
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_variation_type.membership
+    - field.field.commerce_product_variation.membership.field_increase
+    - field.field.commerce_product_variation.membership.field_taxes
+  module:
+    - commerce_price
+id: commerce_product_variation.membership.default
+targetEntityType: commerce_product_variation
+bundle: membership
+mode: default
+content:
+  field_increase:
+    type: commerce_price_default
+    label: above
+    settings:
+      strip_trailing_zeroes: false
+      currency_display: symbol
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_taxes:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  list_price:
+    type: commerce_price_default
+    label: above
+    settings:
+      strip_trailing_zeroes: false
+      currency_display: symbol
+    third_party_settings: {  }
+    weight: -1
+    region: content
+  price:
+    type: commerce_price_default
+    label: above
+    settings:
+      strip_trailing_zeroes: false
+      currency_display: symbol
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  langcode: true
+  product_id: true
+  sku: true
+  title: true

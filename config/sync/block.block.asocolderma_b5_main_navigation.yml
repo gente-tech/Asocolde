@@ -1,0 +1,36 @@
+uuid: 9bf6f24e-fd4f-4825-b516-055d76674ffb
+langcode: es
+status: true
+dependencies:
+  config:
+    - system.menu.main
+  module:
+    - block_visibility_groups
+    - system
+  theme:
+    - asocolderma_b5
+_core:
+  default_config_hash: xSkpj7uuI-3Mp5QI8pV459cq4SoqjVRcBxE9LZCLs7k
+id: asocolderma_b5_main_navigation
+theme: asocolderma_b5
+region: nav_main
+weight: 0
+provider: null
+plugin: 'system_menu_block:main'
+settings:
+  id: 'system_menu_block:main'
+  label: 'Main navigation'
+  label_display: '0'
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: true
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  request_path:
+    id: request_path
+    negate: true
+    pages: '<front>'

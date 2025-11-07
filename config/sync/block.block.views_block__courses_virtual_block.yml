@@ -1,0 +1,42 @@
+uuid: 64e99bed-b9ad-4527-aea9-0116cb6a581a
+langcode: es
+status: true
+dependencies:
+  config:
+    - views.view.courses_virtual
+  module:
+    - block_visibility_groups
+    - system
+    - user
+    - views
+  theme:
+    - asocolderma_b5
+id: views_block__courses_virtual_block
+theme: asocolderma_b5
+region: sidebar_second
+weight: -27
+provider: null
+plugin: 'views_block:courses_virtual-block'
+settings:
+  id: 'views_block:courses_virtual-block'
+  label: ''
+  label_display: visible
+  provider: views
+  views_label: ''
+  items_per_page: none
+visibility:
+  request_path:
+    id: request_path
+    negate: true
+    pages: "<front>\r\n/pacientes\r\n/dermatologos\r\n/terminos-legales\r\n/content/ayuda\r\n/ayuda\r\n/contenido-academico\r\n/contenido-gremial\r\n/la_asociacion/escuelas_dermatologia\r\n/dermatologos/casos_clinicos\r\n/tags/*\r\n/contenido-gremial/*\r\n/articulos-de-revista-casos-clinicos/*"
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      authenticated: authenticated

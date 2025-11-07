@@ -1,0 +1,22 @@
+uuid: 928cbe49-fabc-4318-ad78-1ac3bdae786f
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+id: course
+label: Curso
+type: 'canonical_entities:node'
+pattern: 'curso/[node:title]'
+selection_criteria:
+  5b6baf85-63aa-4606-b812-ae6588e87671:
+    id: 'entity_bundle:node'
+    negate: false
+    uuid: 5b6baf85-63aa-4606-b812-ae6588e87671
+    context_mapping:
+      node: node
+    bundles:
+      course_virtual: course_virtual
+selection_logic: and
+weight: -5
+relationships: {  }

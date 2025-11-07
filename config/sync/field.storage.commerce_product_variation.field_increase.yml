@@ -1,0 +1,19 @@
+uuid: 3bade678-c705-4b82-aa30-90e500086e43
+langcode: es
+status: true
+dependencies:
+  module:
+    - commerce_price
+    - commerce_product
+id: commerce_product_variation.field_increase
+field_name: field_increase
+entity_type: commerce_product_variation
+type: commerce_price
+settings: {  }
+module: commerce_price
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

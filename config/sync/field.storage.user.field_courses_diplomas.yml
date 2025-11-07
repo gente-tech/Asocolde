@@ -1,0 +1,20 @@
+uuid: eef86f6f-3d5d-4b9a-8b22-5219dadfe78b
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_courses_diplomas
+field_name: field_courses_diplomas
+entity_type: user
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

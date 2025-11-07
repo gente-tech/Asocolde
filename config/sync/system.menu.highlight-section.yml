@@ -1,0 +1,8 @@
+uuid: 29bc6372-bfc1-4f80-afba-edd990853870
+langcode: es
+status: true
+dependencies: {  }
+id: highlight-section
+label: 'Secciones destacadas'
+description: ''
+locked: false

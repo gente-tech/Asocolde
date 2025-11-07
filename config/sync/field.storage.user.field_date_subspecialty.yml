@@ -1,0 +1,20 @@
+uuid: 4898922f-853d-478a-8fe6-49092edaa484
+langcode: es
+status: true
+dependencies:
+  module:
+    - datetime
+    - user
+id: user.field_date_subspecialty
+field_name: field_date_subspecialty
+entity_type: user
+type: datetime
+settings:
+  datetime_type: date
+module: datetime
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

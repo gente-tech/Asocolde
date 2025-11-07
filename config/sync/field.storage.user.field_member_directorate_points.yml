@@ -1,0 +1,20 @@
+uuid: c5c1789c-1b64-4d3a-bc34-af479732ee1c
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_member_directorate_points
+field_name: field_member_directorate_points
+entity_type: user
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

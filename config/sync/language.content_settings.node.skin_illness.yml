@@ -1,0 +1,11 @@
+uuid: ec9dd298-0dc2-4984-81c7-a0a2e50210b9
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.skin_illness
+id: node.skin_illness
+target_entity_type_id: node
+target_bundle: skin_illness
+default_langcode: site_default
+language_alterable: false

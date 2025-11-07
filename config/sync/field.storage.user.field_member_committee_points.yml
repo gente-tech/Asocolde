@@ -1,0 +1,20 @@
+uuid: f85c5d90-e70b-4772-b584-bcf579a95795
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_member_committee_points
+field_name: field_member_committee_points
+entity_type: user
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

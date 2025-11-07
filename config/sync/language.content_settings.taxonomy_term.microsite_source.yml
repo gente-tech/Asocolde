@@ -1,0 +1,11 @@
+uuid: 621f0d1e-b74e-4794-9901-e90894ec37aa
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.microsite_source
+id: taxonomy_term.microsite_source
+target_entity_type_id: taxonomy_term
+target_bundle: microsite_source
+default_langcode: site_default
+language_alterable: false

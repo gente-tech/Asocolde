@@ -1,0 +1,35 @@
+uuid: d75bdb87-5c69-46d1-b856-68858f8424b1
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_content.type.image
+    - field.field.block_content.image.field_image
+    - field.field.block_content.image.field_link
+  module:
+    - image
+    - linked_field
+id: block_content.image.default
+targetEntityType: block_content
+bundle: image
+mode: default
+content:
+  field_image:
+    type: image
+    label: hidden
+    settings:
+      image_link: ''
+      image_style: ''
+      image_loading:
+        attribute: eager
+    third_party_settings:
+      linked_field:
+        linked: true
+        type: field
+        destination: field_link
+        advanced: {  }
+    weight: 0
+    region: content
+hidden:
+  field_link: true
+  langcode: true

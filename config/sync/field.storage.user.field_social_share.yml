@@ -1,0 +1,19 @@
+uuid: 5d863b18-5cf6-46ad-ab6e-93a31e111ac5
+langcode: es
+status: true
+dependencies:
+  module:
+    - social_media
+    - user
+id: user.field_social_share
+field_name: field_social_share
+entity_type: user
+type: social_media
+settings: {  }
+module: social_media
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

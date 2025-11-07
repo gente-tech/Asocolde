@@ -1,0 +1,19 @@
+uuid: bafe35fb-85e9-4fc8-8528-632051572812
+langcode: es
+status: true
+dependencies:
+  module:
+    - geolocation
+    - user
+id: user.field_geolocation_office
+field_name: field_geolocation_office
+entity_type: user
+type: geolocation
+settings: {  }
+module: geolocation
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,24 @@
+uuid: 1ae5f674-d5f0-45ff-8134-5643c9fcf769
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_recertificate
+  module:
+    - user
+id: user.user.field_recertificate
+field_name: field_recertificate
+entity_type: user
+bundle: user
+label: 'Si soy aceptado, deseo participar en el programa de Re-certificación interno'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

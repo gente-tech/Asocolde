@@ -1,0 +1,132 @@
+uuid: 0ca7d062-63a2-471b-9e28-6cf4bef9210c
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.event.body
+    - field.field.node.event.field_date_range
+    - field.field.node.event.field_home_location
+    - field.field.node.event.field_image
+    - field.field.node.event.field_metatags
+    - field.field.node.event.field_name
+    - field.field.node.event.field_social_share
+    - field.field.node.event.field_tags
+    - field.field.node.event.field_type
+    - image.style.thumbnail
+    - node.type.event
+  module:
+    - blazy
+    - datetime_range
+    - ds
+    - linked_field
+    - user
+third_party_settings:
+  ds:
+    layout:
+      id: layout_threecol_section
+      library: layout_builder/threecol_section
+      disable_css: false
+      entity_classes: all_classes
+      settings:
+        label: ''
+        column_widths: 33-34-33
+    regions:
+      first:
+        - field_date_range
+      second:
+        - field_type
+        - node_title
+      third:
+        - field_image
+        - node_link
+    fields:
+      node_link:
+        plugin_id: node_link
+        weight: 4
+        label: hidden
+        formatter: default
+        settings:
+          'link text': 'Más info'
+          'link class': ''
+          wrapper: ''
+          class: ''
+      node_title:
+        plugin_id: node_title
+        weight: 2
+        label: hidden
+        formatter: default
+        settings:
+          link: true
+          'link class': ''
+          wrapper: h2
+          class: ''
+id: node.event.teaser
+targetEntityType: node
+bundle: event
+mode: teaser
+content:
+  field_date_range:
+    type: daterange_default
+    label: hidden
+    settings:
+      timezone_override: ''
+      format_type: date
+      separator: al
+    third_party_settings: {  }
+    weight: 0
+    region: first
+  field_image:
+    type: blazy
+    label: hidden
+    settings:
+      caption:
+        title: '0'
+        alt: '0'
+      layout: ''
+      view_mode: ''
+      cache: 0
+      skin: ''
+      lazy: ''
+      style: ''
+      background: false
+      box_caption: ''
+      box_caption_custom: ''
+      box_media_style: ''
+      loading: ''
+      preload: false
+      responsive_image_style: ''
+      box_style: ''
+      image_style: thumbnail
+      media_switch: ''
+      ratio: ''
+      thumbnail_style: ''
+      grid: ''
+      grid_medium: ''
+      grid_small: ''
+    third_party_settings: {  }
+    weight: 3
+    region: third
+  field_type:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: false
+    third_party_settings:
+      linked_field:
+        linked: true
+        type: custom
+        destination: 'internal:/congresos-eventos?categoria=[node:field_type:target_id]'
+        advanced: {  }
+        token: ''
+    weight: 1
+    region: second
+hidden:
+  body: true
+  field_home_location: true
+  field_metatags: true
+  field_name: true
+  field_social_share: true
+  field_tags: true
+  langcode: true
+  links: true

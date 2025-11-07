@@ -1,0 +1,33 @@
+uuid: 1b78193c-7777-4f2b-8fc1-204d7d90e886
+langcode: es
+status: true
+dependencies:
+  module:
+    - asocol
+    - block_visibility_groups
+    - user
+  theme:
+    - asocolderma_b5
+id: user_menu_list
+theme: asocolderma_b5
+region: header
+weight: -24
+provider: null
+plugin: user_menu_list
+settings:
+  id: user_menu_list
+  label: 'User Menu List block'
+  label_display: '0'
+  provider: asocol
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      authenticated: authenticated

@@ -1,0 +1,33 @@
+uuid: 93eb1faf-6d17-4bd9-ae97-e9baf1a43a74
+langcode: es
+status: true
+dependencies:
+  module:
+    - asocol
+    - block_visibility_groups
+    - user
+  theme:
+    - asocolderma_b5
+id: user_notifications
+theme: asocolderma_b5
+region: header
+weight: -25
+provider: null
+plugin: user_notifications
+settings:
+  id: user_notifications
+  label: 'User Notifications block'
+  label_display: '0'
+  provider: asocol
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      authenticated: authenticated

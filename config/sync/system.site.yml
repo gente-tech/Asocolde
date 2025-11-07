@@ -1,0 +1,15 @@
+_core:
+  default_config_hash: VDJxTZtQR21qB4lvOq8zszJZLvLKrSPQpdn2E3T71Ww
+langcode: es
+uuid: 219fb3ac-9471-4625-9158-4d3e08a41ffb
+name: Asocolderma
+mail: acdermatologia@asocolderma.com
+slogan: ''
+page:
+  403: ''
+  404: ''
+  front: /node/469
+admin_compact_mode: false
+weight_select_max: 100
+default_langcode: es
+mail_notification: ''

@@ -1,0 +1,30 @@
+uuid: 8a655ce1-08fe-40a5-95f9-b9f851fe0684
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_tags
+    - taxonomy.vocabulary.tags
+  module:
+    - user
+id: user.user.field_tags
+field_name: field_tags
+entity_type: user
+bundle: user
+label: 'Palabras claves TAGS'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      tags: tags
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

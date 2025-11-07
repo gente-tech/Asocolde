@@ -1,0 +1,8 @@
+uuid: 4a31e2c7-3f8b-4f18-b8c7-826af0502ed9
+langcode: es
+status: true
+dependencies: {  }
+id: store-virtual
+label: 'Tienda Virtual'
+description: ''
+locked: false

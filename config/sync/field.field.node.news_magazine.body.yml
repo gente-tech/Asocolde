@@ -1,0 +1,23 @@
+uuid: f43d482d-ffe8-46eb-a487-dcda905919e1
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.news_magazine
+  module:
+    - text
+id: node.news_magazine.body
+field_name: body
+entity_type: node
+bundle: news_magazine
+label: Contenido
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+  required_summary: false
+field_type: text_with_summary

@@ -1,0 +1,88 @@
+uuid: 2e38fad9-2901-407c-b8f3-28197f7db2c6
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.list_small
+    - field.field.node.gallery.body
+    - field.field.node.gallery.comment
+    - field.field.node.gallery.field_disease_type
+    - field.field.node.gallery.field_image
+    - field.field.node.gallery.field_metatags
+    - field.field.node.gallery.field_note_type
+    - field.field.node.gallery.field_social_share
+    - field.field.node.gallery.field_source
+    - field.field.node.gallery.field_tags
+    - image.style.list_small
+    - node.type.gallery
+  module:
+    - ds
+    - image
+    - layout_builder
+    - options
+    - user
+third_party_settings:
+  layout_builder:
+    enabled: false
+    allow_custom: false
+  ds:
+    layout:
+      id: layout_twocol_section
+      library: layout_builder/twocol_section
+      disable_css: false
+      entity_classes: all_classes
+      settings:
+        label: ''
+        column_widths: 50-50
+    regions:
+      first:
+        - field_image
+      second:
+        - node_title
+        - field_source
+    fields:
+      node_title:
+        plugin_id: node_title
+        weight: 1
+        label: hidden
+        formatter: default
+        settings:
+          link: true
+          'link class': ''
+          wrapper: h2
+          class: ''
+id: node.gallery.list_small
+targetEntityType: node
+bundle: gallery
+mode: list_small
+content:
+  field_image:
+    type: image
+    label: hidden
+    settings:
+      image_link: content
+      image_style: list_small
+      image_loading:
+        attribute: lazy
+    third_party_settings:
+      ds:
+        ds_limit: '1'
+    weight: 0
+    region: first
+  field_source:
+    type: list_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: second
+hidden:
+  body: true
+  comment: true
+  field_disease_type: true
+  field_metatags: true
+  field_note_type: true
+  field_social_share: true
+  field_tags: true
+  langcode: true
+  links: true

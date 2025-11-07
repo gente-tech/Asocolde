@@ -1,0 +1,21 @@
+uuid: 59b79c42-2713-494d-b140-fb6f4132bc0d
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_source
+    - node.type.course_virtual
+  module:
+    - options
+id: node.course_virtual.field_source
+field_name: field_source
+entity_type: node
+bundle: course_virtual
+label: Fuente
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

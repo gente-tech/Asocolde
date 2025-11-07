@@ -1,0 +1,101 @@
+uuid: 1c4fba69-f1a3-4805-88cb-c06573895545
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.list
+    - field.field.node.gallery.body
+    - field.field.node.gallery.comment
+    - field.field.node.gallery.field_disease_type
+    - field.field.node.gallery.field_image
+    - field.field.node.gallery.field_metatags
+    - field.field.node.gallery.field_note_type
+    - field.field.node.gallery.field_social_share
+    - field.field.node.gallery.field_source
+    - field.field.node.gallery.field_tags
+    - image.style.article_list
+    - node.type.gallery
+  module:
+    - ds
+    - image
+    - layout_builder
+    - user
+third_party_settings:
+  layout_builder:
+    enabled: false
+    allow_custom: false
+  ds:
+    layout:
+      id: layout_twocol_section
+      library: layout_builder/twocol_section
+      disable_css: false
+      entity_classes: all_classes
+      settings:
+        label: ''
+        column_widths: 50-50
+    regions:
+      first:
+        - field_image
+      second:
+        - node_title
+        - field_tags
+        - node_link
+    fields:
+      node_link:
+        plugin_id: node_link
+        weight: 3
+        label: hidden
+        formatter: default
+        settings:
+          'link text': 'Ver galería'
+          'link class': ''
+          wrapper: ''
+          class: ''
+      node_title:
+        plugin_id: node_title
+        weight: 1
+        label: hidden
+        formatter: default
+        settings:
+          link: true
+          'link class': ''
+          wrapper: h2
+          class: ''
+id: node.gallery.list
+targetEntityType: node
+bundle: gallery
+mode: list
+content:
+  field_image:
+    type: image
+    label: hidden
+    settings:
+      image_link: content
+      image_style: article_list
+      image_loading:
+        attribute: lazy
+    third_party_settings:
+      ds:
+        ds_limit: '1'
+    weight: 0
+    region: first
+  field_tags:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: false
+    third_party_settings:
+      ds:
+        ds_limit: ''
+    weight: 2
+    region: second
+hidden:
+  body: true
+  comment: true
+  field_disease_type: true
+  field_metatags: true
+  field_note_type: true
+  field_social_share: true
+  field_source: true
+  langcode: true
+  links: true

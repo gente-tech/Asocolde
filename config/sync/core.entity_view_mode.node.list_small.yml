@@ -1,0 +1,10 @@
+uuid: d5e79c1e-ff8c-4396-801d-0e561cdc2a05
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+id: node.list_small
+label: 'List Small'
+targetEntityType: node
+cache: true

@@ -1,0 +1,11 @@
+uuid: edd0eac9-da6e-448e-9951-9f452e3c4c27
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_content.type.slider_fade
+id: block_content.slider_fade
+target_entity_type_id: block_content
+target_bundle: slider_fade
+default_langcode: site_default
+language_alterable: false

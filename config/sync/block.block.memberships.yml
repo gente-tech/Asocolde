@@ -1,0 +1,34 @@
+uuid: ee171df3-57d4-4a14-99db-499a96a80f85
+langcode: es
+status: true
+dependencies:
+  config:
+    - system.menu.member-associations
+  module:
+    - block_visibility_groups
+    - system
+  theme:
+    - asocolderma_b5
+id: memberships
+theme: asocolderma_b5
+region: footer_top_right
+weight: -27
+provider: null
+plugin: 'system_menu_block:member-associations'
+settings:
+  id: 'system_menu_block:member-associations'
+  label: 'Miembro de:'
+  label_display: visible
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  request_path:
+    id: request_path
+    negate: true
+    pages: '<front>'

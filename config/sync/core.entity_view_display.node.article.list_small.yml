@@ -1,0 +1,157 @@
+uuid: fd6030c0-7a2c-4293-b82e-7ce933e70c66
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.list_small
+    - field.field.node.article.body
+    - field.field.node.article.comment
+    - field.field.node.article.field_disease_type
+    - field.field.node.article.field_home_location
+    - field.field.node.article.field_image
+    - field.field.node.article.field_note_type
+    - field.field.node.article.field_social_share
+    - field.field.node.article.field_source
+    - field.field.node.article.field_tags
+    - field.field.node.article.field_type
+    - image.style.list_small
+    - node.type.article
+  module:
+    - blazy
+    - ds
+    - layout_builder
+    - user
+third_party_settings:
+  ds:
+    layout:
+      id: bs_2col_stacked
+      library: null
+      disable_css: false
+      entity_classes: all_classes
+      settings:
+        label: ''
+        layout:
+          wrapper: div
+          classes:
+            row: row
+          add_layout_class: 1
+          attributes: ''
+        regions:
+          top:
+            wrapper: div
+            classes:
+              col-sm-12: col-sm-12
+            add_region_classes: 1
+            attributes: ''
+          left:
+            wrapper: div
+            classes:
+              col-sm-3: col-sm-3
+            add_region_classes: 1
+            attributes: ''
+          right:
+            wrapper: div
+            classes:
+              col-sm-9: col-sm-9
+            add_region_classes: 1
+            attributes: ''
+          bottom:
+            wrapper: div
+            classes:
+              col-sm-12: col-sm-12
+            add_region_classes: 1
+            attributes: ''
+    regions:
+      left:
+        - field_image
+      right:
+        - field_type
+        - node_post_date
+        - node_title
+      bottom:
+        - field_tags
+    fields:
+      node_post_date:
+        plugin_id: node_post_date
+        weight: 2
+        label: hidden
+        formatter: ds_past_date_time_ago
+      node_title:
+        plugin_id: node_title
+        weight: 3
+        label: hidden
+        formatter: default
+        settings:
+          link: true
+          'link class': ''
+          wrapper: h2
+          class: ''
+  layout_builder:
+    enabled: false
+    allow_custom: false
+_core:
+  default_config_hash: 83jX5ChAGdMzOxiDA_B1NjgebVMuD8lNVDgClg_QVP8
+id: node.article.list_small
+targetEntityType: node
+bundle: article
+mode: list_small
+content:
+  field_image:
+    type: blazy
+    label: hidden
+    settings:
+      caption:
+        title: '0'
+        alt: '0'
+      layout: ''
+      view_mode: ''
+      cache: 0
+      skin: ''
+      lazy: ''
+      style: ''
+      background: false
+      box_caption: ''
+      box_caption_custom: ''
+      box_media_style: ''
+      loading: ''
+      preload: false
+      responsive_image_style: ''
+      box_style: ''
+      image_style: list_small
+      media_switch: content
+      ratio: ''
+      thumbnail_style: ''
+      grid: ''
+      grid_medium: ''
+      grid_small: ''
+    third_party_settings: {  }
+    weight: 0
+    region: left
+  field_tags:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: false
+    third_party_settings:
+      ds:
+        ds_limit: ''
+    weight: 4
+    region: bottom
+  field_type:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: false
+    third_party_settings: {  }
+    weight: 1
+    region: right
+hidden:
+  body: true
+  comment: true
+  field_disease_type: true
+  field_home_location: true
+  field_note_type: true
+  field_social_share: true
+  field_source: true
+  langcode: true
+  links: true

@@ -1,0 +1,10 @@
+uuid: 1c323dcf-ec02-48ba-b8cf-213506b6009c
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.configuration
+label: Configuración
+targetEntityType: user
+cache: true

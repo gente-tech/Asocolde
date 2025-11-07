@@ -1,0 +1,79 @@
+uuid: 4f1cd8fc-49e1-4163-93d9-ce150fa1627d
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_content.type.compose
+    - field.storage.block_content.field_block_col1
+  module:
+    - block_field
+    - field_config_cardinality
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '-1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: block_content.compose.field_block_col1
+field_name: field_block_col1
+entity_type: block_content
+bundle: compose
+label: 'Columna 1'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  selection: categories
+  selection_settings:
+    categories:
+      Personalizado: Personalizado
+      Asocolderma: '0'
+      Bloque: '0'
+      'Bloques en línea': '0'
+      'Campos de Alias de URL': '0'
+      'Campos de Archivo': '0'
+      'Campos de Banner Home': '0'
+      'Campos de Bloque personalizado': '0'
+      'Campos de Comentario': '0'
+      'Campos de Content': '0'
+      'Campos de Enlace de atajo': '0'
+      'Campos de Enlace de menú personalizado': '0'
+      'Campos de Entity subqueue': '0'
+      'Campos de Escuela de dermatología': '0'
+      'Campos de Línea de pedido': '0'
+      'Campos de Media': '0'
+      'Campos de Membership': '0'
+      'Campos de Mensaje de contacto': '0'
+      'Campos de Payment': '0'
+      'Campos de Payment method': '0'
+      'Campos de PayU Hash': '0'
+      'Campos de Pedido': '0'
+      'Campos de Perfil': '0'
+      'Campos de Producto': '0'
+      'Campos de Párrafo': '0'
+      'Campos de Redirección': '0'
+      'Campos de Taxonomy term': '0'
+      'Campos de Tienda': '0'
+      'Campos de User': '0'
+      'Campos de Variación de producto': '0'
+      'Campos de Webform submission': '0'
+      Comercio: '0'
+      core: '0'
+      Devel: '0'
+      Formularios: '0'
+      Geolocation: '0'
+      Help: '0'
+      'Listas (Views)': '0'
+      Menús: '0'
+      'Revive Adserver': '0'
+      Sistema: '0'
+      'Social media share': '0'
+      Statistics: '0'
+      System: '0'
+      'Text Resize': '0'
+      User: '0'
+      Webform: '0'
+field_type: block_field

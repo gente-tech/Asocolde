@@ -1,0 +1,10 @@
+uuid: 0c74e73d-b8ca-4c38-858e-ce5548ccb0f4
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.private
+label: 'Datos privados'
+targetEntityType: user
+cache: true

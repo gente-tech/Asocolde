@@ -1,0 +1,25 @@
+uuid: 83f60c53-9bea-48c7-98fa-a0ec8d2262c4
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_source
+    - node.type.skin_illness
+  module:
+    - field_config_cardinality
+    - options
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: node.skin_illness.field_source
+field_name: field_source
+entity_type: node
+bundle: skin_illness
+label: Fuente
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

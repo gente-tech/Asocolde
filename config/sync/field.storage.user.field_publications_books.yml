@@ -1,0 +1,20 @@
+uuid: 6b3ceff4-bd4d-4f93-b0c4-17297c9bafcf
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_publications_books
+field_name: field_publications_books
+entity_type: user
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

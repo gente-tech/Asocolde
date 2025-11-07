@@ -1,0 +1,9 @@
+uuid: f04250b5-b977-45d0-8adc-716eafdc0796
+langcode: es
+status: true
+dependencies: {  }
+id: magazine_publisher
+label: 'Artículos revistas'
+weight: -5
+is_admin: null
+permissions: {  }

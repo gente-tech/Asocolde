@@ -1,0 +1,29 @@
+uuid: a0c04364-24f0-485c-8e78-68ca49cbf830
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_date_subspecialty
+  module:
+    - datetime
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_date_subspecialty
+field_name: field_date_subspecialty
+entity_type: user
+bundle: user
+label: 'Fecha de grado de subespecialidad'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

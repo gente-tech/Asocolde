@@ -1,0 +1,33 @@
+uuid: 644fa470-9e00-4597-9a9c-511a542469ca
+langcode: es
+status: true
+dependencies:
+  module:
+    - options
+    - user
+id: user.field_type_associated
+field_name: field_type_associated
+entity_type: user
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: numero
+      label: Número
+    -
+      value: adherente
+      label: Adherente
+    -
+      value: correspondiente
+      label: Correspondiente
+    -
+      value: internacional
+      label: Internacional
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

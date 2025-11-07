@@ -1,0 +1,8 @@
+uuid: f873e7b8-295f-4c00-91c1-3b23e9c70ad4
+langcode: es
+status: true
+dependencies: {  }
+id: sidebar-left
+label: 'Menu Left'
+description: ''
+locked: false

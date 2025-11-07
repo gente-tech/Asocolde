@@ -1,0 +1,18 @@
+uuid: fd0888be-3106-46cb-add9-ad90c234907f
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_editorial
+field_name: field_editorial
+entity_type: user
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

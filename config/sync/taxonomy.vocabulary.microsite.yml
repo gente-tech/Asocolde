@@ -1,0 +1,8 @@
+uuid: 9e751906-3692-422a-b8e2-5bddaed867a7
+langcode: es
+status: true
+dependencies: {  }
+name: 'Categorías micrositio'
+vid: microsite
+description: ''
+weight: 0

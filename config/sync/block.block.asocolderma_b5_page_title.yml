@@ -1,0 +1,28 @@
+uuid: 88434c0c-bbd3-4255-9a02-a5a918963175
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_visibility_groups.block_visibility_group.content_detail
+  module:
+    - block_visibility_groups
+  theme:
+    - asocolderma_b5
+_core:
+  default_config_hash: vObEQgcglYI-gt2Ql0MbbODrTQxuVn-lyKhISs9_flY
+id: asocolderma_b5_page_title
+theme: asocolderma_b5
+region: breadcrumb
+weight: -31
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Page title'
+  label_display: '0'
+  provider: core
+visibility:
+  condition_group:
+    id: condition_group
+    negate: true
+    block_visibility_group: content_detail

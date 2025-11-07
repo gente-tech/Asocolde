@@ -1,0 +1,11 @@
+uuid: 2edd02ec-b318-4afd-98f3-c37280b3b0b9
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.medicine_school
+id: taxonomy_term.medicine_school
+target_entity_type_id: taxonomy_term
+target_bundle: medicine_school
+default_langcode: site_default
+language_alterable: false

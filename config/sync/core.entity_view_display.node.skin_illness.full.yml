@@ -1,0 +1,198 @@
+uuid: fdfb06b3-dcf2-4eaa-8e88-b220c5168b45
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.full
+    - field.field.node.skin_illness.body
+    - field.field.node.skin_illness.field_disease_type
+    - field.field.node.skin_illness.field_image
+    - field.field.node.skin_illness.field_metatags
+    - field.field.node.skin_illness.field_note_type
+    - field.field.node.skin_illness.field_social_share
+    - field.field.node.skin_illness.field_source
+    - field.field.node.skin_illness.field_tags
+    - field.field.node.skin_illness.field_type
+    - node.type.skin_illness
+  module:
+    - ds
+    - field_group
+    - image
+    - layout_builder
+    - metatag
+    - social_media
+    - text
+    - user
+third_party_settings:
+  layout_builder:
+    enabled: false
+    allow_custom: false
+  ds:
+    layout:
+      id: bs_1col
+      library: null
+      disable_css: false
+      entity_classes: all_classes
+      settings:
+        label: ''
+        layout:
+          wrapper: div
+          classes:
+            row: row
+          add_layout_class: 1
+          attributes: ''
+        regions:
+          main:
+            wrapper: article
+            classes:
+              col-sm-12: col-sm-12
+            add_region_classes: 1
+            attributes: ''
+    regions:
+      main:
+        - group_top
+        - node_print
+        - 'dynamic_block_field:node-text_resize'
+        - field_type
+        - node_post_date
+        - node_title
+        - node_author
+        - field_image
+        - body
+        - group_share
+        - field_tags
+        - field_social_share
+        - field_metatags
+    fields:
+      node_post_date:
+        plugin_id: node_post_date
+        weight: 2
+        label: hidden
+        formatter: ds_past_date_time_ago
+      node_print:
+        plugin_id: node_print
+        weight: 0
+        label: hidden
+        formatter: default
+      'dynamic_block_field:node-text_resize':
+        plugin_id: 'dynamic_block_field:node-text_resize'
+        weight: 1
+        label: hidden
+        formatter: default
+      node_author:
+        plugin_id: node_author
+        weight: 4
+        label: inline
+        formatter: author
+      node_title:
+        plugin_id: node_title
+        weight: 3
+        label: hidden
+        formatter: default
+        settings:
+          link: false
+          'link class': ''
+          wrapper: h1
+          class: ''
+  field_group:
+    group_top:
+      children:
+        - group_share
+        - field_social_share
+      label: Top
+      parent_name: ''
+      region: main
+      weight: 0
+      format_type: html_element
+      format_settings:
+        classes: accesibility-options
+        show_empty_fields: false
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+    group_share:
+      children:
+        - node_print
+        - 'dynamic_block_field:node-text_resize'
+      label: options-letter
+      parent_name: group_top
+      region: main
+      weight: 7
+      format_type: html_element
+      format_settings:
+        classes: letter-options
+        show_empty_fields: false
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+id: node.skin_illness.full
+targetEntityType: node
+bundle: skin_illness
+mode: full
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 6
+    region: main
+  field_image:
+    type: image
+    label: hidden
+    settings:
+      image_link: ''
+      image_style: ''
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 5
+    region: main
+  field_metatags:
+    type: metatag_empty_formatter
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 8
+    region: main
+  field_social_share:
+    type: social_media_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 8
+    region: main
+  field_tags:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: false
+    third_party_settings:
+      ds:
+        ds_limit: ''
+    weight: 7
+    region: main
+  field_type:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: false
+    third_party_settings: {  }
+    weight: 1
+    region: main
+hidden:
+  field_disease_type: true
+  field_note_type: true
+  field_source: true
+  langcode: true
+  links: true

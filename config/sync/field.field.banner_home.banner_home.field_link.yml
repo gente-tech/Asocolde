@@ -1,0 +1,27 @@
+uuid: 3ea4a61e-d8d1-4120-a78f-c94bdbe12860
+langcode: es
+status: true
+dependencies:
+  config:
+    - eck.eck_type.banner_home.banner_home
+    - field.storage.banner_home.field_link
+  module:
+    - field_config_cardinality
+    - link
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: banner_home.banner_home.field_link
+field_name: field_link
+entity_type: banner_home
+bundle: banner_home
+label: Enlace
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 2
+  link_type: 17
+field_type: link

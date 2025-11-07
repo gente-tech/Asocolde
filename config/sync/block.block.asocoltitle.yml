@@ -1,0 +1,30 @@
+uuid: 8f67d7a4-9c7b-4316-9200-a5fad1dabb87
+langcode: es
+status: true
+dependencies:
+  module:
+    - asocol
+    - block_visibility_groups
+    - system
+  theme:
+    - asocolderma_b5
+id: asocoltitle
+theme: asocolderma_b5
+region: header_scroll
+weight: -26
+provider: null
+plugin: asocol_title
+settings:
+  id: asocol_title
+  label: 'Asocol Title'
+  label_display: '0'
+  provider: asocol
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  request_path:
+    id: request_path
+    negate: true
+    pages: '<front>'

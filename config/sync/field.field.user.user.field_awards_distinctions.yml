@@ -1,0 +1,32 @@
+uuid: db737870-0ccd-4e76-9c59-8897837dd1f2
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_awards_distinctions
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_awards_distinctions
+field_name: field_awards_distinctions
+entity_type: user
+bundle: user
+label: 'Premios y Distinciones'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

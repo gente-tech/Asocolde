@@ -1,0 +1,46 @@
+uuid: 50232a12-8c52-4ae2-b8cf-946c929b2bd1
+langcode: es
+status: true
+dependencies:
+  module:
+    - block_classes
+    - block_visibility_groups
+    - revive_adserver
+    - system
+    - user
+  theme:
+    - asocolderma_b5
+third_party_settings:
+  block_classes:
+    block_class: '.d-block .d-sm-none'
+id: revive_adserver_zone_112
+theme: asocolderma_b5
+region: content_column_top_left
+weight: -31
+provider: null
+plugin: revive_adserver_zone_block
+settings:
+  id: revive_adserver_zone_block
+  label: 'Revive Adserver Zone 112 (Pacientes - Internas) - Mobile'
+  label_display: visible
+  provider: revive_adserver
+  zone_id: 112
+  invocation_method: javascript
+  block_banner: false
+  block_banner_campaign: false
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  request_path:
+    id: request_path
+    negate: true
+    pages: '<front>'
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      anonymous: anonymous

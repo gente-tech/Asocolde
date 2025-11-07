@@ -1,0 +1,38 @@
+uuid: c3d0a544-d423-482c-847f-9eda9ee2c17b
+langcode: es
+status: true
+dependencies:
+  module:
+    - asocol
+    - block_visibility_groups
+    - system
+    - user
+  theme:
+    - asocolderma_b5
+id: asocolloginformpopup
+theme: asocolderma_b5
+region: header_scroll
+weight: -22
+provider: null
+plugin: asocol_login_form_popup
+settings:
+  id: asocol_login_form_popup
+  label: 'Asocol Login Form Popup'
+  label_display: '0'
+  provider: asocol
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      anonymous: anonymous
+  request_path:
+    id: request_path
+    negate: true
+    pages: '<front>'

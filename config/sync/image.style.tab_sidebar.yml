@@ -1,0 +1,15 @@
+uuid: eb7698af-1edf-45af-b02c-c18fd027e124
+langcode: es
+status: true
+dependencies: {  }
+name: tab_sidebar
+label: 'Tab Sidebar (104x161)'
+effects:
+  9edf43e2-261e-43ad-8f3f-b0e3e1c89859:
+    uuid: 9edf43e2-261e-43ad-8f3f-b0e3e1c89859
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 104
+      height: 161
+      anchor: center-center

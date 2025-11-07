@@ -1,0 +1,71 @@
+uuid: b4ebea72-7016-4d2a-8ff9-a2b682435979
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.menu_link_content.field_content_hover
+    - system.menu.sidebar-left
+  module:
+    - block_field
+    - field_config_cardinality
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '-1'
+id: menu_link_content.sidebar-left.field_content_hover
+field_name: field_content_hover
+entity_type: menu_link_content
+bundle: sidebar-left
+label: 'Content Hover'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  selection: categories
+  selection_settings:
+    categories:
+      Asocolderma: Asocolderma
+      Bloque: Bloque
+      'Bloques en línea': 'Bloques en línea'
+      'Campos de Alias de URL': 'Campos de Alias de URL'
+      'Campos de Archivo': 'Campos de Archivo'
+      'Campos de Banner Home': 'Campos de Banner Home'
+      'Campos de Bloque personalizado': 'Campos de Bloque personalizado'
+      'Campos de Comentario': 'Campos de Comentario'
+      'Campos de Content': 'Campos de Content'
+      'Campos de Enlace de atajo': 'Campos de Enlace de atajo'
+      'Campos de Enlace de menú personalizado': 'Campos de Enlace de menú personalizado'
+      'Campos de Entity subqueue': 'Campos de Entity subqueue'
+      'Campos de Escuela de dermatología': 'Campos de Escuela de dermatología'
+      'Campos de Línea de pedido': 'Campos de Línea de pedido'
+      'Campos de Media': 'Campos de Media'
+      'Campos de Mensaje de contacto': 'Campos de Mensaje de contacto'
+      'Campos de Payment': 'Campos de Payment'
+      'Campos de Payment method': 'Campos de Payment method'
+      'Campos de Pedido': 'Campos de Pedido'
+      'Campos de Perfil': 'Campos de Perfil'
+      'Campos de Producto': 'Campos de Producto'
+      'Campos de Redirección': 'Campos de Redirección'
+      'Campos de Taxonomy term': 'Campos de Taxonomy term'
+      'Campos de Tienda': 'Campos de Tienda'
+      'Campos de User': 'Campos de User'
+      'Campos de Variación de producto': 'Campos de Variación de producto'
+      'Campos de Webform submission': 'Campos de Webform submission'
+      Comercio: Comercio
+      core: core
+      Devel: Devel
+      Formularios: Formularios
+      Geolocation: Geolocation
+      Help: Help
+      'Listas (Views)': 'Listas (Views)'
+      Menús: Menús
+      Personalizado: Personalizado
+      'Revive Adserver': 'Revive Adserver'
+      Sistema: Sistema
+      System: System
+      'Text Resize': 'Text Resize'
+      User: User
+      'Social media share': '0'
+      Webform: '0'
+field_type: block_field

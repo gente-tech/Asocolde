@@ -1,0 +1,63 @@
+uuid: ed5ca2d6-1cf7-4cba-8c26-648d7ee52ad4
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_content.type.newspaper
+    - field.field.block_content.newspaper.field_articles
+    - field.field.block_content.newspaper.field_link
+  module:
+    - ds
+    - link
+third_party_settings:
+  ds:
+    layout:
+      id: bs_1col
+      library: null
+      disable_css: false
+      entity_classes: all_classes
+      settings:
+        label: ''
+        layout:
+          wrapper: div
+          classes:
+            row: row
+          add_layout_class: 1
+          attributes: ''
+        regions:
+          main:
+            wrapper: div
+            classes:
+              col-sm-12: col-sm-12
+            add_region_classes: 1
+            attributes: ''
+    regions:
+      main:
+        - field_link
+        - newspaper_slider
+    fields:
+      newspaper_slider:
+        plugin_id: newspaper_slider
+        weight: 1
+        label: hidden
+        formatter: default
+id: block_content.newspaper.default
+targetEntityType: block_content
+bundle: newspaper
+mode: default
+content:
+  field_link:
+    type: link
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 0
+    region: main
+hidden:
+  field_articles: true
+  langcode: true

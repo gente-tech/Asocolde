@@ -1,0 +1,35 @@
+uuid: e16cc8d2-1704-4999-b98b-4b01ea3fbe7a
+langcode: es
+status: true
+dependencies:
+  content:
+    - 'block_content:slider_fade:641e56b0-fea4-46a0-b880-2355bebb8717'
+  module:
+    - block_content
+    - block_visibility_groups
+    - system
+  theme:
+    - asocolderma_b5
+id: educaciondirigidaalacomunidad_2
+theme: asocolderma_b5
+region: content_column_top_right
+weight: 0
+provider: null
+plugin: 'block_content:641e56b0-fea4-46a0-b880-2355bebb8717'
+settings:
+  id: 'block_content:641e56b0-fea4-46a0-b880-2355bebb8717'
+  label: 'Educación dirigida a la comunidad'
+  label_display: '0'
+  provider: block_content
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  request_path:
+    id: request_path
+    negate: false
+    pages: /pacientes

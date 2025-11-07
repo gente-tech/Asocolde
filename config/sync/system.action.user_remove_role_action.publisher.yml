@@ -1,0 +1,14 @@
+uuid: 70d86011-8610-4363-b0a3-a009f0c1a1ab
+langcode: es
+status: true
+dependencies:
+  config:
+    - user.role.publisher
+  module:
+    - user
+id: user_remove_role_action.publisher
+label: 'Elimina el rol Publicador asocolderma al(los) usuario(s) seleccionado(s)'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: publisher

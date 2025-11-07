@@ -1,0 +1,8 @@
+uuid: f9627ecc-934d-47f6-8549-897ca933b4ac
+langcode: es
+status: true
+dependencies: {  }
+id: image
+label: 'Bloque imagen'
+revision: 0
+description: 'Un bloque imagen contiene una imagen y puede contener un enlace para redireccionar al usuario.'

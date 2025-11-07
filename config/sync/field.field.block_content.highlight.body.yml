@@ -1,0 +1,23 @@
+uuid: 2ce2deaa-add4-42aa-a82f-942ad9e7bd80
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_content.type.highlight
+    - field.storage.block_content.body
+  module:
+    - text
+id: block_content.highlight.body
+field_name: body
+entity_type: block_content
+bundle: highlight
+label: Body
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: false
+  required_summary: false
+field_type: text_with_summary

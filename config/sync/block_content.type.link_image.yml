@@ -1,0 +1,8 @@
+uuid: 8fe14367-7106-4fae-8e8e-2fa01c1a6869
+langcode: es
+status: true
+dependencies: {  }
+id: link_image
+label: 'Enlace con imagen'
+revision: 0
+description: ''

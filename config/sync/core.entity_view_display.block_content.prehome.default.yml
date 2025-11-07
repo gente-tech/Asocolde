@@ -1,0 +1,54 @@
+uuid: 26e88840-4f45-4a83-b571-f7303d566eaf
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_content.type.prehome
+    - field.field.block_content.prehome.field_class_link
+    - field.field.block_content.prehome.field_image
+    - field.field.block_content.prehome.field_link
+    - field.field.block_content.prehome.field_title
+  module:
+    - image
+    - linked_field
+    - text_field_formatter
+id: block_content.prehome.default
+targetEntityType: block_content
+bundle: prehome
+mode: default
+content:
+  field_image:
+    type: image
+    label: hidden
+    settings:
+      image_link: ''
+      image_style: ''
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_title:
+    type: text_field_formatter
+    label: hidden
+    settings:
+      wrap_tag: h2
+      wrap_class: ''
+      wrap_attributes: ''
+      override_link_label: ''
+      link_to_entity: 0
+    third_party_settings:
+      linked_field:
+        linked: '1'
+        type: field
+        destination: field_link
+        advanced:
+          class: '[block_content:field_class_link]'
+          data-dialog-type: modal
+        token: ''
+    weight: 0
+    region: content
+hidden:
+  field_class_link: true
+  field_link: true
+  langcode: true

@@ -1,0 +1,7 @@
+uuid: bcf4e5c7-993d-4674-a082-b8bc60a714e0
+langcode: es
+status: true
+dependencies: {  }
+formId: webform_submission_contact_node_1_add_form
+captchaType: default
+label: webform_submission_contact_node_1_add_form

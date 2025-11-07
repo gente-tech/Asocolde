@@ -1,0 +1,23 @@
+uuid: 10e1c2af-344a-455d-9e6a-4cd28fb38662
+langcode: es
+status: true
+dependencies:
+  module:
+    - file
+    - user
+id: user.field_postgraduate_diploma
+field_name: field_postgraduate_diploma
+entity_type: user
+type: file
+settings:
+  target_type: file
+  display_field: false
+  display_default: false
+  uri_scheme: public
+module: file
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

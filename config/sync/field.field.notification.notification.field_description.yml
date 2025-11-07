@@ -1,0 +1,29 @@
+uuid: ae009bac-169f-4334-be39-b15a8220b6ed
+langcode: es
+status: true
+dependencies:
+  config:
+    - eck.eck_type.notification.notification
+    - field.storage.notification.field_description
+  module:
+    - field_config_cardinality
+    - text
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: notification.notification.field_description
+field_name: field_description
+entity_type: notification
+bundle: notification
+label: Descripción
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

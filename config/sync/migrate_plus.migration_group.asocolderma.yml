@@ -1,0 +1,17 @@
+uuid: a1777c9f-9728-4f88-b070-b22bdc966e62
+langcode: es
+status: true
+dependencies:
+  enforced:
+    module:
+      - asocol_migrate
+_core:
+  default_config_hash: _9easLZTGQ7fnP9CIi2Rx2DQyLqyB4bVu5Wj2dwrc6M
+id: asocolderma
+label: 'Import from previous site (Drupal 7)'
+description: 'Migrations from the previous Drupal 7 website.'
+source_type: 'Drupal 7'
+module: null
+shared_configuration:
+  source:
+    key: asocol_d7

@@ -1,0 +1,115 @@
+uuid: cffff333-92c4-460a-8f71-a0d739d20a6c
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.microsite.body
+    - field.field.node.microsite.field_image
+    - field.field.node.microsite.field_source_term
+    - field.field.node.microsite.field_tags
+    - field.field.node.microsite.field_type
+    - field.field.node.microsite.field_url
+    - image.style.large
+    - node.type.microsite
+  module:
+    - blazy
+    - ds
+    - text
+    - user
+third_party_settings:
+  ds:
+    layout:
+      id: layout_twocol
+      library: layout_discovery/twocol
+      disable_css: false
+      entity_classes: all_classes
+      settings:
+        label: ''
+    regions:
+      top:
+        - field_type
+      first:
+        - field_image
+      second:
+        - node_title
+        - body
+        - read_more_external_link
+    fields:
+      read_more_external_link:
+        plugin_id: read_more_external_link
+        weight: 4
+        label: hidden
+        formatter: default
+        settings:
+          'link text': 'Visita nuestro micrositio'
+          'link class': ''
+      node_title:
+        plugin_id: node_title
+        weight: 2
+        label: hidden
+        formatter: default
+        settings:
+          link: true
+          'link class': ''
+          wrapper: h2
+          class: ''
+id: node.microsite.teaser
+targetEntityType: node
+bundle: microsite
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 300
+    third_party_settings: {  }
+    weight: 3
+    region: second
+  field_image:
+    type: blazy
+    label: hidden
+    settings:
+      caption:
+        title: '0'
+        alt: '0'
+      layout: ''
+      view_mode: ''
+      cache: 0
+      background: false
+      box_caption: ''
+      box_caption_custom: ''
+      box_media_style: ''
+      loading: ''
+      preload: false
+      responsive_image_style: ''
+      use_theme_field: false
+      box_style: ''
+      image_style: large
+      media_switch: ''
+      ratio: ''
+      thumbnail_style: ''
+      grid: ''
+      grid_medium: ''
+      grid_small: ''
+      style: ''
+    third_party_settings:
+      ds:
+        ds_limit: ''
+    weight: 1
+    region: first
+  field_type:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: false
+    third_party_settings: {  }
+    weight: 0
+    region: top
+hidden:
+  field_source_term: true
+  field_tags: true
+  field_url: true
+  langcode: true
+  links: true

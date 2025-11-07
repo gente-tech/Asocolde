@@ -1,0 +1,24 @@
+uuid: 577ae6e1-2677-4a6b-a4e4-df1ea8374fe4
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_dermatologist_recertified
+  module:
+    - user
+id: user.user.field_dermatologist_recertified
+field_name: field_dermatologist_recertified
+entity_type: user
+bundle: user
+label: 'Dermatologo Recertificado'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

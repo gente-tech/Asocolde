@@ -1,0 +1,25 @@
+uuid: 24cd9939-88f9-4e83-afe7-68d523a54f93
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+id: courses_virtual
+label: 'Cursos virtuales recomendados'
+handler: simple
+handler_configuration: {  }
+entity_settings:
+  target_type: node
+  handler: 'default:node'
+  handler_settings:
+    target_bundles: null
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+queue_settings:
+  min_size: 3
+  max_size: 3
+  act_as_queue: false
+  reverse: false

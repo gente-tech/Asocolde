@@ -1,0 +1,40 @@
+uuid: 9b359e51-58d6-48e7-b199-905d7c955939
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.link_image.field_image
+    - field.field.paragraph.link_image.field_link
+    - paragraphs.paragraphs_type.link_image
+  module:
+    - image
+    - link
+id: paragraph.link_image.default
+targetEntityType: paragraph
+bundle: link_image
+mode: default
+content:
+  field_image:
+    type: image
+    label: hidden
+    settings:
+      image_link: ''
+      image_style: ''
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_link:
+    type: link
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden: {  }

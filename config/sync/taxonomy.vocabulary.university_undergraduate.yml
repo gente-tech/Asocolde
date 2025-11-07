@@ -1,0 +1,8 @@
+uuid: 92407830-3e31-487c-a370-a66b4b7734d4
+langcode: es
+status: true
+dependencies: {  }
+name: 'Universidad de pregrado'
+vid: university_undergraduate
+description: ''
+weight: 0

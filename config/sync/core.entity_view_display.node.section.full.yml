@@ -1,0 +1,142 @@
+uuid: 514fccbd-0534-4bad-9331-a14fc2a9345f
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.full
+    - field.field.node.section.field_body_class
+    - field.field.node.section.field_metatags
+    - field.field.node.section.field_social_share
+    - field.field.node.section.layout_builder__layout
+    - node.type.section
+  module:
+    - asocol
+    - layout_builder
+    - layout_discovery
+    - text_resize
+    - user
+third_party_settings:
+  layout_builder:
+    enabled: true
+    allow_custom: true
+    sections:
+      -
+        layout_id: layout_onecol
+        layout_settings:
+          label: 'Top Content'
+          context_mapping: {  }
+          custom_id: ''
+          custom_classes: accesibility-options
+          custom_class_choose: {  }
+          custom_styles: ''
+          custom_data_attributes: ''
+          regions:
+            content:
+              region_id: ''
+              region_class_choose: {  }
+              region_classes: wilder
+              region_styles: ''
+              region_data: ''
+        components:
+          e752e2a8-2a01-4609-aa52-ae1873129c50:
+            uuid: e752e2a8-2a01-4609-aa52-ae1873129c50
+            region: content
+            configuration:
+              id: asocol_print
+              label: 'Asocol Print'
+              label_display: '0'
+              provider: asocol
+              context_mapping: {  }
+            weight: 0
+            additional: {  }
+          deee79a5-e1cf-4c1e-9abd-fe959417593d:
+            uuid: deee79a5-e1cf-4c1e-9abd-fe959417593d
+            region: content
+            configuration:
+              id: text_resize_block
+              label: 'Text Resize'
+              label_display: '0'
+              provider: text_resize
+              context_mapping: {  }
+            weight: 1
+            additional: {  }
+          0823a5e6-0c05-40e2-850b-d69a79ed72f2:
+            uuid: 0823a5e6-0c05-40e2-850b-d69a79ed72f2
+            region: content
+            configuration:
+              id: 'field_block:node:section:field_social_share'
+              label: 'Social share'
+              label_display: '0'
+              provider: layout_builder
+              context_mapping:
+                entity: layout_builder.entity
+                view_mode: view_mode
+              formatter:
+                type: social_media_default
+                label: hidden
+                settings: {  }
+                third_party_settings: {  }
+            weight: 2
+            additional: {  }
+        third_party_settings: {  }
+      -
+        layout_id: layout_twocol_section
+        layout_settings:
+          label: 'Main Content'
+          context_mapping: {  }
+          column_widths: 50-50
+          custom_id: ''
+          custom_classes: top-information
+          custom_class_choose: {  }
+          custom_styles: ''
+          custom_data_attributes: ''
+          regions:
+            first:
+              region_id: ''
+              region_class_choose: {  }
+              region_classes: ''
+              region_styles: ''
+              region_data: ''
+            second:
+              region_id: ''
+              region_class_choose: {  }
+              region_classes: ''
+              region_styles: ''
+              region_data: ''
+        components: {  }
+        third_party_settings: {  }
+      -
+        layout_id: layout_onecol
+        layout_settings:
+          label: 'Bottom Content'
+          context_mapping: {  }
+          custom_id: ''
+          custom_classes: content-layout-bottom
+          custom_class_choose: {  }
+          custom_styles: ''
+          custom_data_attributes: ''
+          regions:
+            content:
+              region_id: ''
+              region_class_choose: {  }
+              region_classes: ''
+              region_styles: ''
+              region_data: ''
+        components: {  }
+        third_party_settings: {  }
+id: node.section.full
+targetEntityType: node
+bundle: section
+mode: full
+content:
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_body_class: true
+  field_metatags: true
+  field_social_share: true
+  langcode: true
+  layout_builder__layout: true

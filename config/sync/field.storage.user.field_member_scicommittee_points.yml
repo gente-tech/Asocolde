@@ -1,0 +1,20 @@
+uuid: 611c9d41-322d-4bd3-9d38-cc34846bc166
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_member_scicommittee_points
+field_name: field_member_scicommittee_points
+entity_type: user
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

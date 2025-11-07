@@ -1,0 +1,42 @@
+uuid: ff781184-a31b-4417-b870-b8b5b2f717ab
+langcode: es
+status: false
+dependencies:
+  config:
+    - system.menu.most-viewed
+  module:
+    - block_visibility_groups
+    - system
+    - user
+  theme:
+    - asocolderma_b5
+id: menu_most_viewed
+theme: asocolderma_b5
+region: menu_sidebar_first
+weight: -25
+provider: null
+plugin: 'system_menu_block:most-viewed'
+settings:
+  id: 'system_menu_block:most-viewed'
+  label: 'Lo más visto'
+  label_display: visible
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      anonymous: anonymous
+  request_path:
+    id: request_path
+    negate: true
+    pages: '<front>'

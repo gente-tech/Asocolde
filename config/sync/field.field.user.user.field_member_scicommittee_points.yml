@@ -1,0 +1,34 @@
+uuid: c3568f3a-2fb1-43b7-b7f7-99fadcb4108a
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_member_scicommittee_points
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_member_scicommittee_points
+field_name: field_member_scicommittee_points
+entity_type: user
+bundle: user
+label: 'Miembro de Comité científico Revista (100 puntos X libro)'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: Puntos
+  suffix: ''
+field_type: integer

@@ -1,0 +1,9 @@
+uuid: c0fceb24-33a9-4e98-a93d-09d7d0e41985
+langcode: es
+status: true
+dependencies:
+  config:
+    - eck.eck_entity_type.banner_home
+name: 'Banner Home'
+type: banner_home
+description: ''

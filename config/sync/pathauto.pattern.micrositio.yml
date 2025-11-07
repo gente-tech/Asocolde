@@ -1,0 +1,22 @@
+uuid: bfcd4bbe-feb3-4391-bffe-f8fadbe40134
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+id: micrositio
+label: Micrositio
+type: 'canonical_entities:node'
+pattern: 'micrositio/[node:title]'
+selection_criteria:
+  56e06a22-38bd-4d93-8c82-970f57b769be:
+    id: 'entity_bundle:node'
+    negate: false
+    uuid: 56e06a22-38bd-4d93-8c82-970f57b769be
+    context_mapping:
+      node: node
+    bundles:
+      microsite: microsite
+selection_logic: and
+weight: -5
+relationships: {  }

@@ -1,0 +1,62 @@
+uuid: 26ad2dbb-4e26-423a-9185-32d8bb5ae523
+langcode: es
+status: true
+dependencies:
+  module:
+    - asocol
+    - commerce_payment
+    - email_registration
+_core:
+  default_config_hash: 5BYvSDemm8xYwB9rMGFuEuGK6FxVheqtXEUxnpKO2N4
+label: Default
+id: default
+plugin: multistep_default
+configuration:
+  display_checkout_progress: true
+  display_checkout_progress_breadcrumb_links: false
+  panes:
+    login:
+      step: login
+      weight: 0
+      allow_guest_checkout: true
+      allow_registration: false
+      registration_form_mode: register
+    order_summary:
+      step: order_information
+      weight: 1
+      view: commerce_checkout_order_summary
+    contact_information:
+      step: order_information
+      weight: 2
+      double_entry: true
+    payment_information:
+      step: order_information
+      weight: 3
+    payment_process:
+      step: payment
+      weight: 4
+      capture: true
+    completion_message:
+      step: _disabled
+      weight: 7
+      message:
+        value: "Your order number is [commerce_order:order_number].\r\nYou can view your order on your account page when logged in."
+        format: plain_text
+    completion_register:
+      step: complete
+      weight: 5
+    review:
+      step: _disabled
+      weight: 8
+    email_registration_completion_registration:
+      step: _disabled
+      weight: 9
+    email_registration_login:
+      step: _disabled
+      weight: 10
+      allow_guest_checkout: true
+      allow_registration: false
+      registration_form_mode: register
+    order_complete_information:
+      step: complete
+      weight: 6

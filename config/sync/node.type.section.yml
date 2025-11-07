@@ -1,0 +1,17 @@
+uuid: abcc2629-5b9b-4997-9b75-72d955876401
+langcode: es
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: Sección
+type: section
+description: ''
+help: ''
+new_revision: true
+preview_mode: 0
+display_submitted: false

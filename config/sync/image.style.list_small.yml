@@ -1,0 +1,15 @@
+uuid: c4a192b1-d60d-42d2-9ccb-07a1c6de76c9
+langcode: es
+status: true
+dependencies: {  }
+name: list_small
+label: 'List Small (100x70)'
+effects:
+  51d947bf-ad2d-4ae3-a802-7e0801b3c924:
+    uuid: 51d947bf-ad2d-4ae3-a802-7e0801b3c924
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 100
+      height: 70
+      anchor: center-center

@@ -1,0 +1,11 @@
+uuid: ab5fb4b4-cdb7-4cb5-a3c1-732e90cb5a0a
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_content.type.newspaper
+id: block_content.newspaper
+target_entity_type_id: block_content
+target_bundle: newspaper
+default_langcode: site_default
+language_alterable: false

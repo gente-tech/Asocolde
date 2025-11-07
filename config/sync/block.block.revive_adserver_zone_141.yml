@@ -1,0 +1,41 @@
+uuid: 3d89fc37-3aeb-48ef-9fe2-5ce5e755f825
+langcode: es
+status: true
+dependencies:
+  module:
+    - block_classes
+    - block_visibility_groups
+    - revive_adserver
+    - user
+  theme:
+    - asocolderma_b5
+third_party_settings:
+  block_classes:
+    block_class: '.d-none .d-sm-block'
+id: revive_adserver_zone_141
+theme: asocolderma_b5
+region: footer_ads
+weight: -28
+provider: null
+plugin: revive_adserver_zone_block
+settings:
+  id: revive_adserver_zone_block
+  label: 'Revive Adserver Zone 141'
+  label_display: '0'
+  provider: revive_adserver
+  zone_id: 141
+  invocation_method: javascript
+  block_banner: false
+  block_banner_campaign: false
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      authenticated: authenticated

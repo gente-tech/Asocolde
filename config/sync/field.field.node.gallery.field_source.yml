@@ -1,0 +1,25 @@
+uuid: 79b76817-9436-4793-8fe3-78c29096e7a4
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_source
+    - node.type.gallery
+  module:
+    - field_config_cardinality
+    - options
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: node.gallery.field_source
+field_name: field_source
+entity_type: node
+bundle: gallery
+label: Fuente
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

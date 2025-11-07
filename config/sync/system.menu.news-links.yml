@@ -1,0 +1,8 @@
+uuid: 97f5a9c7-0780-4eb9-add1-3e6437222f6c
+langcode: es
+status: true
+dependencies: {  }
+id: news-links
+label: 'Tipo de noticia'
+description: ''
+locked: false

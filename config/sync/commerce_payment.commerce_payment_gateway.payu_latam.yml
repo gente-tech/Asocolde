@@ -1,0 +1,25 @@
+uuid: f8385fe7-c29b-4aa8-929e-1c212ade732c
+langcode: es
+status: true
+dependencies:
+  module:
+    - commerce_payu_webcheckout
+id: payu_latam
+label: 'PayU Latam'
+weight: -9
+plugin: payu_webcheckout
+configuration:
+  display_label: 'PayU Webcheckout'
+  mode: test
+  payment_method_types:
+    - credit_card
+  collect_billing_information: true
+  image_key: no_image
+  image: null
+  purchase_description: 'Compra desde AsoColDerma'
+  payu_api_key: 4Vj8eK4rloUd272L48hsrarnUA
+  payu_merchant_id: '508029'
+  payu_account_id: '512321'
+  payu_gateway_url: 'https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/'
+conditions: {  }
+conditionOperator: AND

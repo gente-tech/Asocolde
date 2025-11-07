@@ -1,0 +1,31 @@
+uuid: 787826e8-9737-4d50-8a81-bc8afe845469
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_content.type.highlight
+    - field.storage.block_content.field_link
+  module:
+    - field_config_cardinality
+    - link
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: block_content.highlight.field_link
+field_name: field_link
+entity_type: block_content
+bundle: highlight
+label: Enlace
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 2
+  link_type: 17
+field_type: link

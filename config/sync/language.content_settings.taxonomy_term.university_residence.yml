@@ -1,0 +1,11 @@
+uuid: 67d25d0c-1b04-4eff-9568-20755898789a
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.university_residence
+id: taxonomy_term.university_residence
+target_entity_type_id: taxonomy_term
+target_bundle: university_residence
+default_langcode: site_default
+language_alterable: false

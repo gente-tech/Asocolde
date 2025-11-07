@@ -1,0 +1,51 @@
+uuid: 5cd29939-5099-4acc-8778-a14ae877b6c4
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_source
+field_name: field_source
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: 'El Espectador'
+      label: 'El Espectador'
+    -
+      value: 'El Tiempo'
+      label: 'El Tiempo'
+    -
+      value: Caracol
+      label: Caracol
+    -
+      value: RCN
+      label: RCN
+    -
+      value: 'Revista AsoColDerma'
+      label: 'Revista AsoColDerma'
+    -
+      value: 'U. El Bosque'
+      label: 'U. El Bosque'
+    -
+      value: AsoColDerma
+      label: AsoColDerma
+    -
+      value: Mediahealth
+      label: Mediahealth
+    -
+      value: ColPsor
+      label: ColPsor
+    -
+      value: IsisPharma
+      label: IsisPharma
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

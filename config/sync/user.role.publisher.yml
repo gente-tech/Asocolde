@@ -1,0 +1,9 @@
+uuid: d057d1d1-ce7a-4909-92c8-4a5fe80bb2d7
+langcode: es
+status: true
+dependencies: {  }
+id: publisher
+label: 'Publicador asocolderma'
+weight: -7
+is_admin: null
+permissions: {  }

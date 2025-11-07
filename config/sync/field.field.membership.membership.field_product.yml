@@ -1,0 +1,38 @@
+uuid: 7a65ccb6-52b0-43fd-bb46-01d7bc6241fd
+langcode: es
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_type.membership
+    - eck.eck_type.membership.membership
+    - field.storage.membership.field_product
+  module:
+    - field_config_cardinality
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: membership.membership.field_product
+field_name: field_product
+entity_type: membership
+bundle: membership
+label: Producto
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:commerce_product'
+  handler_settings:
+    target_bundles:
+      membership: membership
+    sort:
+      field: title
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

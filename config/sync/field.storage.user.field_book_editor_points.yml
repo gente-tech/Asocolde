@@ -1,0 +1,20 @@
+uuid: 945664cf-7e7c-44f0-b61b-9c474905a393
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_book_editor_points
+field_name: field_book_editor_points
+entity_type: user
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

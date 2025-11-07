@@ -1,0 +1,10 @@
+uuid: 57df947f-4bc3-4cc1-b5e8-1c5503de4c35
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+id: node.sidebar_teaser
+label: 'Sidebar Teaser'
+targetEntityType: node
+cache: true

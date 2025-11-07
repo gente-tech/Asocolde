@@ -1,0 +1,22 @@
+uuid: 4516ab24-4170-4a5e-92db-08dcbf01fba6
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+id: video
+label: Video
+type: 'canonical_entities:node'
+pattern: 'multimedia/videos/[node:title]'
+selection_criteria:
+  6ffaedbd-2e64-444c-8d08-9a2dd4dbbea8:
+    id: 'entity_bundle:node'
+    negate: false
+    uuid: 6ffaedbd-2e64-444c-8d08-9a2dd4dbbea8
+    context_mapping:
+      node: node
+    bundles:
+      video: video
+selection_logic: and
+weight: -5
+relationships: {  }

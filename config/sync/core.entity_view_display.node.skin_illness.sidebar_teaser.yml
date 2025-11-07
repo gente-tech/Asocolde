@@ -1,0 +1,108 @@
+uuid: 8bbf716b-e56d-4db7-9c79-c244454f02f2
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.sidebar_teaser
+    - field.field.node.skin_illness.body
+    - field.field.node.skin_illness.field_disease_type
+    - field.field.node.skin_illness.field_image
+    - field.field.node.skin_illness.field_metatags
+    - field.field.node.skin_illness.field_note_type
+    - field.field.node.skin_illness.field_social_share
+    - field.field.node.skin_illness.field_source
+    - field.field.node.skin_illness.field_tags
+    - field.field.node.skin_illness.field_type
+    - image.style.list_small
+    - node.type.skin_illness
+  module:
+    - ds
+    - image
+    - layout_builder
+    - user
+third_party_settings:
+  layout_builder:
+    enabled: false
+    allow_custom: false
+  ds:
+    layout:
+      id: bs_2col
+      library: null
+      disable_css: false
+      entity_classes: all_classes
+      settings:
+        label: ''
+        layout:
+          wrapper: div
+          classes:
+            row: row
+          add_layout_class: 1
+          attributes: ''
+        regions:
+          left:
+            wrapper: div
+            classes:
+              col-sm-5: col-sm-5
+            add_region_classes: 1
+            attributes: ''
+          right:
+            wrapper: div
+            classes:
+              col-sm-7: col-sm-7
+            add_region_classes: 1
+            attributes: ''
+    regions:
+      left:
+        - field_image
+      right:
+        - node_title
+        - field_tags
+    fields:
+      node_title:
+        plugin_id: node_title
+        weight: 1
+        label: hidden
+        formatter: default
+        settings:
+          link: true
+          'link class': ''
+          wrapper: h2
+          class: ''
+id: node.skin_illness.sidebar_teaser
+targetEntityType: node
+bundle: skin_illness
+mode: sidebar_teaser
+content:
+  field_image:
+    type: image
+    label: hidden
+    settings:
+      image_link: content
+      image_style: list_small
+      image_loading:
+        attribute: lazy
+    third_party_settings:
+      ds:
+        ds_limit: ''
+    weight: 0
+    region: left
+  field_tags:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings:
+      ds:
+        ds_limit: ''
+    weight: 2
+    region: right
+hidden:
+  body: true
+  field_disease_type: true
+  field_metatags: true
+  field_note_type: true
+  field_social_share: true
+  field_source: true
+  field_type: true
+  langcode: true
+  links: true

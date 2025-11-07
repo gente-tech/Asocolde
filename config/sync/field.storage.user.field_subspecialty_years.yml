@@ -1,0 +1,20 @@
+uuid: 7a2acca0-5220-4e40-b5f1-8787370c98f2
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_subspecialty_years
+field_name: field_subspecialty_years
+entity_type: user
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,8 @@
+uuid: 8c6a3ad0-4fc5-4496-b6b4-ed071e75d566
+langcode: es
+status: true
+dependencies: {  }
+id: content-patient
+label: 'Contenido Pacientes'
+description: ''
+locked: false

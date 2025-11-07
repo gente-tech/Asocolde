@@ -1,0 +1,67 @@
+uuid: 098d1a25-c692-4f14-83c0-c8afb1ab7508
+langcode: es
+status: true
+dependencies:
+  enforced:
+    module:
+      - asocol_migrate
+_core:
+  default_config_hash: Hil8NqKAnsfJPR_vRWRhonkQ56zW2m_pZJ_RtaEZBYw
+id: asocolderma_node_skin_illness
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags: null
+migration_group: asocolderma
+label: 'Asocolderma node skin illness migration'
+source:
+  plugin: asocolderma_node_skin_illness
+  node_type: enfermedades_de_la_piel
+  target: asocol_d7
+process:
+  uid: node_uid
+  type:
+    plugin: default_value
+    default_value: skin_illness
+  langcode:
+    plugin: default_value
+    default_value: es
+  status: status
+  title: title
+  created: created
+  changed: changed
+  revision_uid: revision_uid
+  revision_log: log
+  revision_timestamp: timestamp
+  promote:
+    plugin: default_value
+    default_value: 0
+  sticky:
+    plugin: default_value
+    default_value: 0
+  default_langcode:
+    plugin: default_value
+    default_value: 1
+  revision_translation_affected:
+    plugin: default_value
+    default_value: 1
+  field_note_type: field_tipo_de_nota
+  field_image/target_id: field_image_fid
+  field_image/alt: field_image_alt
+  field_image/title: field_image_title
+  body: body
+  field_type/target_id: field_categoria_tid
+  field_disease_type:
+    plugin: sub_process
+    source: field_tipo_enfermedad
+    process:
+      target_id: tid
+  field_tags:
+    plugin: sub_process
+    source: field_tags
+    process:
+      target_id: tid
+  field_source: field_fuente
+destination:
+  plugin: 'entity:node'
+migration_dependencies: null

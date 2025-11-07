@@ -1,0 +1,58 @@
+uuid: c13b02a2-c4b8-4422-b7d9-0662bcb95c14
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.newspaper.field_image
+    - field.field.paragraph.newspaper.field_link
+    - field.field.paragraph.newspaper.field_subtitle
+    - field.field.paragraph.newspaper.field_title
+    - paragraphs.paragraphs_type.newspaper
+  module:
+    - image
+    - link
+id: paragraph.newspaper.default
+targetEntityType: paragraph
+bundle: newspaper
+mode: default
+content:
+  field_image:
+    type: image
+    label: above
+    settings:
+      image_link: ''
+      image_style: ''
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_link:
+    type: link
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_subtitle:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_title:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+hidden: {  }

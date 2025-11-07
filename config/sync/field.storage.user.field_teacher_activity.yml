@@ -1,0 +1,20 @@
+uuid: 07be30ae-77c8-4f75-bc03-b8a0fe2b1017
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_teacher_activity
+field_name: field_teacher_activity
+entity_type: user
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

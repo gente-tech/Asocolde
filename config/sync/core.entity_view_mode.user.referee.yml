@@ -1,0 +1,10 @@
+uuid: ed4a4e49-b5f0-4d92-9f30-b64c0c5e85f6
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.referee
+label: Referee
+targetEntityType: user
+cache: true

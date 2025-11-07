@@ -1,0 +1,15 @@
+uuid: c143ec0d-d5e5-4edb-86e4-124a16794af1
+langcode: es
+status: true
+dependencies: {  }
+name: course_list
+label: 'Course List (298x248)'
+effects:
+  b1310d47-7df2-40e7-808e-38edc24bfd2c:
+    uuid: b1310d47-7df2-40e7-808e-38edc24bfd2c
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 298
+      height: 248
+      anchor: center-center

@@ -1,0 +1,90 @@
+uuid: ed3092b3-35cb-42e4-abf9-3068b62f137f
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.course_virtual.body
+    - field.field.node.course_virtual.field_course_dermatologist
+    - field.field.node.course_virtual.field_image
+    - field.field.node.course_virtual.field_social_share
+    - field.field.node.course_virtual.field_source
+    - field.field.node.course_virtual.field_url
+    - image.style.course_list
+    - node.type.course_virtual
+  module:
+    - ds
+    - image
+    - options
+    - text
+    - user
+third_party_settings:
+  ds:
+    layout:
+      id: barrio_col2-3-9
+      library: null
+      disable_css: false
+      entity_classes: all_classes
+      settings:
+        label: ''
+    regions:
+      first:
+        - field_image
+      second:
+        - node_title
+        - body
+        - field_source
+        - read_more_external_link
+    fields:
+      read_more_external_link:
+        plugin_id: read_more_external_link
+        weight: 4
+        label: hidden
+        formatter: default
+      node_title:
+        plugin_id: node_title
+        weight: 1
+        label: hidden
+        formatter: default
+        settings:
+          link: false
+          'link class': ''
+          wrapper: h2
+          class: ''
+id: node.course_virtual.teaser
+targetEntityType: node
+bundle: course_virtual
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 300
+    third_party_settings: {  }
+    weight: 2
+    region: second
+  field_image:
+    type: image
+    label: hidden
+    settings:
+      image_link: ''
+      image_style: course_list
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 0
+    region: first
+  field_source:
+    type: list_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 3
+    region: second
+hidden:
+  field_course_dermatologist: true
+  field_social_share: true
+  field_url: true
+  langcode: true
+  links: true

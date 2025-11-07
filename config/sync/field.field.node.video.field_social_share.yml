@@ -1,0 +1,29 @@
+uuid: 839cc24d-4a5e-4aa0-9ed0-754b3e177fb8
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_social_share
+    - node.type.video
+  module:
+    - field_config_cardinality
+    - social_media
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: node.video.field_social_share
+field_name: field_social_share
+entity_type: node
+bundle: video
+label: 'social share'
+description: ''
+required: true
+translatable: true
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: social_media

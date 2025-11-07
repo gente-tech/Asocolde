@@ -1,0 +1,42 @@
+uuid: e8dfcb55-5399-4844-bd78-9d69a75038f9
+langcode: es
+status: true
+dependencies:
+  config:
+    - system.menu.user-tools
+  module:
+    - block_visibility_groups
+    - system
+    - user
+  theme:
+    - asocolderma_b5
+id: menu_usertools
+theme: asocolderma_b5
+region: header
+weight: -26
+provider: null
+plugin: 'system_menu_block:user-tools'
+settings:
+  id: 'system_menu_block:user-tools'
+  label: 'User Tools'
+  label_display: '0'
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      authenticated: authenticated
+  request_path:
+    id: request_path
+    negate: true
+    pages: '<front>'

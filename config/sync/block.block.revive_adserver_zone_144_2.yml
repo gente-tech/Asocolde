@@ -1,0 +1,46 @@
+uuid: 17035e3b-2f36-49b9-be09-2c45e295c060
+langcode: es
+status: true
+dependencies:
+  module:
+    - block_classes
+    - block_visibility_groups
+    - revive_adserver
+    - system
+    - user
+  theme:
+    - asocolderma_b5
+third_party_settings:
+  block_classes:
+    block_class: '.d-block .d-sm-none'
+id: revive_adserver_zone_144_2
+theme: asocolderma_b5
+region: sidebar_second
+weight: -32
+provider: null
+plugin: revive_adserver_zone_block
+settings:
+  id: revive_adserver_zone_block
+  label: 'Revive Adserver Zone 144 (medicos) - Mobile 2'
+  label_display: visible
+  provider: revive_adserver
+  zone_id: 144
+  invocation_method: javascript
+  block_banner: false
+  block_banner_campaign: false
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  request_path:
+    id: request_path
+    negate: true
+    pages: "<front>\r\n/dermatologos"
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      authenticated: authenticated

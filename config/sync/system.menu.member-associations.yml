@@ -1,0 +1,8 @@
+uuid: 30e8c6e6-2b04-4094-a6d0-597ccd960b63
+langcode: es
+status: true
+dependencies: {  }
+id: member-associations
+label: 'Asociaciones Miembro'
+description: ''
+locked: false

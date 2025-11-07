@@ -1,0 +1,8 @@
+uuid: 030a2f81-083d-484b-bb56-59f870153788
+langcode: es
+status: true
+dependencies: {  }
+name: 'Tipo Noticia Semanal'
+vid: news_type
+description: ''
+weight: 0

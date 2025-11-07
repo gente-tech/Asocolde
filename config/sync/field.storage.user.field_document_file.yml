@@ -1,0 +1,23 @@
+uuid: 01d42d8c-7217-47d0-ac5f-2cab46a400f1
+langcode: es
+status: true
+dependencies:
+  module:
+    - file
+    - user
+id: user.field_document_file
+field_name: field_document_file
+entity_type: user
+type: file
+settings:
+  target_type: file
+  display_field: false
+  display_default: false
+  uri_scheme: public
+module: file
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

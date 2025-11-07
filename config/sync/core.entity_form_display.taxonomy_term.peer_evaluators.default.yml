@@ -1,0 +1,55 @@
+uuid: a72ddbf4-5650-4fd5-99cc-1f480446327f
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.peer_evaluators.field_link
+    - taxonomy.vocabulary.peer_evaluators
+  module:
+    - link
+    - text
+id: taxonomy_term.peer_evaluators.default
+targetEntityType: taxonomy_term
+bundle: peer_evaluators
+mode: default
+content:
+  description:
+    type: text_textarea
+    weight: 1
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_link:
+    type: link_default
+    weight: 3
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 4
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+hidden:
+  path: true

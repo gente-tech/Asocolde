@@ -1,0 +1,28 @@
+uuid: b738b266-3eac-418b-9b7a-3ed1d74becb5
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_subspecialty
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_subspecialty
+field_name: field_subspecialty
+entity_type: user
+bundle: user
+label: 'Nombre de la subespecialidad'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,11 @@
+uuid: cc484599-6d1d-48d9-a285-de955332ffe5
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.microsite
+id: node.microsite
+target_entity_type_id: node
+target_bundle: microsite
+default_langcode: site_default
+language_alterable: false

@@ -1,0 +1,32 @@
+uuid: 36d899b5-911e-495c-b73c-ca028eb2e81a
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_geolocation_office
+  module:
+    - field_config_cardinality
+    - field_display_label
+    - geolocation
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+  field_display_label:
+    display_label: 'Ver mapa'
+id: user.user.field_geolocation_office
+field_name: field_geolocation_office
+entity_type: user
+bundle: user
+label: 'Localización del consultorio'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: geolocation

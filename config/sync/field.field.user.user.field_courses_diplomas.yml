@@ -1,0 +1,32 @@
+uuid: b093f0e0-07aa-41c3-8e96-15f888f13fa6
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_courses_diplomas
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_courses_diplomas
+field_name: field_courses_diplomas
+entity_type: user
+bundle: user
+label: 'Cursos y Diplomados'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

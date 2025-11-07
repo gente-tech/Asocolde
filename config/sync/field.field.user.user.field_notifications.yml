@@ -1,0 +1,32 @@
+uuid: 59843ff6-5f6d-401b-9669-c2e9b96d087f
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_notifications
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_notifications
+field_name: field_notifications
+entity_type: user
+bundle: user
+label: 'Recibir notificaciones de la Asociación en su perfil'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

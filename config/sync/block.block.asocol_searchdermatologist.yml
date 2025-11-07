@@ -1,0 +1,38 @@
+uuid: c2cfdcef-b406-4f5e-91ea-7bb3afb9d4d4
+langcode: es
+status: true
+dependencies:
+  module:
+    - asocol
+    - block_visibility_groups
+    - system
+    - user
+  theme:
+    - asocolderma_b5
+id: asocol_searchdermatologist
+theme: asocolderma_b5
+region: sidebar_second
+weight: -28
+provider: null
+plugin: asocol_search_dermatologist
+settings:
+  id: asocol_search_dermatologist
+  label: 'Directorio Dermatólogos'
+  label_display: visible
+  provider: asocol
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      anonymous: anonymous
+  request_path:
+    id: request_path
+    negate: true
+    pages: "<front>\r\n/pacientes\r\n/directorio-dermatologos"

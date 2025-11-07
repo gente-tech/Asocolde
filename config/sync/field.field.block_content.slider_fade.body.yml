@@ -1,0 +1,23 @@
+uuid: 1f28602c-e85e-4cdb-b120-19ec53566eff
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_content.type.slider_fade
+    - field.storage.block_content.body
+  module:
+    - text
+id: block_content.slider_fade.body
+field_name: body
+entity_type: block_content
+bundle: slider_fade
+label: Body
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: false
+  required_summary: false
+field_type: text_with_summary

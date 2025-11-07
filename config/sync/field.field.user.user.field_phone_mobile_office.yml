@@ -1,0 +1,21 @@
+uuid: 7e1a2929-2573-4d13-9ac6-1895a9df8d32
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_phone_mobile_office
+  module:
+    - telephone
+    - user
+id: user.user.field_phone_mobile_office
+field_name: field_phone_mobile_office
+entity_type: user
+bundle: user
+label: 'No. celular del consultorio'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: telephone

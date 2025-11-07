@@ -1,0 +1,8 @@
+uuid: 21d3db48-5cdb-4535-89bf-92e94a259c53
+langcode: es
+status: true
+dependencies: {  }
+name: Ciudad
+vid: city
+description: ''
+weight: 0

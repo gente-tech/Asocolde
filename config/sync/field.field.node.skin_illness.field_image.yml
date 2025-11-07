@@ -1,0 +1,42 @@
+uuid: be1ebe65-893a-4c45-83c9-a89ab132bdf1
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_image
+    - node.type.skin_illness
+  module:
+    - field_config_cardinality
+    - image
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: node.skin_illness.field_image
+field_name: field_image
+entity_type: node
+bundle: skin_illness
+label: Imagen
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: enfermedad
+  file_extensions: 'png gif jpg jpeg'
+  max_filesize: ''
+  max_resolution: ''
+  min_resolution: ''
+  alt_field: true
+  alt_field_required: true
+  title_field: false
+  title_field_required: false
+  default_image:
+    uuid: ''
+    alt: ''
+    title: ''
+    width: null
+    height: null
+field_type: image

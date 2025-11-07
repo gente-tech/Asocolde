@@ -1,0 +1,86 @@
+uuid: 294fcb66-789b-47f5-a4eb-24fbe8f5d6cf
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.video.body
+    - field.field.node.video.field_disease_type
+    - field.field.node.video.field_metatags
+    - field.field.node.video.field_note_type
+    - field.field.node.video.field_social_share
+    - field.field.node.video.field_source
+    - field.field.node.video.field_tags
+    - field.field.node.video.field_video
+    - image.style.course_list
+    - node.type.video
+  module:
+    - ds
+    - media
+    - options
+    - social_media
+    - user
+third_party_settings:
+  ds:
+    layout:
+      id: layout_onecol
+      library: layout_discovery/onecol
+      disable_css: false
+      entity_classes: all_classes
+      settings:
+        label: ''
+    regions:
+      content:
+        - field_video
+        - node_title
+        - field_source
+        - field_social_share
+    fields:
+      node_title:
+        plugin_id: node_title
+        weight: 1
+        label: hidden
+        formatter: default
+        settings:
+          link: true
+          'link class': ''
+          wrapper: h2
+          class: ''
+id: node.video.teaser
+targetEntityType: node
+bundle: video
+mode: teaser
+content:
+  field_social_share:
+    type: social_media_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_source:
+    type: list_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_video:
+    type: media_thumbnail
+    label: hidden
+    settings:
+      image_link: content
+      image_style: course_list
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  body: true
+  field_disease_type: true
+  field_metatags: true
+  field_note_type: true
+  field_tags: true
+  langcode: true
+  links: true

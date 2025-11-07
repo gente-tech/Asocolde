@@ -1,0 +1,22 @@
+uuid: dd8d2f87-cd97-4476-9bb7-5fa11b8393c5
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.frequent_question
+id: node.frequent_question.promote
+field_name: promote
+entity_type: node
+bundle: frequent_question
+label: 'Promoted to front page'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

@@ -1,0 +1,20 @@
+uuid: 44f13423-2436-4e82-a4d5-19b0dda7a3ef
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_years_residency
+field_name: field_years_residency
+entity_type: user
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,9 @@
+uuid: 87883880-aa01-4d58-9f79-68ba1f4678f5
+langcode: es
+status: true
+dependencies: {  }
+id: assistant
+label: 'Asistente de revista'
+weight: -6
+is_admin: null
+permissions: {  }

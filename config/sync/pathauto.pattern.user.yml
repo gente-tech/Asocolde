@@ -1,0 +1,14 @@
+uuid: e6045349-a567-49c0-9b42-252874ce1e58
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user
+label: Usuario
+type: 'canonical_entities:user'
+pattern: 'perfil-medico/dermatologo-[user:field_first_name]-[user:field_first_surname]'
+selection_criteria: {  }
+selection_logic: and
+weight: 0
+relationships: {  }

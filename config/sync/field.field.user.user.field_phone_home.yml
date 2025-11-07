@@ -1,0 +1,21 @@
+uuid: d9e367a2-5985-46a0-8e3b-82da4c185fab
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_phone_home
+  module:
+    - telephone
+    - user
+id: user.user.field_phone_home
+field_name: field_phone_home
+entity_type: user
+bundle: user
+label: 'Teléfono fijo residencia'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: telephone

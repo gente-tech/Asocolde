@@ -1,0 +1,31 @@
+uuid: e88744cb-c606-4620-a0db-5ac7c27e4b5f
+langcode: es
+status: true
+dependencies:
+  config:
+    - eck.eck_type.membership.membership
+    - field.storage.membership.field_membership_status
+  module:
+    - field_config_cardinality
+    - options
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: membership.membership.field_membership_status
+field_name: field_membership_status
+entity_type: membership
+bundle: membership
+label: Estado
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: pagado
+default_value_callback: ''
+settings: {  }
+field_type: list_string

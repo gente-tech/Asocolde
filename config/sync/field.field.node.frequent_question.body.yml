@@ -1,0 +1,27 @@
+uuid: f8c11b65-b89e-4b97-baf8-c042b0247a51
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.frequent_question
+  module:
+    - field_config_cardinality
+    - text
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: node.frequent_question.body
+field_name: body
+entity_type: node
+bundle: frequent_question
+label: 'Pregunta del paciente'
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: false
+  required_summary: false
+field_type: text_with_summary

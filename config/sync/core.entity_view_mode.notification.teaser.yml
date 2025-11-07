@@ -1,0 +1,10 @@
+uuid: f864f09b-6b1f-4b11-9ac8-d88a1acc2343
+langcode: es
+status: true
+dependencies:
+  module:
+    - eck
+id: notification.teaser
+label: Teaser
+targetEntityType: notification
+cache: true

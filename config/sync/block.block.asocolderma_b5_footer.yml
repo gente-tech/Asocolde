@@ -1,0 +1,36 @@
+uuid: eb0b6c63-351f-416b-aa53-3bd77462aaa2
+langcode: es
+status: true
+dependencies:
+  config:
+    - system.menu.footer
+  module:
+    - block_visibility_groups
+    - system
+  theme:
+    - asocolderma_b5
+_core:
+  default_config_hash: 5M4hVXyvuAEBqE75PX0pxokWwIWwSfDxeQ6KZaBvsy4
+id: asocolderma_b5_footer
+theme: asocolderma_b5
+region: footer_bottom_left
+weight: -21
+provider: null
+plugin: 'system_menu_block:footer'
+settings:
+  id: 'system_menu_block:footer'
+  label: Footer
+  label_display: '0'
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  request_path:
+    id: request_path
+    negate: true
+    pages: '<front>'

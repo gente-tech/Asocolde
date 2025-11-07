@@ -1,0 +1,11 @@
+uuid: c9d5ec29-9ea1-431f-a454-376727df2965
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.peer_evaluators
+id: taxonomy_term.peer_evaluators
+target_entity_type_id: taxonomy_term
+target_bundle: peer_evaluators
+default_langcode: site_default
+language_alterable: false

@@ -1,0 +1,29 @@
+uuid: b6fe1290-2262-4348-84af-15b7ca62d0ba
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_tags
+    - node.type.news_magazine
+    - taxonomy.vocabulary.tags
+id: node.news_magazine.field_tags
+field_name: field_tags
+entity_type: node
+bundle: news_magazine
+label: Etiquetas
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      tags: tags
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

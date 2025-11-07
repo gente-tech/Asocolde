@@ -1,0 +1,18 @@
+uuid: 4acfb264-a141-42bc-b028-5dba2a520052
+langcode: es
+status: true
+dependencies:
+  module:
+    - eck
+id: banner_home.field_status
+field_name: field_status
+entity_type: banner_home
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,8 @@
+uuid: 3caaadd6-66a2-449e-8e3e-4a803829280c
+langcode: es
+status: true
+dependencies: {  }
+name: 'Servicios y especialidades'
+vid: services_specialties
+description: 'Servicios y especialidades del médico dermatólogo'
+weight: 0

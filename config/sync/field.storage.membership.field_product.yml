@@ -1,0 +1,20 @@
+uuid: 66c18a94-98a4-4122-a939-6ceb145eb9c4
+langcode: es
+status: true
+dependencies:
+  module:
+    - commerce_product
+    - eck
+id: membership.field_product
+field_name: field_product
+entity_type: membership
+type: entity_reference
+settings:
+  target_type: commerce_product
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

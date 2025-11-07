@@ -1,0 +1,29 @@
+uuid: 7281ed36-c709-4fa7-92ba-66b11f32c367
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.section.field_body_class
+    - field.field.node.section.field_metatags
+    - field.field.node.section.field_social_share
+    - field.field.node.section.layout_builder__layout
+    - node.type.section
+  module:
+    - user
+id: node.section.teaser
+targetEntityType: node
+bundle: section
+mode: teaser
+content:
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_body_class: true
+  field_metatags: true
+  field_social_share: true
+  langcode: true
+  layout_builder__layout: true

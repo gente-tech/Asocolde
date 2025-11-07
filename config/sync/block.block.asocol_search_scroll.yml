@@ -1,0 +1,30 @@
+uuid: 80c6ef81-70ad-4ce6-82fb-7e3bef900307
+langcode: es
+status: true
+dependencies:
+  module:
+    - asocol
+    - block_visibility_groups
+    - system
+  theme:
+    - asocolderma_b5
+id: asocol_search_scroll
+theme: asocolderma_b5
+region: header_scroll
+weight: -24
+provider: null
+plugin: asocol_search
+settings:
+  id: asocol_search
+  label: 'Asocol Search'
+  label_display: '0'
+  provider: asocol
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  request_path:
+    id: request_path
+    negate: true
+    pages: '<front>'

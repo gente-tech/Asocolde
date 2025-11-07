@@ -1,0 +1,210 @@
+uuid: b53d7bac-ddfa-4150-a7bc-783fbafdc51e
+langcode: es
+status: true
+dependencies:
+  enforced:
+    module:
+      - asocol_migrate
+_core:
+  default_config_hash: 9-SUz2j8yuYWxmfe0Ckmz810g9PjVMqcZdrFU8yGgk4
+id: asocolderma_user
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags: null
+migration_group: asocolderma
+label: 'Asocolderma user migration'
+source:
+  plugin: asocolderma_user
+  target: asocol_d7
+process:
+  uid: uid
+  name: name
+  pass: pass
+  mail: mail
+  status: status
+  created: created
+  changed: changed
+  access: access
+  login: login
+  timezone: timezone
+  langcode:
+    plugin: default_value
+    default_value: es
+  preferred_langcode:
+    plugin: default_value
+    default_value: es
+  preferred_admin_langcode:
+    plugin: default_value
+    default_value: es
+  init: init
+  roles:
+    plugin: static_map
+    bypass: true
+    source: roles
+    map:
+      3: administrator
+      4: dermatologist
+  field_notifications: field_recibir_notificaciones
+  field_profile_directory: field_mostrar_mi_perfil_a_los_pa
+  field_services_show: field_mostrar_servicios
+  field_recertificate: field_participar_re_certificacio
+  field_first_name: field_nombres
+  field_second_name: field_segundo_nombre
+  field_first_surname: field_apellidos
+  field_second_surname: field_segundo_apellido
+  field_sex: field_sexo
+  user_picture/target_id: field_field_user_avatar_fid
+  user_picture/alt: field_field_user_avatar_alt
+  user_picture/title: field_field_user_avatar_title
+  field_university_degree/target_id: field_titulo_universitario
+  field_city/target_id: field_ciudad
+  field_mail_public: field_email_publico
+  field_website/uri: field_sitio_web
+  field_office_hours: field_horario_de_atencion
+  field_phone_one: field_telefono
+  field_phone_two: field_telefono_2
+  field_profile: field_informacion_de_perfil
+  field_medicine_school/target_id: field_facultad_de_medicina
+  field_university_residence/target_id: field_universidad_de_residencia
+  field_office_images:
+    plugin: sub_process
+    source: field_imagen_consultorio
+    process:
+      target_id: fid
+      alt: alt
+      title: title
+  field_legal_terms: field_acepto_terminos
+  field_address_office: field_direccion_most
+  field_geolocation_office/lat: field_ubicacion_mapa_lat
+  field_geolocation_office/lng: field_ubicacion_mapa_lng
+  field_geolocation_office/lat_sin: field_ubicacion_mapa_lat_sin
+  field_geolocation_office/lat_cos: field_ubicacion_mapa_lat_cos
+  field_geolocation_office/lng_rad: field_ubicacion_mapa_lng_rad
+  field_mail_personal: field_correo_electronico_persona
+  field_phone_home: field_telefono_fijo_residencia
+  field_address_home: field_direccion_de_residencia
+  field_phone_mobile: field_celular
+  field_correspondence:
+    plugin: static_map
+    bypass: true
+    source: field_recibir_correspondencia
+    map:
+      - office
+      - home
+  field_services_specialties:
+    plugin: sub_process
+    source: field_servicios_y_especialidades
+    process:
+      target_id: tid
+  field_laser: field_tratamientos_laser
+  field_medical_speciality: field_otra_especialidad
+  field_tags:
+    plugin: sub_process
+    source: field_tags_perfil
+    process:
+      target_id: tid
+  field_membership: field_estado_afiliacion
+  field_document_type:
+    plugin: static_map
+    bypass: true
+    source: field_tipo_de_documento
+    map:
+      'Cédula de Ciudadania': CC
+      'Cédula de Extranjería': CE
+      Pasaporte: PA
+      'Tarjeta de Extranjería': TE
+  field_document_number: field_no_identificacion
+  field_country: field_pais
+  field_type_associated:
+    plugin: static_map
+    bypass: true
+    source: field_tipo_de_asociado
+    map:
+      Número: numero
+      Adherente: adherente
+      Correspondiente: correspondiente
+      Internacional: internacional
+  field_phone_mobile_office: field_no_celular_del_consultorio
+  field_phone_office: field_tel_fono_del_consultorio
+  field_birthday: field_fecha_de_nacimiento
+  field_civil_status: field_estado_civil_
+  field_department: field_departamento
+  field_university_undergraduate: field_universidad_de_pregrado
+  field_rethus: field_registro_medico
+  field_years_residency: field_field_anos_residencia
+  field_date_postgraduate: field_fecha_post_grado
+  field_university_subspecialty: field_universidad_de_subespecial
+  field_subspecialty: field_nombre_de_la_subespecialid
+  field_date_subspecialty: field_fecha_de_grado_de_subespec
+  field_subspecialty_years: field_anos_subespecialidad
+  field_associate_number_1: field_asociado_presentan1
+  field_associate_number_2: field_asociado_presentan_2
+  field_admission_application/target_id: field_field_carta_ingreso_fid
+  field_admission_application/display: field_field_carta_ingreso_display
+  field_admission_application/description: field_field_carta_ingreso_description
+  field_document_file/target_id: field_field_dc_scanner_fid
+  field_document_file/display: field_field_dc_scanner_display
+  field_document_file/description: field_field_dc_scanner_description
+  field_cv/target_id: field_hoja_de_vida_fid
+  field_cv/display: field_hoja_de_vida_display
+  field_cv/description: field_hoja_de_vida_description
+  field_rut/target_id: field_rut_fid
+  field_rut/display: field_rut_display
+  field_rut/description: field_rut_description
+  field_undergraduate_diploma/target_id: field_diploma_pregrado_fid
+  field_undergraduate_diploma/display: field_diploma_pregrado_display
+  field_undergraduate_diploma/description: field_diploma_pregrado_description
+  field_postgraduate_diploma/target_id: field_diploma_especializacion_fid
+  field_postgraduate_diploma/display: field_diploma_especializacion_display
+  field_postgraduate_diploma/description: field_diploma_especializacion_description
+  field_postgraduate_certificate/target_id: field_acta_de_grado_especializac_fid
+  field_postgraduate_certificate/display: field_acta_de_grado_especializac_display
+  field_postgraduate_certificate/description: field_acta_de_grado_especializac_description
+  field_undergraduate_certificate/target_id: field_acta_de_grado_pregrado_fid
+  field_undergraduate_certificate/display: field_acta_de_grado_pregrado_display
+  field_undergraduate_certificate/description: field_acta_de_grado_pregrado_description
+  field_recommendation_1/target_id: field_carta_asociado_1_fid
+  field_recommendation_1/display: field_carta_asociado_1_display
+  field_recommendation_1/description: field_carta_asociado_1_description
+  field_recommendation_2/target_id: field_carta_asociado_2_fid
+  field_recommendation_2/display: field_carta_asociado_2_display
+  field_recommendation_2/description: field_carta_asociado_2_description
+  field_professional_card/target_id: field_tarjeta_profesional_fid
+  field_professional_card/display: field_tarjeta_profesional_display
+  field_professional_card/description: field_tarjeta_profesional_description
+  field_camec_score/target_id: field_pdf_puntaje_rec_camec_fid
+  field_camec_score/display: field_pdf_puntaje_rec_camec_display
+  field_camec_score/description: field_pdf_puntaje_rec_camec_description
+  field_national_congress: field_congreso_nacional_de_derma
+  field_congress_specialties: field_congreso_de_especialidades
+  field_points_scientific: field_puntos_por_pertenecer_a_un
+  field_points_congress: field_congresos_nacionales_e_int
+  field_points_work: field_en_su_consultorio_particul
+  field_dermatologist_recertified: field_dermatologo_recertificado
+  field_magazine_points: field_autor_art_culo_revista_aso
+  field_journal_committee_points: field_editoriales_cartas_al_comi
+  field_research_points: field_art_culo_de_investigaci_n_
+  field_content_website_points: field_art_culo_o_contenido_para_
+  field_book_chapter_points: field_autor_de_cap_tulo_de_libro
+  field_book_editor_points: field_autor_o_editor_de_libro_de
+  field_journal_editor_points: field_editor_de_revista_cient_fi
+  field_member_committee_points: field_miembro_de_comit_editorial
+  field_member_scicommittee_points: field_miembro_de_comit_cient_fic
+  field_president_directorate: field_presidente_junta_directiva
+  field_member_directorate_points: field_miembro_de_junta_directiva
+  field_scientific_works_points: field_portrabajos_cient_ficos_de
+  field_membership_payment_date: field_fecha_pago_afiliacion
+  field_membership_expiration_date: field_fecha_vence_afiliacion
+  field_office_description: field_direccion_consultorio
+  field_courses_diplomas: field_cursos_y_diplomados_ayuda_
+  field_publications_books: field_publicaciones_en_libros_de
+  field_publications_journals: field_publicaciones_en_revistas_
+  field_publications_web: field_publicaciones_en_la_web_ay
+  field_teacher_activity: field_actividad_como_docente_ayu
+  field_master_doctor: field_maestr_as_o_doctorados_ayu
+  field_awards_distinctions: field_premios_y_distinciones_ayu
+  field_other_activities: field_otras_actividades_no_inclu
+destination:
+  plugin: 'entity:user'
+migration_dependencies: null

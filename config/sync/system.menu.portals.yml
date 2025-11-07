@@ -1,0 +1,8 @@
+uuid: db136230-fd2f-474a-910e-c45b876438f6
+langcode: es
+status: true
+dependencies: {  }
+id: portals
+label: 'Nuestros portales'
+description: ''
+locked: false

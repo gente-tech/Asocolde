@@ -1,0 +1,8 @@
+uuid: c7fda94a-6a8b-40d7-b88d-f90c4c58f1b8
+langcode: es
+status: true
+dependencies: {  }
+id: social-network
+label: 'Redes sociales'
+description: ''
+locked: false

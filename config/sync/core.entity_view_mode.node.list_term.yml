@@ -1,0 +1,10 @@
+uuid: 6e72cdc0-dbfa-47a0-9f24-344242832170
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+id: node.list_term
+label: 'List Taxonomy Term'
+targetEntityType: node
+cache: true

@@ -1,0 +1,34 @@
+uuid: c56b66a9-4170-482d-b0e2-58a3b9276493
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_tags
+    - node.type.skin_illness
+    - taxonomy.vocabulary.tags
+  module:
+    - field_config_cardinality
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '-1'
+id: node.skin_illness.field_tags
+field_name: field_tags
+entity_type: node
+bundle: skin_illness
+label: Tags
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      tags: tags
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

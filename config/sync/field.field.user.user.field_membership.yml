@@ -1,0 +1,32 @@
+uuid: 0d9855eb-dc25-4c30-b291-adf06c889036
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_membership
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_membership
+field_name: field_membership
+entity_type: user
+bundle: user
+label: Afiliación
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

@@ -1,0 +1,34 @@
+uuid: 1eb1c89b-d2f1-4ef0-ac14-dabe2148735a
+langcode: es
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_type.default
+    - field.storage.commerce_product.field_category
+    - taxonomy.vocabulary.product
+  module:
+    - field_config_cardinality
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: commerce_product.default.field_category
+field_name: field_category
+entity_type: commerce_product
+bundle: default
+label: Categoría
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      product: product
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

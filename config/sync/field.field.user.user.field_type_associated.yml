@@ -1,0 +1,21 @@
+uuid: 1a673547-99d3-48d0-b549-d1c3bdafb095
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_type_associated
+  module:
+    - options
+    - user
+id: user.user.field_type_associated
+field_name: field_type_associated
+entity_type: user
+bundle: user
+label: 'Tipo de Asociado al que aspira'
+description: '<p><a href="/terminos-legales" target="_blank">Conozca los tipos de Asociados</a></p>'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

@@ -1,0 +1,31 @@
+uuid: e81e707b-01e3-47b3-97fa-c067318d9fc3
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_content.type.prehome
+    - field.storage.block_content.field_link
+  module:
+    - field_config_cardinality
+    - link
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: block_content.prehome.field_link
+field_name: field_link
+entity_type: block_content
+bundle: prehome
+label: Enlace
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 0
+  link_type: 1
+field_type: link

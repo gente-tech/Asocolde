@@ -1,0 +1,35 @@
+uuid: 540e620b-4422-4ae8-9e82-275af10a358b
+langcode: es
+status: true
+dependencies:
+  content:
+    - 'block_content:highlight:1a1e0d6d-c333-4a73-9b6e-06f929bc3069'
+  module:
+    - block_content
+    - block_visibility_groups
+    - system
+  theme:
+    - asocolderma_b5
+id: highlight_dermatologist_find
+theme: asocolderma_b5
+region: content_column_top_right
+weight: -26
+provider: null
+plugin: 'block_content:1a1e0d6d-c333-4a73-9b6e-06f929bc3069'
+settings:
+  id: 'block_content:1a1e0d6d-c333-4a73-9b6e-06f929bc3069'
+  label: '¿Cómo encuentro un dermatólogo?'
+  label_display: visible
+  provider: block_content
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  request_path:
+    id: request_path
+    negate: false
+    pages: /pacientes

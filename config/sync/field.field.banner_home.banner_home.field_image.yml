@@ -1,0 +1,42 @@
+uuid: f01b8dea-56b9-41b3-94a7-aff471f126ca
+langcode: es
+status: true
+dependencies:
+  config:
+    - eck.eck_type.banner_home.banner_home
+    - field.storage.banner_home.field_image
+  module:
+    - field_config_cardinality
+    - image
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: banner_home.banner_home.field_image
+field_name: field_image
+entity_type: banner_home
+bundle: banner_home
+label: Imagen
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: banner
+  file_extensions: 'png gif jpg jpeg'
+  max_filesize: '1 MB'
+  max_resolution: 1200x340
+  min_resolution: ''
+  alt_field: false
+  alt_field_required: false
+  title_field: false
+  title_field_required: false
+  default_image:
+    uuid: 9e16e4e9-c539-422e-a707-0f891f8a9a8e
+    alt: ''
+    title: ''
+    width: 700
+    height: 450
+field_type: image

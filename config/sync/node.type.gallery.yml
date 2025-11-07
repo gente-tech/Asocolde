@@ -1,0 +1,17 @@
+uuid: 4b269e72-c12d-4082-a2b3-9b2f7fe50937
+langcode: es
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: 'Galería de imágenes'
+type: gallery
+description: ''
+help: ''
+new_revision: true
+preview_mode: 0
+display_submitted: false

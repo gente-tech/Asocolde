@@ -1,0 +1,23 @@
+uuid: a4cbd632-a5d6-4d14-b452-2408ddceb394
+langcode: es
+status: true
+dependencies:
+  module:
+    - file
+    - user
+id: user.field_admission_application
+field_name: field_admission_application
+entity_type: user
+type: file
+settings:
+  target_type: file
+  display_field: false
+  display_default: false
+  uri_scheme: public
+module: file
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

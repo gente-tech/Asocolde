@@ -1,0 +1,23 @@
+uuid: 6e4b415d-c135-49a5-bb9d-9db7a876a43e
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.skin_illness
+  module:
+    - text
+id: node.skin_illness.body
+field_name: body
+entity_type: node
+bundle: skin_illness
+label: Body
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+  required_summary: false
+field_type: text_with_summary

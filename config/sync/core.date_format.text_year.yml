@@ -1,0 +1,8 @@
+uuid: 3d2d437b-bf8a-4a29-af9d-a14ecca27f97
+langcode: es
+status: true
+dependencies: {  }
+id: text_year
+label: 'Text Year'
+locked: false
+pattern: 'F Y'

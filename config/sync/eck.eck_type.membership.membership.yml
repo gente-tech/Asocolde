@@ -1,0 +1,9 @@
+uuid: e868b3dd-02d4-4909-8a49-549ed705ce20
+langcode: es
+status: true
+dependencies:
+  config:
+    - eck.eck_entity_type.membership
+name: Membership
+type: membership
+description: ''

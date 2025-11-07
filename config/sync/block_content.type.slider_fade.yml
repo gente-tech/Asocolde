@@ -1,0 +1,8 @@
+uuid: c3800243-9823-44e6-9f03-2dddac9c896f
+langcode: es
+status: true
+dependencies: {  }
+id: slider_fade
+label: 'Slider fade'
+revision: 0
+description: ''

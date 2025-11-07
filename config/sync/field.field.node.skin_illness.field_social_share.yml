@@ -1,0 +1,29 @@
+uuid: 7e6f3a66-1cbc-4764-881f-f78f21d7e2ad
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_social_share
+    - node.type.skin_illness
+  module:
+    - field_config_cardinality
+    - social_media
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: node.skin_illness.field_social_share
+field_name: field_social_share
+entity_type: node
+bundle: skin_illness
+label: 'Social share'
+description: ''
+required: true
+translatable: true
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: social_media

@@ -1,0 +1,31 @@
+uuid: 3a68eda4-d866-4d87-9af5-65addbae2693
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.field.menu_link_content.sidebar-left.field_content_hover
+    - system.menu.sidebar-left
+  module:
+    - block_field
+    - ds
+id: menu_link_content.sidebar-left.default
+targetEntityType: menu_link_content
+bundle: sidebar-left
+mode: default
+content:
+  children:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_content_hover:
+    type: block_field
+    label: hidden
+    settings: {  }
+    third_party_settings:
+      ds:
+        ds_limit: ''
+    weight: 2
+    region: content
+hidden:
+  langcode: true

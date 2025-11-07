@@ -1,0 +1,14 @@
+uuid: f45e7759-bc47-449b-9868-6d24e34751b6
+langcode: es
+status: true
+dependencies: {  }
+name: carousel
+label: 'Carrusel (140x120)'
+effects:
+  8e65da30-4a80-4996-9108-0791d2bf5fc8:
+    uuid: 8e65da30-4a80-4996-9108-0791d2bf5fc8
+    id: image_resize
+    weight: 1
+    data:
+      width: 140
+      height: 120

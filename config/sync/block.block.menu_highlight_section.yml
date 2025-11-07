@@ -1,0 +1,34 @@
+uuid: 8e4a8003-2913-494f-bf17-3bca14bb039e
+langcode: es
+status: true
+dependencies:
+  config:
+    - system.menu.highlight-section
+  module:
+    - block_visibility_groups
+    - system
+  theme:
+    - asocolderma_b5
+id: menu_highlight_section
+theme: asocolderma_b5
+region: footer_top_left
+weight: -25
+provider: null
+plugin: 'system_menu_block:highlight-section'
+settings:
+  id: 'system_menu_block:highlight-section'
+  label: 'Secciones destacadas'
+  label_display: visible
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  request_path:
+    id: request_path
+    negate: true
+    pages: '<front>'

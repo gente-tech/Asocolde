@@ -1,0 +1,8 @@
+uuid: 123a964d-0834-4303-8db1-a14957242201
+langcode: es
+status: true
+dependencies: {  }
+id: newspaper
+label: 'Bloque Revista'
+revision: 0
+description: ''

@@ -1,0 +1,20 @@
+uuid: cc0d0f7f-e12f-4388-bd0d-e2168a6547df
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_first_name
+  module:
+    - user
+id: user.user.field_first_name
+field_name: field_first_name
+entity_type: user
+bundle: user
+label: 'Primer Nombre'
+description: 'Solo se permiten letras y espacios.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

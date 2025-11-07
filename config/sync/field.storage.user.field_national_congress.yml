@@ -1,0 +1,20 @@
+uuid: b3db46ef-00d7-4758-9468-0ed44415f1d6
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_national_congress
+field_name: field_national_congress
+entity_type: user
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

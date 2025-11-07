@@ -1,0 +1,14 @@
+uuid: b3b4e456-6a19-4c77-999f-1621727f7da6
+langcode: es
+status: true
+dependencies: {  }
+id: membership
+label: Afiliación
+traits: {  }
+locked: false
+description: ''
+variationType: null
+variationTypes:
+  - membership
+multipleVariations: false
+injectVariationFields: true

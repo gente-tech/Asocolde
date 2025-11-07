@@ -1,0 +1,24 @@
+uuid: 02e02403-a172-4dab-8995-af3f0c8110ce
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_office_hours
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: user.user.field_office_hours
+field_name: field_office_hours
+entity_type: user
+bundle: user
+label: 'Horario de atención'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

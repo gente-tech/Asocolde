@@ -1,0 +1,34 @@
+uuid: 2a4c85df-4ccf-4055-84f3-beb677945b97
+langcode: es
+status: true
+dependencies:
+  config:
+    - eck.eck_type.banner_home.banner_home
+    - field.storage.banner_home.field_banner_location
+    - taxonomy.vocabulary.banner_location
+  module:
+    - field_config_cardinality
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+id: banner_home.banner_home.field_banner_location
+field_name: field_banner_location
+entity_type: banner_home
+bundle: banner_home
+label: 'Ubicación del banner'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      banner_location: banner_location
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

@@ -1,0 +1,36 @@
+uuid: aa3bbb7a-d019-4e4a-ba8c-a6401d7237f3
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_note_type
+field_name: field_note_type
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: texto
+      label: Artículo
+    -
+      value: video
+      label: Video
+    -
+      value: image
+      label: Imagen
+    -
+      value: audio
+      label: Audio
+    -
+      value: galeria
+      label: Galería
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

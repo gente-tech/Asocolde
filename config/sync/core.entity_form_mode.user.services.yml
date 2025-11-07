@@ -1,0 +1,10 @@
+uuid: 5ebecb14-ca18-4035-ba31-b72b4a8e58c6
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.services
+label: Servicios
+targetEntityType: user
+cache: true

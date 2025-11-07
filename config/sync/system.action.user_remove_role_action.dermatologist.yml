@@ -1,0 +1,14 @@
+uuid: 3925ab3b-5934-42af-97db-e72035c0955e
+langcode: es
+status: true
+dependencies:
+  config:
+    - user.role.dermatologist
+  module:
+    - user
+id: user_remove_role_action.dermatologist
+label: 'Elimina el rol Dermatólogo al(los) usuario(s) seleccionado(s)'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: dermatologist

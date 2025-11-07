@@ -1,0 +1,32 @@
+uuid: 1007d63a-117e-4daf-8e37-ea1e66e5d6aa
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_years_residency
+  module:
+    - field_config_cardinality
+    - user
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: user.user.field_years_residency
+field_name: field_years_residency
+entity_type: user
+bundle: user
+label: 'Años aprobados de Residencia especialización'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 0
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

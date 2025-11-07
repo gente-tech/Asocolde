@@ -1,0 +1,38 @@
+uuid: 0df5fc78-863e-4d81-946b-54da032e931c
+langcode: es
+status: true
+dependencies:
+  config:
+    - commerce_product.commerce_product_type.membership
+    - field.storage.commerce_product.field_year
+    - taxonomy.vocabulary.membership_year
+  module:
+    - field_config_cardinality
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: commerce_product.membership.field_year
+field_name: field_year
+entity_type: commerce_product
+bundle: membership
+label: 'Año Afiliación'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      membership_year: membership_year
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

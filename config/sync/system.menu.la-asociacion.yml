@@ -1,0 +1,8 @@
+uuid: a174c766-a036-4c00-ac19-7fe6838ce614
+langcode: es
+status: true
+dependencies: {  }
+id: la-asociacion
+label: 'La asociación'
+description: ''
+locked: false

@@ -1,0 +1,42 @@
+uuid: a0101d73-a25f-49ab-8a35-385205f5f7d9
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_content.type.newspaper
+    - field.storage.block_content.field_articles
+    - paragraphs.paragraphs_type.newspaper
+  module:
+    - entity_reference_revisions
+    - field_config_cardinality
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '-1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: block_content.newspaper.field_articles
+field_name: field_articles
+entity_type: block_content
+bundle: newspaper
+label: Artículos
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      newspaper: newspaper
+    negate: 0
+    target_bundles_drag_drop:
+      link_image:
+        weight: 3
+        enabled: false
+      newspaper:
+        weight: 4
+        enabled: true
+field_type: entity_reference_revisions

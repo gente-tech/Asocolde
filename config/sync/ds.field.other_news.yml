@@ -1,0 +1,11 @@
+id: other_news
+label: 'Otras noticias'
+ui_limit: 'article|*'
+type: block
+type_label: 'Block field'
+entities:
+  node: node
+properties:
+  block: 'views_block:articles_detail-block_other_news'
+  use_block_title: false
+  add_block_wrappers: false

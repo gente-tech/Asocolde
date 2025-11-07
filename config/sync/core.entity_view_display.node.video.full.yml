@@ -1,0 +1,178 @@
+uuid: e0d88165-2058-4b59-9ea0-1d47dedf90e2
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.full
+    - field.field.node.video.body
+    - field.field.node.video.field_disease_type
+    - field.field.node.video.field_metatags
+    - field.field.node.video.field_note_type
+    - field.field.node.video.field_social_share
+    - field.field.node.video.field_source
+    - field.field.node.video.field_tags
+    - field.field.node.video.field_video
+    - node.type.video
+  module:
+    - ds
+    - field_group
+    - layout_builder
+    - metatag
+    - social_media
+    - text
+    - user
+third_party_settings:
+  layout_builder:
+    enabled: false
+    allow_custom: false
+  ds:
+    layout:
+      id: ds_1col
+      library: null
+      disable_css: false
+      entity_classes: all_classes
+      settings:
+        classes:
+          layout_class: {  }
+        wrappers:
+          ds_content: div
+        outer_wrapper: div
+        attributes: ''
+        link_attribute: ''
+        link_custom: ''
+        label: ''
+    regions:
+      ds_content:
+        - group_top
+        - node_post_date
+        - node_title
+        - node_author
+        - body
+        - field_video
+        - field_tags
+        - field_metatags
+        - group_letter_options
+        - node_print
+        - 'dynamic_block_field:node-text_resize'
+        - field_social_share
+    fields:
+      node_post_date:
+        plugin_id: node_post_date
+        weight: 1
+        label: hidden
+        formatter: ds_post_date_long
+      node_print:
+        plugin_id: node_print
+        weight: 21
+        label: hidden
+        formatter: default
+      'dynamic_block_field:node-text_resize':
+        plugin_id: 'dynamic_block_field:node-text_resize'
+        weight: 22
+        label: hidden
+        formatter: default
+      node_author:
+        plugin_id: node_author
+        weight: 3
+        label: hidden
+        formatter: author
+      node_title:
+        plugin_id: node_title
+        weight: 2
+        label: hidden
+        formatter: default
+        settings:
+          link: false
+          'link class': ''
+          wrapper: h1
+          class: ''
+  field_group:
+    group_top:
+      children:
+        - group_letter_options
+        - field_social_share
+      label: Top
+      parent_name: ''
+      region: ds_content
+      weight: 0
+      format_type: html_element
+      format_settings:
+        classes: accesibility-options
+        show_empty_fields: false
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+    group_letter_options:
+      children:
+        - node_print
+        - 'dynamic_block_field:node-text_resize'
+      label: letter-options
+      parent_name: group_top
+      region: ds_content
+      weight: 20
+      format_type: html_element
+      format_settings:
+        classes: letter-options
+        show_empty_fields: false
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+id: node.video.full
+targetEntityType: node
+bundle: video
+mode: full
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 4
+    region: ds_content
+  field_metatags:
+    type: metatag_empty_formatter
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 7
+    region: ds_content
+  field_social_share:
+    type: social_media_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 23
+    region: ds_content
+  field_tags:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 6
+    region: ds_content
+  field_video:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: full
+      link: false
+    third_party_settings: {  }
+    weight: 5
+    region: ds_content
+hidden:
+  field_disease_type: true
+  field_note_type: true
+  field_source: true
+  langcode: true
+  links: true

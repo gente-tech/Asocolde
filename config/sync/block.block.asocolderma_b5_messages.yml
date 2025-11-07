@@ -1,0 +1,22 @@
+uuid: 1efd5bde-9534-406b-90d1-71ab4ad41b00
+langcode: es
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - asocolderma_b5
+_core:
+  default_config_hash: 8RZqmxm5unlvDod-jN0pLX6lKXccwQTHhk-pAEM0ZqM
+id: asocolderma_b5_messages
+theme: asocolderma_b5
+region: content
+weight: -31
+provider: null
+plugin: system_messages_block
+settings:
+  id: system_messages_block
+  label: Messages
+  label_display: '0'
+  provider: system
+visibility: {  }

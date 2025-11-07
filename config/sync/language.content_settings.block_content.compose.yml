@@ -1,0 +1,11 @@
+uuid: 573f83af-9d5c-4bf1-8d9c-95960338f99d
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_content.type.compose
+id: block_content.compose
+target_entity_type_id: block_content
+target_bundle: compose
+default_langcode: site_default
+language_alterable: false

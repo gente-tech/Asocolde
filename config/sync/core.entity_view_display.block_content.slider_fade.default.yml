@@ -1,0 +1,120 @@
+uuid: f3b931fb-e7e4-4651-905d-a89df269c353
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_content.type.slider_fade
+    - field.field.block_content.slider_fade.body
+    - field.field.block_content.slider_fade.field_image
+  module:
+    - ds
+    - slick
+    - text
+third_party_settings:
+  ds:
+    layout:
+      id: bs_2col
+      library: null
+      disable_css: false
+      entity_classes: all_classes
+      settings:
+        label: ''
+        layout:
+          wrapper: div
+          classes:
+            row: row
+          add_layout_class: 1
+          attributes: ''
+        regions:
+          left:
+            wrapper: div
+            classes:
+              col-sm-8: col-sm-8
+            add_region_classes: 1
+            attributes: ''
+          right:
+            wrapper: div
+            classes:
+              col-sm-4: col-sm-4
+            add_region_classes: 1
+            attributes: ''
+    regions:
+      left:
+        - block_title
+        - body
+      right:
+        - field_image
+    fields:
+      block_title:
+        plugin_id: block_title
+        weight: 0
+        label: hidden
+        formatter: default
+id: block_content.slider_fade.default
+targetEntityType: block_content
+bundle: slider_fade
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: left
+  field_image:
+    type: slick_image
+    label: hidden
+    settings:
+      caption:
+        title: '0'
+        alt: '0'
+      optionset: slider_fade
+      layout: ''
+      view_mode: ''
+      cache: 0
+      skin: default
+      lazy: ''
+      style: ''
+      background: false
+      box_caption: ''
+      box_caption_custom: ''
+      box_media_style: ''
+      loading: ''
+      preload: false
+      responsive_image_style: ''
+      use_theme_field: false
+      box_style: ''
+      image_style: ''
+      media_switch: ''
+      ratio: ''
+      thumbnail_style: ''
+      grid: ''
+      grid_medium: ''
+      grid_small: ''
+      overridables:
+        arrows: '0'
+        autoplay: '0'
+        dots: '0'
+        draggable: '0'
+        infinite: '0'
+        mouseWheel: '0'
+        randomize: '0'
+        variableWidth: '0'
+      optionset_thumbnail: ''
+      skin_thumbnail: ''
+      thumbnail_caption: ''
+      thumbnail_effect: ''
+      thumbnail_position: ''
+      override: false
+      skin_arrows: ''
+      skin_dots: ''
+      preserve_keys: false
+      visible_items: null
+    third_party_settings:
+      ds:
+        ds_limit: ''
+    weight: 2
+    region: right
+hidden:
+  langcode: true

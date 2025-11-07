@@ -1,0 +1,15 @@
+uuid: 85c09558-ab0f-4c68-a0e3-44169639d463
+langcode: es
+status: true
+dependencies: {  }
+name: article_list
+label: 'Article list (352x250)'
+effects:
+  ad71cbb4-61d5-46d7-86e2-2ffa5edbb5a4:
+    uuid: ad71cbb4-61d5-46d7-86e2-2ffa5edbb5a4
+    id: image_scale
+    weight: 1
+    data:
+      width: 352
+      height: 250
+      upscale: false

@@ -1,0 +1,20 @@
+uuid: 7252bf0e-d3e0-4a9a-bd0e-bdda467ff75e
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_points_scientific
+field_name: field_points_scientific
+entity_type: user
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

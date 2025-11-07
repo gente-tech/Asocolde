@@ -1,0 +1,19 @@
+uuid: c64470dc-8ba5-4b3d-a4d7-c46bdefa7274
+langcode: es
+status: false
+dependencies:
+  module:
+    - commerce_payment_example
+id: test_onsite
+label: 'Prueba onsite'
+weight: -8
+plugin: example_onsite
+configuration:
+  display_label: Example
+  mode: test
+  payment_method_types:
+    - credit_card
+  collect_billing_information: true
+  api_key: dfsdfsdfsdf
+conditions: {  }
+conditionOperator: AND

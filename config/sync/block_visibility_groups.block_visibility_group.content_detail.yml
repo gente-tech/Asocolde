@@ -1,0 +1,36 @@
+uuid: 40e88467-031b-412a-aac0-536c53c7de38
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+    - system
+id: content_detail
+label: 'Content Detail'
+logic: or
+conditions:
+  91ef61d0-c41f-4353-9b43-33f049bf84a5:
+    id: 'entity_bundle:node'
+    negate: false
+    uuid: 91ef61d0-c41f-4353-9b43-33f049bf84a5
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      article: article
+      event: event
+      gallery: gallery
+      page: page
+      video: video
+  d42b4f37-bb8d-492d-bcfc-4aec1eb62df8:
+    id: request_path
+    negate: false
+    uuid: d42b4f37-bb8d-492d-bcfc-4aec1eb62df8
+    context_mapping: {  }
+    pages: "/usuario/*\r\n/la-asociacion/escuelas-dermatologia"
+  cf7ba4d3-88b8-4e9b-a7b9-9d4ed39d8dda:
+    id: request_path
+    negate: true
+    uuid: cf7ba4d3-88b8-4e9b-a7b9-9d4ed39d8dda
+    context_mapping: {  }
+    pages: '<front>'
+allow_other_conditions: false

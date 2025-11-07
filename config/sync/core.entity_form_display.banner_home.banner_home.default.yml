@@ -1,0 +1,80 @@
+uuid: 3b25c8ec-eaee-458b-8d44-698b1b43be9e
+langcode: es
+status: true
+dependencies:
+  config:
+    - eck.eck_type.banner_home.banner_home
+    - field.field.banner_home.banner_home.field_banner_location
+    - field.field.banner_home.banner_home.field_image
+    - field.field.banner_home.banner_home.field_link
+    - field.field.banner_home.banner_home.field_status
+    - image.style.thumbnail
+  module:
+    - image
+    - link
+id: banner_home.banner_home.default
+targetEntityType: banner_home
+bundle: banner_home
+mode: default
+content:
+  created:
+    type: datetime_timestamp
+    weight: 6
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_banner_location:
+    type: options_select
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_image:
+    type: image_image
+    weight: 2
+    region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+  field_link:
+    type: link_default
+    weight: 1
+    region: content
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+  field_status:
+    type: boolean_checkbox
+    weight: 7
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 4
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 5
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden: {  }

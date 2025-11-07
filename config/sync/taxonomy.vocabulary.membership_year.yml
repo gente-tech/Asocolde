@@ -1,0 +1,8 @@
+uuid: e3f64f3c-e0d2-4c37-bab0-8f0dc1c84d85
+langcode: es
+status: true
+dependencies: {  }
+name: 'Años Afiliación'
+vid: membership_year
+description: ''
+weight: 0

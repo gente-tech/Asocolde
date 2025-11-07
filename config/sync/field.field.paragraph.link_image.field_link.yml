@@ -1,0 +1,31 @@
+uuid: a8a4e202-8ea0-42e6-93d8-819bb92da811
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_link
+    - paragraphs.paragraphs_type.link_image
+  module:
+    - field_config_cardinality
+    - link
+third_party_settings:
+  field_config_cardinality:
+    cardinality_config: '1'
+    cardinality_label_config: false
+    unlimited_not_required: ''
+    limited_not_required: ''
+    limited_required: ''
+id: paragraph.link_image.field_link
+field_name: field_link
+entity_type: paragraph
+bundle: link_image
+label: Enlace
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 2
+  link_type: 17
+field_type: link

@@ -1,0 +1,42 @@
+uuid: 0948d531-0801-4e7c-b3e5-0ee4b1f1b646
+langcode: es
+status: true
+dependencies:
+  config:
+    - system.menu.menu-top-anonymous
+  module:
+    - block_visibility_groups
+    - system
+    - user
+  theme:
+    - asocolderma_b5
+id: menu_top_anonymous
+theme: asocolderma_b5
+region: header_scroll
+weight: -23
+provider: null
+plugin: 'system_menu_block:menu-top-anonymous'
+settings:
+  id: 'system_menu_block:menu-top-anonymous'
+  label: 'Menu Top Anónimo'
+  label_display: '0'
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      anonymous: anonymous
+  request_path:
+    id: request_path
+    negate: true
+    pages: '<front>'

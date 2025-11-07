@@ -1,0 +1,11 @@
+uuid: d2125f2d-4fd4-4b1d-b024-68083fa02a5c
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.course_virtual
+id: node.course_virtual
+target_entity_type_id: node
+target_bundle: course_virtual
+default_langcode: site_default
+language_alterable: false

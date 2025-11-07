@@ -1,0 +1,9 @@
+uuid: 16f5928b-f226-4b57-a11b-349fcfb2ac0c
+langcode: es
+status: true
+dependencies: {  }
+id: list
+label: List
+logic: and
+conditions: {  }
+allow_other_conditions: false

@@ -1,0 +1,33 @@
+uuid: f2abcd37-a261-4355-9058-5b0345dc361d
+langcode: es
+status: true
+dependencies:
+  module:
+    - block_visibility_groups
+    - system
+  theme:
+    - asocolderma_b5
+_core:
+  default_config_hash: 0NVfpyQPKZxRuQo9q6vvYWK_taOoQfffMkybqoZx46E
+id: asocolderma_b5_local_tasks
+theme: asocolderma_b5
+region: content
+weight: -30
+provider: null
+plugin: local_tasks_block
+settings:
+  id: local_tasks_block
+  label: Tabs
+  label_display: '0'
+  provider: core
+  primary: true
+  secondary: true
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
+  request_path:
+    id: request_path
+    negate: true
+    pages: '/user/*'

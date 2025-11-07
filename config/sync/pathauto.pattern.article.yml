@@ -1,0 +1,22 @@
+uuid: 224e3cbe-52fc-4dfa-a6fd-fe37e034d637
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+id: article
+label: Artículo
+type: 'canonical_entities:node'
+pattern: '[node:field_type]/[node:field_disease_type]/[node:title]'
+selection_criteria:
+  47be25e7-e7df-4fdc-904f-2e47a45589a8:
+    id: 'entity_bundle:node'
+    negate: false
+    uuid: 47be25e7-e7df-4fdc-904f-2e47a45589a8
+    context_mapping:
+      node: node
+    bundles:
+      article: article
+selection_logic: and
+weight: -5
+relationships: {  }

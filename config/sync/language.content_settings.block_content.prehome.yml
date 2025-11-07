@@ -1,0 +1,11 @@
+uuid: 1449a038-a9a8-4f9f-a12d-9d6df5a45093
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_content.type.prehome
+id: block_content.prehome
+target_entity_type_id: block_content
+target_bundle: prehome
+default_langcode: site_default
+language_alterable: false

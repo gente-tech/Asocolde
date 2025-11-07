@@ -1,0 +1,30 @@
+uuid: 5a7d38d2-79ed-4391-ac69-0b7b869ac91d
+langcode: es
+status: true
+dependencies:
+  content:
+    - 'block_content:image:25e6ab13-2d5e-47fc-ad61-d389c7cd92e0'
+  module:
+    - block_content
+    - block_visibility_groups
+  theme:
+    - asocolderma_b5
+id: logo_header
+theme: asocolderma_b5
+region: nav_branding
+weight: -20
+provider: null
+plugin: 'block_content:25e6ab13-2d5e-47fc-ad61-d389c7cd92e0'
+settings:
+  id: 'block_content:25e6ab13-2d5e-47fc-ad61-d389c7cd92e0'
+  label: Logo
+  label_display: '0'
+  provider: block_content
+  status: true
+  info: ''
+  view_mode: full
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''

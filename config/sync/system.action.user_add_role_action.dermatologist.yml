@@ -1,0 +1,14 @@
+uuid: b73cda5c-5f57-4831-aea4-e62358e6b4b9
+langcode: es
+status: true
+dependencies:
+  config:
+    - user.role.dermatologist
+  module:
+    - user
+id: user_add_role_action.dermatologist
+label: 'Añade el rol Dermatólogo al(los) usuario(s) seleccionado(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: dermatologist

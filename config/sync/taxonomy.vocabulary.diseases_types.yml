@@ -1,0 +1,8 @@
+uuid: 14eec4e1-d0a5-4573-b212-9dfd94a7a33a
+langcode: es
+status: true
+dependencies: {  }
+name: 'Tipos de enfermedades'
+vid: diseases_types
+description: ''
+weight: 0

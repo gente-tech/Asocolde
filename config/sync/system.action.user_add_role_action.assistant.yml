@@ -1,0 +1,14 @@
+uuid: 9a5b84a0-7eb3-4e82-ad88-a7bb15e6a435
+langcode: es
+status: true
+dependencies:
+  config:
+    - user.role.assistant
+  module:
+    - user
+id: user_add_role_action.assistant
+label: 'Añade el rol Asistente de revista al(los) usuario(s) seleccionado(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: assistant

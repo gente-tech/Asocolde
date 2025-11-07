@@ -1,0 +1,18 @@
+uuid: f5a47e49-01b5-46d9-b436-b15f8f3fa2d0
+langcode: es
+status: true
+dependencies:
+  module:
+    - eck
+id: dermatology_school.field_status
+field_name: field_status
+entity_type: dermatology_school
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,21 @@
+uuid: f24303f1-d2c5-4de9-8591-e1a042359268
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_birthday
+  module:
+    - datetime
+    - user
+id: user.user.field_birthday
+field_name: field_birthday
+entity_type: user
+bundle: user
+label: 'Fecha de nacimiento'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

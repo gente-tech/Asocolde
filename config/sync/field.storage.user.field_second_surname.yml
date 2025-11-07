@@ -1,0 +1,21 @@
+uuid: 61a5af6d-50d5-4297-b894-e21fd10e90c3
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.field_second_surname
+field_name: field_second_surname
+entity_type: user
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

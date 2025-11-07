@@ -1,0 +1,14 @@
+uuid: 26955285-d29b-41c9-9959-3cd33c8c18bf
+langcode: es
+status: true
+dependencies: {  }
+name: list_small_term
+label: 'List Small Term (160x120)'
+effects:
+  6b6b792f-26ed-4d52-9ff3-5a366d3cdb75:
+    uuid: 6b6b792f-26ed-4d52-9ff3-5a366d3cdb75
+    id: image_resize
+    weight: 1
+    data:
+      width: 160
+      height: 120

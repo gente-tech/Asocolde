@@ -1,0 +1,10 @@
+uuid: 80f3cf1d-5a52-4cb7-beb7-333432fe75b1
+langcode: es
+status: true
+dependencies: {  }
+id: banner_home
+label: 'Banner Home'
+uid: true
+created: true
+changed: true
+title: true

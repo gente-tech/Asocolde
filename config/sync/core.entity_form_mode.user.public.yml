@@ -1,0 +1,10 @@
+uuid: 3be4d2ca-1392-4c41-9fad-14634770d80c
+langcode: es
+status: true
+dependencies:
+  module:
+    - user
+id: user.public
+label: 'Datos públicos'
+targetEntityType: user
+cache: true

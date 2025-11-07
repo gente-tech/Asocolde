@@ -1,0 +1,24 @@
+uuid: 8510740c-9e9b-4c35-9d05-7d20e60c06b2
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_profile_directory
+  module:
+    - user
+id: user.user.field_profile_directory
+field_name: field_profile_directory
+entity_type: user
+bundle: user
+label: 'Si soy aceptado, mostrar mi perfil a los pacientes en el Directorio'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

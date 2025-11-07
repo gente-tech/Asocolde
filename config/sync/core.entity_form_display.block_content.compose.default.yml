@@ -1,0 +1,49 @@
+uuid: e3f3487f-2de3-44fc-98ac-236c8e4af287
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_content.type.compose
+    - field.field.block_content.compose.field_block_col1
+    - field.field.block_content.compose.field_block_col2
+  module:
+    - block_field
+id: block_content.compose.default
+targetEntityType: block_content
+bundle: compose
+mode: default
+content:
+  field_block_col1:
+    type: block_field_default
+    weight: 26
+    region: content
+    settings:
+      plugin_id: ''
+      settings: {  }
+      configuration_form: full
+    third_party_settings: {  }
+  field_block_col2:
+    type: block_field_default
+    weight: 27
+    region: content
+    settings:
+      plugin_id: ''
+      settings: {  }
+      configuration_form: full
+    third_party_settings: {  }
+  info:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+hidden: {  }

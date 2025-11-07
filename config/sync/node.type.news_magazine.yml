@@ -1,0 +1,17 @@
+uuid: f9b82e04-6eea-4ba4-a7b9-262f3756f7a5
+langcode: es
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: 'Noticia Semanal Revista'
+type: news_magazine
+description: ''
+help: ''
+new_revision: true
+preview_mode: 0
+display_submitted: false

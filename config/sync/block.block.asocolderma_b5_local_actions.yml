@@ -1,0 +1,20 @@
+uuid: 52c8214b-a0da-4cc0-8042-ed4426487bb2
+langcode: es
+status: true
+dependencies:
+  theme:
+    - asocolderma_b5
+_core:
+  default_config_hash: Y7nzG5CbVbffL6BFD_MEiJoIELb4X3HUe2vp4QC5jAY
+id: asocolderma_b5_local_actions
+theme: asocolderma_b5
+region: content
+weight: -28
+provider: null
+plugin: local_actions_block
+settings:
+  id: local_actions_block
+  label: 'Primary admin actions'
+  label_display: '0'
+  provider: core
+visibility: {  }
