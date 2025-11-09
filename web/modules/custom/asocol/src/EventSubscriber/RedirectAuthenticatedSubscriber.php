@@ -17,22 +17,19 @@ class RedirectAuthenticatedSubscriber implements EventSubscriberInterface {
   /**
    * Stores the current user.
    *
-   * @var \Drupal\user\Entity\User
+   * @var \Drupal\Core\Session\AccountProxyInterface
    */
-  protected $currentUser;
+  protected AccountProxyInterface $currentUser;
 
   /**
-   * The current route match.
+   * Path matcher service.
    *
-   * @var \Drupal\Core\Routing\RouteMatchInterface
+   * @var \Drupal\Core\Path\PathMatcherInterface
    */
-  protected $routeMatch;
+  protected PathMatcherInterface $pathMatcher;
 
   /**
    * Constructs a RedirectAuthenticatedSubscriber object.
-   *
-   * @param \Drupal\Core\Path\PathMatcherInterface $pathMatcher
-   *   The path matcher.
    */
   public function __construct(AccountProxyInterface $current_user, PathMatcherInterface $pathMatcher) {
     $this->currentUser = $current_user;
