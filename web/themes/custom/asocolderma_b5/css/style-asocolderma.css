@@ -12517,10 +12517,7 @@ padding-block: 5px !important;
 }
 
 
-
-
-
-.slide__caption{
+.slide__caption:not(:not(.view-events-carousel)){
     background: rgba(0, 0, 0, 0.45) !important;
     padding: 1rem 2rem !important;
     height: 80px !important;
@@ -12547,4 +12544,24 @@ padding-block: 5px !important;
     color: #b5aeae;
     padding-block: 4px;
     display: inline-block;
+}
+
+.block-views-blockarticles-block-slider-videos-destacados .slide__caption{
+  padding: 5px;
+  background: rgba(0, 0, 0, 0.45) !important;
+}
+
+.block-views-blockarticles-block-slider-videos-destacados  .slide__link {
+  margin: 0;
+}
+
+.block-views-blockarticles-block-slider-videos-destacados  .slide__link a{
+  color: #b5aeae;
+    padding-block: 4px;
+    display: inline-block;
+}
+
+.block-views-blockarticles-block-slider-videos-destacados  h2 a{
+    color:white !important;
+    text-decoration: none !important;
 }
