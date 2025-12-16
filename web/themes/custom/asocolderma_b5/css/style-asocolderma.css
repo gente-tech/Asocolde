@@ -12429,3 +12429,52 @@ main .body-content .view-comite-editorial .user--type-user .field--name-user-lin
     margin-bottom: 1rem;
   }
 }
+
+
+
+.block-custum .image-block {
+    flex-direction: column;
+    padding: .5rem;
+    background: #fff7e9 !important;
+    border-top: 1px solid #747474 !important;
+}
+
+.block-custum .image__texts {
+    max-width: 100% !important;
+    text-align: center;
+    padding: 0 !important;
+    margin-top: 10px;
+}
+
+.block-custum .image__texts h2 {
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: #fe8c48 !important;
+}
+
+.block-custum .image-block__image img {
+    width: 60px;
+}
+
+.block-custum  .image-block__link a {
+font-size: 1rem;
+padding: .2rem .5rem;
+}
+
+
+ .block-custum  .grid-sm-6:nth-child(2n) .image__texts h2 {
+  color:  black !important;
+}
+
+.block-custum  .grid-sm-6:first-child .image-block__link a {
+    border-color: black;
+    color: black;
+    &:hover, &:focus {
+        background: black;
+        color: white;
+        text-decoration: none;
+    }
+}
