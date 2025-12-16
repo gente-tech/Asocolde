@@ -12479,3 +12479,39 @@ padding: .2rem .5rem;
         text-decoration: none;
     }
 }
+
+
+
+
+.view-comite-editorial  .info-dr {
+  line-height: 1.1;
+}
+
+.view-comite-editorial .field--name-field-university-degree{
+color: #289cff !important;
+padding-block: 5px !important;
+}
+
+
+.view-comite-editorial .blazy--field-tags-usuario {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.view-comite-editorial .taxonomy-term a {
+    font-size: 1.5rem !important;
+    background: #289cff;
+    color: white;
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 12px;
+}
+
+.view-comite-editorial h2 {
+  margin: 0;
+  padding: 0;
+}
