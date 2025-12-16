@@ -12201,6 +12201,7 @@ div[class*="view-display-id-page_"] .views-row:last-child {
 }
 /* line 358, ../assets/scss/pages/_list.scss */
 .block--type-newspaper .field--name-field-link a {
+  z-index: 1111111111;
   font-size: 1.4rem;
   padding: .4rem;
   padding-bottom: .2rem;
