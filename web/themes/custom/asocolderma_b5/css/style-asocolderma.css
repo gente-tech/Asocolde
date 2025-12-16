@@ -12444,7 +12444,6 @@ main .body-content .view-comite-editorial .user--type-user .field--name-user-lin
     max-width: 100% !important;
     text-align: center;
     padding: 0 !important;
-    margin-top: 10px;
 }
 
 .block-custum .image__texts h2 {
@@ -12457,7 +12456,8 @@ main .body-content .view-comite-editorial .user--type-user .field--name-user-lin
 }
 
 .block-custum .image-block__image img {
-    width: 60px;
+    height: 50px;
+    width: auto;
 }
 
 .block-custum  .image-block__link a {
@@ -12514,4 +12514,37 @@ padding-block: 5px !important;
 .view-comite-editorial h2 {
   margin: 0;
   padding: 0;
+}
+
+
+
+
+
+.slide__caption{
+    background: rgba(0, 0, 0, 0.45) !important;
+    padding: 1rem 2rem !important;
+    height: 80px !important;
+}
+
+ .slide__caption a{
+    text-decoration: none !important;
+    &:hover{
+      text-decoration: none !important;
+    }
+}
+
+.slide__caption .views-field-title a {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal; 
+  text-align: left;   
+}
+
+.slide__caption .views-field-field-type a {
+    color: #b5aeae;
+    padding-block: 4px;
+    display: inline-block;
 }
