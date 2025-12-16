@@ -7,6 +7,9 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Drupal;
 
  /**
  * Implements a Search Dermatologist Form.
@@ -44,34 +47,33 @@ class SearchForm extends FormBase {
   }
 
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['text'] = [
+
+    $keys = Drupal::request()->query->get('keys');
+
+    $form['#method'] = 'get';
+    $form['#action'] = Url::fromRoute('search.view_node_search')->toString();
+    $form['keys'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Search'),
+      '#title' => $this->t('Buscar'),
       '#title_display' => 'invisible',
+      '#required' => TRUE,
+      '#default_value' => $keys,
       '#attributes' => [
-        'placeholder' => $this->t('Search...'),
+        'placeholder' => $this->t('Buscar'),
+        'autocomplete' => 'off',
       ],
     ];
-    $form['option'] = [
-      '#type' => 'select',
-      '#options' => [
-        'dermatologists' => 'Dermatólogos',
-        'skinillness' => 'Enfermedades dermatológicas',
-        // 'congress' => 'Congresos y eventos académicos',
-        'microsites' => 'Micrositios',
-        'courses' => 'Cursos virtuales',
-        'fq' => 'Preguntas frecuentes al dermatólogo',
-      ],
-      '#attributes' => [
-        'onchange' => 'this.form.submit();',
-      ],
-    ];
+
     $form['actions'] = [
       '#type' => 'actions',
     ];
-    $form['actions']['submit'] = [
+
+    $form['submit'] = [
       '#type' => 'submit',
-      '#value' => $this->t('Search'),
+      '#value' => $this->t('Buscar'),
+      '#attributes' => [
+        'class' => ['visually-hidden'],
+      ],
     ];
 
     return $form;
@@ -82,30 +84,7 @@ class SearchForm extends FormBase {
    * @param FormStateInterface $form_state
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $text = $form_state->getValue('text');
-    $option = $form_state->getValue('option');
-    switch($option) {
-      case 'dermatologists':
-        $url = Url::fromRoute('view.dermatologists.page', [], ['query' => ['nombre' => $text]]);
-        break;
-      case 'skinillness':
-        $url = Url::fromRoute('view.skin_illness.page_1', [], ['query' => ['buscar' => $text]]);
-        break;
-      // case 'congress':
-      //   $url = Url::fromUri('https://dermatologiaecuatoriana.com/');
-      //   break;
-      case 'microsites':
-        $url = Url::fromUri('internal:/micrositios');
-        break;
-      case 'courses':
-        $url = Url::fromRoute('view.courses_virtual.page', [], ['query' => ['buscar' => $text]]);
-        break;
-      case 'fq':
-        $url = Url::fromRoute('view.fq.page', [], ['query' => ['buscar' => $text]]);
-        break;
-    }
 
-    $form_state->setRedirectUrl($url);
   }
 
 }
