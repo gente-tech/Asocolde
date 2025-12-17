@@ -254,7 +254,7 @@ div[id^="block-highlight-dermatologist-query"] .bs-region--right .field--name-fi
 .view-articles.view-display-id-block_slider_videos .more-link a,
 .view-articles.view-display-id-block_slider_asocolderma .more-link a,
 .view-articles.view-display-id-block_slider_academic .more-link a,
-.view-articles.view-display-id-block_slider_gremial .more-link a, .block-views-blockevents-carousel-block-patient .more-link a,
+.view-articles.view-display-id-block_slider_gremial .more-link a, .view-articles .more-link a, .block-views-blockevents-carousel-block-patient .more-link a,
 .block-views-blockevents-carousel-block-dermatologist-home .more-link a, .block-views-blockevents-carousel-block-patient-highlight .slide__description .views-field-view-node a,
 .block-views-blockevents-carousel-block-highlight .slide__description .views-field-view-node a, .block-asocol-tips-fq-doctor .more-link a,
 .block-asocol-tabs-doctor .more-link a, aside .view-comite-editorial .group-top .more-link a, .block-views-blocktop-skin-illness-block-top .view-top-skin-illness .more-link a, .view-patient-articles .group-top .more-link a, .multimedia-block-section .layout__region--first .block-views-blockmultimedia-block-video-list .multimedia-block .more-link a,
@@ -290,7 +290,7 @@ div[id^="block-highlight-dermatologist-query"] .bs-region--right .field--name-fi
 .view-articles.view-display-id-block_slider_videos .more-link a:hover,
 .view-articles.view-display-id-block_slider_asocolderma .more-link a:hover,
 .view-articles.view-display-id-block_slider_academic .more-link a:hover,
-.view-articles.view-display-id-block_slider_gremial .more-link a:hover, .block-views-blockevents-carousel-block-patient .more-link a:hover,
+.view-articles.view-display-id-block_slider_gremial .more-link a:hover, .view-articles .more-link a:hover, .block-views-blockevents-carousel-block-patient .more-link a:hover,
 .block-views-blockevents-carousel-block-dermatologist-home .more-link a:hover, .block-views-blockevents-carousel-block-patient-highlight .slide__description .views-field-view-node a:hover,
 .block-views-blockevents-carousel-block-highlight .slide__description .views-field-view-node a:hover, .block-asocol-tips-fq-doctor .more-link a:hover,
 .block-asocol-tabs-doctor .more-link a:hover, aside .view-comite-editorial .group-top .more-link a:hover, .block-views-blocktop-skin-illness-block-top .view-top-skin-illness .more-link a:hover, .view-patient-articles .group-top .more-link a:hover, .multimedia-block-section .layout__region--first .block-views-blockmultimedia-block-video-list .multimedia-block .more-link a:hover,
@@ -323,7 +323,7 @@ div[id^="block-highlight-dermatologist-query"] .bs-region--right .field--name-fi
 .view-articles.view-display-id-block_slider_videos .more-link a:focus,
 .view-articles.view-display-id-block_slider_asocolderma .more-link a:focus,
 .view-articles.view-display-id-block_slider_academic .more-link a:focus,
-.view-articles.view-display-id-block_slider_gremial .more-link a:focus, .block-views-blockevents-carousel-block-patient .more-link a:focus,
+.view-articles.view-display-id-block_slider_gremial .more-link a:focus, .view-articles .more-link a:focus, .block-views-blockevents-carousel-block-patient .more-link a:focus,
 .block-views-blockevents-carousel-block-dermatologist-home .more-link a:focus, .block-views-blockevents-carousel-block-patient-highlight .slide__description .views-field-view-node a:focus,
 .block-views-blockevents-carousel-block-highlight .slide__description .views-field-view-node a:focus, .block-asocol-tips-fq-doctor .more-link a:focus,
 .block-asocol-tabs-doctor .more-link a:focus, aside .view-comite-editorial .group-top .more-link a:focus, .block-views-blocktop-skin-illness-block-top .view-top-skin-illness .more-link a:focus, .view-patient-articles .group-top .more-link a:focus, .multimedia-block-section .layout__region--first .block-views-blockmultimedia-block-video-list .multimedia-block .more-link a:focus,
@@ -355,7 +355,7 @@ div[id^="block-highlight-dermatologist-query"] .bs-region--right .field--name-fi
 .view-articles.view-display-id-block_slider_videos .more-link a.disabled,
 .view-articles.view-display-id-block_slider_asocolderma .more-link a.disabled,
 .view-articles.view-display-id-block_slider_academic .more-link a.disabled,
-.view-articles.view-display-id-block_slider_gremial .more-link a.disabled, .block-views-blockevents-carousel-block-patient .more-link a.disabled,
+.view-articles.view-display-id-block_slider_gremial .more-link a.disabled, .view-articles .more-link a.disabled, .block-views-blockevents-carousel-block-patient .more-link a.disabled,
 .block-views-blockevents-carousel-block-dermatologist-home .more-link a.disabled, .block-views-blockevents-carousel-block-patient-highlight .slide__description .views-field-view-node a.disabled,
 .block-views-blockevents-carousel-block-highlight .slide__description .views-field-view-node a.disabled, .block-asocol-tips-fq-doctor .more-link a.disabled,
 .block-asocol-tabs-doctor .more-link a.disabled, aside .view-comite-editorial .group-top .more-link a.disabled, .block-views-blocktop-skin-illness-block-top .view-top-skin-illness .more-link a.disabled, .view-patient-articles .group-top .more-link a.disabled, .multimedia-block-section .layout__region--first .block-views-blockmultimedia-block-video-list .multimedia-block .more-link a.disabled,
@@ -382,7 +382,7 @@ div[id^="block-highlight-dermatologist-query"] .bs-region--right .field--name-fi
 .view-articles.view-display-id-block_slider_videos .more-link a:disabled,
 .view-articles.view-display-id-block_slider_asocolderma .more-link a:disabled,
 .view-articles.view-display-id-block_slider_academic .more-link a:disabled,
-.view-articles.view-display-id-block_slider_gremial .more-link a:disabled, .block-views-blockevents-carousel-block-patient .more-link a:disabled,
+.view-articles.view-display-id-block_slider_gremial .more-link a:disabled, .view-articles .more-link a:disabled, .block-views-blockevents-carousel-block-patient .more-link a:disabled,
 .block-views-blockevents-carousel-block-dermatologist-home .more-link a:disabled, .block-views-blockevents-carousel-block-patient-highlight .slide__description .views-field-view-node a:disabled,
 .block-views-blockevents-carousel-block-highlight .slide__description .views-field-view-node a:disabled, .block-asocol-tips-fq-doctor .more-link a:disabled,
 .block-asocol-tabs-doctor .more-link a:disabled, aside .view-comite-editorial .group-top .more-link a:disabled, .block-views-blocktop-skin-illness-block-top .view-top-skin-illness .more-link a:disabled, .view-patient-articles .group-top .more-link a:disabled, .multimedia-block-section .layout__region--first .block-views-blockmultimedia-block-video-list .multimedia-block .more-link a:disabled,
@@ -418,7 +418,7 @@ div[id^="block-highlight-dermatologist-query"] .bs-region--right .field--name-fi
 .view-articles.view-display-id-block_slider_videos .more-link a.disabled:hover,
 .view-articles.view-display-id-block_slider_asocolderma .more-link a.disabled:hover,
 .view-articles.view-display-id-block_slider_academic .more-link a.disabled:hover,
-.view-articles.view-display-id-block_slider_gremial .more-link a.disabled:hover, .block-views-blockevents-carousel-block-patient .more-link a.disabled:hover,
+.view-articles.view-display-id-block_slider_gremial .more-link a.disabled:hover, .view-articles .more-link a.disabled:hover, .block-views-blockevents-carousel-block-patient .more-link a.disabled:hover,
 .block-views-blockevents-carousel-block-dermatologist-home .more-link a.disabled:hover, .block-views-blockevents-carousel-block-patient-highlight .slide__description .views-field-view-node a.disabled:hover,
 .block-views-blockevents-carousel-block-highlight .slide__description .views-field-view-node a.disabled:hover, .block-asocol-tips-fq-doctor .more-link a.disabled:hover,
 .block-asocol-tabs-doctor .more-link a.disabled:hover, aside .view-comite-editorial .group-top .more-link a.disabled:hover, .block-views-blocktop-skin-illness-block-top .view-top-skin-illness .more-link a.disabled:hover, .view-patient-articles .group-top .more-link a.disabled:hover, .multimedia-block-section .layout__region--first .block-views-blockmultimedia-block-video-list .multimedia-block .more-link a.disabled:hover,
@@ -445,7 +445,7 @@ div[id^="block-highlight-dermatologist-query"] .bs-region--right .field--name-fi
 .view-articles.view-display-id-block_slider_videos .more-link a:disabled:hover,
 .view-articles.view-display-id-block_slider_asocolderma .more-link a:disabled:hover,
 .view-articles.view-display-id-block_slider_academic .more-link a:disabled:hover,
-.view-articles.view-display-id-block_slider_gremial .more-link a:disabled:hover, .block-views-blockevents-carousel-block-patient .more-link a:disabled:hover,
+.view-articles.view-display-id-block_slider_gremial .more-link a:disabled:hover, .view-articles .more-link a:disabled:hover, .block-views-blockevents-carousel-block-patient .more-link a:disabled:hover,
 .block-views-blockevents-carousel-block-dermatologist-home .more-link a:disabled:hover, .block-views-blockevents-carousel-block-patient-highlight .slide__description .views-field-view-node a:disabled:hover,
 .block-views-blockevents-carousel-block-highlight .slide__description .views-field-view-node a:disabled:hover, .block-asocol-tips-fq-doctor .more-link a:disabled:hover,
 .block-asocol-tabs-doctor .more-link a:disabled:hover, aside .view-comite-editorial .group-top .more-link a:disabled:hover, .block-views-blocktop-skin-illness-block-top .view-top-skin-illness .more-link a:disabled:hover, .view-patient-articles .group-top .more-link a:disabled:hover, .multimedia-block-section .layout__region--first .block-views-blockmultimedia-block-video-list .multimedia-block .more-link a:disabled:hover,
@@ -476,7 +476,7 @@ div[id^="block-highlight-dermatologist-query"] .bs-region--right .field--name-fi
 .view-articles.view-display-id-block_slider_videos .more-link a.disabled:focus,
 .view-articles.view-display-id-block_slider_asocolderma .more-link a.disabled:focus,
 .view-articles.view-display-id-block_slider_academic .more-link a.disabled:focus,
-.view-articles.view-display-id-block_slider_gremial .more-link a.disabled:focus, .block-views-blockevents-carousel-block-patient .more-link a.disabled:focus,
+.view-articles.view-display-id-block_slider_gremial .more-link a.disabled:focus, .view-articles .more-link a.disabled:focus, .block-views-blockevents-carousel-block-patient .more-link a.disabled:focus,
 .block-views-blockevents-carousel-block-dermatologist-home .more-link a.disabled:focus, .block-views-blockevents-carousel-block-patient-highlight .slide__description .views-field-view-node a.disabled:focus,
 .block-views-blockevents-carousel-block-highlight .slide__description .views-field-view-node a.disabled:focus, .block-asocol-tips-fq-doctor .more-link a.disabled:focus,
 .block-asocol-tabs-doctor .more-link a.disabled:focus, aside .view-comite-editorial .group-top .more-link a.disabled:focus, .block-views-blocktop-skin-illness-block-top .view-top-skin-illness .more-link a.disabled:focus, .view-patient-articles .group-top .more-link a.disabled:focus, .multimedia-block-section .layout__region--first .block-views-blockmultimedia-block-video-list .multimedia-block .more-link a.disabled:focus,
@@ -503,7 +503,7 @@ div[id^="block-highlight-dermatologist-query"] .bs-region--right .field--name-fi
 .view-articles.view-display-id-block_slider_videos .more-link a:disabled:focus,
 .view-articles.view-display-id-block_slider_asocolderma .more-link a:disabled:focus,
 .view-articles.view-display-id-block_slider_academic .more-link a:disabled:focus,
-.view-articles.view-display-id-block_slider_gremial .more-link a:disabled:focus, .block-views-blockevents-carousel-block-patient .more-link a:disabled:focus,
+.view-articles.view-display-id-block_slider_gremial .more-link a:disabled:focus, .view-articles .more-link a:disabled:focus, .block-views-blockevents-carousel-block-patient .more-link a:disabled:focus,
 .block-views-blockevents-carousel-block-dermatologist-home .more-link a:disabled:focus, .block-views-blockevents-carousel-block-patient-highlight .slide__description .views-field-view-node a:disabled:focus,
 .block-views-blockevents-carousel-block-highlight .slide__description .views-field-view-node a:disabled:focus, .block-asocol-tips-fq-doctor .more-link a:disabled:focus,
 .block-asocol-tabs-doctor .more-link a:disabled:focus, aside .view-comite-editorial .group-top .more-link a:disabled:focus, .block-views-blocktop-skin-illness-block-top .view-top-skin-illness .more-link a:disabled:focus, .view-patient-articles .group-top .more-link a:disabled:focus, .multimedia-block-section .layout__region--first .block-views-blockmultimedia-block-video-list .multimedia-block .more-link a:disabled:focus,
@@ -534,7 +534,7 @@ div[id^="block-highlight-dermatologist-query"] .bs-region--right .field--name-fi
 .view-articles.view-display-id-block_slider_videos .more-link a:hover,
 .view-articles.view-display-id-block_slider_asocolderma .more-link a:hover,
 .view-articles.view-display-id-block_slider_academic .more-link a:hover,
-.view-articles.view-display-id-block_slider_gremial .more-link a:hover, .block-views-blockevents-carousel-block-patient .more-link a:hover,
+.view-articles.view-display-id-block_slider_gremial .more-link a:hover, .view-articles .more-link a:hover, .block-views-blockevents-carousel-block-patient .more-link a:hover,
 .block-views-blockevents-carousel-block-dermatologist-home .more-link a:hover, .block-views-blockevents-carousel-block-patient-highlight .slide__description .views-field-view-node a:hover,
 .block-views-blockevents-carousel-block-highlight .slide__description .views-field-view-node a:hover, .block-asocol-tips-fq-doctor .more-link a:hover,
 .block-asocol-tabs-doctor .more-link a:hover, aside .view-comite-editorial .group-top .more-link a:hover, .block-views-blocktop-skin-illness-block-top .view-top-skin-illness .more-link a:hover, .view-patient-articles .group-top .more-link a:hover, .multimedia-block-section .layout__region--first .block-views-blockmultimedia-block-video-list .multimedia-block .more-link a:hover,
@@ -561,7 +561,7 @@ div[id^="block-highlight-dermatologist-query"] .bs-region--right .field--name-fi
 .view-articles.view-display-id-block_slider_videos .more-link a:active,
 .view-articles.view-display-id-block_slider_asocolderma .more-link a:active,
 .view-articles.view-display-id-block_slider_academic .more-link a:active,
-.view-articles.view-display-id-block_slider_gremial .more-link a:active, .block-views-blockevents-carousel-block-patient .more-link a:active,
+.view-articles.view-display-id-block_slider_gremial .more-link a:active, .view-articles .more-link a:active, .block-views-blockevents-carousel-block-patient .more-link a:active,
 .block-views-blockevents-carousel-block-dermatologist-home .more-link a:active, .block-views-blockevents-carousel-block-patient-highlight .slide__description .views-field-view-node a:active,
 .block-views-blockevents-carousel-block-highlight .slide__description .views-field-view-node a:active, .block-asocol-tips-fq-doctor .more-link a:active,
 .block-asocol-tabs-doctor .more-link a:active, aside .view-comite-editorial .group-top .more-link a:active, .block-views-blocktop-skin-illness-block-top .view-top-skin-illness .more-link a:active, .view-patient-articles .group-top .more-link a:active, .multimedia-block-section .layout__region--first .block-views-blockmultimedia-block-video-list .multimedia-block .more-link a:active,
@@ -594,7 +594,7 @@ div[id^="block-highlight-dermatologist-query"] .bs-region--right .field--name-fi
 .view-articles.view-display-id-block_slider_videos .more-link a.active,
 .view-articles.view-display-id-block_slider_asocolderma .more-link a.active,
 .view-articles.view-display-id-block_slider_academic .more-link a.active,
-.view-articles.view-display-id-block_slider_gremial .more-link a.active, .block-views-blockevents-carousel-block-patient .more-link a.active,
+.view-articles.view-display-id-block_slider_gremial .more-link a.active, .view-articles .more-link a.active, .block-views-blockevents-carousel-block-patient .more-link a.active,
 .block-views-blockevents-carousel-block-dermatologist-home .more-link a.active, .block-views-blockevents-carousel-block-patient-highlight .slide__description .views-field-view-node a.active,
 .block-views-blockevents-carousel-block-highlight .slide__description .views-field-view-node a.active, .block-asocol-tips-fq-doctor .more-link a.active,
 .block-asocol-tabs-doctor .more-link a.active, aside .view-comite-editorial .group-top .more-link a.active, .block-views-blocktop-skin-illness-block-top .view-top-skin-illness .more-link a.active, .view-patient-articles .group-top .more-link a.active, .multimedia-block-section .layout__region--first .block-views-blockmultimedia-block-video-list .multimedia-block .more-link a.active,
@@ -626,7 +626,7 @@ div[id^="block-highlight-dermatologist-query"] .bs-region--right .field--name-fi
 .view-articles.view-display-id-block_slider_videos .more-link a:after,
 .view-articles.view-display-id-block_slider_asocolderma .more-link a:after,
 .view-articles.view-display-id-block_slider_academic .more-link a:after,
-.view-articles.view-display-id-block_slider_gremial .more-link a:after, .block-views-blockevents-carousel-block-patient .more-link a:after,
+.view-articles.view-display-id-block_slider_gremial .more-link a:after, .view-articles .more-link a:after, .block-views-blockevents-carousel-block-patient .more-link a:after,
 .block-views-blockevents-carousel-block-dermatologist-home .more-link a:after, .block-views-blockevents-carousel-block-patient-highlight .slide__description .views-field-view-node a:after,
 .block-views-blockevents-carousel-block-highlight .slide__description .views-field-view-node a:after, .block-asocol-tips-fq-doctor .more-link a:after,
 .block-asocol-tabs-doctor .more-link a:after, aside .view-comite-editorial .group-top .more-link a:after, .block-views-blocktop-skin-illness-block-top .view-top-skin-illness .more-link a:after, .view-patient-articles .group-top .more-link a:after, .multimedia-block-section .layout__region--first .block-views-blockmultimedia-block-video-list .multimedia-block .more-link a:after,
@@ -4879,7 +4879,8 @@ form .geolocation-map-controls .control_recenter button {
 .block-views-blockpatient-articles-block-slide-articles-other,
 .block-views-blockarticles-block-slider-gallery,
 .block-views-blockarticles-block-slider-videos,
-.block-views-blockpatient-articles-block-slider-asocolderma {
+.block-views-blockpatient-articles-block-slider-asocolderma,
+.block-views-blockarticles-block-slider-videos-destacados {
   position: relative;
   width: 100%;
 }
@@ -4890,7 +4891,8 @@ form .geolocation-map-controls .control_recenter button {
 .block-views-blockpatient-articles-block-slide-articles-other h2,
 .block-views-blockarticles-block-slider-gallery h2,
 .block-views-blockarticles-block-slider-videos h2,
-.block-views-blockpatient-articles-block-slider-asocolderma h2 {
+.block-views-blockpatient-articles-block-slider-asocolderma h2,
+.block-views-blockarticles-block-slider-videos-destacados h2 {
   font-size: 1.4rem;
   padding: .5rem .5rem .8rem;
   padding-right: 10rem;
@@ -4902,7 +4904,8 @@ form .geolocation-map-controls .control_recenter button {
 .block-views-blockarticles-block-slider-videos,
 .block-views-blockarticles-block-slider-academic,
 .block-views-blockarticles-block-slider-gremial,
-.block-views-blockpatient-articles-block-slider-asocolderma {
+.block-views-blockpatient-articles-block-slider-asocolderma,
+.block-views-blockarticles-block-slider-videos-destacados {
   border-top: 1px solid #fe8c48;
 }
 /* line 41, ../assets/scss/components/_cards.scss */
@@ -4911,7 +4914,8 @@ form .geolocation-map-controls .control_recenter button {
 .block-views-blockarticles-block-slider-videos h2,
 .block-views-blockarticles-block-slider-academic h2,
 .block-views-blockarticles-block-slider-gremial h2,
-.block-views-blockpatient-articles-block-slider-asocolderma h2 {
+.block-views-blockpatient-articles-block-slider-asocolderma h2,
+.block-views-blockarticles-block-slider-videos-destacados h2 {
   padding: 1rem .5rem;
   padding-right: 10rem;
 }
@@ -5039,7 +5043,8 @@ form .geolocation-map-controls .control_recenter button {
 .view-articles.view-display-id-block_slider_videos .view-content .slick__slide,
 .view-articles.view-display-id-block_slider_asocolderma .view-content .slick__slide,
 .view-articles.view-display-id-block_slider_academic .view-content .slick__slide,
-.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide {
+.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__slide {
   position: relative;
 }
 /* line 120, ../assets/scss/components/_cards.scss */
@@ -5057,7 +5062,8 @@ form .geolocation-map-controls .control_recenter button {
 .view-articles.view-display-id-block_slider_videos .view-content .slick__slide .slide__caption,
 .view-articles.view-display-id-block_slider_asocolderma .view-content .slick__slide .slide__caption,
 .view-articles.view-display-id-block_slider_academic .view-content .slick__slide .slide__caption,
-.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .slide__caption {
+.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .slide__caption,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__slide .slide__caption {
   background: rgba(0, 0, 0, 0.7);
   bottom: .5rem;
   font-size: 1.4rem;
@@ -5125,7 +5131,10 @@ form .geolocation-map-controls .control_recenter button {
 .view-articles.view-display-id-block_slider_academic .view-content .slick__slide .views-field-title,
 .view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .views-field-field-title,
 .view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .views-field-field-subtitle,
-.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .views-field-title {
+.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .views-field-title,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__slide .views-field-field-title,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__slide .views-field-field-subtitle,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__slide .views-field-title {
   line-height: 1.7rem;
   font-weight: bold;
 }
@@ -5186,7 +5195,10 @@ form .geolocation-map-controls .control_recenter button {
 .view-articles.view-display-id-block_slider_academic .view-content .slick__slide .views-field-title a,
 .view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .views-field-field-title a,
 .view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .views-field-field-subtitle a,
-.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .views-field-title a {
+.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .views-field-title a,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__slide .views-field-field-title a,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__slide .views-field-field-subtitle a,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__slide .views-field-title a {
   color: #ffffff;
 }
 /* line 138, ../assets/scss/components/_cards.scss */
@@ -5246,7 +5258,10 @@ form .geolocation-map-controls .control_recenter button {
 .view-articles.view-display-id-block_slider_academic .view-content .slick__slide .views-field-title a:hover,
 .view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .views-field-field-title a:hover,
 .view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .views-field-field-subtitle a:hover,
-.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .views-field-title a:hover {
+.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .views-field-title a:hover,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__slide .views-field-field-title a:hover,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__slide .views-field-field-subtitle a:hover,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__slide .views-field-title a:hover {
   text-decoration: underline;
 }
 /* line 143, ../assets/scss/components/_cards.scss */
@@ -5264,7 +5279,8 @@ form .geolocation-map-controls .control_recenter button {
 .view-articles.view-display-id-block_slider_videos .view-content .slick__slide .slide__description,
 .view-articles.view-display-id-block_slider_asocolderma .view-content .slick__slide .slide__description,
 .view-articles.view-display-id-block_slider_academic .view-content .slick__slide .slide__description,
-.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .slide__description {
+.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .slide__description,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__slide .slide__description {
   color: #ffffff;
   padding-right: 10rem;
   position: relative;
@@ -5284,7 +5300,8 @@ form .geolocation-map-controls .control_recenter button {
 .view-articles.view-display-id-block_slider_videos .view-content .slick__slide .slide__description .views-field-created,
 .view-articles.view-display-id-block_slider_asocolderma .view-content .slick__slide .slide__description .views-field-created,
 .view-articles.view-display-id-block_slider_academic .view-content .slick__slide .slide__description .views-field-created,
-.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .slide__description .views-field-created {
+.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .slide__description .views-field-created,
+.block-views-blockarticles-block-slider-videos-destacados  .view-content .slick__slide .slide__description .views-field-created{
   opacity: 0.8;
 }
 /* line 150, ../assets/scss/components/_cards.scss */
@@ -5302,7 +5319,8 @@ form .geolocation-map-controls .control_recenter button {
 .view-articles.view-display-id-block_slider_videos .view-content .slick__slide .slide__description .views-field-field-social-share,
 .view-articles.view-display-id-block_slider_asocolderma .view-content .slick__slide .slide__description .views-field-field-social-share,
 .view-articles.view-display-id-block_slider_academic .view-content .slick__slide .slide__description .views-field-field-social-share,
-.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .slide__description .views-field-field-social-share {
+.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .slide__description .views-field-field-social-share,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__slide .slide__description .views-field-field-social-share{
   position: absolute;
   right: 0;
   top: 50%;
@@ -5338,7 +5356,8 @@ form .geolocation-map-controls .control_recenter button {
 .view-articles.view-display-id-block_slider_academic .view-content .slick__slide .slide__description .views-field-field-social-share:hover .field-content,
 .view-articles.view-display-id-block_slider_academic .view-content .slick__slide .slide__description .views-field-field-social-share:focus .field-content,
 .view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .slide__description .views-field-field-social-share:hover .field-content,
-.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .slide__description .views-field-field-social-share:focus .field-content {
+.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .slide__description .views-field-field-social-share:focus .field-content,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__slide .slide__description .views-field-field-social-share:focus .field-content {
   opacity: 1;
   visibility: visible;
 }
@@ -5357,7 +5376,8 @@ form .geolocation-map-controls .control_recenter button {
 .view-articles.view-display-id-block_slider_videos .view-content .slick__slide .slide__description .views-field-field-social-share .field-content,
 .view-articles.view-display-id-block_slider_asocolderma .view-content .slick__slide .slide__description .views-field-field-social-share .field-content,
 .view-articles.view-display-id-block_slider_academic .view-content .slick__slide .slide__description .views-field-field-social-share .field-content,
-.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .slide__description .views-field-field-social-share .field-content {
+.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .slide__description .views-field-field-social-share .field-content,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__slide .slide__description .views-field-field-social-share .field-content {
   opacity: 0;
   position: relative;
   visibility: hidden;
@@ -5377,7 +5397,8 @@ form .geolocation-map-controls .control_recenter button {
 .view-articles.view-display-id-block_slider_videos .view-content .slick__slide .slide__description .views-field-field-social-share .field-content .block-social-media,
 .view-articles.view-display-id-block_slider_asocolderma .view-content .slick__slide .slide__description .views-field-field-social-share .field-content .block-social-media,
 .view-articles.view-display-id-block_slider_academic .view-content .slick__slide .slide__description .views-field-field-social-share .field-content .block-social-media,
-.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .slide__description .views-field-field-social-share .field-content .block-social-media {
+.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .slide__description .views-field-field-social-share .field-content .block-social-media,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__slide .slide__description .views-field-field-social-share .field-content .block-social-media {
   background: #ffffff;
   border-radius: 1rem;
   padding: .5rem;
@@ -5400,7 +5421,8 @@ form .geolocation-map-controls .control_recenter button {
 .view-articles.view-display-id-block_slider_videos .view-content .slick__slide .slide__description .views-field-field-social-share .field-content .block-social-media:after,
 .view-articles.view-display-id-block_slider_asocolderma .view-content .slick__slide .slide__description .views-field-field-social-share .field-content .block-social-media:after,
 .view-articles.view-display-id-block_slider_academic .view-content .slick__slide .slide__description .views-field-field-social-share .field-content .block-social-media:after,
-.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .slide__description .views-field-field-social-share .field-content .block-social-media:after {
+.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .slide__description .views-field-field-social-share .field-content .block-social-media:after,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__slide .slide__description .views-field-field-social-share .field-content .block-social-media:after {
   bottom: -.7rem;
   content: '';
   width: 0;
@@ -5427,7 +5449,8 @@ form .geolocation-map-controls .control_recenter button {
 .view-articles.view-display-id-block_slider_videos .view-content .slick__slide .slide__description .views-label-field-social-share,
 .view-articles.view-display-id-block_slider_asocolderma .view-content .slick__slide .slide__description .views-label-field-social-share,
 .view-articles.view-display-id-block_slider_academic .view-content .slick__slide .slide__description .views-label-field-social-share,
-.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .slide__description .views-label-field-social-share {
+.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .slide__description .views-label-field-social-share,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__slide .slide__description .views-label-field-social-share {
   background: #07898d;
   border-radius: 2rem;
   color: #ffffff;
@@ -5450,7 +5473,8 @@ form .geolocation-map-controls .control_recenter button {
 .view-articles.view-display-id-block_slider_videos .view-content .slick__slide .slide__description .views-label-field-social-share:after,
 .view-articles.view-display-id-block_slider_asocolderma .view-content .slick__slide .slide__description .views-label-field-social-share:after,
 .view-articles.view-display-id-block_slider_academic .view-content .slick__slide .slide__description .views-label-field-social-share:after,
-.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .slide__description .views-label-field-social-share:after {
+.view-articles.view-display-id-block_slider_gremial .view-content .slick__slide .slide__description .views-label-field-social-share:after,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__slide .slide__description .views-label-field-social-share:after {
   content: "\e948";
   font-family: "iconFont";
   margin-left: .5rem;
@@ -5470,7 +5494,8 @@ form .geolocation-map-controls .control_recenter button {
 .view-articles.view-display-id-block_slider_videos .view-content .slick__arrow .slick-arrow,
 .view-articles.view-display-id-block_slider_asocolderma .view-content .slick__arrow .slick-arrow,
 .view-articles.view-display-id-block_slider_academic .view-content .slick__arrow .slick-arrow,
-.view-articles.view-display-id-block_slider_gremial .view-content .slick__arrow .slick-arrow {
+.view-articles.view-display-id-block_slider_gremial .view-content .slick__arrow .slick-arrow,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__arrow .slick-arrow {
   background: transparent;
 }
 /* line 207, ../assets/scss/components/_cards.scss */
@@ -5488,7 +5513,8 @@ form .geolocation-map-controls .control_recenter button {
 .view-articles.view-display-id-block_slider_videos .view-content .slick__arrow .slick-arrow:before,
 .view-articles.view-display-id-block_slider_asocolderma .view-content .slick__arrow .slick-arrow:before,
 .view-articles.view-display-id-block_slider_academic .view-content .slick__arrow .slick-arrow:before,
-.view-articles.view-display-id-block_slider_gremial .view-content .slick__arrow .slick-arrow:before {
+.view-articles.view-display-id-block_slider_gremial .view-content .slick__arrow .slick-arrow:before,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__arrow .slick-arrow:before{
   color: rgba(0, 0, 0, 0.6);
   font-size: 3rem;
 }
@@ -5507,7 +5533,8 @@ form .geolocation-map-controls .control_recenter button {
 .view-articles.view-display-id-block_slider_videos .view-content .slide__media .media,
 .view-articles.view-display-id-block_slider_asocolderma .view-content .slide__media .media,
 .view-articles.view-display-id-block_slider_academic .view-content .slide__media .media,
-.view-articles.view-display-id-block_slider_gremial .view-content .slide__media .media {
+.view-articles.view-display-id-block_slider_gremial .view-content .slide__media .media,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slide__media .media{
   padding: 0 !important;
 }
 /* line 217, ../assets/scss/components/_cards.scss */
@@ -5525,7 +5552,8 @@ form .geolocation-map-controls .control_recenter button {
 .view-articles.view-display-id-block_slider_videos .view-content .slide__media img,
 .view-articles.view-display-id-block_slider_asocolderma .view-content .slide__media img,
 .view-articles.view-display-id-block_slider_academic .view-content .slide__media img,
-.view-articles.view-display-id-block_slider_gremial .view-content .slide__media img {
+.view-articles.view-display-id-block_slider_gremial .view-content .slide__media img,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slide__media img{
   height: 250px;
   position: static;
   width: 100%;
@@ -5555,7 +5583,8 @@ form .geolocation-map-controls .control_recenter button {
 .view-articles.view-display-id-block_slider_videos .more-link,
 .view-articles.view-display-id-block_slider_asocolderma .more-link,
 .view-articles.view-display-id-block_slider_academic .more-link,
-.view-articles.view-display-id-block_slider_gremial .more-link {
+.view-articles.view-display-id-block_slider_gremial .more-link,
+.view-articles .more-link{
   position: absolute;
   right: .5rem;
   top: 0.5rem;
@@ -5575,7 +5604,8 @@ form .geolocation-map-controls .control_recenter button {
 .view-articles.view-display-id-block_slider_videos .more-link a,
 .view-articles.view-display-id-block_slider_asocolderma .more-link a,
 .view-articles.view-display-id-block_slider_academic .more-link a,
-.view-articles.view-display-id-block_slider_gremial .more-link a {
+.view-articles.view-display-id-block_slider_gremial .more-link a,
+.view-articles .more-link a {
   font-size: 1.4rem;
   padding: .4rem;
   padding-bottom: .2rem;
@@ -5589,7 +5619,8 @@ form .geolocation-map-controls .control_recenter button {
 .view-articles.view-display-id-block_slider_academic .view-content .slick__slide .slide__description .views-label-field-social-share,
 .view-articles.view-display-id-block_slider_gallery .view-content .slick__slide .slide__description .views-label-field-social-share,
 .view-articles.view-display-id-block_slider_videos .view-content .slick__slide .slide__description .views-label-field-social-share,
-.view-articles.view-display-id-block_slider_asocolderma .view-content .slick__slide .slide__description .views-label-field-social-share {
+.view-articles.view-display-id-block_slider_asocolderma .view-content .slick__slide .slide__description .views-label-field-social-share,
+.block-views-blockarticles-block-slider-videos-destacados .view-content .slick__slide .slide__description .views-label-field-social-share {
   background: #fe8c48;
 }
 /* line 252, ../assets/scss/components/_cards.scss */
@@ -12144,14 +12175,15 @@ div[class*="view-display-id-page_"] .views-row:last-child {
 .block-views-blockpatient-articles-block-slider-asocolderma,
 .block-views-blockarticles-block-slider-gallery,
 .block-views-blockarticles-block-slider-videos,
-.block-views-blockpatient-articles-block-slide-articles-other {
+.block-views-blockpatient-articles-block-slide-articles-other,
+.block-views-blockarticles-block-slider-videos-destacados {
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
   box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
   margin-bottom: 1.6rem;
   overflow: hidden;
 }
-/* line 340, ../assets/scss/pages/_list.scss */
+/* line 340, ../assets/scss/pages/_list.scss   AQUI */
 .block--type-newspaper .view-articles,
 .block--type-newspaper .view-patient-articles,
 .block-views-blockarticles-block-slider-academic .view-articles,
@@ -12532,48 +12564,42 @@ padding-block: 5px !important;
     }
 }
 
-.slide__caption .views-field-title a {
+.slide__caption .views-field-title a, .slide__caption .slide__title a{
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal; 
-  text-align: left;   
+  text-align: left; 
+  color: #ffffff impot !important;
 }
 
-.slide__caption .views-field-field-type a {
+.slide__caption .views-field-field-type a, .slide__caption .slide__link a {
     color: #b5aeae;
     padding-block: 4px;
     display: inline-block;
 }
-
-
-.block-views-blockarticles-block-slider-videos-destacados .slide__caption{
-  padding: 5px;
-  background: rgba(0, 0, 0, 0.45) !important;
-}
-
-.block-views-blockarticles-block-slider-videos-destacados  .slide__link {
+ 
+.slide__caption h2.slide__title {
   margin: 0;
+  padding: 0;
 }
 
-.block-views-blockarticles-block-slider-videos-destacados  .slide__link a{
-  color: #b5aeae;
-    padding-block: 4px;
-    display: inline-block;
+.slide__caption  .slide__link {
+margin: auto;
 }
 
-.block-views-blockarticles-block-slider-videos-destacados  h2 a{
-    color:white !important;
-    text-decoration: none !important;
+.block-views-blockarticles-block-slider-videos-destacados .slide__title a {
+    height: 40px;
+    color: white !important;
+    font-weight: 600;
+    font-size: 1.2rem;
+    vertical-align: middle;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
 }
-
-.block-views-blockarticles-block-slider-videos-destacados img {
-  max-height: 250px;
-}
-
-
 
 nav#block-menu-top-anonymous a {
     background: #289cff;
@@ -12627,4 +12653,13 @@ nav#block-menu-top-anonymous a {
     border-top-right-radius: 8px;
     border-bottom-right-radius: 8px;
     padding-block: 1.1px;
+}
+
+.view-articles .more-link a{
+  color: #fe8c48;
+  border-color: #fe8c48;
+  &:hover{
+    background: #fe8c48;
+    color: white;
+  }
 }
