@@ -4853,7 +4853,7 @@ form .geolocation-map-controls .control_recenter button {
     text-align: left;
   }
 }
-/* line 1, ../assets/scss/components/_cards.scss */
+/* line 1, ../assets/scss/components/_cards.scss*/
 .block-views-blockarticles-block-home-dermatologist,
 .block--type-newspaper,
 .block-views-blockarticles-block-academic {
@@ -12355,11 +12355,6 @@ main .body-content .view-comite-editorial .user--type-user .field--name-user-lin
     border-radius: 12px;
     text-align: center;
     vertical-align: middle;
-    &:hover {
-        background: #1ea1ff;
-        color: white;
-        text-decoration: none;
-    }
     &:after {
       content: "\e911";
       font-family: "iconFont";
@@ -12367,6 +12362,13 @@ main .body-content .view-comite-editorial .user--type-user .field--name-user-lin
       margin-left: .5rem;
       vertical-align: middle;
       color: #ffff00;
+    }
+    &:hover {
+        background: white;
+        color: #289cff;
+        border:1px solid #289cff;
+        text-decoration: none;
+        &:after { color: #289cff; }
     }
 }
 
@@ -12377,7 +12379,7 @@ main .body-content .view-comite-editorial .user--type-user .field--name-user-lin
 .magazine-block {
   border: 1px solid;
   border-top: 2px solid #289cff;
-  padding: 2rem 0px;
+  padding: .5rem 0px;
 }
 
 .magazine-block > div:last-child{
@@ -12385,7 +12387,7 @@ main .body-content .view-comite-editorial .user--type-user .field--name-user-lin
   display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 10px;
+    margin-top: 5px;
     color: #0d730d;
         padding-inline: 1rem;
     gap: 1rem;
@@ -12394,14 +12396,14 @@ main .body-content .view-comite-editorial .user--type-user .field--name-user-lin
 
 .magazine-block > div:first-child{
     border-bottom: 1px solid #d0d0d0;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-    padding-inline: 4rem;
+    padding-bottom: 5px;
+    margin-bottom: 0;
+    padding-inline: 2rem;
 }
 
 .magazine-block .magazine-block__last{
-  margin-block: 2rem;
-  margin-left: 5rem;
+  margin-block: 1rem;
+  margin-left: 4rem;
   border-left: 1.5rem solid #289cff;
 }
 
@@ -12546,6 +12548,7 @@ padding-block: 5px !important;
     display: inline-block;
 }
 
+
 .block-views-blockarticles-block-slider-videos-destacados .slide__caption{
   padding: 5px;
   background: rgba(0, 0, 0, 0.45) !important;
@@ -12564,4 +12567,64 @@ padding-block: 5px !important;
 .block-views-blockarticles-block-slider-videos-destacados  h2 a{
     color:white !important;
     text-decoration: none !important;
+}
+
+.block-views-blockarticles-block-slider-videos-destacados img {
+  max-height: 250px;
+}
+
+
+
+nav#block-menu-top-anonymous a {
+    background: #289cff;
+    color: white;
+    border: 1px solid #289cff;
+    color: #ffffff;
+    display: block;
+    height: 4.3rem;
+    line-height: 4.3rem;
+    padding: 0 1.6rem;
+    text-align: center;
+    width: 100%;
+    &:hover, &:focus {
+      background: white;
+      color: #289cff;
+    }
+}
+
+.top-searcher .search-form form {
+  justify-content: end;
+}
+
+.search-form form .form-item input {
+    border: 1px solid var(--main-color);
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    &::placeholder{
+      color: var(--main-color);
+    }
+}
+
+.top-searcher .search-form form .form-actions {
+    width: 5rem;
+    border: 1px solid var(--main-color);
+    border-left: none;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    &:before{
+      right: 10px;
+    }
+}
+
+.top-menu.show-title .region-header-scroll .search-form form{
+        border-bottom: inherit;
+        justify-content: end;
+}
+
+.top-menu.show-title .region-header-scroll .form-actions {
+  border: 1px solid var(--main-color);
+  border-left: none;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    padding-block: 1.1px;
 }
