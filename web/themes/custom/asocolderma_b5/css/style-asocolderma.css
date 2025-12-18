@@ -12663,3 +12663,89 @@ nav#block-menu-top-anonymous a {
     color: white;
   }
 }
+
+nav#block-menu-top-anonymous a {
+    background: white;
+    color: #289cff;
+    border: 1px solid #289cff;
+    display: block;
+    height: 4.3rem;
+    line-height: 4.3rem;
+    padding: 0 1.6rem;
+    text-align: center;
+    width: 100%;
+    border-radius: 12px;
+    &:hover, &:focus {
+      background: #289cff;
+      color: white;
+      &:after {
+            color: #ffff00;
+      }
+    }
+    &:after {
+        content: "\e911";
+        font-family: "iconFont";
+        font-size: 1.5rem;
+        margin-left: .5rem;
+        vertical-align: middle;
+        color: #289cff;
+    }
+}
+
+.top-menu .menu--top-header {
+  @media(min-width: 960px)  { width: 75%; }
+ @media(min-width: 1140px)  { width: 75%; } 
+}
+
+.view-contenido-derma-u{}
+
+.view-contenido-derma-u .views-view-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.view-contenido-derma-u .views-row {
+    display: flex;
+    justify-content: start;
+    flex-wrap: wrap;
+}
+
+.view-contenido-derma-u .views-col {
+    padding: 10px;
+	position:relative;
+	overflow: hidden;
+	height: 180px;
+    max-width: 100%;
+    min-width: 25%;
+    width: 190px !important;
+}
+
+.view-contenido-derma-u .views-field-title {
+    position: absolute;
+    bottom: 1px;
+    background: #0000008f;
+    padding: 4px 6px;
+    min-height: 60px;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    width: 90%;
+	z-index:1;
+}
+
+.view-contenido-derma-u .views-field-title a{
+    color: white;
+    font-size: 1.2rem;
+}
+
+.view-contenido-derma-u .views-field-field-imagen-dermau {
+    overflow: hidden;
+}
+
+.view-contenido-derma-u .views-field-field-imagen-dermau img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    object-position: center;
+}
