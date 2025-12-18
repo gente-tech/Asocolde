@@ -3941,7 +3941,7 @@ form .geolocation-map-controls .control_recenter button {
   }
   /* line 926, ../assets/scss/components/_header.scss */
   .top-menu .menu--menu-top-anonymous {
-    max-width: 180px;
+    max-width: 210px;
     width: auto;
   }
   /* line 929, ../assets/scss/components/_header.scss */
@@ -12694,7 +12694,7 @@ nav#block-menu-top-anonymous a {
 
 .top-menu .menu--top-header {
   @media(min-width: 960px)  { width: 75%; }
- @media(min-width: 1140px)  { width: 75%; } 
+ @media(min-width: 1140px)  { width: 55%; } 
 }
 
 .view-contenido-derma-u{}
