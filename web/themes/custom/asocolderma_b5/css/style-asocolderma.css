@@ -12749,3 +12749,12 @@ nav#block-menu-top-anonymous a {
     object-fit: cover;
     object-position: center;
 }
+
+/* Ajuste menu top */
+.top-menu .region-header-scroll, .top-menu .region-header { gap:1rem; }
+.region.region-header-scroll > nav, .region.region-header-scroll > div {  flex: 1; }
+#block-menu-top-anonymous {  margin-right: 2rem; margin-left: auto; }
+.top-menu.show-title .region-header-scroll .search-form { max-width: 100%; }
+.top-menu.show-title .region-header-scroll .search-form form {  margin-right: 2rem; }
+.top-menu.show-title .region-header-scroll .search-form form .form-item {  width: 90%; }
+.top-menu.show-title .region-header-scroll .search-form form .form-actions { min-width: 32px;  height: 35px; }
