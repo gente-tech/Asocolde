@@ -3279,6 +3279,9 @@ form .geolocation-map-controls .control_recenter button {
   padding: 0 1.6rem;
   text-align: center;
   width: 100%;
+  @media (max-width:450px) {
+    font-size:10px;
+  }
 }
 /* line 303, ../assets/scss/components/_header.scss */
 .top-menu .region-header-scroll .block-asocol-login-form-popup a:hover, .top-menu .region-header-scroll .block-asocol-login-form-popup a:focus {
@@ -3728,7 +3731,7 @@ form .geolocation-map-controls .control_recenter button {
 @media screen and (max-width: 1000px) {
   /* line 726, ../assets/scss/components/_header.scss */
   .block-user-menu-list {
-    width: calc(100% - 137px);
+    width: calc(100% - 145px);
   }
   /* line 728, ../assets/scss/components/_header.scss */
   .block-user-menu-list .btn-user {
@@ -6654,7 +6657,7 @@ div[class*="block-views-blockcourses-virtual-block"] .node--type-course-virtual 
 
 /* line 82, ../assets/scss/components/_sidebars.scss */
 .block-asocol-tips-fq-doctor {
-  margin-bottom: 2.5rem;
+  margin-block: 2rem;
 }
 
 /* line 90, ../assets/scss/components/_sidebars.scss */
@@ -8156,10 +8159,6 @@ div[id^="block-educaciondirigidaalacomunidad"] .field--name-body a:after {
   .page-node-type-section.path-frontpage .body-content {
     box-shadow: none;
     padding: 0;
-  }
-  /* line 946, ../assets/scss/pages/_home.scss */
-  .page-node-type-section .body-content {
-    padding: 2rem 0 4rem;
   }
 
   /* line 951, ../assets/scss/pages/_home.scss */
@@ -12690,6 +12689,9 @@ nav#block-menu-top-anonymous a {
         vertical-align: middle;
         color: #289cff;
     }
+  @media (max-width:450px) {
+    font-size:10px;
+  }
 }
 
 .top-menu .menu--top-header {
@@ -12751,7 +12753,6 @@ nav#block-menu-top-anonymous a {
 }
 
 /* Ajuste menu top */
-.top-menu .region-header-scroll, .top-menu .region-header { gap:1rem; }
 .region.region-header-scroll > nav, .region.region-header-scroll > div {  flex: 1; }
 #block-menu-top-anonymous {  margin-right: 2rem; margin-left: auto; }
 .top-menu.show-title .region-header-scroll .search-form { max-width: 100%; }
