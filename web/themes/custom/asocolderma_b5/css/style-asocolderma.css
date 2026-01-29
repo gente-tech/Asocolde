@@ -4419,6 +4419,15 @@ form .geolocation-map-controls .control_recenter button {
     width: 190px;
   }
 }
+
+/* line 1341, ../assets/scss/components/_header.scss */
+  .top-searcher .region-nav-branding {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
 @media (min-width: 1140px) {
   /* line 1317, ../assets/scss/components/_header.scss */
   .main-menu.navbar-expand-lg .navbar-nav .nav-link {
@@ -4439,13 +4448,7 @@ form .geolocation-map-controls .control_recenter button {
   .top-searcher .container {
     padding-right: 0;
   }
-  /* line 1341, ../assets/scss/components/_header.scss */
-  .top-searcher .region-nav-branding {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
+  
   /* line 1347, ../assets/scss/components/_header.scss */
   .top-searcher .search-form {
     display: block;
