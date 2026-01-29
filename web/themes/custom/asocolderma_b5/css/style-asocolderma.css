@@ -12571,7 +12571,7 @@ padding-block: 5px !important;
   text-overflow: ellipsis;
   white-space: normal; 
   text-align: left; 
-  color: #ffffff impot !important;
+  color: #ffffff !important;
 }
 
 .slide__caption .views-field-field-type a, .slide__caption .slide__link a {
@@ -12593,11 +12593,13 @@ margin: auto;
     height: 40px;
     color: white !important;
     font-weight: 600;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     vertical-align: middle;
     display: flex;
     align-items: center;
     overflow: hidden;
+	font-family: "Trebuchet MS", sans-serif;
+	
 }
 
 nav#block-menu-top-anonymous a {
