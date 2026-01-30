@@ -4421,13 +4421,13 @@ form .geolocation-map-controls .control_recenter button {
 }
 
 /* line 1341, ../assets/scss/components/_header.scss */
-  .top-searcher .region-nav-branding {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
-
+.top-searcher .region-nav-branding {
+align-items: center;
+display: flex;
+justify-content: space-between;
+width: 100%;
+}
+  
 @media (min-width: 1140px) {
   /* line 1317, ../assets/scss/components/_header.scss */
   .main-menu.navbar-expand-lg .navbar-nav .nav-link {
@@ -12233,9 +12233,10 @@ div[class*="view-display-id-page_"] .views-row:last-child {
   right: .5rem;
   top: 0.5rem;
 }
+
 /* line 358, ../assets/scss/pages/_list.scss */
 .block--type-newspaper .field--name-field-link a {
-  z-index: 1111111111;
+  z-index: 0;
   font-size: 1.4rem;
   padding: .4rem;
   padding-bottom: .2rem;
@@ -12559,10 +12560,10 @@ padding-block: 5px !important;
     height: 80px !important;
 }
 
- .slide__caption a{
+ .slide__caption a, .slide__caption span{
     text-decoration: none !important;
     &:hover{
-      text-decoration: none !important;
+      text-decoration: underline !important; 
     }
 }
 
@@ -12574,7 +12575,7 @@ padding-block: 5px !important;
   text-overflow: ellipsis;
   white-space: normal; 
   text-align: left; 
-  color: #ffffff !important;
+  color: #ffffff impot !important;
 }
 
 .slide__caption .views-field-field-type a, .slide__caption .slide__link a {
@@ -12601,8 +12602,7 @@ margin: auto;
     display: flex;
     align-items: center;
     overflow: hidden;
-	font-family: "Trebuchet MS", sans-serif;
-	
+    font-family: "Trebuchet MS", sans-serif;
 }
 
 nav#block-menu-top-anonymous a {
