@@ -168,7 +168,7 @@ class Hash extends ContentEntityBase implements ContentEntityInterface {
    */
   public function preSave(EntityStorageInterface $storage) {
     $event = new HashPresaveEvent($this);
-    \Drupal::service('event_dispatcher')->dispatch(HashPresaveEvent::EVENT_NAME, $event);
+    \Drupal::service('event_dispatcher')->dispatch($event, HashPresaveEvent::EVENT_NAME);
     parent::preSave($storage);
   }
 
