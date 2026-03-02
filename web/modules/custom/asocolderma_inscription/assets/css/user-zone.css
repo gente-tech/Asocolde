@@ -1,0 +1,20 @@
+.user-zone-menu {
+  position: sticky;
+  top: 16px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.user-zone-menu__link {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.user-zone-menu__link.is-active {
+  font-weight: 700;
+  background: #f3f3f3;
+}

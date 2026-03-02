@@ -1,0 +1,11 @@
+asocolderma_inscription.aspirante.dashboard:
+  title: 'Mi inscripción'
+  route_name: asocolderma_inscription.aspirante.dashboard
+  menu_name: account_aspirante
+
+asocolderma_inscription.sg_list:
+  title: 'Solicitudes (Secretaría General)'
+  description: 'Listado de solicitudes activas'
+  parent: system.admin_content
+  route_name: asocolderma_inscription.sg_list
+  weight: 20

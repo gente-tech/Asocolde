@@ -1,0 +1,18 @@
+services:
+  asocolderma_inscription.solicitud_id_generator:
+    class: Drupal\asocolderma_inscription\Service\SolicitudIdGenerator
+    arguments: ['@entity_type.manager', '@lock', '@datetime.time']
+
+  asocolderma_inscription.solicitud_manager:
+    class: Drupal\asocolderma_inscription\Service\SolicitudManager
+    arguments: ['@entity_type.manager']
+
+  asocolderma_inscription.solicitud_create_access:
+    class: Drupal\asocolderma_inscription\Access\SolicitudCreateAccess
+    arguments: ['@asocolderma_inscription.solicitud_manager']
+  
+  asocolderma_inscription.login_redirect_subscriber:
+    class: Drupal\asocolderma_inscription\EventSubscriber\LoginRedirectSubscriber
+    arguments: ['@current_user', '@current_route_match']
+    tags:
+      - { name: event_subscriber }

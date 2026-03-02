@@ -1,0 +1,9 @@
+name: 'Asocolderma Inscription'
+type: module
+description: 'Registro de aspirantes y flujo de inscripción'
+package: Custom
+core_version_requirement: ^10 || ^11
+dependencies:
+  - drupal:user
+  - profile:profile
+  - drupal:file

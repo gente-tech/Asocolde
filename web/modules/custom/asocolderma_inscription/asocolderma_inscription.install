@@ -1,0 +1,342 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for asocolderma_inscription.
+ */
+
+use Drupal\Core\Database\Database;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface;
+
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\node\Entity\NodeType;
+
+/**
+ * Instala las tablas de la entidad solicitud_ingreso si el módulo ya estaba instalado
+ * cuando se agregó la entidad al código.
+ */
+function asocolderma_inscription_update_8001(): void
+{
+  $connection = Database::getConnection();
+  $schema = $connection->schema();
+
+  // Si ya existe la tabla base, no hacemos nada.
+  if ($schema->tableExists('solicitud_ingreso')) {
+    return;
+  }
+
+  // Verifica que la definición de entidad exista.
+  $etm = \Drupal::entityTypeManager();
+  $definition = $etm->getDefinition('solicitud_ingreso', FALSE);
+  if (!$definition) {
+    throw new \RuntimeException('No existe la definición de entidad "solicitud_ingreso". Revisa el EntityType en el módulo.');
+  }
+
+  // Instala el entity type (crea tablas base/field_data/revision si aplica).
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  $update_manager->installEntityType($definition);
+}
+
+/**
+ * Instala/actualiza base fields nuevos en solicitud_ingreso.
+ */
+function asocolderma_inscription_update_8002(): void
+{
+  $entity_type_id = 'solicitud_ingreso';
+
+  $etm = \Drupal::entityTypeManager();
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  $field_manager = \Drupal::service('entity_field.manager');
+
+  $entity_type = $etm->getDefinition($entity_type_id);
+  $new_definitions = \Drupal\asocolderma_inscription\Entity\SolicitudIngreso::baseFieldDefinitions($entity_type);
+  $current = $field_manager->getFieldStorageDefinitions($entity_type_id);
+
+  foreach ($new_definitions as $field_name => $storage_def) {
+    // Ya existe en BD -> no tocar.
+    if (isset($current[$field_name])) {
+      continue;
+    }
+
+    // Campos base/core que no debes instalar manualmente.
+    if (in_array($field_name, ['id', 'uuid', 'langcode', 'created', 'changed'], TRUE)) {
+      continue;
+    }
+
+    // Instalar solo los nuevos.
+    $update_manager->installFieldStorageDefinition(
+      $field_name,
+      $entity_type_id,
+      $entity_type_id,
+      $storage_def
+    );
+  }
+}
+
+/**
+ * Crea el tipo de contenido y campos para persistir Solicitud como Node.
+ */
+function asocolderma_inscription_update_9001(): void
+{
+  $type = 'solicitud_ingreso';
+
+  // 1) Content type.
+  if (!NodeType::load($type)) {
+    $node_type = NodeType::create([
+      'type' => $type,
+      'name' => 'Solicitud de ingreso',
+      'description' => 'Persistencia completa de la solicitud de ingreso (datos + adjuntos).',
+    ]);
+    $node_type->save();
+  }
+
+  // Helper: crea field storage si no existe.
+  $ensure_storage = static function (string $field_name, string $field_type, array $storage_settings = [], int $cardinality = 1) use ($type): void {
+    $existing = FieldStorageConfig::loadByName('node', $field_name);
+    if ($existing) {
+      return;
+    }
+    FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => 'node',
+      'type' => $field_type,
+      'settings' => $storage_settings,
+      'cardinality' => $cardinality,
+      'translatable' => FALSE,
+    ])->save();
+  };
+
+  // Helper: crea field instance en el bundle si no existe.
+  $ensure_field = static function (string $field_name, string $label, array $field_settings = [], bool $required = FALSE) use ($type): void {
+    $existing = FieldConfig::loadByName('node', $type, $field_name);
+    if ($existing) {
+      return;
+    }
+    FieldConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => 'node',
+      'bundle' => $type,
+      'label' => $label,
+      'required' => $required,
+      'settings' => $field_settings,
+    ])->save();
+  };
+
+  // 2) Campos core de negocio.
+  $ensure_storage('field_solicitud_id', 'string', ['max_length' => 32]);
+  $ensure_field('field_solicitud_id', 'ID Solicitud', [], TRUE);
+
+  $allowed_states = [
+    'in_progress' => 'En trámite',
+    'needs_clarification' => 'Pendiente aclaración',
+    'sg_approved' => 'Aprobada por Secretaría',
+    'rejected' => 'Rechazada',
+    'payment_pending' => 'Pago pendiente',
+    'pending_signature' => 'Pendiente firma',
+    'active_member' => 'Miembro activo',
+  ];
+  $ensure_storage('field_state', 'list_string', ['allowed_values' => $allowed_states]);
+  $ensure_field('field_state', 'Estado', [], TRUE);
+
+  $ensure_storage('field_sg_reason', 'string_long');
+  $ensure_field('field_sg_reason', 'Motivo / observación Secretaría General', [], FALSE);
+
+  $ensure_storage('field_terms_accepted', 'boolean');
+  $ensure_field('field_terms_accepted', 'Aceptó términos', [], TRUE);
+
+  // 3) Paso 1: Información general.
+  $ensure_storage('field_tipo_asociado', 'string', ['max_length' => 32]);
+  $ensure_field('field_tipo_asociado', 'Tipo de asociado', [], TRUE);
+
+  $ensure_storage('field_nombre1', 'string', ['max_length' => 100]);
+  $ensure_field('field_nombre1', 'Primer nombre', [], TRUE);
+
+  $ensure_storage('field_nombre2', 'string', ['max_length' => 100]);
+  $ensure_field('field_nombre2', 'Segundo nombre', [], FALSE);
+
+  $ensure_storage('field_apellido1', 'string', ['max_length' => 100]);
+  $ensure_field('field_apellido1', 'Primer apellido', [], TRUE);
+
+  $ensure_storage('field_apellido2', 'string', ['max_length' => 100]);
+  $ensure_field('field_apellido2', 'Segundo apellido', [], FALSE);
+
+  $ensure_storage('field_fecha_nacimiento', 'datetime', ['datetime_type' => 'date']);
+  $ensure_field('field_fecha_nacimiento', 'Fecha de nacimiento', [], TRUE);
+
+  $ensure_storage('field_estado_civil', 'string', ['max_length' => 100]);
+  $ensure_field('field_estado_civil', 'Estado civil', [], TRUE);
+
+  $ensure_storage('field_sexo', 'string', ['max_length' => 32]);
+  $ensure_field('field_sexo', 'Sexo', [], TRUE);
+
+  $ensure_storage('field_tipo_documento', 'string', ['max_length' => 50]);
+  $ensure_field('field_tipo_documento', 'Tipo de documento', [], TRUE);
+
+  $ensure_storage('field_numero_documento', 'string', ['max_length' => 50]);
+  $ensure_field('field_numero_documento', 'Número de documento', [], TRUE);
+
+  $ensure_storage('field_registro_medico', 'string', ['max_length' => 100]);
+  $ensure_field('field_registro_medico', 'Registro médico / tarjeta profesional', [], TRUE);
+
+  $ensure_storage('field_pais', 'string', ['max_length' => 100]);
+  $ensure_field('field_pais', 'País', [], TRUE);
+
+  $ensure_storage('field_departamento', 'string', ['max_length' => 100]);
+  $ensure_field('field_departamento', 'Departamento', [], TRUE);
+
+  $ensure_storage('field_ciudad_ejercicio', 'string', ['max_length' => 100]);
+  $ensure_field('field_ciudad_ejercicio', 'Ciudad de ejercicio principal', [], TRUE);
+
+  // 4) Paso 2: Institucional.
+  $ensure_storage('field_direccion_institucional', 'string', ['max_length' => 255]);
+  $ensure_field('field_direccion_institucional', 'Dirección institucional', [], TRUE);
+
+  $ensure_storage('field_email_principal', 'email');
+  $ensure_field('field_email_principal', 'Correo principal', [], TRUE);
+
+  $ensure_storage('field_celular', 'string', ['max_length' => 30]);
+  $ensure_field('field_celular', 'Celular', [], TRUE);
+
+  $ensure_storage('field_correspondencia_fisica', 'string', ['max_length' => 32]);
+  $ensure_field('field_correspondencia_fisica', 'Correspondencia física', [], TRUE);
+
+  // 5) Paso 3: Académico.
+  $ensure_storage('field_facultad_pregrado', 'string', ['max_length' => 255]);
+  $ensure_field('field_facultad_pregrado', 'Facultad pregrado', [], TRUE);
+
+  $ensure_storage('field_pais_pregrado', 'string', ['max_length' => 100]);
+  $ensure_field('field_pais_pregrado', 'País pregrado', [], TRUE);
+
+  $ensure_storage('field_titulo_universitario', 'string', ['max_length' => 255]);
+  $ensure_field('field_titulo_universitario', 'Título universitario', [], TRUE);
+
+  $ensure_storage('field_universidad_residencia', 'string', ['max_length' => 255]);
+  $ensure_field('field_universidad_residencia', 'Universidad residencia', [], TRUE);
+
+  $ensure_storage('field_pais_residencia', 'string', ['max_length' => 100]);
+  $ensure_field('field_pais_residencia', 'País residencia', [], TRUE);
+
+  $ensure_storage('field_recertificacion_camec', 'boolean');
+  $ensure_field('field_recertificacion_camec', 'Participa en CAMEC', [], TRUE);
+
+  $ensure_storage('field_tiene_subespecialidad', 'boolean');
+  $ensure_field('field_tiene_subespecialidad', 'Tiene subespecialidad', [], TRUE);
+
+  $ensure_storage('field_subespecialidad_cual', 'string', ['max_length' => 255]);
+  $ensure_field('field_subespecialidad_cual', 'Subespecialidad (Cuál)', [], FALSE);
+
+  // 6) Adjuntos (file, private://).
+  $file_storage_settings = [
+    'uri_scheme' => 'private',
+    'target_type' => 'file',
+    'display_field' => FALSE,
+    'display_default' => FALSE,
+  ];
+  $file_field_settings = [
+    'file_directory' => 'solicitudes',
+    'file_extensions' => 'pdf jpg jpeg png',
+    'max_filesize' => '10 MB',
+    'description_field' => FALSE,
+  ];
+
+  $file_fields_required = [
+    'field_adj_carta_1' => 'Copia carta 1 de presentación',
+    'field_adj_carta_2' => 'Copia carta 2 de presentación',
+    'field_adj_rut' => 'Copia RUT',
+    'field_adj_id' => 'Copia cédula o ID',
+    'field_adj_carta_ingreso' => 'Carta de solicitud de ingreso',
+    'field_adj_hv' => 'Hoja de vida',
+    'field_adj_diploma_medico' => 'Copia diploma médico general',
+    'field_adj_diploma_dermatologo' => 'Copia diploma dermatólogo',
+    'field_adj_rethus' => 'Registro médico / RETHUS',
+    'field_adj_aut_verificacion' => 'Carta autorización verificación títulos',
+    'field_adj_cert_publicacion' => 'Certificación conferencia/caso/póster/publicación',
+  ];
+
+  foreach ($file_fields_required as $fname => $label) {
+    $ensure_storage($fname, 'file', $file_storage_settings, 1);
+    $ensure_field($fname, $label, $file_field_settings, TRUE);
+  }
+
+  // 7) Displays (mínimos) para que se renderice sin configuración manual.
+  $form_display = EntityFormDisplay::load("node.$type.default");
+  if (!$form_display) {
+    $form_display = EntityFormDisplay::create([
+      'targetEntityType' => 'node',
+      'bundle' => $type,
+      'mode' => 'default',
+      'status' => TRUE,
+    ]);
+  }
+
+  // Widget para campos clave.
+  $form_display->setComponent('title', ['type' => 'string_textfield']);
+  $form_display->setComponent('field_solicitud_id', ['type' => 'string_textfield']);
+  $form_display->setComponent('field_state', ['type' => 'options_select']);
+  $form_display->setComponent('field_sg_reason', ['type' => 'string_textarea']);
+  $form_display->setComponent('field_terms_accepted', ['type' => 'boolean_checkbox']);
+
+  // Deja el resto con defaults (si no existen, no rompe).
+  $form_display->save();
+
+  $view_display = EntityViewDisplay::load("node.$type.default");
+  if (!$view_display) {
+    $view_display = EntityViewDisplay::create([
+      'targetEntityType' => 'node',
+      'bundle' => $type,
+      'mode' => 'default',
+      'status' => TRUE,
+    ]);
+  }
+
+  // Mostrar campos clave por defecto.
+  $view_display->setComponent('field_solicitud_id', ['type' => 'string']);
+  $view_display->setComponent('field_state', ['type' => 'list_default']);
+  $view_display->setComponent('field_sg_reason', ['type' => 'basic_string']);
+  $view_display->save();
+}
+
+function asocolderma_inscription_update_9003(): void {
+  $type = 'solicitud_ingreso';
+
+  $form_display = EntityFormDisplay::load("node.$type.default");
+  if (!$form_display) {
+    $form_display = EntityFormDisplay::create([
+      'targetEntityType' => 'node',
+      'bundle' => $type,
+      'mode' => 'default',
+      'status' => TRUE,
+    ]);
+  }
+
+  $fields = [
+    'field_adj_aut_verificacion',
+    'field_adj_carta_1',
+    'field_adj_carta_2',
+    'field_adj_carta_ingreso',
+    'field_adj_cert_publicacion',
+    'field_adj_diploma_dermatologo',
+    'field_adj_diploma_medico',
+    'field_adj_hv',
+    'field_adj_id',
+    'field_adj_rethus',
+    'field_adj_rut',
+  ];
+
+  $weight = 50;
+  foreach ($fields as $field_name) {
+    $form_display->setComponent($field_name, [
+      'type' => 'file_generic',
+      'weight' => $weight++,
+      'settings' => [
+        'progress_indicator' => 'throbber',
+      ],
+    ]);
+  }
+
+  $form_display->save();
+}

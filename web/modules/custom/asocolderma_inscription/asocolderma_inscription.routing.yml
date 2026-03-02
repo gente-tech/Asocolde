@@ -1,0 +1,87 @@
+asocolderma_inscription.register:
+  path: '/registro-aspirante'
+  defaults:
+    _form: '\Drupal\asocolderma_inscription\Form\AspiranteRegisterForm'
+    _title: 'Registro de Aspirantes'
+  requirements:
+    _access: 'TRUE'
+
+asocolderma_inscription.activate:
+  path: '/activar-cuenta/{token}'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\AspiranteActivateController::activate'
+    _title: 'Activación de cuenta'
+  requirements:
+    _access: 'TRUE'
+
+asocolderma_inscription.user_zone:
+  path: '/zona'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\UserZoneController::redirectDefault'
+    _title: 'Zona de usuario'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+asocolderma_inscription.user_zone_profile:
+  path: '/zona/perfil'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\UserZoneController::profile'
+    _title: 'Perfil'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+asocolderma_inscription.user_zone_profile_edit:
+  path: '/zona/perfil/editar'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\UserZoneController::profileEdit'
+    _title: 'Editar perfil'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+asocolderma_inscription.user_zone_requests:
+  path: '/zona/solicitudes'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\UserZoneController::requests'
+    _title: 'Solicitudes'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+asocolderma_inscription.solicitud_create:
+  path: '/zona/solicitudes/crear'
+  defaults:
+    _form: '\Drupal\asocolderma_inscription\Form\SolicitudIngresoWizardForm'
+    _title: 'Crear solicitud'
+  requirements:
+    _permission: 'create solicitud ingreso'
+    _custom_access: 'asocolderma_inscription.solicitud_create_access::access'
+
+# Aspirante: editar solicitud (solo si está en aclaración, por ejemplo)
+asocolderma_inscription.solicitud_edit:
+  path: '/zona/solicitudes/{solicitud_ingreso}/editar'
+  defaults:
+    _form: '\Drupal\asocolderma_inscription\Form\SolicitudIngresoEditWizardForm'
+    _title: 'Editar solicitud'
+  requirements:
+    _permission: 'create solicitud ingreso'
+
+# Secretaría General: listado
+asocolderma_inscription.sg_list:
+  path: '/admin/asocolderma/solicitudes'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\SolicitudSgController::list'
+    _title: 'Solicitudes (Secretaría General)'
+  requirements:
+    _permission: 'view sg solicitudes'
+
+asocolderma_inscription.sg_review:
+  path: '/admin/asocolderma/solicitudes/{node}/revisar'
+  defaults:
+    _form: '\Drupal\asocolderma_inscription\Form\SolicitudNodeSgReviewForm'
+    _title: 'Revisar solicitud'
+  requirements:
+    _permission: 'manage sg solicitudes'
+    node: '\d+'
+  options:
+    parameters:
+      node:
+        type: entity:node
