@@ -173,7 +173,7 @@
 						{% set any_file = true %}
 						<li>
 							<strong>{{ item.label }}:</strong>
-							<a href="{{ file_url(f.entity.uri.value) }}" target="_blank">
+							<a class="btn-pdf" href="{{ file_url(f.entity.uri.value) }}">
 								{{ f.entity.filename.value }}
 							</a>
 						</li>
