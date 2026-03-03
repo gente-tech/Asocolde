@@ -1,0 +1,191 @@
+<section class="solicitud-ingreso">
+
+	<div class="solicitud-ingreso__header">
+		<h1>Solicitud de ingreso</h1>
+
+		<p>
+			<strong>ID Solicitud:</strong>
+			{{ node.field_solicitud_id.value ?: '-' }}
+		</p>
+
+		<p>
+			<strong>Estado:</strong>
+			{{ node.field_state.entity ? node.field_state.entity.name.value : '-' }}
+		</p>
+
+		<p>
+			<strong>Aceptó términos:</strong>
+			{{ node.field_terms_accepted is defined ? (node.field_terms_accepted.value ? 'Sí' : 'No') : '-' }}
+		</p>
+	</div>
+
+
+	<div class="solicitud-ingreso__body">
+
+		<div class="solicitud-ingreso__section">
+			<h2>Información general</h2>
+
+			<p>
+				<strong>Tipo de asociado:</strong>
+				{{ node.field_tipo_asociado.value ?: '-' }}</p>
+
+			<p>
+				<strong>Primer nombre:</strong>
+				{{ node.field_nombre1.value ?: '-' }}</p>
+			<p>
+				<strong>Segundo nombre:</strong>
+				{{ node.field_nombre2.value ?: '-' }}</p>
+			<p>
+				<strong>Primer apellido:</strong>
+				{{ node.field_apellido1.value ?: '-' }}</p>
+			<p>
+				<strong>Segundo apellido:</strong>
+				{{ node.field_apellido2.value ?: '-' }}</p>
+
+			<p>
+				<strong>Fecha de nacimiento:</strong>
+				{{ node.field_fecha_nacimiento.value ? node.field_fecha_nacimiento.value|date('Y-m-d') : '-' }}
+			</p>
+
+			<p>
+				<strong>Estado civil:</strong>
+				{{ node.field_estado_civil.value ?: '-' }}</p>
+			<p>
+				<strong>Sexo:</strong>
+				{{ node.field_sexo.value ?: '-' }}</p>
+
+			<p>
+				<strong>Tipo de documento:</strong>
+				{{ node.field_tipo_documento.value ?: '-' }}</p>
+			<p>
+				<strong>Número de documento:</strong>
+				{{ node.field_numero_documento.value ?: '-' }}</p>
+
+			<p>
+				<strong>Número Registro médico / tarjeta profesional:</strong>
+				{{ node.field_registro_medico.value ?: '-' }}
+			</p>
+
+			<p>
+				<strong>País:</strong>
+				{{ node.field_pais.value ?: '-' }}</p>
+			<p>
+				<strong>Ciudad de ejercicio principal:</strong>
+				{{ node.field_ciudad_ejercicio.value ?: '-' }}</p>
+			<p>
+				<strong>Departamento:</strong>
+				{{ node.field_departamento.value ?: '-' }}</p>
+		</div>
+
+
+		<div class="solicitud-ingreso__section">
+			<h2>Información uso institucional</h2>
+
+			<p>
+				<strong>Dirección física principal/institucional:</strong>
+				{{ node.field_direccion_institucional.value ?: '-' }}
+			</p>
+
+			<p>
+				<strong>Correo electrónico principal:</strong>
+				{{ node.field_email_principal.value ?: '-' }}
+			</p>
+
+			<p>
+				<strong>Teléfono celular de contacto:</strong>
+				{{ node.field_celular.value ?: '-' }}
+			</p>
+
+			<p>
+				<strong>Lugar donde desea recibir la correspondencia física:</strong>
+				{{ node.field_correspondencia_fisica.value ?: '-' }}
+			</p>
+		</div>
+
+
+		<div class="solicitud-ingreso__section">
+			<h2>Información académica</h2>
+
+			<p>
+				<strong>Facultad de medicina – Pregrado:</strong>
+				{{ node.field_facultad_pregrado.value ?: '-' }}
+			</p>
+
+			<p>
+				<strong>País donde realizó el pregrado en medicina:</strong>
+				{{ node.field_pais_pregrado.value ?: '-' }}
+			</p>
+
+			<p>
+				<strong>Título universitario:</strong>
+				{{ node.field_titulo_universitario.value ?: '-' }}
+			</p>
+
+			<p>
+				<strong>Universidad de residencia:</strong>
+				{{ node.field_universidad_residencia.value ?: '-' }}
+			</p>
+
+			<p>
+				<strong>País donde realizó la residencia:</strong>
+				{{ node.field_pais_residencia.value ?: '-' }}
+			</p>
+
+			<p>
+				<strong>Participar en programa voluntario CAMEC:</strong>
+				{{ node.field_recertificacion_camec.value ? 'Sí' : 'No' }}
+			</p>
+
+			<p>
+				<strong>Tiene subespecialidad:</strong>
+				{{ node.field_tiene_subespecialidad.value ? 'Sí' : 'No' }}
+			</p>
+
+			<p>
+				<strong>Subespecialidad (Cuál):</strong>
+				{{ node.field_subespecialidad_cual.value ?: '-' }}
+			</p>
+		</div>
+
+
+		<div class="solicitud-ingreso__section">
+			<h2>Información societaria (Adjuntos)</h2>
+
+			{% set adjuntos = [
+        {'label':'Carta de solicitud de ingreso', 'field':'field_adj_carta_ingreso'},
+        {'label':'Copia carta 1 de presentación', 'field':'field_adj_carta_1'},
+        {'label':'Copia carta 2 de presentación', 'field':'field_adj_carta_2'},
+        {'label':'Hoja de vida', 'field':'field_adj_hv'},
+        {'label':'Copia cédula o ID', 'field':'field_adj_id'},
+        {'label':'Copia RUT', 'field':'field_adj_rut'},
+        {'label':'Copia diploma médico general', 'field':'field_adj_diploma_medico'},
+        {'label':'Copia diploma dermatólogo', 'field':'field_adj_diploma_dermatologo'},
+        {'label':'Registro médico / RETHUS', 'field':'field_adj_rethus'},
+        {'label':'Carta autorización verificación títulos', 'field':'field_adj_aut_verificacion'},
+        {'label':'Certificación conferencia/caso/póster/publicación', 'field':'field_adj_cert_publicacion'}
+      ] %}
+
+			<ul>
+				{% set any_file = false %}
+				{% for item in adjuntos %}
+					{% set f = attribute(node, item.field) %}
+					{% if f is not empty and f.entity %}
+						{% set any_file = true %}
+						<li>
+							<strong>{{ item.label }}:</strong>
+							<a href="{{ file_url(f.entity.uri.value) }}" target="_blank">
+								{{ f.entity.filename.value }}
+							</a>
+						</li>
+					{% endif %}
+				{% endfor %}
+			</ul>
+
+			{% if not any_file %}
+				<p>No hay documentos adjuntos.</p>
+			{% endif %}
+
+		</div>
+
+	</div>
+</section>
