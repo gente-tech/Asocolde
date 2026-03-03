@@ -119,5 +119,6 @@ class AspiranteRegisterForm extends FormBase
 		$this->messenger()->addStatus(
 			$this->t('Te enviamos un correo para activar tu cuenta.')
 		);
+		$form_state->setRedirect('user.login');
 	}
 }
