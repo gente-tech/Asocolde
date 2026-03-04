@@ -16,3 +16,11 @@ services:
     arguments: ['@current_user', '@current_route_match']
     tags:
       - { name: event_subscriber }
+  
+  asocolderma_inscription.solicitud_historial_logger:
+    class: Drupal\asocolderma_inscription\Service\SolicitudHistorialLogger
+    arguments: ['@database', '@time']
+
+  asocolderma_inscription.solicitud_state_manager:
+    class: Drupal\asocolderma_inscription\Service\SolicitudStateManager
+    arguments: ['@database', '@current_user', '@asocolderma_inscription.solicitud_historial_logger']
