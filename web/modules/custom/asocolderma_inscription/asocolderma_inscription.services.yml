@@ -19,7 +19,7 @@ services:
   
   asocolderma_inscription.solicitud_historial_logger:
     class: Drupal\asocolderma_inscription\Service\SolicitudHistorialLogger
-    arguments: ['@database', '@time']
+    arguments: ['@database', '@datetime.time']
 
   asocolderma_inscription.solicitud_state_manager:
     class: Drupal\asocolderma_inscription\Service\SolicitudStateManager
