@@ -5,3 +5,10 @@ global-styling:
       css/style-asocolderma.css: { weight: 10 }
   js:
     assets/js/custom.js: {}
+
+modal_pdf:
+  js:
+    js/modal-pdf.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
