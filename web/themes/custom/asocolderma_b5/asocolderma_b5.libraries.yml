@@ -8,7 +8,7 @@ global-styling:
 
 modal_pdf:
   js:
-    js/modal-pdf.js: {}
+    assets/js/modal-pdf.js: {}
   dependencies:
     - core/drupal
     - core/once
