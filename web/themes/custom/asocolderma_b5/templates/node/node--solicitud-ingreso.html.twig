@@ -11,7 +11,11 @@
 
 		<p>
 			<strong>Estado:</strong>
-			{{ node.field_state.entity ? node.field_state.entity.name.value : '-' }}
+			{% if logged_in and 'secretaria_general' in user.getRoles %}
+				{{ drupal_form('Drupal\\asocolderma_inscription\\Form\\SolicitudStateInlineForm', node.id) }}
+			{% else %}
+				{{ node.field_state.entity ? node.field_state.entity.name.value : '-' }}
+			{% endif %}
 		</p>
 
 		<p>
@@ -192,13 +196,13 @@
 </section>
 
 <!-- Overlay + Modal -->
-  <div class="overlay-pdf" id="overlayPdf">
-    <div class="modal-pdf" id="modalPdf">
-      <div class="modal-header">
-        <button id="closeBtn">Cerrar</button>
-      </div>
-      <div class="modal-content">
-        <iframe id="pdfFrame" src=""></iframe>
-      </div>
-    </div>
-  </div>
+<div class="overlay-pdf" id="overlayPdf">
+	<div class="modal-pdf" id="modalPdf">
+		<div class="modal-header">
+			<button id="closeBtn">Cerrar</button>
+		</div>
+		<div class="modal-content">
+			<iframe id="pdfFrame" src=""></iframe>
+		</div>
+	</div>
+</div>
