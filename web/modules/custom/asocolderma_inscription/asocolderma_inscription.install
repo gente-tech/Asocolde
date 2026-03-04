@@ -340,3 +340,80 @@ function asocolderma_inscription_update_9003(): void {
 
   $form_display->save();
 }
+
+function asocolderma_inscription_schema() {
+  $schema['asocolderma_solicitud_historial'] = [
+    'description' => 'Historial append-only de transiciones de estado de solicitudes.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'solicitud_nid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'from_tid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+      ],
+      'to_tid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'actor_uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'created' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'origin' => [
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+        'default' => 'unknown',
+      ],
+      'comment' => [
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => FALSE,
+      ],
+      'metadata' => [
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => FALSE,
+        'description' => 'JSON string con metadata técnica (ip, user_agent, etc.)',
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'idx_solicitud_created' => ['solicitud_nid', 'created'],
+      'idx_to_created' => ['to_tid', 'created'],
+      'idx_actor_created' => ['actor_uid', 'created'],
+    ],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Update hook para crear tabla en sitios ya instalados.
+ */
+function asocolderma_inscription_update_9002(): void {
+  $schema = \Drupal::database()->schema();
+
+  if ($schema->tableExists('asocolderma_solicitud_historial')) {
+    return;
+  }
+
+  $table = asocolderma_inscription_schema()['asocolderma_solicitud_historial'];
+  $schema->createTable('asocolderma_solicitud_historial', $table);
+}
