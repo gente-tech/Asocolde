@@ -12896,6 +12896,9 @@ div[id^="modal-messages"] {
 }
 
 
+section.solicitud-ingreso {
+    padding: 10px;
+}
 
 .solicitud-ingreso__header {
     display: flex;
@@ -12925,6 +12928,8 @@ div[id^="modal-messages"] {
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 8px;
+	display: flex;
+    flex-wrap: wrap;
 }
 
 .solicitud-ingreso__section h2 {
@@ -12963,6 +12968,11 @@ div[id^="modal-messages"] {
     font-size: 14px;
 }
 
+.solicitud-ingreso__body .solicitud-ingreso__section {
+    background: white;
+    border: 1px solid #adadad;
+}
+
 .pagination {
 	gap: 10px;
 }
@@ -12976,6 +12986,7 @@ div[id^="modal-messages"] {
 
 @media (max-width: 768px) {
 	.solicitud-ingreso__section ul { flex-direction: column; }
+	.solicitud-ingreso__section ul li{ flex-direction: column; text-align: center; }
 	.solicitud-ingreso__section p {  flex: 1 100%; }
 }
 
