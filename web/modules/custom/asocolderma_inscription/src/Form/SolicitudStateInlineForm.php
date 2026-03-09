@@ -40,10 +40,17 @@ final class SolicitudStateInlineForm extends FormBase {
     }
 
     $vid = 'estado_solicitud_ingreso';
-    $allowed_names = ['Pendiente aclaración', 'Aprobada', 'Rechazada'];
-    $options = $this->resolveTidsByNames($vid, $allowed_names);
 
     $current_tid = (int) ($node->get('field_state')->target_id ?? 0);
+    $current_name = $this->resolveTermNameByTid($current_tid);
+
+    if ($current_name === 'Aprobada') {
+      $allowed_names = ['Rechazado Junta D.', 'Aprobado Junta D.'];
+    } else {
+      $allowed_names = ['Pendiente aclaración', 'Aprobada', 'Rechazada'];
+    }
+
+    $options = $this->resolveTidsByNames($vid, $allowed_names);
 
     $form['nid'] = [
       '#type' => 'hidden',
@@ -85,6 +92,21 @@ final class SolicitudStateInlineForm extends FormBase {
       return;
     }
 
+    $current_tid = (int) ($node->get('field_state')->target_id ?? 0);
+    $current_name = $this->resolveTermNameByTid($current_tid);
+
+    if ($current_name === 'Aprobada') {
+      $allowed = $this->resolveTidsByNames('estado_solicitud_ingreso', ['Rechazado Junta D.', 'Aprobado Junta D.']);
+    } else {
+      $allowed = $this->resolveTidsByNames('estado_solicitud_ingreso', ['Pendiente aclaración', 'Aprobada', 'Rechazada']);
+    }
+
+    if (!isset($allowed[$to_tid])) {
+      $this->messenger()->addError($this->t('Opción de estado no permitida para el estado actual.'));
+      $form_state->setRedirectUrl(\Drupal\Core\Url::fromUserInput('/solicitudes-aspirantes'));
+      return;
+    }
+
     $this->stateManager->transitionByTid(
       $node,
       $to_tid,
@@ -112,4 +134,11 @@ final class SolicitudStateInlineForm extends FormBase {
     return $options;
   }
 
+  private function resolveTermNameByTid(int $tid): ?string {
+    if ($tid <= 0) {
+      return NULL;
+    }
+    $term = $this->etm->getStorage('taxonomy_term')->load($tid);
+    return $term ? (string) $term->getName() : NULL;
+  }
 }
