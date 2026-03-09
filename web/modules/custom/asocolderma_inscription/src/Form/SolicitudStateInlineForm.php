@@ -39,29 +39,31 @@ final class SolicitudStateInlineForm extends FormBase {
       throw new AccessDeniedHttpException();
     }
 
-    $vid = 'estado_solicitud_ingreso';
-
     $current_tid = (int) ($node->get('field_state')->target_id ?? 0);
     $current_name = $this->resolveTermNameByTid($current_tid);
-
-    if ($current_name === 'Aprobada') {
-      $allowed_names = ['Rechazado Junta D.', 'Aprobado Junta D.'];
-    } else {
-      $allowed_names = ['Pendiente aclaración', 'Aprobada', 'Rechazada'];
-    }
-
-    $options = $this->resolveTidsByNames($vid, $allowed_names);
+    $allowed_names = $this->getAllowedStateNamesByCurrentState($current_name);
 
     $form['nid'] = [
       '#type' => 'hidden',
       '#value' => (int) $node->id(),
     ];
 
+    if (empty($allowed_names)) {
+      $form['state_text'] = [
+        '#markup' => '<span>' . ($current_name ?: '-') . '</span>',
+      ];
+      $form['#cache']['max-age'] = 0;
+      return $form;
+    }
+
+    $options = $this->resolveTidsByNames('estado_solicitud_ingreso', $allowed_names);
+
     $form['state_tid'] = [
       '#type' => 'select',
       '#title' => $this->t('Estado'),
       '#options' => $options,
-      '#default_value' => $current_tid ?: NULL,
+      '#default_value' => NULL,
+      '#empty_option' => $this->t('- Seleccione -'),
       '#required' => TRUE,
     ];
 
@@ -94,16 +96,12 @@ final class SolicitudStateInlineForm extends FormBase {
 
     $current_tid = (int) ($node->get('field_state')->target_id ?? 0);
     $current_name = $this->resolveTermNameByTid($current_tid);
+    $allowed_names = $this->getAllowedStateNamesByCurrentState($current_name);
+    $allowed_options = $this->resolveTidsByNames('estado_solicitud_ingreso', $allowed_names);
 
-    if ($current_name === 'Aprobada') {
-      $allowed = $this->resolveTidsByNames('estado_solicitud_ingreso', ['Rechazado Junta D.', 'Aprobado Junta D.']);
-    } else {
-      $allowed = $this->resolveTidsByNames('estado_solicitud_ingreso', ['Pendiente aclaración', 'Aprobada', 'Rechazada']);
-    }
-
-    if (!isset($allowed[$to_tid])) {
+    if (!isset($allowed_options[$to_tid])) {
       $this->messenger()->addError($this->t('Opción de estado no permitida para el estado actual.'));
-      $form_state->setRedirectUrl(\Drupal\Core\Url::fromUserInput('/solicitudes-aspirantes'));
+      $form_state->setRedirectUrl(Url::fromUserInput('/solicitudes-aspirantes'));
       return;
     }
 
@@ -112,11 +110,24 @@ final class SolicitudStateInlineForm extends FormBase {
       $to_tid,
       'node_view_inline_select',
       'Cambio de estado por Secretaría General desde el detalle',
-      ['nid' => $nid]
+      [
+        'nid' => $nid,
+        'from_state' => $current_name,
+        'to_tid' => $to_tid,
+      ]
     );
 
     $this->messenger()->addStatus($this->t('Estado actualizado.'));
     $form_state->setRedirectUrl(Url::fromUserInput('/solicitudes-aspirantes'));
+  }
+
+  private function getAllowedStateNamesByCurrentState(?string $current_name): array {
+    return match ($current_name) {
+      'En trámite' => ['Pendiente aclaración', 'Aprobada', 'Rechazada'],
+      'Aprobada' => ['Aprobado Junta D.', 'Rechazado Junta D.'],
+      'Aprobado Junta D.' => ['Aprobado Asamblea G.', 'Rechazado Asamblea G.'],
+      default => [],
+    };
   }
 
   private function resolveTidsByNames(string $vid, array $names): array {
@@ -124,7 +135,11 @@ final class SolicitudStateInlineForm extends FormBase {
     $options = [];
 
     foreach ($names as $name) {
-      $terms = $storage->loadByProperties(['vid' => $vid, 'name' => $name]);
+      $terms = $storage->loadByProperties([
+        'vid' => $vid,
+        'name' => $name,
+      ]);
+
       if ($terms) {
         $term = reset($terms);
         $options[(int) $term->id()] = $term->getName();
@@ -138,7 +153,9 @@ final class SolicitudStateInlineForm extends FormBase {
     if ($tid <= 0) {
       return NULL;
     }
+
     $term = $this->etm->getStorage('taxonomy_term')->load($tid);
     return $term ? (string) $term->getName() : NULL;
   }
+
 }
