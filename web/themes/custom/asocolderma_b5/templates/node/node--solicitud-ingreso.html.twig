@@ -19,7 +19,7 @@
 			{{ node.field_terms_accepted is defined ? (node.field_terms_accepted.value ? 'Sí' : 'No') : '-' }}
 		</p>
 	</div>
-	{% if logged_in and 'secretaria_general' in user.getRoles %}
+	{% if logged_in and ('secretaria_general' in user.getRoles or 'coordinacion_administrativa' in user.getRoles) %}
 		<div class="solicitud-ingreso__header">
 			{{ drupal_form('Drupal\\asocolderma_inscription\\Form\\SolicitudStateInlineForm', node.id) }}
 		</div>
