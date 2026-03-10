@@ -14,11 +14,18 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 final class SolicitudStateInlineForm extends FormBase {
 
+  protected EntityTypeManagerInterface $etm;
+  protected SolicitudStateManager $stateManager;
+
   public function __construct(
-    private readonly EntityTypeManagerInterface $etm,
-    private readonly SolicitudStateManager $stateManager,
-    private readonly RequestStack $requestStack,
-  ) {}
+    EntityTypeManagerInterface $etm,
+    SolicitudStateManager $stateManager,
+    RequestStack $request_stack,
+  ) {
+    $this->etm = $etm;
+    $this->stateManager = $stateManager;
+    $this->requestStack = $request_stack;
+  }
 
   public static function create(ContainerInterface $container): self {
     return new self(
