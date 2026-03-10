@@ -10,18 +10,21 @@ use Drupal\asocolderma_inscription\Service\SolicitudStateManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Drupal\Core\Url;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 final class SolicitudStateInlineForm extends FormBase {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $etm,
     private readonly SolicitudStateManager $stateManager,
+    private readonly RequestStack $requestStack,
   ) {}
 
   public static function create(ContainerInterface $container): self {
     return new self(
       $container->get('entity_type.manager'),
       $container->get('asocolderma_inscription.solicitud_state_manager'),
+      $container->get('request_stack'),
     );
   }
 
@@ -46,6 +49,14 @@ final class SolicitudStateInlineForm extends FormBase {
     $form['nid'] = [
       '#type' => 'hidden',
       '#value' => (int) $node->id(),
+    ];
+
+    $current_request = $this->requestStack->getCurrentRequest();
+    $destination = $current_request ? $current_request->getRequestUri() : '/';
+
+    $form['destination'] = [
+      '#type' => 'hidden',
+      '#value' => $destination,
     ];
 
     if (empty($allowed_names)) {
@@ -86,11 +97,12 @@ final class SolicitudStateInlineForm extends FormBase {
 
     $nid = (int) $form_state->getValue('nid');
     $to_tid = (int) $form_state->getValue('state_tid');
+    $destination = (string) $form_state->getValue('destination');
 
     $node = $this->etm->getStorage('node')->load($nid);
     if (!$node instanceof NodeInterface || $node->bundle() !== 'solicitud_ingreso') {
       $this->messenger()->addError($this->t('No se pudo cargar la solicitud.'));
-      $form_state->setRedirectUrl(Url::fromUserInput('/solicitudes-aspirantes'));
+      $form_state->setRedirectUrl(Url::fromUserInput($destination ?: '/'));
       return;
     }
 
@@ -101,7 +113,7 @@ final class SolicitudStateInlineForm extends FormBase {
 
     if (!isset($allowed_options[$to_tid])) {
       $this->messenger()->addError($this->t('Opción de estado no permitida para el estado actual.'));
-      $form_state->setRedirectUrl(Url::fromUserInput('/solicitudes-aspirantes'));
+      $form_state->setRedirectUrl(Url::fromUserInput($destination ?: '/'));
       return;
     }
 
@@ -119,7 +131,7 @@ final class SolicitudStateInlineForm extends FormBase {
     );
 
     $this->messenger()->addStatus($this->t('Estado actualizado.'));
-    $form_state->setRedirectUrl(Url::fromUserInput('/solicitudes-aspirantes'));
+    $form_state->setRedirectUrl(Url::fromUserInput($destination ?: '/'));
   }
 
   private function getAllowedStateNamesByCurrentState(?string $current_name): array {
