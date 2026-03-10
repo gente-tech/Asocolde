@@ -1,1 +1,33 @@
 <?php
+
+use Drupal\node\NodeInterface;
+
+function asocolderma_inscription_preprocess_node(array &$variables) {
+	if (empty($variables['node']) || !$variables['node'] instanceof NodeInterface) {
+		return;
+	}
+
+	$node = $variables['node'];
+
+	if ($node->bundle() !== 'solicitud_ingreso') {
+		return;
+	}
+
+	$request = \Drupal::request();
+	$session = $request->getSession();
+	$referer = $request->headers->get('referer');
+
+	if (!$referer) {
+		return;
+	}
+
+	$host = $request->getSchemeAndHttpHost();
+
+	if (str_starts_with($referer, $host)) {
+		$path = str_replace($host, '', $referer);
+
+		if (!str_contains($path, '/node/' . $node->id())) {
+			$session->set('asocolderma_inscription.solicitud_return_url', $path);
+		}
+	}
+}

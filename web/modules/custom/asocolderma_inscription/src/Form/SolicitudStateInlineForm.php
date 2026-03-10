@@ -2,15 +2,15 @@
 
 namespace Drupal\asocolderma_inscription\Form;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\asocolderma_inscription\Service\SolicitudStateManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Drupal\Core\Url;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 final class SolicitudStateInlineForm extends FormBase {
 
@@ -40,7 +40,10 @@ final class SolicitudStateInlineForm extends FormBase {
   }
 
   public function buildForm(array $form, FormStateInterface $form_state, $nid = NULL): array {
-    if (!$this->currentUser()->hasRole('secretaria_general') && !$this->currentUser()->hasRole('coordinacion_administrativa')) {
+    if (
+      !$this->currentUser()->hasRole('secretaria_general') &&
+      !$this->currentUser()->hasRole('coordinacion_administrativa')
+    ) {
       throw new AccessDeniedHttpException();
     }
 
@@ -53,13 +56,14 @@ final class SolicitudStateInlineForm extends FormBase {
     $current_name = $this->resolveTermNameByTid($current_tid);
     $allowed_names = $this->getAllowedStateNamesByCurrentState($current_name);
 
+    $request = $this->requestStack->getCurrentRequest();
+    $session = $request ? $request->getSession() : NULL;
+    $destination = $session ? $session->get('asocolderma_inscription.solicitud_return_url', '/') : '/';
+
     $form['nid'] = [
       '#type' => 'hidden',
       '#value' => (int) $node->id(),
     ];
-
-    $current_request = $this->requestStack->getCurrentRequest();
-    $destination = $current_request ? $current_request->getRequestUri() : '/';
 
     $form['destination'] = [
       '#type' => 'hidden',
@@ -85,7 +89,10 @@ final class SolicitudStateInlineForm extends FormBase {
       '#required' => TRUE,
     ];
 
-    $form['actions'] = ['#type' => 'actions'];
+    $form['actions'] = [
+      '#type' => 'actions',
+    ];
+
     $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Guardar'),
@@ -105,7 +112,10 @@ final class SolicitudStateInlineForm extends FormBase {
   }
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    if (!$this->currentUser()->hasRole('secretaria_general') && !$this->currentUser()->hasRole('coordinacion_administrativa')) {
+    if (
+      !$this->currentUser()->hasRole('secretaria_general') &&
+      !$this->currentUser()->hasRole('coordinacion_administrativa')
+    ) {
       throw new AccessDeniedHttpException();
     }
 
@@ -145,6 +155,11 @@ final class SolicitudStateInlineForm extends FormBase {
     );
 
     $this->messenger()->addStatus($this->t('Estado actualizado.'));
+    $form_state->setRedirectUrl(Url::fromUserInput($destination ?: '/'));
+  }
+
+  public function cancelForm(array &$form, FormStateInterface $form_state): void {
+    $destination = (string) $form_state->getValue('destination');
     $form_state->setRedirectUrl(Url::fromUserInput($destination ?: '/'));
   }
 
@@ -197,11 +212,6 @@ final class SolicitudStateInlineForm extends FormBase {
 
     $term = $this->etm->getStorage('taxonomy_term')->load($tid);
     return $term ? (string) $term->getName() : NULL;
-  }
-
-  public function cancelForm(array &$form, FormStateInterface $form_state): void {
-    $destination = (string) $form_state->getValue('destination');
-    $form_state->setRedirectUrl(Url::fromUserInput($destination ?: '/'));
   }
 
 }
