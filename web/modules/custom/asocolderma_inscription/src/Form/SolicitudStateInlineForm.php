@@ -19,7 +19,6 @@ final class SolicitudStateInlineForm extends FormBase {
 
   protected EntityTypeManagerInterface $etm;
   protected SolicitudStateManager $stateManager;
-  protected RequestStack $requestStack;
   protected FormBuilderInterface $formBuilder;
 
   public function __construct(
@@ -170,8 +169,7 @@ final class SolicitudStateInlineForm extends FormBase {
   }
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    // El cambio de estado ya no se hace aquí.
-    // Se hace dentro del modal de confirmación.
+    // El cambio de estado se hace en el modal.
   }
 
   public function cancelForm(array &$form, FormStateInterface $form_state): void {
