@@ -30,7 +30,7 @@ final class SolicitudStateInlineForm extends FormBase {
   }
 
   public function buildForm(array $form, FormStateInterface $form_state, $nid = NULL): array {
-    if (!$this->currentUser()->hasRole('secretaria_general')) {
+    if (!$this->currentUser()->hasRole('secretaria_general') && !$this->currentUser()->hasRole('coordinacion_administrativa')) {
       throw new AccessDeniedHttpException();
     }
 
@@ -80,7 +80,7 @@ final class SolicitudStateInlineForm extends FormBase {
   }
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    if (!$this->currentUser()->hasRole('secretaria_general')) {
+    if (!$this->currentUser()->hasRole('secretaria_general') && !$this->currentUser()->hasRole('coordinacion_administrativa')) {
       throw new AccessDeniedHttpException();
     }
 
@@ -109,11 +109,12 @@ final class SolicitudStateInlineForm extends FormBase {
       $node,
       $to_tid,
       'node_view_inline_select',
-      'Cambio de estado por Secretaría General desde el detalle',
+      'Cambio de estado desde el detalle',
       [
         'nid' => $nid,
         'from_state' => $current_name,
         'to_tid' => $to_tid,
+        'actor_roles' => $this->currentUser()->getRoles(),
       ]
     );
 
@@ -122,12 +123,26 @@ final class SolicitudStateInlineForm extends FormBase {
   }
 
   private function getAllowedStateNamesByCurrentState(?string $current_name): array {
-    return match ($current_name) {
-      'En trámite' => ['Pendiente aclaración', 'Aprobada', 'Rechazada'],
-      'Aprobada' => ['Aprobado Junta D.', 'Rechazado Junta D.'],
-      'Aprobado Junta D.' => ['Aprobado Asamblea G.', 'Rechazado Asamblea G.'],
-      default => [],
-    };
+    if ($this->currentUser()->hasRole('secretaria_general')) {
+      return match ($current_name) {
+        'En trámite' => ['Pendiente aclaración', 'Aprobada', 'Rechazada'],
+        'Aprobada' => ['Aprobado Junta D.', 'Rechazado Junta D.'],
+        'Aprobado Junta D.' => ['Aprobado Asamblea G.', 'Rechazado Asamblea G.'],
+        default => [],
+      };
+    }
+
+    if ($this->currentUser()->hasRole('coordinacion_administrativa')) {
+      return match ($current_name) {
+        'Aprobado Asamblea G.' => ['Pendiente pago de ingreso'],
+        'Pendiente pago de ingreso' => ['Pendiente firma de documentos'],
+        'Pendiente firma de documentos' => [],
+        'Documentos firmados' => ['Miembro activo'],
+        default => [],
+      };
+    }
+
+    return [];
   }
 
   private function resolveTidsByNames(string $vid, array $names): array {
