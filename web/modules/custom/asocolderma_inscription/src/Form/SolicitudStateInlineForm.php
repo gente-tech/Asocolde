@@ -92,6 +92,13 @@ final class SolicitudStateInlineForm extends FormBase {
       '#button_type' => 'primary',
     ];
 
+    $form['actions']['cancel'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Cancelar'),
+      '#limit_validation_errors' => [],
+      '#submit' => ['::cancelForm'],
+    ];
+
     $form['#cache']['max-age'] = 0;
 
     return $form;
@@ -190,6 +197,11 @@ final class SolicitudStateInlineForm extends FormBase {
 
     $term = $this->etm->getStorage('taxonomy_term')->load($tid);
     return $term ? (string) $term->getName() : NULL;
+  }
+
+  public function cancelForm(array &$form, FormStateInterface $form_state): void {
+    $destination = (string) $form_state->getValue('destination');
+    $form_state->setRedirectUrl(Url::fromUserInput($destination ?: '/'));
   }
 
 }
