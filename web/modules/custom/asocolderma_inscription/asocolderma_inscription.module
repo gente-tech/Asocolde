@@ -3,31 +3,34 @@
 use Drupal\node\NodeInterface;
 
 function asocolderma_inscription_preprocess_node(array &$variables) {
-	if (empty($variables['node']) || !$variables['node'] instanceof NodeInterface) {
-		return;
-	}
+  if (empty($variables['node']) || !$variables['node'] instanceof NodeInterface) {
+    return;
+  }
 
-	$node = $variables['node'];
+  $node = $variables['node'];
 
-	if ($node->bundle() !== 'solicitud_ingreso') {
-		return;
-	}
+  if ($node->bundle() !== 'solicitud_ingreso') {
+    return;
+  }
 
-	$request = \Drupal::request();
-	$session = $request->getSession();
-	$referer = $request->headers->get('referer');
+  $request = \Drupal::request();
+  $session = $request->getSession();
+  $referer = $request->headers->get('referer');
+  $host = $request->getSchemeAndHttpHost();
 
-	if (!$referer) {
-		return;
-	}
+  if ($referer && str_starts_with($referer, $host)) {
+    $path = str_replace($host, '', $referer);
 
-	$host = $request->getSchemeAndHttpHost();
+    if (!str_contains($path, '/node/' . $node->id())) {
+      $session->set('asocolderma_inscription.solicitud_return_url', $path);
+    }
+    return;
+  }
 
-	if (str_starts_with($referer, $host)) {
-		$path = str_replace($host, '', $referer);
+  $current_path = $request->getRequestUri();
+  $stored_path = $session->get('asocolderma_inscription.solicitud_return_url');
 
-		if (!str_contains($path, '/node/' . $node->id())) {
-			$session->set('asocolderma_inscription.solicitud_return_url', $path);
-		}
-	}
+  if (empty($stored_path) && !str_contains($current_path, '/node/' . $node->id())) {
+    $session->set('asocolderma_inscription.solicitud_return_url', $current_path ?: '/');
+  }
 }
