@@ -76,9 +76,7 @@ final class SolicitudStateInlineForm extends FormBase {
     ];
 
     if (empty($allowed_names)) {
-      $form['state_text'] = [
-        '#markup' => '<span>' . ($current_name ?: '-') . '</span>',
-      ];
+      $form['#access'] = FALSE;
       $form['#cache']['max-age'] = 0;
       return $form;
     }
