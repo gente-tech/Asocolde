@@ -12884,6 +12884,12 @@ div[id^="modal-messages"] {
     background: aliceblue;
     border-radius: 8px;
     border: 1px solid;
+	text-align: center;
+}
+
+.acciones a.active {
+    background: var(--main-color);
+    color: white;
 }
 
 .table .acciones a {
@@ -12895,6 +12901,15 @@ div[id^="modal-messages"] {
     max-height: 25px;
 }
 
+.estado-solicitud-color {
+    background: #e9e9e9;
+    padding: 2px 10px;
+    line-height: 1;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 8px;
+    text-align: center;
+}
 
 section.solicitud-ingreso {
     padding: 10px;
