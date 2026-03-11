@@ -16,21 +16,35 @@ function asocolderma_inscription_preprocess_node(array &$variables) {
   $request = \Drupal::request();
   $session = $request->getSession();
   $referer = $request->headers->get('referer');
-  $host = $request->getSchemeAndHttpHost();
 
-  if ($referer && str_starts_with($referer, $host)) {
-    $path = str_replace($host, '', $referer);
-
-    if (!str_contains($path, '/node/' . $node->id())) {
-      $session->set('asocolderma_inscription.solicitud_return_url', $path);
-    }
+  if (!$referer) {
     return;
   }
 
-  $current_path = $request->getRequestUri();
-  $stored_path = $session->get('asocolderma_inscription.solicitud_return_url');
+  $host = $request->getSchemeAndHttpHost();
 
-  if (empty($stored_path) && !str_contains($current_path, '/node/' . $node->id())) {
-    $session->set('asocolderma_inscription.solicitud_return_url', $current_path ?: '/');
+  if (!str_starts_with($referer, $host)) {
+    return;
   }
+
+  $referer_path = parse_url($referer, PHP_URL_PATH) ?: '/';
+  $current_path = $request->getPathInfo();
+
+  // Ruta interna real del nodo.
+  $internal_node_path = '/node/' . $node->id();
+
+  // Alias actual del nodo, por ejemplo /solicitud/04032026-234-001.
+  $current_alias = \Drupal::service('path_alias.manager')->getAliasByPath($internal_node_path);
+
+  // No guardar como retorno la misma página actual ni la ruta interna del nodo
+  // ni el alias del nodo.
+  if (
+    $referer_path === $current_path ||
+    $referer_path === $internal_node_path ||
+    $referer_path === $current_alias
+  ) {
+    return;
+  }
+
+  $session->set('asocolderma_inscription.solicitud_return_url', $referer_path);
 }
