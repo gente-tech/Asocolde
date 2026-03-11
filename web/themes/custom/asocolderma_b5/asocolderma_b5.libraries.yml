@@ -12,3 +12,9 @@ modal_pdf:
   dependencies:
     - core/drupal
     - core/once
+
+views-tabs:
+  js:
+    assets/js/views-tabs-active.js: {}
+  dependencies:
+    - core/drupal

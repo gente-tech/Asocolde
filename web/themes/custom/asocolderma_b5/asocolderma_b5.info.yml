@@ -5,6 +5,7 @@ core_version_requirement: '^9.4 || ^10'
 'base theme': bootstrap5
 libraries:
   - asocolderma_b5/global-styling
+  - asocolderma_b5/views-tabs
 ckeditor_stylesheets:
   - css/style.css
 ckeditor5-stylesheets:
