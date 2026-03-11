@@ -3,6 +3,8 @@ global-styling:
     theme:
       css/style.css: { weight: -10 }
       css/style-asocolderma.css: { weight: 10 }
+      css/style-solicitud-aspirante.css: { weight: 20 }
+
   js:
     assets/js/custom.js: {}
 
