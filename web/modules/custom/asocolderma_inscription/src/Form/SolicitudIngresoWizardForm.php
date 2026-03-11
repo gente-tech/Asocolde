@@ -102,6 +102,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['general']['tipo_asociado'] = [
         '#type' => 'select',
         '#title' => $this->t('Tipo de asociado al que aspira'),
+        '#description' => $this->t('Seleccione la categoría de miembro a la cual desea postularse, de acuerdo con los criterios establecidos por la Asociación.'),
         '#required' => TRUE,
         '#options' => [
           'numero' => $this->t('Número'),
@@ -115,29 +116,37 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['general']['nombre1'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Primer nombre'),
+        '#description' => $this->t('Digite su primer nombre exactamente como figura en su documento de identidad. Ejemplo: Carlos.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['general']['nombre1'] ?? '',
       ];
+
       $form['general']['nombre2'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Segundo nombre'),
+        '#description' => $this->t('Digite su segundo nombre, si aplica, tal como aparece en su documento de identidad. Ejemplo: Andrés.'),
         '#default_value' => $wizard_values['general']['nombre2'] ?? '',
       ];
+
       $form['general']['apellido1'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Primer apellido'),
+        '#description' => $this->t('Digite su primer apellido exactamente como figura en su documento de identidad. Ejemplo: Gómez.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['general']['apellido1'] ?? '',
       ];
+
       $form['general']['apellido2'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Segundo apellido'),
+        '#description' => $this->t('Digite su segundo apellido, si aplica, tal como aparece en su documento de identidad. Ejemplo: Rodríguez.'),
         '#default_value' => $wizard_values['general']['apellido2'] ?? '',
       ];
 
       $form['general']['fecha_nacimiento'] = [
         '#type' => 'date',
         '#title' => $this->t('Fecha de nacimiento'),
+        '#description' => $this->t('Seleccione su fecha de nacimiento conforme a su documento oficial.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['general']['fecha_nacimiento'] ?? '',
       ];
@@ -145,6 +154,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['general']['estado_civil'] = [
         '#type' => 'select',
         '#title' => $this->t('Estado civil'),
+        '#description' => $this->t('Seleccione su estado civil actual. Esta información será utilizada únicamente para fines administrativos del proceso.'),
         '#required' => TRUE,
         '#options' => [
           'soltero' => $this->t('Soltero'),
@@ -159,6 +169,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['general']['sexo'] = [
         '#type' => 'select',
         '#title' => $this->t('Sexo'),
+        '#description' => $this->t('Seleccione la opción correspondiente según su información personal.'),
         '#required' => TRUE,
         '#options' => [
           'm' => $this->t('Masculino'),
@@ -171,6 +182,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['general']['tipo_documento'] = [
         '#type' => 'select',
         '#title' => $this->t('Tipo de documento'),
+        '#description' => $this->t('Seleccione el tipo de documento con el cual se identifica formalmente.'),
         '#required' => TRUE,
         '#options' => [
           'cc' => $this->t('Cédula de ciudadanía'),
@@ -183,6 +195,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['general']['numero_documento'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Número de documento'),
+        '#description' => $this->t('Ingrese el número del documento sin puntos, comas ni espacios. Ejemplo: 1234567890.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['general']['numero_documento'] ?? '',
       ];
@@ -190,6 +203,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['general']['registro_medico'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Registro médico'),
+        '#description' => $this->t('Ingrese el número de su registro médico profesional vigente. Ejemplo: RM-12345 o el consecutivo oficial que corresponda.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['general']['registro_medico'] ?? '',
       ];
@@ -197,6 +211,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['general']['pais'] = [
         '#type' => 'textfield',
         '#title' => $this->t('País'),
+        '#description' => $this->t('Indique el país de residencia actual. Ejemplo: Colombia.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['general']['pais'] ?? '',
       ];
@@ -204,6 +219,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['general']['ciudad_ejercicio'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Ciudad de ejercicio'),
+        '#description' => $this->t('Digite la ciudad donde desarrolla actualmente su ejercicio profesional. Ejemplo: Bogotá.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['general']['ciudad_ejercicio'] ?? '',
       ];
@@ -219,6 +235,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['contacto']['direccion'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Dirección'),
+        '#description' => $this->t('Ingrese su dirección completa de residencia o correspondencia. Ejemplo: Calle 123 # 45-67, Apartamento 201.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['contacto']['direccion'] ?? '',
       ];
@@ -226,6 +243,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['contacto']['telefono'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Teléfono'),
+        '#description' => $this->t('Ingrese su número de teléfono fijo, incluyendo indicativo si corresponde. Ejemplo: 6011234567.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['contacto']['telefono'] ?? '',
       ];
@@ -233,6 +251,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['contacto']['celular'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Celular'),
+        '#description' => $this->t('Ingrese un número de celular activo para contacto y notificaciones. Ejemplo: 3001234567.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['contacto']['celular'] ?? '',
       ];
@@ -240,6 +259,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['contacto']['email'] = [
         '#type' => 'email',
         '#title' => $this->t('Correo electrónico'),
+        '#description' => $this->t('Ingrese el correo electrónico principal donde recibirá comunicaciones oficiales del proceso. Ejemplo: nombre@dominio.com.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['contacto']['email'] ?? '',
       ];
@@ -255,6 +275,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['profesional']['universidad'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Universidad'),
+        '#description' => $this->t('Digite el nombre completo de la institución donde obtuvo su título de médico. Ejemplo: Universidad Nacional de Colombia.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['profesional']['universidad'] ?? '',
       ];
@@ -262,6 +283,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['profesional']['titulo'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Título'),
+        '#description' => $this->t('Ingrese el título profesional obtenido. Ejemplo: Médico Cirujano.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['profesional']['titulo'] ?? '',
       ];
@@ -269,6 +291,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['profesional']['fecha_grado'] = [
         '#type' => 'date',
         '#title' => $this->t('Fecha de grado'),
+        '#description' => $this->t('Seleccione la fecha en la que obtuvo el título profesional registrado anteriormente.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['profesional']['fecha_grado'] ?? '',
       ];
@@ -276,6 +299,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['profesional']['especialidad'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Especialidad'),
+        '#description' => $this->t('Digite su especialidad médica principal. Ejemplo: Dermatología.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['profesional']['especialidad'] ?? '',
       ];
@@ -283,12 +307,14 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['profesional']['subespecialidad'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Subespecialidad (si aplica)'),
+        '#description' => $this->t('Ingrese su subespecialidad, en caso de contar con ella. Ejemplo: Dermatopatología.'),
         '#default_value' => $wizard_values['profesional']['subespecialidad'] ?? '',
       ];
 
       $form['profesional']['lugar_trabajo'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Lugar de trabajo'),
+        '#description' => $this->t('Indique la institución, clínica, hospital, consultorio o entidad donde ejerce actualmente. Ejemplo: Clínica del Country.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['profesional']['lugar_trabajo'] ?? '',
       ];
@@ -304,6 +330,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['adjuntos']['adj_id'] = [
         '#type' => 'managed_file',
         '#title' => $this->t('Documento de identidad'),
+        '#description' => $this->t('Adjunte una copia legible de su documento de identidad vigente. Formatos permitidos: PDF, JPG, JPEG o PNG. Tamaño máximo: 10 MB.'),
         '#required' => TRUE,
         '#upload_location' => 'private://solicitud_ingreso/id/',
         '#default_value' => $wizard_values['adjuntos']['adj_id'] ?? NULL,
@@ -316,6 +343,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['adjuntos']['adj_hv'] = [
         '#type' => 'managed_file',
         '#title' => $this->t('Hoja de vida'),
+        '#description' => $this->t('Adjunte su hoja de vida actualizada en formato PDF. Se recomienda que el documento incluya formación académica, experiencia profesional y datos de contacto. Tamaño máximo: 10 MB.'),
         '#required' => TRUE,
         '#upload_location' => 'private://solicitud_ingreso/hv/',
         '#default_value' => $wizard_values['adjuntos']['adj_hv'] ?? NULL,
@@ -328,6 +356,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['adjuntos']['adj_rut'] = [
         '#type' => 'managed_file',
         '#title' => $this->t('RUT'),
+        '#description' => $this->t('Adjunte una copia actualizada del Registro Único Tributario (RUT) en formato PDF. Tamaño máximo: 10 MB.'),
         '#required' => TRUE,
         '#upload_location' => 'private://solicitud_ingreso/rut/',
         '#default_value' => $wizard_values['adjuntos']['adj_rut'] ?? NULL,
@@ -340,6 +369,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['adjuntos']['adj_rethus'] = [
         '#type' => 'managed_file',
         '#title' => $this->t('RETHUS'),
+        '#description' => $this->t('Adjunte el certificado o soporte de inscripción en RETHUS en formato PDF. Tamaño máximo: 10 MB.'),
         '#required' => TRUE,
         '#upload_location' => 'private://solicitud_ingreso/rethus/',
         '#default_value' => $wizard_values['adjuntos']['adj_rethus'] ?? NULL,
@@ -352,6 +382,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['adjuntos']['adj_diploma_medico'] = [
         '#type' => 'managed_file',
         '#title' => $this->t('Diploma médico'),
+        '#description' => $this->t('Adjunte el diploma que acredita su título profesional como médico en formato PDF. Tamaño máximo: 10 MB.'),
         '#required' => TRUE,
         '#upload_location' => 'private://solicitud_ingreso/diploma_medico/',
         '#default_value' => $wizard_values['adjuntos']['adj_diploma_medico'] ?? NULL,
@@ -364,6 +395,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['adjuntos']['adj_diploma_dermatologo'] = [
         '#type' => 'managed_file',
         '#title' => $this->t('Diploma dermatólogo'),
+        '#description' => $this->t('Adjunte el diploma o soporte académico que acredita su especialidad en dermatología en formato PDF. Tamaño máximo: 10 MB.'),
         '#required' => TRUE,
         '#upload_location' => 'private://solicitud_ingreso/diploma_dermatologo/',
         '#default_value' => $wizard_values['adjuntos']['adj_diploma_dermatologo'] ?? NULL,
@@ -376,6 +408,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['adjuntos']['adj_cert_publicacion'] = [
         '#type' => 'managed_file',
         '#title' => $this->t('Certificación de publicaciones (si aplica)'),
+        '#description' => $this->t('Si cuenta con publicaciones, adjunte los certificados o soportes correspondientes en formato PDF. Este campo es opcional. Tamaño máximo: 10 MB.'),
         '#upload_location' => 'private://solicitud_ingreso/cert_publicacion/',
         '#default_value' => $wizard_values['adjuntos']['adj_cert_publicacion'] ?? NULL,
         '#upload_validators' => [
@@ -387,6 +420,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['adjuntos']['adj_aut_verificacion'] = [
         '#type' => 'managed_file',
         '#title' => $this->t('Autorización de verificación'),
+        '#description' => $this->t('Adjunte el documento firmado mediante el cual autoriza la validación de la información suministrada. Formato PDF. Tamaño máximo: 10 MB.'),
         '#required' => TRUE,
         '#upload_location' => 'private://solicitud_ingreso/aut_verificacion/',
         '#default_value' => $wizard_values['adjuntos']['adj_aut_verificacion'] ?? NULL,
@@ -399,6 +433,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['adjuntos']['adj_carta_1'] = [
         '#type' => 'managed_file',
         '#title' => $this->t('Carta 1'),
+        '#description' => $this->t('Adjunte la primera carta de presentación o recomendación en formato PDF, conforme a los requisitos del proceso de ingreso. Tamaño máximo: 10 MB.'),
         '#required' => TRUE,
         '#upload_location' => 'private://solicitud_ingreso/carta_1/',
         '#default_value' => $wizard_values['adjuntos']['adj_carta_1'] ?? NULL,
@@ -411,6 +446,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['adjuntos']['adj_carta_2'] = [
         '#type' => 'managed_file',
         '#title' => $this->t('Carta 2'),
+        '#description' => $this->t('Adjunte la segunda carta de presentación o recomendación en formato PDF, conforme a los requisitos del proceso de ingreso. Tamaño máximo: 10 MB.'),
         '#required' => TRUE,
         '#upload_location' => 'private://solicitud_ingreso/carta_2/',
         '#default_value' => $wizard_values['adjuntos']['adj_carta_2'] ?? NULL,
@@ -431,6 +467,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['confirm']['terms'] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Acepto los términos y condiciones'),
+        '#description' => $this->t('Declaro que la información suministrada es veraz y autorizo su validación dentro del proceso institucional de evaluación y admisión.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['confirm']['terms'] ?? 0,
       ];
@@ -438,7 +475,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['confirm']['preview'] = [
         '#type' => 'item',
         '#title' => $this->t('Resumen'),
-        '#markup' => $this->t('Revisa que la información sea correcta antes de enviar la solicitud.'),
+        '#markup' => $this->t('Verifique cuidadosamente la información registrada antes de enviar su solicitud. Una vez remitida, será gestionada conforme al flujo institucional definido por la Asociación.'),
       ];
     }
 
