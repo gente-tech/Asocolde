@@ -275,7 +275,7 @@ function asocolderma_inscription_get_date_for_step(NodeInterface $node, string $
   }
 
   if ($step_label === asocolderma_inscription_map_current_state_to_flow_label($current_name)) {
-    return \Drupal::service('date.formatter')->format($node->getCreatedTime(), 'custom', 'd/m/Y');
+    return \Drupal::service('date.formatter')->format($node->getCreatedTime(), 'custom', 'd/m/Y h:i A');
   }
 
   return '';

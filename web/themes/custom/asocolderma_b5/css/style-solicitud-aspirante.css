@@ -109,4 +109,20 @@
   background: #ef4444;
 }
 
-27022026-845-002
+.solicitud-semaforo__date {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+
+.solicitud-semaforo__date .fecha {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.solicitud-semaforo__date .hora {
+  font-size: 11px;
+  color: #9ca3af;
+}

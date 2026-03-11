@@ -22,9 +22,14 @@
           <div class="solicitud-semaforo__content">
             <div class="solicitud-semaforo__label">{{ step.label }}</div>
 
-            {% if step.date %}
-              <div class="solicitud-semaforo__date">{{ step.date }}</div>
-            {% endif %}
+				{% if step.date %}
+					{% set parts = step.date|split(' ') %}
+
+					<div class="solicitud-semaforo__date">
+						<span class="fecha">{{ parts[0] }}</span>
+						<span class="hora">{{ parts[1] }} {{ parts[2] }}</span>
+					</div>
+				{% endif %}
           </div>
         </div>
       {% endfor %}
