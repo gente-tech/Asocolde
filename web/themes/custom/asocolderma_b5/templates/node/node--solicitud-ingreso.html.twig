@@ -1,4 +1,18 @@
 {{ attach_library('asocolderma_b5/modal_pdf') }}
+
+<br>
+<br>
+{% if logged_in and ('coordinacion_administrativa' in user.getRoles) %}
+	<div class="acciones">
+		<a href="/pendientes-pago-ingreso">Pasos para pago</a>
+		<a href="/pendientes-validar-pago">Validar pago</a>
+		<a href="/pendientes-carta-bienvenida">Carta de bienvenida</a>
+		<a href="/solicitudes-con-documentos-firmados">Documentos firmados</a>
+		<a href="/solicitudes-aspirante-activado">Activados</a>
+	</div>
+	<br>	
+{% endif %}
+
 <section class="solicitud-ingreso">
 
 	<div class="solicitud-ingreso__header">
