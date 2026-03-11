@@ -13003,6 +13003,24 @@ section.solicitud-ingreso {
 	.solicitud-ingreso__section ul { flex-direction: column; }
 	.solicitud-ingreso__section ul li{ flex-direction: column; text-align: center; }
 	.solicitud-ingreso__section p {  flex: 1 100%; }
+
+	.acciones {
+	    justify-content: center;
+	    gap: 5px;
+	    flex-wrap: wrap;
+	    padding-top: 10px;
+	}
+	table.table { min-width: max-content; }
+	.view-content, .contenedor-tabla { overflow: auto;  max-width: 100%;}
+
+	details > .details-wrapper > div { flex: 1 50%; }
+	form .form-actions {
+		justify-content: center;
+    	flex-direction: column;
+    	gap: 10px;
+	}
+	form .form-actions input {  margin: 0 !important; }
+	
 }
 
 /**** FIN AJUSTES 04-03-2026 *****/
