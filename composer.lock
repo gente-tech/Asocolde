@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dd51c48aa5b6271d2f79d03478ff0f3a",
+    "content-hash": "ae0c2adb037f00bca6bb12667c9640ac",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2375,66 +2375,6 @@
             "support": {
                 "source": "https://git.drupalcode.org/project/captcha",
                 "issues": "https://www.drupal.org/project/issues/captcha"
-            }
-        },
-        {
-            "name": "drupal/color_field",
-            "version": "3.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/color_field.git",
-                "reference": "3.0.2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/color_field-3.0.2.zip",
-                "reference": "3.0.2",
-                "shasum": "2778e454798a59d3e9fd27f56a161562e2d1f0fe"
-            },
-            "require": {
-                "drupal/core": "^9 || ^10 || ^11"
-            },
-            "require-dev": {
-                "drupal/core-recommended": "^9 || ^10 || ^11",
-                "drupal/feeds": "^3.0@beta",
-                "drupal/token": "~1.3"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "3.0.2",
-                    "datestamp": "1743394003",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "targoo",
-                    "homepage": "https://www.drupal.org/user/431910",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "Nick Wilde",
-                    "homepage": "https://www.drupal.org/user/nickwilde",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "targoo",
-                    "homepage": "https://www.drupal.org/user/431910"
-                }
-            ],
-            "description": "Provides a color field type to store the color value and opacity",
-            "homepage": "https://www.drupal.org/project/color_field",
-            "support": {
-                "source": "https://git.drupalcode.org/project/color_field",
-                "issues": "https://www.drupal.org/project/issues/color_field"
             }
         },
         {
@@ -5715,147 +5655,6 @@
             "time": "2023-07-19T22:22:22+00:00"
         },
         {
-            "name": "drupal/recaptcha",
-            "version": "3.4.0",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/recaptcha.git",
-                "reference": "8.x-3.4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/recaptcha-8.x-3.4.zip",
-                "reference": "8.x-3.4",
-                "shasum": "95fa7ac5dd064ea6a1c14fc4881778bf68200598"
-            },
-            "require": {
-                "drupal/captcha": "^1.15 || ^2.0",
-                "drupal/core": "^10 || ^11",
-                "google/recaptcha": "^1.3"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "8.x-3.4",
-                    "datestamp": "1723563033",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "hass",
-                    "homepage": "https://www.drupal.org/u/hass"
-                },
-                {
-                    "name": "See other contributors",
-                    "homepage": "https://www.drupal.org/node/147903/committers"
-                },
-                {
-                    "name": "diolan",
-                    "homepage": "https://www.drupal.org/user/2336786"
-                },
-                {
-                    "name": "hass",
-                    "homepage": "https://www.drupal.org/user/85918"
-                },
-                {
-                    "name": "id.medion",
-                    "homepage": "https://www.drupal.org/user/2542592"
-                },
-                {
-                    "name": "kim.pepper",
-                    "homepage": "https://www.drupal.org/user/370574"
-                },
-                {
-                    "name": "larowlan",
-                    "homepage": "https://www.drupal.org/user/395439"
-                },
-                {
-                    "name": "liam morland",
-                    "homepage": "https://www.drupal.org/user/493050"
-                },
-                {
-                    "name": "robloach",
-                    "homepage": "https://www.drupal.org/user/61114"
-                },
-                {
-                    "name": "wundo",
-                    "homepage": "https://www.drupal.org/user/25523"
-                },
-                {
-                    "name": "yseki",
-                    "homepage": "https://www.drupal.org/user/1523064"
-                }
-            ],
-            "description": "Protect your website from spam and abuse while letting real people pass through with ease.",
-            "homepage": "https://www.drupal.org/project/recaptcha",
-            "support": {
-                "source": "https://git.drupalcode.org/project/recaptcha.git",
-                "issues": "https://www.drupal.org/project/issues/recaptcha"
-            }
-        },
-        {
-            "name": "drupal/recaptcha_v3",
-            "version": "2.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/recaptcha_v3.git",
-                "reference": "2.0.1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/recaptcha_v3-2.0.1.zip",
-                "reference": "2.0.1",
-                "shasum": "f2226e4227d146df17d584b5307316da182f4e2a"
-            },
-            "require": {
-                "drupal/captcha": "*",
-                "drupal/core": "^9.5 || ^10"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "2.0.1",
-                    "datestamp": "1692375692",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "b-prod",
-                    "homepage": "https://www.drupal.org/user/407852"
-                },
-                {
-                    "name": "dench0",
-                    "homepage": "https://www.drupal.org/user/896504"
-                },
-                {
-                    "name": "majid.ali",
-                    "homepage": "https://www.drupal.org/user/1271330"
-                }
-            ],
-            "description": "The reCaptcha V3 module provides integration with Google reCaptcha V3 and CAPTCHA module.",
-            "homepage": "https://www.drupal.org/project/recaptcha_v3",
-            "support": {
-                "source": "https://git.drupalcode.org/project/recaptcha_v3",
-                "error": "require.drupal/captcha : invalid version constraint (Could not parse version constraint ^2.0': Invalid version string \"^2.0'\")"
-            }
-        },
-        {
             "name": "drupal/redirect",
             "version": "1.12.0",
             "source": {
@@ -7170,58 +6969,6 @@
                 }
             ],
             "time": "2025-03-06T22:45:56+00:00"
-        },
-        {
-            "name": "google/recaptcha",
-            "version": "1.3.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/google/recaptcha.git",
-                "reference": "56522c261d2e8c58ba416c90f81a4cd9f2ed89b9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/google/recaptcha/zipball/56522c261d2e8c58ba416c90f81a4cd9f2ed89b9",
-                "reference": "56522c261d2e8c58ba416c90f81a4cd9f2ed89b9",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.14",
-                "php-coveralls/php-coveralls": "^2.5",
-                "phpunit/phpunit": "^10"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.3.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "ReCaptcha\\": "src/ReCaptcha"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Client library for reCAPTCHA, a free service that protects websites from spam and abuse.",
-            "homepage": "https://www.google.com/recaptcha/",
-            "keywords": [
-                "Abuse",
-                "captcha",
-                "recaptcha",
-                "spam"
-            ],
-            "support": {
-                "forum": "https://groups.google.com/forum/#!forum/recaptcha",
-                "issues": "https://github.com/google/recaptcha/issues",
-                "source": "https://github.com/google/recaptcha"
-            },
-            "time": "2025-06-26T22:21:57+00:00"
         },
         {
             "name": "graham-campbell/result-type",
@@ -13447,5 +13194,5 @@
     "platform-overrides": {
         "php": "8.1"
     },
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }
