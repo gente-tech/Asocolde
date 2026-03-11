@@ -122,6 +122,9 @@ final class SolicitudStateInlineForm extends FormBase {
       '#value' => $this->t('Cancelar'),
       '#limit_validation_errors' => [],
       '#submit' => ['::cancelForm'],
+      '#attributes' => [
+        'formnovalidate' => 'formnovalidate',
+      ],
     ];
 
     $form['#cache']['max-age'] = 0;
