@@ -18,3 +18,9 @@ views-tabs:
     assets/js/views-tabs-active.js: {}
   dependencies:
     - core/drupal
+
+estado-solicitud:
+  js:
+    assets/js/estado-color.js: {}
+  dependencies:
+    - core/drupal
