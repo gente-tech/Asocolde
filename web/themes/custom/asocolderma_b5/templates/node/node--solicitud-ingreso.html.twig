@@ -4,36 +4,32 @@
 <br>
 
 {% if semaforo_steps is not empty %}
-	<div class="solicitud-semaforo-wrapper">
-		<h3 class="solicitud-semaforo-title">Seguimiento de la solicitud</h3>
+  <div class="solicitud-semaforo-wrapper">
+    <h3 class="solicitud-semaforo-title">Seguimiento de la solicitud</h3>
 
-		<div class="solicitud-semaforo" role="list" aria-label="Estados de la solicitud">
-			{% for step in semaforo_steps %}
-				<div class="solicitud-semaforo__item solicitud-semaforo__item--{{ step.status }}" role="listitem">
+    <div class="solicitud-semaforo" role="list" aria-label="Estados de la solicitud">
+      {% for step in semaforo_steps %}
+        <div class="solicitud-semaforo__item solicitud-semaforo__item--{{ step.status }}" role="listitem">
 
-					{% if not loop.first %}
-						<div class="solicitud-semaforo__line"></div>
-					{% endif %}
+          {% if not loop.first %}
+            <div class="solicitud-semaforo__line"></div>
+          {% endif %}
 
-					<div class="solicitud-semaforo__node">
-						<span class="solicitud-semaforo__dot"></span>
-					</div>
+          <div class="solicitud-semaforo__node">
+            <span class="solicitud-semaforo__dot"></span>
+          </div>
 
-					<div class="solicitud-semaforo__content">
-						<div class="solicitud-semaforo__label">{{ step.label }}</div>
+          <div class="solicitud-semaforo__content">
+            <div class="solicitud-semaforo__label">{{ step.label }}</div>
 
-						{% if step.date %}
-							<div class="solicitud-semaforo__date">{{ step.date }}</div>
-						{% endif %}
-
-						{% if step.note %}
-							<div class="solicitud-semaforo__note">{{ step.note }}</div>
-						{% endif %}
-					</div>
-				</div>
-			{% endfor %}
-		</div>
-	</div>
+            {% if step.date %}
+              <div class="solicitud-semaforo__date">{{ step.date }}</div>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
 {% endif %}
 
 <br>
