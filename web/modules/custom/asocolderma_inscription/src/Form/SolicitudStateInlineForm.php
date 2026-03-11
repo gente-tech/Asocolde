@@ -118,12 +118,12 @@ final class SolicitudStateInlineForm extends FormBase {
     ];
 
     $form['actions']['cancel'] = [
-      '#type' => 'submit',
+      '#type' => 'button',
       '#value' => $this->t('Cancelar'),
-      '#limit_validation_errors' => [],
-      '#submit' => ['::cancelForm'],
       '#attributes' => [
-        'formnovalidate' => 'formnovalidate',
+        'id' => 'asocolderma-cancel-button',
+        'class' => ['button'],
+        'data-destination' => $destination ?: '/',
       ],
     ];
 
@@ -251,11 +251,6 @@ final class SolicitudStateInlineForm extends FormBase {
     );
 
     $this->messenger()->addStatus($this->t('Estado actualizado.'));
-    $form_state->setRedirectUrl(Url::fromUserInput($destination ?: '/'));
-  }
-
-  public function cancelForm(array &$form, FormStateInterface $form_state): void {
-    $destination = (string) $form_state->getValue('destination');
     $form_state->setRedirectUrl(Url::fromUserInput($destination ?: '/'));
   }
 

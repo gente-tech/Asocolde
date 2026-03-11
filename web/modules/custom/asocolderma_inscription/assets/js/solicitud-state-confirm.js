@@ -22,6 +22,15 @@
           window.location.href = destination;
         });
       });
+
+      once('asocolderma-cancel-button', '#asocolderma-cancel-button', context).forEach(function (el) {
+        $(el).on('click', function (e) {
+          e.preventDefault();
+
+          const destination = $(el).data('destination') || '/';
+          window.location.href = destination;
+        });
+      });
     }
   };
 })(jQuery, Drupal, once);
