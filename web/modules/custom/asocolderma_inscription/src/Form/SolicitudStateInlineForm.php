@@ -7,7 +7,6 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
-use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
@@ -19,18 +18,15 @@ final class SolicitudStateInlineForm extends FormBase {
 
   protected EntityTypeManagerInterface $etm;
   protected SolicitudStateManager $stateManager;
-  protected FormBuilderInterface $formBuilder;
 
   public function __construct(
     EntityTypeManagerInterface $etm,
     SolicitudStateManager $stateManager,
     RequestStack $request_stack,
-    FormBuilderInterface $form_builder,
   ) {
     $this->etm = $etm;
     $this->stateManager = $stateManager;
     $this->requestStack = $request_stack;
-    $this->formBuilder = $form_builder;
   }
 
   public static function create(ContainerInterface $container): self {
@@ -38,7 +34,6 @@ final class SolicitudStateInlineForm extends FormBase {
       $container->get('entity_type.manager'),
       $container->get('asocolderma_inscription.solicitud_state_manager'),
       $container->get('request_stack'),
-      $container->get('form_builder'),
     );
   }
 
@@ -68,6 +63,7 @@ final class SolicitudStateInlineForm extends FormBase {
     $destination = $session ? $session->get('asocolderma_inscription.solicitud_return_url', '/') : '/';
 
     $form['#attached']['library'][] = 'core/drupal.dialog.ajax';
+    $form['#attached']['library'][] = 'asocolderma_inscription/solicitud_state_confirm';
 
     $form['nid'] = [
       '#type' => 'hidden',
@@ -109,6 +105,17 @@ final class SolicitudStateInlineForm extends FormBase {
       '#ajax' => [
         'callback' => '::openConfirmModal',
         'event' => 'click',
+        'progress' => ['type' => 'none'],
+        'disable-refocus' => TRUE,
+      ],
+    ];
+
+    $form['actions']['hidden_submit'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Guardar oculto'),
+      '#attributes' => [
+        'style' => 'display:none;',
+        'id' => 'asocolderma-solicitud-hidden-submit',
       ],
     ];
 
@@ -149,19 +156,50 @@ final class SolicitudStateInlineForm extends FormBase {
     $allowed_options = $this->resolveTidsByNames('estado_solicitud_ingreso', $allowed_names);
 
     if (empty($to_tid) || !isset($allowed_options[$to_tid])) {
+      $this->messenger()->addError($this->t('Debe seleccionar un estado válido.'));
       return $response;
     }
 
-    $modal_form = $this->formBuilder->getForm(
-      \Drupal\asocolderma_inscription\Form\SolicitudStateConfirmModalForm::class,
-      $nid,
-      $to_tid,
-      $destination
-    );
+    $dialog_content = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['asocolderma-confirm-dialog'],
+      ],
+      'message' => [
+        '#markup' => '<p>' . $this->t('¿Está seguro de cambiar el estado de esta solicitud?') . '</p>',
+      ],
+      'actions' => [
+        '#type' => 'container',
+        '#attributes' => ['class' => ['confirmation-actions']],
+        'yes' => [
+          '#type' => 'button',
+          '#value' => $this->t('Sí'),
+          '#attributes' => [
+            'class' => ['button', 'button--primary', 'asocolderma-confirm-yes'],
+            'id' => 'asocolderma-confirm-yes',
+          ],
+        ],
+        'no' => [
+          '#type' => 'button',
+          '#value' => $this->t('No'),
+          '#attributes' => [
+            'class' => ['button', 'asocolderma-confirm-no'],
+            'id' => 'asocolderma-confirm-no',
+            'data-destination' => $destination ?: '/',
+          ],
+        ],
+      ],
+      '#attached' => [
+        'library' => [
+          'asocolderma_inscription/solicitud_state_confirm',
+          'core/drupal.dialog.ajax',
+        ],
+      ],
+    ];
 
     $response->addCommand(new OpenModalDialogCommand(
       $this->t('Confirmar cambio de estado'),
-      $modal_form,
+      $dialog_content,
       ['width' => '500']
     ));
 
@@ -169,7 +207,50 @@ final class SolicitudStateInlineForm extends FormBase {
   }
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    // El cambio de estado se hace en el modal.
+    if (
+      !$this->currentUser()->hasRole('secretaria_general') &&
+      !$this->currentUser()->hasRole('coordinacion_administrativa')
+    ) {
+      throw new AccessDeniedHttpException();
+    }
+
+    $nid = (int) $form_state->getValue('nid');
+    $to_tid = (int) $form_state->getValue('state_tid');
+    $destination = (string) $form_state->getValue('destination');
+
+    $node = $this->etm->getStorage('node')->load($nid);
+    if (!$node instanceof NodeInterface || $node->bundle() !== 'solicitud_ingreso') {
+      $this->messenger()->addError($this->t('No se pudo cargar la solicitud.'));
+      $form_state->setRedirectUrl(Url::fromUserInput($destination ?: '/'));
+      return;
+    }
+
+    $current_tid = (int) ($node->get('field_state')->target_id ?? 0);
+    $current_name = $this->resolveTermNameByTid($current_tid);
+    $allowed_names = $this->getAllowedStateNamesByCurrentState($current_name);
+    $allowed_options = $this->resolveTidsByNames('estado_solicitud_ingreso', $allowed_names);
+
+    if (!isset($allowed_options[$to_tid])) {
+      $this->messenger()->addError($this->t('Opción de estado no permitida para el estado actual.'));
+      $form_state->setRedirectUrl(Url::fromUserInput($destination ?: '/'));
+      return;
+    }
+
+    $this->stateManager->transitionByTid(
+      $node,
+      $to_tid,
+      'node_view_inline_select',
+      'Cambio de estado desde modal de confirmación',
+      [
+        'nid' => $nid,
+        'from_state' => $current_name,
+        'to_tid' => $to_tid,
+        'actor_roles' => $this->currentUser()->getRoles(),
+      ]
+    );
+
+    $this->messenger()->addStatus($this->t('Estado actualizado.'));
+    $form_state->setRedirectUrl(Url::fromUserInput($destination ?: '/'));
   }
 
   public function cancelForm(array &$form, FormStateInterface $form_state): void {
@@ -225,7 +306,6 @@ final class SolicitudStateInlineForm extends FormBase {
     }
 
     $term = $this->etm->getStorage('taxonomy_term')->load($tid);
-
     return $term ? (string) $term->getName() : NULL;
   }
 

@@ -1,0 +1,10 @@
+solicitud_state_confirm:
+  version: 1.x
+  js:
+    assets/js/solicitud-state-confirm.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/once
+    - core/drupal.dialog
+    - core/drupal.dialog.ajax
