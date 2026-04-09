@@ -37,3 +37,11 @@ enterprise_integrations.hubspot_settings:
     _title: 'HubSpot Settings'
   requirements:
     _permission: 'administer site configuration'
+
+enterprise_integrations.zoho_sign_test:
+  path: '/admin/config/asocolderma/integraciones/sign-doc/test'
+  defaults:
+    _controller: '\Drupal\enterprise_integrations\Controller\ZohoSignTestController::testTemplate'
+    _title: 'Test Zoho Sign'
+  requirements:
+    _permission: 'administer site configuration'
