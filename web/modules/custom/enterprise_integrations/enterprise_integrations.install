@@ -1,0 +1,157 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for enterprise_integrations.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function enterprise_integrations_schema()
+{
+	$schema['enterprise_integrations_zoho_sign_requests'] = [
+		'description' => 'Relaciona solicitudes de ingreso con requests de Zoho Sign.',
+		'fields' => [
+			'id' => [
+				'description' => 'Primary Key.',
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'solicitud_nid' => [
+				'description' => 'NID del nodo solicitud_ingreso.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'zoho_request_id' => [
+				'description' => 'Request ID de Zoho Sign.',
+				'type' => 'varchar',
+				'length' => 100,
+				'not null' => TRUE,
+				'default' => '',
+			],
+			'zoho_action_id' => [
+				'description' => 'Action ID de Zoho Sign.',
+				'type' => 'varchar',
+				'length' => 100,
+				'not null' => FALSE,
+			],
+			'zoho_document_id' => [
+				'description' => 'Document ID interno de Zoho Sign.',
+				'type' => 'varchar',
+				'length' => 100,
+				'not null' => FALSE,
+			],
+			'zoho_zsdocumentid' => [
+				'description' => 'zsdocumentid de Zoho Sign.',
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'recipient_name' => [
+				'description' => 'Nombre del firmante.',
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'recipient_email' => [
+				'description' => 'Correo del firmante.',
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'status' => [
+				'description' => 'Estado local del request en Drupal.',
+				'type' => 'varchar',
+				'length' => 50,
+				'not null' => TRUE,
+				'default' => 'pending',
+			],
+			'requested_at' => [
+				'description' => 'Timestamp de creación del request en Zoho.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => FALSE,
+			],
+			'signed_at' => [
+				'description' => 'Timestamp de firma detectada.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => FALSE,
+			],
+			'completed_at' => [
+				'description' => 'Timestamp de completion del request en Zoho.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => FALSE,
+			],
+			'last_status_check' => [
+				'description' => 'Última vez que Drupal consultó el estado en Zoho.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => FALSE,
+			],
+			'processed_to_drupal' => [
+				'description' => 'Indica si ya se aplicó el cambio de estado en Drupal.',
+				'type' => 'int',
+				'size' => 'tiny',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'processed_to_drupal_at' => [
+				'description' => 'Timestamp en que se procesó en Drupal.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => FALSE,
+			],
+			'error_message' => [
+				'description' => 'Último error de sincronización.',
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+			'attempts' => [
+				'description' => 'Cantidad de intentos de sincronización/validación.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'payload' => [
+				'description' => 'Payload JSON de respaldo.',
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+			'created' => [
+				'description' => 'Timestamp de creación local.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'changed' => [
+				'description' => 'Timestamp de última actualización local.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'solicitud_nid' => ['solicitud_nid'],
+			'zoho_request_lookup' => ['zoho_request_id'],
+			'status' => ['status'],
+			'processed_to_drupal' => ['processed_to_drupal'],
+		],
+		'unique keys' => [
+			'unique_zoho_request_id' => ['zoho_request_id'],
+		],
+	];
+
+	return $schema;
+}
