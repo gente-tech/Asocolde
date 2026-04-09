@@ -40,15 +40,7 @@ class ZohoSignSignUrlTestController extends ControllerBase {
 	 */
 	public function getSignUrl(): JsonResponse	{
 		try {
-			$template = $this->zohoSignService->getTemplateDetails();
-
-			$action_id = $template['templates']['actions'][0]['action_id'] ?? '';
-			if (empty($action_id)) {
-				throw new \Exception('No fue posible obtener el action_id de la plantilla.');
-			}
-
-			$document = $this->zohoSignService->createDocumentFromTemplate([
-				'action_id' => $action_id,
+			$response = $this->zohoSignService->createDocumentAndGetSignUrl([
 				'recipient_name' => 'Virgilio Padilla',
 				'recipient_email' => 'vpadillar01@gmail.com',
 				'field_text_data' => [
@@ -58,19 +50,7 @@ class ZohoSignSignUrlTestController extends ControllerBase {
 				'notes' => 'Documento generado desde Drupal para probar sign_url',
 			]);
 
-			$request_id = $document['requests']['request_id'] ?? '';
-			$request_action_id = $document['requests']['actions'][0]['action_id'] ?? '';
-
-			if (empty($request_id) || empty($request_action_id)) {
-				throw new \Exception('No fue posible obtener request_id o action_id del documento creado.');
-			}
-
-			$sign_url_response = $this->zohoSignService->getEmbeddedSignUrl($request_id, $request_action_id);
-
-			return new JsonResponse([
-				'document_response' => $document,
-				'sign_url_response' => $sign_url_response,
-			], 200);
+			return new JsonResponse($response, 200);
 		} catch (\Throwable $e) {
 			return new JsonResponse([
 				'status' => 'error',

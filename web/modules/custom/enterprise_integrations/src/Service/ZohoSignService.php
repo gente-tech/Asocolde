@@ -283,4 +283,53 @@ class ZohoSignService {
 			throw new \Exception('No fue posible obtener la URL de firma de Zoho Sign.');
 		}
 	}
+
+	/**
+	 * Crea documento desde plantilla y obtiene la URL de firma embebida.
+	 *
+	 * @param array $data
+	 *   Datos del firmante y campos del documento.
+	 *
+	 * @return array
+	 *   Respuesta consolidada.
+	 *
+	 * @throws \Exception
+	 */
+	public function createDocumentAndGetSignUrl(array $data): array {
+		$template = $this->getTemplateDetails();
+
+		$action_id = $template['templates']['actions'][0]['action_id'] ?? '';
+		if (empty($action_id)) {
+			throw new \Exception('No fue posible obtener el action_id de la plantilla.');
+		}
+
+		$document = $this->createDocumentFromTemplate([
+			'action_id' => $action_id,
+			'recipient_name' => $data['recipient_name'] ?? '',
+			'recipient_email' => $data['recipient_email'] ?? '',
+			'field_text_data' => $data['field_text_data'] ?? [],
+			'notes' => $data['notes'] ?? '',
+		]);
+
+		$request_id = $document['requests']['request_id'] ?? '';
+		$request_action_id = $document['requests']['actions'][0]['action_id'] ?? '';
+
+		if (empty($request_id) || empty($request_action_id)) {
+			throw new \Exception('No fue posible obtener request_id o action_id del documento creado.');
+		}
+
+		$sign_url_response = $this->getEmbeddedSignUrl($request_id, $request_action_id);
+
+		return [
+			'request_id' => $request_id,
+			'action_id' => $request_action_id,
+			'document_id' => $document['requests']['document_ids'][0]['document_id'] ?? '',
+			'zsdocumentid' => $document['requests']['zsdocumentid'] ?? '',
+			'request_status' => $document['requests']['request_status'] ?? '',
+			'action_status' => $document['requests']['actions'][0]['action_status'] ?? '',
+			'sign_url' => $sign_url_response['sign_url'] ?? '',
+			'document_response' => $document,
+			'sign_url_response' => $sign_url_response,
+		];
+	}
 }
