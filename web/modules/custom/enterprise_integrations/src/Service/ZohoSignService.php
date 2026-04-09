@@ -223,4 +223,64 @@ class ZohoSignService {
 			throw new \Exception('No fue posible crear el documento en Zoho Sign.');
 		}
 	}
+
+	/**
+	 * Obtiene la URL embebida de firma.
+	 *
+	 * @param string $request_id
+	 *   Request ID de Zoho.
+	 * @param string $action_id
+	 *   Action ID del firmante.
+	 *
+	 * @return array
+	 *   Respuesta de Zoho.
+	 *
+	 * @throws \Exception
+	 */
+	public function getEmbeddedSignUrl(string $request_id, string $action_id): array {
+		$settings = $this->getSettings();
+		$access_token = $this->getAccessToken();
+
+		if (empty($request_id)) {
+			throw new \Exception('Falta request_id.');
+		}
+
+		if (empty($action_id)) {
+			throw new \Exception('Falta action_id.');
+		}
+
+		$url = $settings['api_domain'] . '/api/v1/requests/' . $request_id . '/actions/' . $action_id . '/embedtoken';
+
+		$query = [
+			'host' => $settings['host'],
+		];
+
+		if (!empty($settings['redirect_url'])) {
+			$query['redirect_url'] = $settings['redirect_url'];
+		}
+
+		try {
+			$response = $this->httpClient->request('POST', $url, [
+				'headers' => [
+					'Authorization' => 'Zoho-oauthtoken ' . $access_token,
+					'Accept' => 'application/json',
+				],
+				'query' => $query,
+			]);
+
+			$response_data = json_decode((string) $response->getBody(), TRUE);
+
+			if (empty($response_data) || !is_array($response_data)) {
+				throw new \Exception('Zoho retornó una respuesta inválida al obtener el sign_url.');
+			}
+
+			return $response_data;
+		}
+		catch (\Throwable $e) {
+			$this->logger->error('Error obteniendo sign_url de Zoho Sign: @message', [
+				'@message' => $e->getMessage(),
+			]);
+			throw new \Exception('No fue posible obtener la URL de firma de Zoho Sign.');
+		}
+	}
 }
