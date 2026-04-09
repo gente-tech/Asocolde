@@ -1,19 +1,3 @@
-enterprise_integrations.settings:
-  path: '/admin/config/system/enterprise-integrations/mandrill'
-  defaults:
-    _form: '\Drupal\enterprise_integrations\Form\MandrillSettingsForm'
-    _title: 'Mandrill Settings'
-  requirements:
-    _permission: 'administer site configuration'
-
-enterprise_integrations.hubspot_settings:
-  path: '/admin/config/integrations/hubspot'
-  defaults:
-    _form: '\Drupal\enterprise_integrations\Form\HubspotSettingsForm'
-    _title: 'HubSpot Settings'
-  requirements:
-    _permission: 'administer site configuration'
-
 enterprise_integrations.asocolderma:
   path: '/admin/config/asocolderma'
   defaults:
@@ -35,5 +19,21 @@ enterprise_integrations.zohosign_settings:
   defaults:
     _form: '\Drupal\enterprise_integrations\Form\ZohoSignSettingsForm'
     _title: 'SignDoc'
+  requirements:
+    _permission: 'administer site configuration'
+
+enterprise_integrations.mailchimp_settings:
+  path: '/admin/config/asocolderma/integraciones/mandrill'
+  defaults:
+    _form: '\Drupal\enterprise_integrations\Form\MandrillSettingsForm'
+    _title: 'Mandrill Settings'
+  requirements:
+    _permission: 'administer site configuration'
+
+enterprise_integrations.hubspot_settings:
+  path: '/admin/config/asocolderma/integraciones/hubspot'
+  defaults:
+    _form: '\Drupal\enterprise_integrations\Form\HubspotSettingsForm'
+    _title: 'HubSpot Settings'
   requirements:
     _permission: 'administer site configuration'
