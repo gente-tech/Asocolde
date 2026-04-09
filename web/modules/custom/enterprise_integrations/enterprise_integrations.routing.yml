@@ -45,3 +45,11 @@ enterprise_integrations.zoho_sign_test:
     _title: 'Test Zoho Sign'
   requirements:
     _permission: 'administer site configuration'
+
+enterprise_integrations.zoho_sign_create_test:
+  path: '/admin/config/asocolderma/integraciones/sign-doc/create-test'
+  defaults:
+    _controller: '\Drupal\enterprise_integrations\Controller\ZohoSignCreateTestController::createDocument'
+    _title: 'Create Test Zoho Sign'
+  requirements:
+    _permission: 'administer site configuration'
