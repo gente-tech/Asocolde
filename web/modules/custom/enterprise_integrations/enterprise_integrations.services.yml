@@ -16,3 +16,10 @@ services:
       - '@http_client'
       - '@config.factory'
       - '@logger.channel.enterprise_integrations'
+
+  enterprise_integrations.zoho_sign:
+    class: Drupal\enterprise_integrations\Service\ZohoSignService
+    arguments:
+      - '@http_client'
+      - '@config.factory'
+      - '@logger.factory'
