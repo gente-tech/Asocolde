@@ -1,0 +1,34 @@
+enterprise_integrations.settings:
+  title: 'Mandrill configuraciones'
+  description: 'Configuración Mailchimp Transactional (Mandrill) integration.'
+  route_name: enterprise_integrations.settings
+  parent: system.admin_config_system
+  weight: 100
+
+enterprise_integrations.hubspot_settings:
+  title: 'HubSpot Integration'
+  description: 'HubSpot API configuration'
+  parent: system.admin_config_services
+  route_name: enterprise_integrations.hubspot_settings
+  weight: 200
+
+enterprise_integrations.asocolderma:
+  title: 'Asocolderma'
+  description: 'Configuraciones de Asocolderma'
+  route_name: enterprise_integrations.asocolderma
+  parent: system.admin_config
+  weight: 100
+
+enterprise_integrations.integraciones:
+  title: 'Integraciones'
+  description: 'Integraciones externas'
+  route_name: enterprise_integrations.integraciones
+  parent: enterprise_integrations.asocolderma
+  weight: 10
+
+enterprise_integrations.zohosign_settings:
+  title: 'SignDoc'
+  description: 'Configuración de Zoho Sign'
+  route_name: enterprise_integrations.zohosign_settings
+  parent: enterprise_integrations.integraciones
+  weight: 10

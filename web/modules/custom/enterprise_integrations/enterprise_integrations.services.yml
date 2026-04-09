@@ -1,0 +1,18 @@
+services:
+  logger.channel.enterprise_integrations:
+    parent: logger.channel_base
+    arguments: ['enterprise_integrations']
+
+  enterprise_integrations.mandrill:
+    class: Drupal\enterprise_integrations\Service\MandrillService
+    arguments:
+      - '@http_client'
+      - '@config.factory'
+      - '@logger.channel.enterprise_integrations'
+  
+  enterprise_integrations.hubspot:
+    class: Drupal\enterprise_integrations\Service\HubspotService
+    arguments:
+      - '@http_client'
+      - '@config.factory'
+      - '@logger.channel.enterprise_integrations'

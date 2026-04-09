@@ -1,0 +1,7 @@
+name: 'Enterprise Integrations'
+type: module
+description: 'Integration layer for external enterprise services such as Mandrill, HubSpot and more.'
+package: 'Custom'
+core_version_requirement: ^10 || ^11
+dependencies:
+  - drupal:system
