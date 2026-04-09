@@ -144,4 +144,83 @@ class ZohoSignService {
 		throw new \Exception('No fue posible consultar la plantilla de Zoho Sign.');
 		}
 	}
+
+	/**
+	 * Crea un documento desde la plantilla de Zoho Sign.
+	 *
+	 * @param array $data
+	 *   Datos para construir el documento.
+	 *
+	 * @return array
+	 *   Respuesta de Zoho.
+	 *
+	 * @throws \Exception
+	 */
+	public function createDocumentFromTemplate(array $data): array {
+		$settings = $this->getSettings();
+		$access_token = $this->getAccessToken();
+
+		if (empty($settings['template_id'])) {
+			throw new \Exception('No hay template_id configurado para Zoho Sign.');
+		}
+
+		if (empty($data['action_id'])) {
+			throw new \Exception('Falta action_id.');
+		}
+
+		if (empty($data['recipient_name'])) {
+			throw new \Exception('Falta recipient_name.');
+		}
+
+		if (empty($data['recipient_email'])) {
+			throw new \Exception('Falta recipient_email.');
+		}
+
+		$payload = [
+			'templates' => [
+				'actions' => [
+					[
+						'action_id' => $data['action_id'],
+						'recipient_name' => $data['recipient_name'],
+						'recipient_email' => $data['recipient_email'],
+						'verify_recipient' => FALSE,
+						'is_embedded' => TRUE,
+					],
+				],
+				'field_data' => [
+					'field_text_data' => $data['field_text_data'] ?? [],
+				],
+				'notes' => $data['notes'] ?? '',
+			],	
+		];
+
+		try {
+			$response = $this->httpClient->request('POST', $settings['api_domain'] . '/api/v1/templates/' . $settings['template_id'] . '/createdocument', [
+				'headers' => [
+				'Authorization' => 'Zoho-oauthtoken ' . $access_token,
+				'Accept' => 'application/json',
+				],
+				'multipart' => [
+				[
+					'name' => 'data',
+					'contents' => json_encode($payload, JSON_UNESCAPED_UNICODE),
+				],
+				],
+			]);
+
+			$response_data = json_decode((string) $response->getBody(), TRUE);
+
+			if (empty($response_data) || !is_array($response_data)) {
+				throw new \Exception('Zoho retornó una respuesta inválida al crear el documento.');
+			}
+
+			return $response_data;
+		}
+		catch (\Throwable $e) {
+			$this->logger->error('Error creando documento en Zoho Sign: @message', [
+				'@message' => $e->getMessage(),
+			]);
+			throw new \Exception('No fue posible crear el documento en Zoho Sign.');
+		}
+	}
 }
