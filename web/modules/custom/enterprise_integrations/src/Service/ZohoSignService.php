@@ -5,6 +5,7 @@ namespace Drupal\enterprise_integrations\Service;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use GuzzleHttp\ClientInterface;
+use Drupal\Core\Database\Connection;
 
 /**
  * Servicio para integración con Zoho Sign.
@@ -33,16 +34,25 @@ class ZohoSignService {
 	protected $logger;
 
 	/**
+	 * Conexión a base de datos.
+	 *
+	 * @var \Drupal\Core\Database\Connection
+	 */
+	protected Connection $database;
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct(
 		ClientInterface $http_client,
 		ConfigFactoryInterface $config_factory,
-		LoggerChannelFactoryInterface $logger_factory
+		LoggerChannelFactoryInterface $logger_factory,
+		Connection $database
 	) {
 		$this->httpClient = $http_client;
 		$this->configFactory = $config_factory;
 		$this->logger = $logger_factory->get('enterprise_integrations');
+		$this->database = $database;
 	}
 
 	/**
@@ -296,6 +306,10 @@ class ZohoSignService {
 	 * @throws \Exception
 	 */
 	public function createDocumentAndGetSignUrl(array $data): array {
+		if (empty($data['solicitud_nid'])) {
+			throw new \Exception('Falta solicitud_nid.');
+		}
+
 		$template = $this->getTemplateDetails();
 
 		$action_id = $template['templates']['actions'][0]['action_id'] ?? '';
@@ -313,21 +327,42 @@ class ZohoSignService {
 
 		$request_id = $document['requests']['request_id'] ?? '';
 		$request_action_id = $document['requests']['actions'][0]['action_id'] ?? '';
+		$document_id = $document['requests']['document_ids'][0]['document_id'] ?? '';
+		$zsdocumentid = $document['requests']['zsdocumentid'] ?? '';
+		$request_status = $document['requests']['request_status'] ?? 'pending';
+		$action_status = $document['requests']['actions'][0]['action_status'] ?? 'UNOPENED';
 
 		if (empty($request_id) || empty($request_action_id)) {
 			throw new \Exception('No fue posible obtener request_id o action_id del documento creado.');
 		}
 
 		$sign_url_response = $this->getEmbeddedSignUrl($request_id, $request_action_id);
+		$sign_url = $sign_url_response['sign_url'] ?? '';
+
+		$this->saveRequestMapping([
+			'solicitud_nid' => (int) $data['solicitud_nid'],
+			'zoho_request_id' => $request_id,
+			'zoho_action_id' => $request_action_id,
+			'zoho_document_id' => $document_id,
+			'zoho_zsdocumentid' => $zsdocumentid,
+			'recipient_name' => $data['recipient_name'] ?? '',
+			'recipient_email' => $data['recipient_email'] ?? '',
+			'status' => strtolower($request_status),
+			'requested_at' => \Drupal::time()->getRequestTime(),
+			'payload' => [
+				'document_response' => $document,
+				'sign_url_response' => $sign_url_response,
+			],
+		]);
 
 		return [
 			'request_id' => $request_id,
 			'action_id' => $request_action_id,
-			'document_id' => $document['requests']['document_ids'][0]['document_id'] ?? '',
-			'zsdocumentid' => $document['requests']['zsdocumentid'] ?? '',
-			'request_status' => $document['requests']['request_status'] ?? '',
-			'action_status' => $document['requests']['actions'][0]['action_status'] ?? '',
-			'sign_url' => $sign_url_response['sign_url'] ?? '',
+			'document_id' => $document_id,
+			'zsdocumentid' => $zsdocumentid,
+			'request_status' => $request_status,
+			'action_status' => $action_status,
+			'sign_url' => $sign_url,
 			'document_response' => $document,
 			'sign_url_response' => $sign_url_response,
 		];
@@ -374,5 +409,47 @@ class ZohoSignService {
 			]);
 			throw new \Exception('No fue posible consultar el estado del documento en Zoho Sign.');
 		}
+	}
+
+	/**
+	 * Guarda el mapeo entre la solicitud y el request de Zoho Sign.
+	 *
+	 * @param array $data
+	 *   Datos a persistir.
+	 *
+	 * @return int
+	 *   ID del registro insertado.
+	 *
+	 * @throws \Exception
+	 */
+	public function saveRequestMapping(array $data): int {
+		if (empty($data['solicitud_nid'])) {
+			throw new \Exception('Falta solicitud_nid.');
+		}
+
+		if (empty($data['zoho_request_id'])) {
+			throw new \Exception('Falta zoho_request_id.');
+		}
+
+		$now = \Drupal::time()->getRequestTime();
+
+		$insert_id = $this->database->insert('enterprise_integrations_zoho_sign_requests')
+		->fields([
+			'solicitud_nid' => (int) $data['solicitud_nid'],
+			'zoho_request_id' => (string) $data['zoho_request_id'],
+			'zoho_action_id' => !empty($data['zoho_action_id']) ? (string) $data['zoho_action_id'] : NULL,
+			'zoho_document_id' => !empty($data['zoho_document_id']) ? (string) $data['zoho_document_id'] : NULL,
+			'zoho_zsdocumentid' => !empty($data['zoho_zsdocumentid']) ? (string) $data['zoho_zsdocumentid'] : NULL,
+			'recipient_name' => !empty($data['recipient_name']) ? (string) $data['recipient_name'] : NULL,
+			'recipient_email' => !empty($data['recipient_email']) ? (string) $data['recipient_email'] : NULL,
+			'status' => !empty($data['status']) ? (string) $data['status'] : 'pending',
+			'requested_at' => !empty($data['requested_at']) ? (int) $data['requested_at'] : $now,
+			'payload' => !empty($data['payload']) ? json_encode($data['payload'], JSON_UNESCAPED_UNICODE) : NULL,
+			'created' => $now,
+			'changed' => $now,
+		])
+		->execute();
+
+		return (int) $insert_id;
 	}
 }

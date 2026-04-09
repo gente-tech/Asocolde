@@ -38,20 +38,22 @@ class ZohoSignSignUrlTestController extends ControllerBase {
 	/**
 	 * Prueba creación de documento + obtención de sign_url.
 	 */
-	public function getSignUrl(): JsonResponse	{
+	public function getSignUrl(): JsonResponse {
 		try {
 			$response = $this->zohoSignService->createDocumentAndGetSignUrl([
+				'solicitud_nid' => 2548,
 				'recipient_name' => 'Virgilio Padilla',
 				'recipient_email' => 'vpadillar01@gmail.com',
 				'field_text_data' => [
-					'Texto-mnnvqbeg' => '1047421571',
-					'Texto-mnnvmpuk' => 'Cartagena',
+				'Texto-mnnvqbeg' => '1047421571',
+				'Texto-mnnvmpuk' => 'Cartagena',
 				],
 				'notes' => 'Documento generado desde Drupal para probar sign_url',
 			]);
 
 			return new JsonResponse($response, 200);
-		} catch (\Throwable $e) {
+		}
+		catch (\Throwable $e) {
 			return new JsonResponse([
 				'status' => 'error',
 				'message' => $e->getMessage(),
