@@ -4,7 +4,6 @@ namespace Drupal\asocolderma_inscription\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\node\NodeInterface;
 use Drupal\enterprise_integrations\Service\ZohoSignService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -15,7 +14,6 @@ final class SolicitudSignatureController extends ControllerBase
 {
 
 	public function __construct(
-		private readonly AccountProxyInterface $currentUser,
 		private readonly ZohoSignService $zohoSignService,
 		private readonly MessengerInterface $messenger,
 	) {}
@@ -23,7 +21,6 @@ final class SolicitudSignatureController extends ControllerBase
 	public static function create(ContainerInterface $container): self
 	{
 		return new self(
-			$container->get('current_user'),
 			$container->get('enterprise_integrations.zoho_sign'),
 			$container->get('messenger'),
 		);
@@ -35,7 +32,7 @@ final class SolicitudSignatureController extends ControllerBase
 			throw new AccessDeniedHttpException();
 		}
 
-		if ((int) $node->getOwnerId() !== (int) $this->currentUser->id()) {
+		if ((int) $node->getOwnerId() !== (int) $this->currentUser()->id()) {
 			throw new AccessDeniedHttpException();
 		}
 
@@ -103,7 +100,7 @@ final class SolicitudSignatureController extends ControllerBase
 			throw new AccessDeniedHttpException();
 		}
 
-		if ((int) $node->getOwnerId() !== (int) $this->currentUser->id()) {
+		if ((int) $node->getOwnerId() !== (int) $this->currentUser()->id()) {
 			throw new AccessDeniedHttpException();
 		}
 
