@@ -23,6 +23,11 @@ class MandrillSettingsForm extends ConfigFormBase
   {
     $config = $this->config('enterprise_integrations.settings');
 
+    if ($form_state->get('message_groups_last_id') === NULL) {
+      $last_id = (int) ($config->get('mandrill.message_groups_last_id') ?? 0);
+      $form_state->set('message_groups_last_id', $last_id);
+    }
+
     $saved_groups = $config->get('mandrill.message_groups') ?? [];
 
     if ($form_state->get('message_groups_count') === NULL) {
@@ -113,8 +118,16 @@ class MandrillSettingsForm extends ConfigFormBase
       ];
 
       $group_default = $saved_groups[$i] ?? [
+        'key' => '',
         'subject' => '',
         'message' => '',
+      ];
+
+      $form['mandrill']['message_groups_wrapper']['message_groups'][$i]['key'] = [
+        '#type' => 'textfield',
+        '#title' => $this->t('Clave'),
+        '#default_value' => $group_default['key'] ?? '',
+        '#attributes' => ['readonly' => 'readonly'],
       ];
 
       $form['mandrill']['message_groups_wrapper']['message_groups'][$i]['subject'] = [
@@ -172,7 +185,20 @@ class MandrillSettingsForm extends ConfigFormBase
   public function addMessageGroupSubmit(array &$form, FormStateInterface $form_state)
   {
     $count = (int) $form_state->get('message_groups_count');
+    $last_id = (int) $form_state->get('message_groups_last_id');
+
+    $values = $form_state->getValue('message_groups') ?? [];
+
+    $new_id = $last_id + 1;
+    $values[] = [
+      'key' => 'mail_text_' . $new_id,
+      'subject' => '',
+      'message' => '',
+    ];
+
+    $form_state->setValue('message_groups', $values);
     $form_state->set('message_groups_count', $count + 1);
+    $form_state->set('message_groups_last_id', $new_id);
     $form_state->setRebuild(TRUE);
   }
 
@@ -190,7 +216,7 @@ class MandrillSettingsForm extends ConfigFormBase
       $form_state->setValue('message_groups', $values);
     }
 
-    $new_count = max(1, $count - 1);
+    $new_count = max(1, count($values));
     $form_state->set('message_groups_count', $new_count);
     $form_state->setRebuild(TRUE);
   }
@@ -228,20 +254,38 @@ class MandrillSettingsForm extends ConfigFormBase
     }
 
     $message_groups = $form_state->getValue('message_groups') ?? [];
+    $last_id = (int) ($config->get('mandrill.message_groups_last_id') ?? 0);
 
-    // Limpia grupos vacíos.
-    $message_groups = array_values(array_filter($message_groups, function ($group) {
+    $clean_groups = [];
+
+    foreach ($message_groups as $group) {
       if (!is_array($group)) {
-        return FALSE;
+        continue;
       }
 
       $subject = trim((string) ($group['subject'] ?? ''));
       $message = trim((string) ($group['message'] ?? ''));
+      $key = trim((string) ($group['key'] ?? ''));
 
-      return $subject !== '' || $message !== '';
-    }));
+      if ($subject === '' && $message === '') {
+        continue;
+      }
 
-    $config->set('mandrill.message_groups', $message_groups);
+      if ($key === '') {
+        $last_id++;
+        $key = 'mail_text_' . $last_id;
+      }
+
+      $clean_groups[] = [
+        'key' => $key,
+        'subject' => $subject,
+        'message' => $message,
+      ];
+    }
+
+    $config
+      ->set('mandrill.message_groups', $clean_groups)
+      ->set('mandrill.message_groups_last_id', $last_id);
 
     $config->save();
 
