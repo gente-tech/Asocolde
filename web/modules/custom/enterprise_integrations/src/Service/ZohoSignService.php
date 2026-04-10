@@ -10,7 +10,8 @@ use Drupal\Core\Database\Connection;
 /**
  * Servicio para integración con Zoho Sign.
  */
-class ZohoSignService {
+class ZohoSignService
+{
 
 	/**
 	 * Cliente HTTP.
@@ -58,7 +59,8 @@ class ZohoSignService {
 	/**
 	 * Retorna la configuración de Zoho Sign.
 	 */
-	protected function getSettings(): array	{
+	protected function getSettings(): array
+	{
 		$config = $this->configFactory->get('enterprise_integrations.zoho_sign_settings');
 
 		return [
@@ -83,35 +85,35 @@ class ZohoSignService {
 	 *
 	 * @throws \Exception
 	 */
-  	public function getAccessToken(): string {
+	public function getAccessToken(): string
+	{
 		$settings = $this->getSettings();
 
 		try {
-		$response = $this->httpClient->request('POST', $settings['accounts_domain'] . '/oauth/v2/token', [
-			'form_params' => [
-			'grant_type' => 'refresh_token',
-			'refresh_token' => $settings['refresh_token'],
-			'client_id' => $settings['client_id'],
-			'client_secret' => $settings['client_secret'],
-			],
-			'headers' => [
-			'Accept' => 'application/json',
-			],
-		]);
+			$response = $this->httpClient->request('POST', $settings['accounts_domain'] . '/oauth/v2/token', [
+				'form_params' => [
+					'grant_type' => 'refresh_token',
+					'refresh_token' => $settings['refresh_token'],
+					'client_id' => $settings['client_id'],
+					'client_secret' => $settings['client_secret'],
+				],
+				'headers' => [
+					'Accept' => 'application/json',
+				],
+			]);
 
-		$data = json_decode((string) $response->getBody(), TRUE);
+			$data = json_decode((string) $response->getBody(), TRUE);
 
-		if (empty($data['access_token'])) {
-			throw new \Exception('Zoho no retornó access_token.');
-		}
+			if (empty($data['access_token'])) {
+				throw new \Exception('Zoho no retornó access_token.');
+			}
 
-		return $data['access_token'];
-		}
-		catch (\Throwable $e) {
-		$this->logger->error('Error obteniendo access token de Zoho Sign: @message', [
-			'@message' => $e->getMessage(),
-		]);
-		throw new \Exception('No fue posible obtener el access token de Zoho Sign.');
+			return $data['access_token'];
+		} catch (\Throwable $e) {
+			$this->logger->error('Error obteniendo access token de Zoho Sign: @message', [
+				'@message' => $e->getMessage(),
+			]);
+			throw new \Exception('No fue posible obtener el access token de Zoho Sign.');
 		}
 	}
 
@@ -123,35 +125,35 @@ class ZohoSignService {
 	 *
 	 * @throws \Exception
 	 */
-	public function getTemplateDetails(): array {
+	public function getTemplateDetails(): array
+	{
 		$settings = $this->getSettings();
 		$access_token = $this->getAccessToken();
 
 		if (empty($settings['template_id'])) {
-		throw new \Exception('No hay template_id configurado para Zoho Sign.');
+			throw new \Exception('No hay template_id configurado para Zoho Sign.');
 		}
 
 		try {
-		$response = $this->httpClient->request('GET', $settings['api_domain'] . '/api/v1/templates/' . $settings['template_id'], [
-			'headers' => [
-			'Authorization' => 'Zoho-oauthtoken ' . $access_token,
-			'Accept' => 'application/json',
-			],
-		]);
+			$response = $this->httpClient->request('GET', $settings['api_domain'] . '/api/v1/templates/' . $settings['template_id'], [
+				'headers' => [
+					'Authorization' => 'Zoho-oauthtoken ' . $access_token,
+					'Accept' => 'application/json',
+				],
+			]);
 
-		$data = json_decode((string) $response->getBody(), TRUE);
+			$data = json_decode((string) $response->getBody(), TRUE);
 
-		if (empty($data) || !is_array($data)) {
-			throw new \Exception('Zoho retornó una respuesta inválida al consultar la plantilla.');
-		}
+			if (empty($data) || !is_array($data)) {
+				throw new \Exception('Zoho retornó una respuesta inválida al consultar la plantilla.');
+			}
 
-		return $data;
-		}
-		catch (\Throwable $e) {
-		$this->logger->error('Error consultando template de Zoho Sign: @message', [
-			'@message' => $e->getMessage(),
-		]);
-		throw new \Exception('No fue posible consultar la plantilla de Zoho Sign.');
+			return $data;
+		} catch (\Throwable $e) {
+			$this->logger->error('Error consultando template de Zoho Sign: @message', [
+				'@message' => $e->getMessage(),
+			]);
+			throw new \Exception('No fue posible consultar la plantilla de Zoho Sign.');
 		}
 	}
 
@@ -166,7 +168,8 @@ class ZohoSignService {
 	 *
 	 * @throws \Exception
 	 */
-	public function createDocumentFromTemplate(array $data): array {
+	public function createDocumentFromTemplate(array $data): array
+	{
 		$settings = $this->getSettings();
 		$access_token = $this->getAccessToken();
 
@@ -201,20 +204,20 @@ class ZohoSignService {
 					'field_text_data' => $data['field_text_data'] ?? [],
 				],
 				'notes' => $data['notes'] ?? '',
-			],	
+			],
 		];
 
 		try {
 			$response = $this->httpClient->request('POST', $settings['api_domain'] . '/api/v1/templates/' . $settings['template_id'] . '/createdocument', [
 				'headers' => [
-				'Authorization' => 'Zoho-oauthtoken ' . $access_token,
-				'Accept' => 'application/json',
+					'Authorization' => 'Zoho-oauthtoken ' . $access_token,
+					'Accept' => 'application/json',
 				],
 				'multipart' => [
-				[
-					'name' => 'data',
-					'contents' => json_encode($payload, JSON_UNESCAPED_UNICODE),
-				],
+					[
+						'name' => 'data',
+						'contents' => json_encode($payload, JSON_UNESCAPED_UNICODE),
+					],
 				],
 			]);
 
@@ -225,8 +228,7 @@ class ZohoSignService {
 			}
 
 			return $response_data;
-		}
-		catch (\Throwable $e) {
+		} catch (\Throwable $e) {
 			$this->logger->error('Error creando documento en Zoho Sign: @message', [
 				'@message' => $e->getMessage(),
 			]);
@@ -247,7 +249,8 @@ class ZohoSignService {
 	 *
 	 * @throws \Exception
 	 */
-	public function getEmbeddedSignUrl(string $request_id, string $action_id): array {
+	public function getEmbeddedSignUrl(string $request_id, string $action_id): array
+	{
 		$settings = $this->getSettings();
 		$access_token = $this->getAccessToken();
 
@@ -285,8 +288,7 @@ class ZohoSignService {
 			}
 
 			return $response_data;
-		}
-		catch (\Throwable $e) {
+		} catch (\Throwable $e) {
 			$this->logger->error('Error obteniendo sign_url de Zoho Sign: @message', [
 				'@message' => $e->getMessage(),
 			]);
@@ -305,7 +307,8 @@ class ZohoSignService {
 	 *
 	 * @throws \Exception
 	 */
-	public function createDocumentAndGetSignUrl(array $data): array {
+	public function createDocumentAndGetSignUrl(array $data): array
+	{
 		if (empty($data['solicitud_nid'])) {
 			throw new \Exception('Falta solicitud_nid.');
 		}
@@ -379,7 +382,8 @@ class ZohoSignService {
 	 *
 	 * @throws \Exception
 	 */
-	public function getRequestDetails(string $request_id): array {
+	public function getRequestDetails(string $request_id): array
+	{
 		$settings = $this->getSettings();
 		$access_token = $this->getAccessToken();
 
@@ -390,8 +394,8 @@ class ZohoSignService {
 		try {
 			$response = $this->httpClient->request('GET', $settings['api_domain'] . '/api/v1/requests/' . $request_id, [
 				'headers' => [
-				'Authorization' => 'Zoho-oauthtoken ' . $access_token,
-				'Accept' => 'application/json',
+					'Authorization' => 'Zoho-oauthtoken ' . $access_token,
+					'Accept' => 'application/json',
 				],
 			]);
 
@@ -402,8 +406,7 @@ class ZohoSignService {
 			}
 
 			return $response_data;
-		}
-		catch (\Throwable $e) {
+		} catch (\Throwable $e) {
 			$this->logger->error('Error consultando request de Zoho Sign: @message', [
 				'@message' => $e->getMessage(),
 			]);
@@ -422,7 +425,8 @@ class ZohoSignService {
 	 *
 	 * @throws \Exception
 	 */
-	public function saveRequestMapping(array $data): int {
+	public function saveRequestMapping(array $data): int
+	{
 		if (empty($data['solicitud_nid'])) {
 			throw new \Exception('Falta solicitud_nid.');
 		}
@@ -434,22 +438,145 @@ class ZohoSignService {
 		$now = \Drupal::time()->getRequestTime();
 
 		$insert_id = $this->database->insert('enterprise_integrations_zoho_sign_requests')
-		->fields([
-			'solicitud_nid' => (int) $data['solicitud_nid'],
-			'zoho_request_id' => (string) $data['zoho_request_id'],
-			'zoho_action_id' => !empty($data['zoho_action_id']) ? (string) $data['zoho_action_id'] : NULL,
-			'zoho_document_id' => !empty($data['zoho_document_id']) ? (string) $data['zoho_document_id'] : NULL,
-			'zoho_zsdocumentid' => !empty($data['zoho_zsdocumentid']) ? (string) $data['zoho_zsdocumentid'] : NULL,
-			'recipient_name' => !empty($data['recipient_name']) ? (string) $data['recipient_name'] : NULL,
-			'recipient_email' => !empty($data['recipient_email']) ? (string) $data['recipient_email'] : NULL,
-			'status' => !empty($data['status']) ? (string) $data['status'] : 'pending',
-			'requested_at' => !empty($data['requested_at']) ? (int) $data['requested_at'] : $now,
-			'payload' => !empty($data['payload']) ? json_encode($data['payload'], JSON_UNESCAPED_UNICODE) : NULL,
-			'created' => $now,
-			'changed' => $now,
-		])
-		->execute();
+			->fields([
+				'solicitud_nid' => (int) $data['solicitud_nid'],
+				'zoho_request_id' => (string) $data['zoho_request_id'],
+				'zoho_action_id' => !empty($data['zoho_action_id']) ? (string) $data['zoho_action_id'] : NULL,
+				'zoho_document_id' => !empty($data['zoho_document_id']) ? (string) $data['zoho_document_id'] : NULL,
+				'zoho_zsdocumentid' => !empty($data['zoho_zsdocumentid']) ? (string) $data['zoho_zsdocumentid'] : NULL,
+				'recipient_name' => !empty($data['recipient_name']) ? (string) $data['recipient_name'] : NULL,
+				'recipient_email' => !empty($data['recipient_email']) ? (string) $data['recipient_email'] : NULL,
+				'status' => !empty($data['status']) ? (string) $data['status'] : 'pending',
+				'requested_at' => !empty($data['requested_at']) ? (int) $data['requested_at'] : $now,
+				'payload' => !empty($data['payload']) ? json_encode($data['payload'], JSON_UNESCAPED_UNICODE) : NULL,
+				'created' => $now,
+				'changed' => $now,
+			])
+			->execute();
 
 		return (int) $insert_id;
+	}
+
+	/**
+	 * Crea el request/documento desde plantilla y lo persiste en Drupal.
+	 *
+	 * Este método NO genera sign_url.
+	 *
+	 * @param array $data
+	 *   Datos del firmante y campos del documento.
+	 *
+	 * @return array
+	 *   Datos consolidados del request creado.
+	 *
+	 * @throws \Exception
+	 */
+	public function createSignatureRequest(array $data): array
+	{
+		if (empty($data['solicitud_nid'])) {
+			throw new \Exception('Falta solicitud_nid.');
+		}
+
+		$template = $this->getTemplateDetails();
+
+		$action_id = $template['templates']['actions'][0]['action_id'] ?? '';
+		if (empty($action_id)) {
+			throw new \Exception('No fue posible obtener el action_id de la plantilla.');
+		}
+
+		$document = $this->createDocumentFromTemplate([
+			'action_id' => $action_id,
+			'recipient_name' => $data['recipient_name'] ?? '',
+			'recipient_email' => $data['recipient_email'] ?? '',
+			'field_text_data' => $data['field_text_data'] ?? [],
+			'notes' => $data['notes'] ?? '',
+		]);
+
+		$request_id = $document['requests']['request_id'] ?? '';
+		$request_action_id = $document['requests']['actions'][0]['action_id'] ?? '';
+		$document_id = $document['requests']['document_ids'][0]['document_id'] ?? '';
+		$zsdocumentid = $document['requests']['zsdocumentid'] ?? '';
+		$request_status = $document['requests']['request_status'] ?? 'pending';
+		$action_status = $document['requests']['actions'][0]['action_status'] ?? 'UNOPENED';
+
+		if (empty($request_id) || empty($request_action_id)) {
+			throw new \Exception('No fue posible obtener request_id o action_id del documento creado.');
+		}
+
+		$this->saveRequestMapping([
+			'solicitud_nid' => (int) $data['solicitud_nid'],
+			'zoho_request_id' => $request_id,
+			'zoho_action_id' => $request_action_id,
+			'zoho_document_id' => $document_id,
+			'zoho_zsdocumentid' => $zsdocumentid,
+			'recipient_name' => $data['recipient_name'] ?? '',
+			'recipient_email' => $data['recipient_email'] ?? '',
+			'status' => strtolower($request_status),
+			'requested_at' => \Drupal::time()->getRequestTime(),
+			'payload' => [
+				'document_response' => $document,
+			],
+		]);
+
+		return [
+			'request_id' => $request_id,
+			'action_id' => $request_action_id,
+			'document_id' => $document_id,
+			'zsdocumentid' => $zsdocumentid,
+			'request_status' => $request_status,
+			'action_status' => $action_status,
+			'document_response' => $document,
+		];
+	}
+
+	/**
+	 * Genera una sign_url fresca para un request existente.
+	 *
+	 * @param string $request_id
+	 *   Request ID de Zoho.
+	 * @param string $action_id
+	 *   Action ID del firmante.
+	 *
+	 * @return array
+	 *   Respuesta consolidada.
+	 *
+	 * @throws \Exception
+	 */
+	public function generateFreshSignUrl(string $request_id, string $action_id): array
+	{
+		$sign_url_response = $this->getEmbeddedSignUrl($request_id, $action_id);
+		$sign_url = $sign_url_response['sign_url'] ?? '';
+
+		if (empty($sign_url)) {
+			throw new \Exception('Zoho no retornó sign_url.');
+		}
+
+		return [
+			'request_id' => $request_id,
+			'action_id' => $action_id,
+			'sign_url' => $sign_url,
+			'sign_url_response' => $sign_url_response,
+		];
+	}
+
+	/**
+	 * Retorna el último mapeo guardado para una solicitud.
+	 *
+	 * @param int $solicitud_nid
+	 *   NID de la solicitud.
+	 *
+	 * @return array|null
+	 *   Registro o NULL.
+	 */
+	public function getLatestRequestMappingBySolicitud(int $solicitud_nid): ?array
+	{
+		$query = $this->database->select('enterprise_integrations_zoho_sign_requests', 'z');
+		$query->fields('z');
+		$query->condition('solicitud_nid', $solicitud_nid);
+		$query->orderBy('id', 'DESC');
+		$query->range(0, 1);
+
+		$record = $query->execute()->fetchAssoc();
+
+		return $record ?: NULL;
 	}
 }
