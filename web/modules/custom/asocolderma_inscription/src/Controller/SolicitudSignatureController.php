@@ -8,6 +8,7 @@ use Drupal\enterprise_integrations\Service\ZohoSignService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpFoundation\Response;
 
 final class SolicitudSignatureController extends ControllerBase
 {
@@ -225,5 +226,57 @@ final class SolicitudSignatureController extends ControllerBase
 
 		$term = reset($terms);
 		return $term ? (int) $term->id() : NULL;
+	}
+
+	public function viewSignedDocument(NodeInterface $node): Response
+	{
+		if ($node->bundle() !== 'solicitud_ingreso') {
+			throw new AccessDeniedHttpException();
+		}
+
+		if ((int) $node->getOwnerId() !== (int) $this->currentUser()->id()) {
+			throw new AccessDeniedHttpException();
+		}
+
+		try {
+			$mapping = $this->zohoSignService->getLatestRequestMappingBySolicitud((int) $node->id());
+
+			if (empty($mapping['zoho_request_id'])) {
+				throw new \RuntimeException('No existe documento firmado.');
+			}
+
+			$request_id = (string) $mapping['zoho_request_id'];
+
+			$settings = $this->zohoSignService->getSettings();
+			$access_token = $this->zohoSignService->getAccessToken();
+
+			$response = \Drupal::httpClient()->request(
+				'GET',
+				$settings['api_domain'] . '/api/v1/requests/' . $request_id . '/pdf',
+				[
+					'headers' => [
+						'Authorization' => 'Zoho-oauthtoken ' . $access_token,
+					],
+				]
+			);
+
+			$pdf = $response->getBody()->getContents();
+
+			return new Response($pdf, 200, [
+				'Content-Type' => 'application/pdf',
+				'Content-Disposition' => 'inline; filename="documento_firmado.pdf"',
+			]);
+		} catch (\Throwable $e) {
+			$this->getLogger('asocolderma_inscription')->error(
+				'Error mostrando documento firmado @nid: @message',
+				[
+					'@nid' => $node->id(),
+					'@message' => $e->getMessage(),
+				]
+			);
+
+			$this->messenger()->addError('No fue posible cargar el documento firmado.');
+			return $this->redirect('asocolderma_inscription.user_zone_requests');
+		}
 	}
 }

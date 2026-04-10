@@ -111,3 +111,16 @@ asocolderma_inscription.solicitud_sign_return:
     parameters:
       node:
         type: entity:node
+
+asocolderma_inscription.solicitud_signed_document:
+  path: '/solicitud/{node}/documento-firmado'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\SolicitudSignatureController::viewSignedDocument'
+    _title: 'Documento firmado'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _entity_access: 'node.view'
+  options:
+    parameters:
+      node:
+        type: entity:node

@@ -8,6 +8,7 @@ use GuzzleHttp\ClientInterface;
 use Drupal\Core\Database\Connection;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\ResponseInterface;
+use Drupal\Core\Url;
 
 /**
  * Servicio para integración con Zoho Sign.
@@ -206,6 +207,7 @@ class ZohoSignService
 					'field_text_data' => $data['field_text_data'] ?? [],
 				],
 				'notes' => $data['notes'] ?? '',
+				'redirect_pages' => $data['redirect_pages'] ?? [],
 			],
 		];
 
@@ -504,12 +506,30 @@ class ZohoSignService
 			throw new \Exception('No fue posible obtener el action_id de la plantilla.');
 		}
 
+		$config = $this->getSettings();
+
+		$base_url = $config['host'] ?: $config['redirect_url'];
+
+		if (empty($base_url)) {
+			throw new \Exception('No hay host o redirect_url configurado en Zoho Sign.');
+		}
+
+		$base_url = rtrim($base_url, '/');
+
+		$return_url = $base_url . '/solicitud/' . (int) $data['solicitud_nid'] . '/firma/retorno';
+
 		$document = $this->createDocumentFromTemplate([
 			'action_id' => $action_id,
 			'recipient_name' => $data['recipient_name'] ?? '',
 			'recipient_email' => $data['recipient_email'] ?? '',
 			'field_text_data' => $data['field_text_data'] ?? [],
 			'notes' => $data['notes'] ?? '',
+			'redirect_pages' => [
+				'sign_success' => $return_url,
+				'sign_completed' => $return_url,
+				'sign_declined' => $return_url,
+				'sign_later' => $return_url,
+			],
 		]);
 
 		$request_id = $document['requests']['request_id'] ?? '';
@@ -678,6 +698,40 @@ class ZohoSignService
 			]);
 
 			throw new \Exception('No fue posible consultar el estado del documento en Zoho Sign: ' . $e->getMessage());
+		}
+	}
+
+	/**
+	 * Obtiene la URL de descarga del documento firmado.
+	 *
+	 * @param string $request_id
+	 *
+	 * @return string|null
+	 */
+	public function getSignedDocumentUrl(string $request_id): ?string
+	{
+		$settings = $this->getSettings();
+		$access_token = $this->getAccessToken();
+
+		try {
+			$response = $this->httpClient->request(
+				'GET',
+				$settings['api_domain'] . '/api/v1/requests/' . $request_id . '/pdf',
+				[
+					'headers' => [
+						'Authorization' => 'Zoho-oauthtoken ' . $access_token,
+					],
+				]
+			);
+
+			return $settings['api_domain'] . '/api/v1/requests/' . $request_id . '/pdf';
+		} catch (\Throwable $e) {
+			$this->logger->error('Error obteniendo PDF firmado @request_id: @message', [
+				'@request_id' => $request_id,
+				'@message' => $e->getMessage(),
+			]);
+
+			return NULL;
 		}
 	}
 }

@@ -4,40 +4,55 @@
 <br>
 
 {% if semaforo_steps is not empty %}
-  <div class="solicitud-semaforo-wrapper">
-    <h3 class="solicitud-semaforo-title">Seguimiento de la solicitud</h3>
+	<div class="solicitud-semaforo-wrapper">
+		<h3 class="solicitud-semaforo-title">Seguimiento de la solicitud</h3>
 
-    <div class="solicitud-semaforo" role="list" aria-label="Estados de la solicitud">
-      {% for step in semaforo_steps %}
-        <div class="solicitud-semaforo__item solicitud-semaforo__item--{{ step.status }}" role="listitem">
+		<div class="solicitud-semaforo" role="list" aria-label="Estados de la solicitud">
+			{% for step in semaforo_steps %}
+				<div class="solicitud-semaforo__item solicitud-semaforo__item--{{ step.status }}" role="listitem">
 
-          {% if not loop.first %}
-            <div class="solicitud-semaforo__line"></div>
-          {% endif %}
+					{% if not loop.first %}
+						<div class="solicitud-semaforo__line"></div>
+					{% endif %}
 
-          <div class="solicitud-semaforo__node">
-            <span class="solicitud-semaforo__dot"></span>
-          </div>
-
-          <div class="solicitud-semaforo__content">
-            <div class="solicitud-semaforo__label">{{ step.label }}</div>
-
-				{% if step.date %}
-					{% set parts = step.date|split(' ') %}
-
-					<div class="solicitud-semaforo__date">
-						<span class="fecha">{{ parts[0] }}</span>
-						<span class="hora">{{ parts[1] }} {{ parts[2] }}</span>
+					<div class="solicitud-semaforo__node">
+						<span class="solicitud-semaforo__dot"></span>
 					</div>
-				{% endif %}
-          </div>
-        </div>
-      {% endfor %}
-    </div>
-  </div>
+
+					<div class="solicitud-semaforo__content">
+						<div class="solicitud-semaforo__label">{{ step.label }}</div>
+
+						{% if step.date %}
+							{% set parts = step.date|split(' ') %}
+
+							<div class="solicitud-semaforo__date">
+								<span class="fecha">{{ parts[0] }}</span>
+								<span class="hora">{{ parts[1] }}
+									{{ parts[2] }}</span>
+							</div>
+						{% endif %}
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
 {% endif %}
 
 <br>
+
+{% set estado = node.field_state.entity.label %}
+
+{% if estado == 'Documentos firmados' %}
+
+	<div class="solicitud-documento-firmado">
+		<h3>Documento firmado</h3>
+
+		<a href="{{ path('asocolderma_inscription.solicitud_signed_document', {'node': node.id}) }}" class="button button--primary" target="_blank">
+			Ver documento
+		</a>
+	</div>
+
+{% endif %}
 
 <section class="solicitud-ingreso">
 
