@@ -86,13 +86,23 @@ final class SolicitudStateManager
       throw new \RuntimeException('No fue posible preparar la firma porque faltan datos del firmante.');
     }
 
-    $this->zohoSignService->createSignatureRequest([
-      'solicitud_nid' => (int) $node->id(),
-      'recipient_name' => $recipient_name,
-      'recipient_email' => $recipient_email,
-      'field_text_data' => $this->buildFieldTextData($node),
-      'notes' => 'Solicitud de ingreso Asocolderma #' . $this->getSolicitudCode($node),
-    ]);
+    try {
+      $this->zohoSignService->createSignatureRequest([
+        'solicitud_nid' => (int) $node->id(),
+        'recipient_name' => $recipient_name,
+        'recipient_email' => $recipient_email,
+        'field_text_data' => $this->buildFieldTextData($node),
+        'notes' => 'Solicitud de ingreso Asocolderma #' . $this->getSolicitudCode($node),
+      ]);
+    } catch (\Throwable $e) {
+      \Drupal::logger('asocolderma_inscription')->error(
+        'Error creando request de firma para solicitud @nid: @message',
+        [
+          '@nid' => $node->id(),
+          '@message' => $e->getMessage(),
+        ]
+      );
+    }
   }
 
   private function resolveRecipientName(NodeInterface $node): string
