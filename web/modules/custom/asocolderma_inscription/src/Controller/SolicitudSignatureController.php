@@ -36,7 +36,7 @@ final class SolicitudSignatureController extends ControllerBase
 		$state_name = $this->getStateName($node);
 		if ($state_name !== 'Pendiente firma de documentos') {
 			$this->messenger()->addError('La solicitud no está habilitada para firma.');
-			return $this->redirect('asocolderma_inscription.user_solicitudes');
+			return $this->redirect('asocolderma_inscription.user_zone_requests');
 		}
 
 		try {
@@ -87,7 +87,7 @@ final class SolicitudSignatureController extends ControllerBase
 			);
 
 			$this->messenger()->addError('No fue posible abrir la firma en este momento.');
-			return $this->redirect('asocolderma_inscription.user_solicitudes');
+			return $this->redirect('asocolderma_inscription.user_zone_requests');
 		}
 	}
 
@@ -102,7 +102,7 @@ final class SolicitudSignatureController extends ControllerBase
 		}
 
 		$this->messenger()->addStatus('Has regresado del proceso de firma.');
-		return $this->redirect('asocolderma_inscription.user_solicitudes');
+		return $this->redirect('asocolderma_inscription.user_zone_requests');
 	}
 
 	private function getStateName(NodeInterface $node): string
