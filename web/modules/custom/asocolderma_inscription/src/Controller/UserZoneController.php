@@ -116,11 +116,33 @@ final class UserZoneController extends ControllerBase
     $rows = [];
     foreach ($nodes as $n) {
       $term = $n->get('field_state')->entity;
-      $estado_label = $term ? $term->label() : '-';
+      $estado_label = $term ? (string) $term->label() : '-';
+
+      $action = '';
+
+      if ($estado_label === 'Pendiente firma de documentos') {
+        $action = [
+          'data' => [
+            '#type' => 'link',
+            '#title' => $this->t('Firmar documentos'),
+            '#url' => \Drupal\Core\Url::fromRoute(
+              'asocolderma_inscription.solicitud_sign_redirect',
+              ['node' => $n->id()]
+            ),
+            '#attributes' => [
+              'class' => ['button', 'button--primary'],
+            ],
+          ],
+        ];
+      } else {
+        $action = '-';
+      }
+
       $rows[] = [
         'id' => $n->get('field_solicitud_id')->value ?? ('NID ' . $n->id()),
         'state' => $estado_label,
         'created' => \Drupal::service('date.formatter')->format((int) $n->getCreatedTime(), 'short'),
+        'actions' => $action,
       ];
     }
 
@@ -157,12 +179,24 @@ final class UserZoneController extends ControllerBase
 
     $build['table'] = [
       '#type' => 'table',
-      '#header' => [$this->t('ID'), $this->t('Estado'), $this->t('Creada')],
-      '#rows' => array_map(static fn($r) => [$r['id'], $r['state'], $r['created']], $rows),
+      '#header' => [
+        $this->t('ID'),
+        $this->t('Estado'),
+        $this->t('Creada'),
+        $this->t('Acciones'),
+      ],
+      '#rows' => array_map(
+        static fn($r) => [
+          $r['id'],
+          $r['state'],
+          $r['created'],
+          $r['actions'],
+        ],
+        $rows
+      ),
       '#empty' => $this->t('Aún no has creado solicitudes.'),
     ];
 
-    // El borrador vive en TempStore; evita cachearlo.
     $build['#cache'] = [
       'max-age' => 0,
     ];
