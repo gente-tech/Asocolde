@@ -395,49 +395,6 @@ class ZohoSignService
 	}
 
 	/**
-	 * Consulta el estado de un documento por request_id.
-	 *
-	 * @param string $request_id
-	 *   Request ID de Zoho.
-	 *
-	 * @return array
-	 *   Respuesta de Zoho.
-	 *
-	 * @throws \Exception
-	 */
-	public function getRequestDetails(string $request_id): array
-	{
-		$settings = $this->getSettings();
-		$access_token = $this->getAccessToken();
-
-		if (empty($request_id)) {
-			throw new \Exception('Falta request_id.');
-		}
-
-		try {
-			$response = $this->httpClient->request('GET', $settings['api_domain'] . '/api/v1/requests/' . $request_id, [
-				'headers' => [
-					'Authorization' => 'Zoho-oauthtoken ' . $access_token,
-					'Accept' => 'application/json',
-				],
-			]);
-
-			$response_data = json_decode((string) $response->getBody(), TRUE);
-
-			if (empty($response_data) || !is_array($response_data)) {
-				throw new \Exception('Zoho retornó una respuesta inválida al consultar el request.');
-			}
-
-			return $response_data;
-		} catch (\Throwable $e) {
-			$this->logger->error('Error consultando request de Zoho Sign: @message', [
-				'@message' => $e->getMessage(),
-			]);
-			throw new \Exception('No fue posible consultar el estado del documento en Zoho Sign.');
-		}
-	}
-
-	/**
 	 * Guarda el mapeo entre la solicitud y el request de Zoho Sign.
 	 *
 	 * @param array $data
