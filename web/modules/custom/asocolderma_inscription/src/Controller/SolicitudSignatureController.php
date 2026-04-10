@@ -101,7 +101,46 @@ final class SolicitudSignatureController extends ControllerBase
 			throw new AccessDeniedHttpException();
 		}
 
-		$this->messenger()->addStatus('Has regresado del proceso de firma.');
+		try {
+			$mapping = $this->zohoSignService->getLatestRequestMappingBySolicitud((int) $node->id());
+
+			if (empty($mapping['zoho_request_id'])) {
+				$this->messenger()->addWarning('No se encontró un request de firma asociado a la solicitud.');
+				return $this->redirect('asocolderma_inscription.user_zone_requests');
+			}
+
+			$request_id = (string) $mapping['zoho_request_id'];
+			$details = $this->zohoSignService->getRequestDetails($request_id);
+
+			$request_status = strtolower((string) ($details['requests']['request_status'] ?? ''));
+			$action_status = strtolower((string) ($details['requests']['actions'][0]['action_status'] ?? ''));
+
+			if (in_array($request_status, ['completed', 'signed'], TRUE) || in_array($action_status, ['signed', 'completed'], TRUE)) {
+				$documentos_firmados_tid = $this->getStateTidByName('Documentos firmados');
+
+				if ($documentos_firmados_tid) {
+					$node->set('field_state', ['target_id' => $documentos_firmados_tid]);
+					$node->save();
+
+					$this->messenger()->addStatus('La firma fue completada y la solicitud fue actualizada a Documentos firmados.');
+				} else {
+					$this->messenger()->addWarning('El documento fue firmado, pero no se encontró el estado Documentos firmados.');
+				}
+			} else {
+				$this->messenger()->addStatus('Aún no se evidencia la firma completa del documento.');
+			}
+		} catch (\Throwable $e) {
+			$this->getLogger('asocolderma_inscription')->error(
+				'Error sincronizando retorno de firma para solicitud @nid: @message',
+				[
+					'@nid' => $node->id(),
+					'@message' => $e->getMessage(),
+				]
+			);
+
+			$this->messenger()->addError('No fue posible validar el estado de la firma en este momento.');
+		}
+
 		return $this->redirect('asocolderma_inscription.user_zone_requests');
 	}
 
@@ -170,5 +209,21 @@ final class SolicitudSignatureController extends ControllerBase
 		}
 
 		return 'NID-' . $node->id();
+	}
+
+	private function getStateTidByName(string $state_name): ?int
+	{
+		$storage = $this->entityTypeManager()->getStorage('taxonomy_term');
+		$terms = $storage->loadByProperties([
+			'vid' => 'estado_solicitud_ingreso',
+			'name' => $state_name,
+		]);
+
+		if (!$terms) {
+			return NULL;
+		}
+
+		$term = reset($terms);
+		return $term ? (int) $term->id() : NULL;
 	}
 }
