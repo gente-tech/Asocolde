@@ -295,9 +295,9 @@ class ZohoSignService
 			'host' => $settings['host'],
 		];
 
-		if (!empty($settings['redirect_url'])) {
-			$query['redirect_url'] = $settings['redirect_url'];
-		}
+		// if (!empty($settings['redirect_url'])) {
+		// 	$query['redirect_url'] = $settings['redirect_url'];
+		// }
 
 		try {
 			$response = $this->httpClient->request('POST', $url, [
