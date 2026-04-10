@@ -6,6 +6,8 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use GuzzleHttp\ClientInterface;
 use Drupal\Core\Database\Connection;
+use GuzzleHttp\Exception\RequestException;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Servicio para integración con Zoho Sign.
@@ -208,18 +210,22 @@ class ZohoSignService
 		];
 
 		try {
-			$response = $this->httpClient->request('POST', $settings['api_domain'] . '/api/v1/templates/' . $settings['template_id'] . '/createdocument', [
-				'headers' => [
-					'Authorization' => 'Zoho-oauthtoken ' . $access_token,
-					'Accept' => 'application/json',
-				],
-				'multipart' => [
-					[
-						'name' => 'data',
-						'contents' => json_encode($payload, JSON_UNESCAPED_UNICODE),
+			$response = $this->httpClient->request(
+				'POST',
+				$settings['api_domain'] . '/api/v1/templates/' . $settings['template_id'] . '/createdocument',
+				[
+					'headers' => [
+						'Authorization' => 'Zoho-oauthtoken ' . $access_token,
+						'Accept' => 'application/json',
 					],
-				],
-			]);
+					'multipart' => [
+						[
+							'name' => 'data',
+							'contents' => json_encode($payload, JSON_UNESCAPED_UNICODE),
+						],
+					],
+				]
+			);
 
 			$response_data = json_decode((string) $response->getBody(), TRUE);
 
@@ -228,11 +234,26 @@ class ZohoSignService
 			}
 
 			return $response_data;
-		} catch (\Throwable $e) {
-			$this->logger->error('Error creando documento en Zoho Sign: @message', [
-				'@message' => $e->getMessage(),
+		} catch (RequestException $e) {
+			$response = $e->getResponse();
+			$status_code = $response ? $response->getStatusCode() : 0;
+			$response_body = $response ? (string) $response->getBody() : '';
+			$decoded_body = json_decode($response_body, TRUE);
+
+			$this->logger->error('Error creando documento en Zoho Sign. Status: @status. Response: @response. Payload: @payload', [
+				'@status' => $status_code,
+				'@response' => $response_body,
+				'@payload' => json_encode($payload, JSON_UNESCAPED_UNICODE),
 			]);
-			throw new \Exception('No fue posible crear el documento en Zoho Sign.');
+
+			$error_message = $this->extractZohoErrorMessage($response, $decoded_body);
+			throw new \Exception('Zoho Sign rechazó la creación del documento: ' . $error_message);
+		} catch (\Throwable $e) {
+			$this->logger->error('Error creando documento en Zoho Sign: @message. Payload: @payload', [
+				'@message' => $e->getMessage(),
+				'@payload' => json_encode($payload, JSON_UNESCAPED_UNICODE),
+			]);
+			throw new \Exception('No fue posible crear el documento en Zoho Sign: ' . $e->getMessage());
 		}
 	}
 
@@ -578,5 +599,36 @@ class ZohoSignService
 		$record = $query->execute()->fetchAssoc();
 
 		return $record ?: NULL;
+	}
+
+	/**
+	 * Extrae un mensaje útil desde la respuesta de Zoho.
+	 */
+	private function extractZohoErrorMessage(?ResponseInterface $response, ?array $decoded_body): string
+	{
+		if (!$response) {
+			return 'Sin respuesta HTTP de Zoho.';
+		}
+
+		if (is_array($decoded_body)) {
+			if (!empty($decoded_body['message']) && is_string($decoded_body['message'])) {
+				return $decoded_body['message'];
+			}
+
+			if (!empty($decoded_body['error']['message']) && is_string($decoded_body['error']['message'])) {
+				return $decoded_body['error']['message'];
+			}
+
+			if (!empty($decoded_body['errors'][0]['message']) && is_string($decoded_body['errors'][0]['message'])) {
+				return $decoded_body['errors'][0]['message'];
+			}
+
+			if (!empty($decoded_body['code']) || !empty($decoded_body['status'])) {
+				return json_encode($decoded_body, JSON_UNESCAPED_UNICODE);
+			}
+		}
+
+		$body = (string) $response->getBody();
+		return $body !== '' ? $body : 'Respuesta vacía de Zoho.';
 	}
 }
