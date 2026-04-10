@@ -211,6 +211,10 @@ class ZohoSignService
 			],
 		];
 
+		$this->logger->notice('Zoho Sign redirect_pages payload: @redirect_pages', [
+			'@redirect_pages' => json_encode($data['redirect_pages'] ?? [], JSON_UNESCAPED_UNICODE),
+		]);
+
 		try {
 			$response = $this->httpClient->request(
 				'POST',
@@ -474,6 +478,11 @@ class ZohoSignService
 		$base_url = rtrim($base_url, '/');
 
 		$return_url = $base_url . '/solicitud/' . (int) $data['solicitud_nid'] . '/firma/retorno';
+
+		$this->logger->notice('Zoho Sign return_url construido para solicitud @nid: @url', [
+			'@nid' => (int) $data['solicitud_nid'],
+			'@url' => $return_url,
+		]);
 
 		$document = $this->createDocumentFromTemplate([
 			'action_id' => $action_id,
