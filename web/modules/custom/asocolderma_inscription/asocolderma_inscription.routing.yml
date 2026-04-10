@@ -85,3 +85,29 @@ asocolderma_inscription.sg_review:
     parameters:
       node:
         type: entity:node
+
+asocolderma_inscription.solicitud_sign_redirect:
+  path: '/solicitud/{node}/firmar'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\SolicitudSignatureController::redirectToSign'
+    _title: 'Firmar documentos'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _entity_access: 'node.view'
+  options:
+    parameters:
+      node:
+        type: entity:node
+
+asocolderma_inscription.solicitud_sign_return:
+  path: '/solicitud/{node}/firma/retorno'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\SolicitudSignatureController::returnFromSign'
+    _title: 'Retorno firma'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _entity_access: 'node.view'
+  options:
+    parameters:
+      node:
+        type: entity:node
