@@ -631,4 +631,53 @@ class ZohoSignService
 		$body = (string) $response->getBody();
 		return $body !== '' ? $body : 'Respuesta vacía de Zoho.';
 	}
+
+	/**
+	 * Consulta el detalle de un request/documento en Zoho Sign.
+	 *
+	 * @param string $request_id
+	 *   Request ID de Zoho Sign.
+	 *
+	 * @return array
+	 *   Respuesta decodificada.
+	 *
+	 * @throws \Exception
+	 */
+	public function getRequestDetails(string $request_id): array
+	{
+		$settings = $this->getSettings();
+		$access_token = $this->getAccessToken();
+
+		if ($request_id === '') {
+			throw new \Exception('Falta request_id.');
+		}
+
+		try {
+			$response = $this->httpClient->request(
+				'GET',
+				$settings['api_domain'] . '/api/v1/requests/' . $request_id,
+				[
+					'headers' => [
+						'Authorization' => 'Zoho-oauthtoken ' . $access_token,
+						'Accept' => 'application/json',
+					],
+				]
+			);
+
+			$response_data = json_decode((string) $response->getBody(), TRUE);
+
+			if (empty($response_data) || !is_array($response_data)) {
+				throw new \Exception('Zoho retornó una respuesta inválida al consultar el request.');
+			}
+
+			return $response_data;
+		} catch (\Throwable $e) {
+			$this->logger->error('Error consultando request de Zoho Sign @request_id: @message', [
+				'@request_id' => $request_id,
+				'@message' => $e->getMessage(),
+			]);
+
+			throw new \Exception('No fue posible consultar el estado del documento en Zoho Sign: ' . $e->getMessage());
+		}
+	}
 }
