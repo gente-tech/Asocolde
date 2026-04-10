@@ -1,9 +1,10 @@
-name: 'Asocolderma Inscription'
+name: "Asocolderma Inscription"
 type: module
-description: 'Registro de aspirantes y flujo de inscripción'
+description: "Registro de aspirantes y flujo de inscripción"
 package: Custom
 core_version_requirement: ^10 || ^11
 dependencies:
   - drupal:user
   - profile:profile
   - drupal:file
+  - enterprise_integrations:enterprise_integrations
