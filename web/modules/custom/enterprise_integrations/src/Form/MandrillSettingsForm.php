@@ -23,9 +23,11 @@ class MandrillSettingsForm extends ConfigFormBase
   {
     $config = $this->config('enterprise_integrations.settings');
 
-    // Inicializa cantidad de grupos en estado del formulario.
+    $saved_groups = $config->get('mandrill.message_groups') ?? [];
+
     if ($form_state->get('message_groups_count') === NULL) {
-      $form_state->set('message_groups_count', 1);
+      $initial_count = !empty($saved_groups) ? count($saved_groups) : 1;
+      $form_state->set('message_groups_count', $initial_count);
     }
 
     $groups_count = (int) $form_state->get('message_groups_count');
@@ -110,16 +112,21 @@ class MandrillSettingsForm extends ConfigFormBase
         '#open' => TRUE,
       ];
 
+      $group_default = $saved_groups[$i] ?? [
+        'subject' => '',
+        'message' => '',
+      ];
+
       $form['mandrill']['message_groups_wrapper']['message_groups'][$i]['subject'] = [
         '#type' => 'textfield',
         '#title' => $this->t('Subject'),
-        '#default_value' => $form_state->getValue(['message_groups', $i, 'subject']) ?? '',
+        '#default_value' => $group_default['subject'] ?? '',
       ];
 
       $form['mandrill']['message_groups_wrapper']['message_groups'][$i]['message'] = [
         '#type' => 'textarea',
         '#title' => $this->t('Mensaje'),
-        '#default_value' => $form_state->getValue(['message_groups', $i, 'message']) ?? '',
+        '#default_value' => $group_default['message'] ?? '',
         '#rows' => 6,
       ];
 
@@ -219,6 +226,22 @@ class MandrillSettingsForm extends ConfigFormBase
       $file->save();
       $config->set('mail_banner', $banner);
     }
+
+    $message_groups = $form_state->getValue('message_groups') ?? [];
+
+    // Limpia grupos vacíos.
+    $message_groups = array_values(array_filter($message_groups, function ($group) {
+      if (!is_array($group)) {
+        return FALSE;
+      }
+
+      $subject = trim((string) ($group['subject'] ?? ''));
+      $message = trim((string) ($group['message'] ?? ''));
+
+      return $subject !== '' || $message !== '';
+    }));
+
+    $config->set('mandrill.message_groups', $message_groups);
 
     $config->save();
 
