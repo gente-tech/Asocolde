@@ -249,7 +249,12 @@ final class SolicitudSignatureController extends ControllerBase
 			throw new AccessDeniedHttpException();
 		}
 
-		if ((int) $node->getOwnerId() !== (int) $this->currentUser()->id()) {
+		$current_user = $this->currentUser();
+
+		$is_owner = ((int) $node->getOwnerId() === (int) $current_user->id());
+		$is_coord_admin = in_array('coordinacion_administrativa', $current_user->getRoles(), TRUE);
+
+		if (!$is_owner && !$is_coord_admin) {
 			throw new AccessDeniedHttpException();
 		}
 
