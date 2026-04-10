@@ -700,4 +700,47 @@ class ZohoSignService
 			return NULL;
 		}
 	}
+
+	/**
+	 * Descarga el PDF firmado de un request de Zoho Sign.
+	 *
+	 * @param string $request_id
+	 *   Request ID de Zoho.
+	 *
+	 * @return string
+	 *   Contenido binario del PDF.
+	 *
+	 * @throws \Exception
+	 */
+	public function downloadSignedDocument(string $request_id): string
+	{
+		$settings = $this->getSettings();
+		$access_token = $this->getAccessToken();
+
+		if ($request_id === '') {
+			throw new \Exception('Falta request_id.');
+		}
+
+		try {
+			$response = $this->httpClient->request(
+				'GET',
+				$settings['api_domain'] . '/api/v1/requests/' . $request_id . '/pdf',
+				[
+					'headers' => [
+						'Authorization' => 'Zoho-oauthtoken ' . $access_token,
+						'Accept' => 'application/pdf',
+					],
+				]
+			);
+
+			return $response->getBody()->getContents();
+		} catch (\Throwable $e) {
+			$this->logger->error('Error descargando PDF firmado @request_id: @message', [
+				'@request_id' => $request_id,
+				'@message' => $e->getMessage(),
+			]);
+
+			throw new \Exception('No fue posible descargar el documento firmado de Zoho Sign: ' . $e->getMessage());
+		}
+	}
 }

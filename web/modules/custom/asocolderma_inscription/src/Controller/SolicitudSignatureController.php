@@ -267,24 +267,11 @@ final class SolicitudSignatureController extends ControllerBase
 
 			$request_id = (string) $mapping['zoho_request_id'];
 
-			$settings = $this->zohoSignService->getSettings();
-			$access_token = $this->zohoSignService->getAccessToken();
-
-			$response = \Drupal::httpClient()->request(
-				'GET',
-				$settings['api_domain'] . '/api/v1/requests/' . $request_id . '/pdf',
-				[
-					'headers' => [
-						'Authorization' => 'Zoho-oauthtoken ' . $access_token,
-					],
-				]
-			);
-
-			$pdf = $response->getBody()->getContents();
+			$pdf = $this->zohoSignService->downloadSignedDocument($request_id);
 
 			return new Response($pdf, 200, [
 				'Content-Type' => 'application/pdf',
-				'Content-Disposition' => 'inline; filename="documento_firmado.pdf"',
+				'Content-Disposition' => 'inline; filename="documento_firmado_' . $node->id() . '.pdf"',
 			]);
 		} catch (\Throwable $e) {
 			$this->getLogger('asocolderma_inscription')->error(
