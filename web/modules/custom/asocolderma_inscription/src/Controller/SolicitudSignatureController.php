@@ -3,7 +3,6 @@
 namespace Drupal\asocolderma_inscription\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\node\NodeInterface;
 use Drupal\enterprise_integrations\Service\ZohoSignService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -15,14 +14,12 @@ final class SolicitudSignatureController extends ControllerBase
 
 	public function __construct(
 		private readonly ZohoSignService $zohoSignService,
-		private readonly MessengerInterface $messenger,
 	) {}
 
 	public static function create(ContainerInterface $container): self
 	{
 		return new self(
 			$container->get('enterprise_integrations.zoho_sign'),
-			$container->get('messenger'),
 		);
 	}
 
@@ -38,8 +35,8 @@ final class SolicitudSignatureController extends ControllerBase
 
 		$state_name = $this->getStateName($node);
 		if ($state_name !== 'Pendiente firma de documentos') {
-			$this->messenger->addError('La solicitud no está habilitada para firma.');
-			return $this->redirect('asocolderma_inscription.user_solicitudes')->send();
+			$this->messenger()->addError('La solicitud no está habilitada para firma.');
+			return $this->redirect('asocolderma_inscription.user_solicitudes');
 		}
 
 		try {
@@ -89,8 +86,8 @@ final class SolicitudSignatureController extends ControllerBase
 				]
 			);
 
-			$this->messenger->addError('No fue posible abrir la firma en este momento.');
-			return $this->redirect('asocolderma_inscription.user_solicitudes')->send();
+			$this->messenger()->addError('No fue posible abrir la firma en este momento.');
+			return $this->redirect('asocolderma_inscription.user_solicitudes');
 		}
 	}
 
@@ -104,8 +101,8 @@ final class SolicitudSignatureController extends ControllerBase
 			throw new AccessDeniedHttpException();
 		}
 
-		$this->messenger->addStatus('Has regresado del proceso de firma.');
-		return $this->redirect('asocolderma_inscription.user_solicitudes')->send();
+		$this->messenger()->addStatus('Has regresado del proceso de firma.');
+		return $this->redirect('asocolderma_inscription.user_solicitudes');
 	}
 
 	private function getStateName(NodeInterface $node): string
