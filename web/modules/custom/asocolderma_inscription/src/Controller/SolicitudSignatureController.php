@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpFoundation\Response;
+use Drupal\Core\Routing\TrustedRedirectResponse;
 
 final class SolicitudSignatureController extends ControllerBase
 {
@@ -91,7 +92,7 @@ final class SolicitudSignatureController extends ControllerBase
 				throw new \RuntimeException('Zoho no devolvió una URL de firma.');
 			}
 
-			return new RedirectResponse($sign_url);
+			return new TrustedRedirectResponse($sign_url);
 		} catch (\Throwable $e) {
 			$this->getLogger('asocolderma_inscription')->error(
 				'Error preparando firma para solicitud @nid: @message',
