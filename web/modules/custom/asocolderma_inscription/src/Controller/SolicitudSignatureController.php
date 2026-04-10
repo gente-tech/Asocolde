@@ -26,6 +26,11 @@ final class SolicitudSignatureController extends ControllerBase
 
 	public function redirectToSign(NodeInterface $node): RedirectResponse
 	{
+		$this->getLogger('asocolderma_inscription')->error(
+			'DEBUG FIRMA: entrando a redirectToSign para solicitud @nid',
+			['@nid' => $node->id()]
+		);
+
 		if ($node->bundle() !== 'solicitud_ingreso') {
 			throw new AccessDeniedHttpException();
 		}
@@ -44,6 +49,11 @@ final class SolicitudSignatureController extends ControllerBase
 			$mapping = $this->zohoSignService->getLatestRequestMappingBySolicitud((int) $node->id());
 
 			if (empty($mapping['zoho_request_id']) || empty($mapping['zoho_action_id'])) {
+				$this->getLogger('asocolderma_inscription')->error(
+					'DEBUG FIRMA: NO existe request, se va a crear uno nuevo para @nid',
+					['@nid' => $node->id()]
+				);
+
 				$recipient_name = $this->resolveRecipientName($node);
 				$recipient_email = $this->resolveRecipientEmail($node);
 
@@ -62,6 +72,10 @@ final class SolicitudSignatureController extends ControllerBase
 				$request_id = (string) ($created['request_id'] ?? '');
 				$action_id = (string) ($created['action_id'] ?? '');
 			} else {
+				$this->getLogger('asocolderma_inscription')->error(
+					'DEBUG FIRMA: ya existe request para @nid',
+					['@nid' => $node->id()]
+				);
 				$request_id = (string) $mapping['zoho_request_id'];
 				$action_id = (string) $mapping['zoho_action_id'];
 			}
