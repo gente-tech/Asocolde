@@ -439,4 +439,36 @@ final class MandrillService
 
 		return $this->send($payload);
 	}
+
+	public function sendConfiguredTemplateMessage(string $message_key, string $template_name, array $params = [], array $extra_variables = []): array
+	{
+		$message_group = $this->getMessageGroupByKey($message_key);
+
+		if (!$message_group) {
+			throw new \InvalidArgumentException(sprintf('No existe el message_key: %s', $message_key));
+		}
+
+		$subject = $message_group['subject'] ?? '';
+		$message = $message_group['message'] ?? '';
+
+		if ($subject === '' || $message === '') {
+			throw new \RuntimeException(sprintf('El message_key %s no tiene subject o message configurado.', $message_key));
+		}
+
+		$variables = array_merge($extra_variables, [
+			'subject' => $subject,
+			'message' => $message,
+		]);
+
+		$html = $this->renderTwigTemplate($template_name, $variables);
+
+		$text = trim(strip_tags($message));
+
+		$payload = $params;
+		$payload['subject'] = $subject;
+		$payload['html'] = $html;
+		$payload['text'] = $text;
+
+		return $this->send($payload);
+	}
 }

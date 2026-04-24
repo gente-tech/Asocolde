@@ -117,12 +117,12 @@ class AspiranteRegisterForm extends FormBase
 
 		// Enviar correo
 		try {
-			$this->mandrillService->sendTemplatedMessage(
+			$this->mandrillService->sendConfiguredTemplateMessage(
+				'mail_text_1',
 				'base-mail',
 				[
 					'to_email' => $mail,
 					'to_name' => $mail,
-					'subject' => 'Activa tu cuenta en Asocolderma',
 					'internal_copy' => FALSE,
 					'tags' => ['registro_aspirante', 'activacion_cuenta'],
 					'metadata' => [
@@ -131,11 +131,9 @@ class AspiranteRegisterForm extends FormBase
 					],
 				],
 				[
-					'subject' => 'Activa tu cuenta en Asocolderma',
 					'nombre' => $mail,
 					'email_title' => 'Asocolderma',
 					'email_description' => 'Asociación Colombiana de Dermatología',
-					'message' => 'Tu registro fue creado correctamente. Haz clic en el botón para activar tu cuenta.',
 					'action_url' => $activation_url,
 					'action_text' => 'Activar cuenta',
 				]
