@@ -7,9 +7,35 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\Entity\User;
 use Drupal\Core\Url;
 use Drupal\Component\Utility\Crypt;
+use Drupal\enterprise_integrations\Service\MandrillService;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
+use Psr\Log\LoggerInterface;
 
 class AspiranteRegisterForm extends FormBase
 {
+	protected MandrillService $mandrillService;
+	protected LanguageManagerInterface $languageManager;
+	protected LoggerInterface $logger;
+
+	public function __construct(
+		MandrillService $mandrillService,
+		LanguageManagerInterface $languageManager,
+		LoggerInterface $logger
+	) {
+		$this->mandrillService = $mandrillService;
+		$this->languageManager = $languageManager;
+		$this->logger = $logger;
+	}
+
+	public static function create(ContainerInterface $container)
+	{
+		return new static(
+			$container->get('enterprise_integrations.mandrill'),
+			$container->get('language_manager'),
+			$container->get('logger.channel.asocolderma_inscription')
+		);
+	}
 
 	public function getFormId()
 	{
@@ -90,29 +116,42 @@ class AspiranteRegisterForm extends FormBase
 		)->toString();
 
 		// Enviar correo
-		$result = \Drupal::service('plugin.manager.mail')->mail(
-			'user',
-			'register_pending_approval',
-			$mail,
-			\Drupal::languageManager()->getDefaultLanguage()->getId(),
-			[
-				'account' => $user,
-				'activation_link' => $activation_url,
-			]
-		);
-
-		if ($result['result'] === TRUE) {
-			\Drupal::logger('asocolderma_inscription')->info(
-				'El correo de activación se envió al correo: @mail, con el link: @activation_link',
+		try {
+			$this->mandrillService->sendTemplatedMessage(
+				'base-mail',
 				[
-					'@mail' => $mail,
-					'@activation_link' => $activation_url,
+					'to_email' => $mail,
+					'to_name' => $mail,
+					'subject' => 'Activa tu cuenta en Asocolderma',
+					'internal_copy' => FALSE,
+					'tags' => ['registro_aspirante', 'activacion_cuenta'],
+					'metadata' => [
+						'user_id' => (string) $user->id(),
+						'mail_type' => 'activation',
+					],
+				],
+				[
+					'subject' => 'Activa tu cuenta en Asocolderma',
+					'nombre' => $mail,
+					'email_title' => 'Asocolderma',
+					'email_description' => 'Asociación Colombiana de Dermatología',
+					'message' => 'Tu registro fue creado correctamente. Haz clic en el botón para activar tu cuenta.',
+					'action_url' => $activation_url,
+					'action_text' => 'Activar cuenta',
 				]
 			);
-		} else {
-			\Drupal::logger('asocolderma_inscription')->error(
-				'ERROR al intentar enviar el correo al correo: @mail',
+
+			$this->logger->info(
+				'Correo de activación enviado a @mail.',
 				['@mail' => $mail]
+			);
+		} catch (\Throwable $e) {
+			$this->logger->error(
+				'Error enviando correo de activación a @mail: @error',
+				[
+					'@mail' => $mail,
+					'@error' => $e->getMessage(),
+				]
 			);
 		}
 

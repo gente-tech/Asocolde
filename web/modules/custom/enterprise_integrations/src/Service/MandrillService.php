@@ -394,4 +394,49 @@ final class MandrillService
 
 		return $payload;
 	}
+
+	public function renderTwigTemplate(string $template_name, array $variables = []): string
+	{
+		$template_file = DRUPAL_ROOT . '/modules/custom/enterprise_integrations/templates/mail/' . $template_name . '.html.twig';
+
+		if (!file_exists($template_file)) {
+			throw new \InvalidArgumentException(sprintf('No existe la plantilla de correo: %s', $template_name));
+		}
+
+		$template_content = file_get_contents($template_file);
+
+		if ($template_content === FALSE) {
+			throw new \RuntimeException(sprintf('No se pudo leer la plantilla de correo: %s', $template_name));
+		}
+
+		$assets = $this->getMailAssets();
+
+		$variables = array_merge($assets, $variables);
+
+		return \Drupal::service('twig')->createTemplate($template_content)->render($variables);
+	}
+
+	public function sendTemplatedMessage(string $template_name, array $params = [], array $variables = []): array
+	{
+		if (empty($params['subject'])) {
+			throw new \InvalidArgumentException('El parámetro "subject" es obligatorio.');
+		}
+
+		if (empty($params['to_email'])) {
+			throw new \InvalidArgumentException('El parámetro "to_email" es obligatorio.');
+		}
+
+		$html = $this->renderTwigTemplate($template_name, $variables);
+
+		$text = '';
+		if (!empty($variables['message'])) {
+			$text = trim(strip_tags((string) $variables['message']));
+		}
+
+		$payload = $params;
+		$payload['html'] = $html;
+		$payload['text'] = $text;
+
+		return $this->send($payload);
+	}
 }
