@@ -33,7 +33,7 @@ class AspiranteRegisterForm extends FormBase
 		return new static(
 			$container->get('enterprise_integrations.mandrill'),
 			$container->get('language_manager'),
-			$container->get('logger.channel.asocolderma_inscription')
+			$container->get('logger.factory')->get('asocolderma_inscription')
 		);
 	}
 
