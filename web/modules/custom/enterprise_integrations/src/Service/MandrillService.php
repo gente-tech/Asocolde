@@ -471,4 +471,30 @@ final class MandrillService
 
 		return $this->send($payload);
 	}
+
+	public function getMessageGroupByKey(string $key): ?array
+	{
+		$config = $this->configFactory->get('enterprise_integrations.settings');
+		$message_groups = $config->get('mandrill.message_groups') ?? [];
+
+		if (!is_array($message_groups) || $key === '') {
+			return NULL;
+		}
+
+		foreach ($message_groups as $group) {
+			if (!is_array($group)) {
+				continue;
+			}
+
+			if (($group['key'] ?? '') === $key) {
+				return [
+					'key' => (string) ($group['key'] ?? ''),
+					'subject' => (string) ($group['subject'] ?? ''),
+					'message' => (string) ($group['message'] ?? ''),
+				];
+			}
+		}
+
+		return NULL;
+	}
 }
