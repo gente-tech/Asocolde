@@ -476,7 +476,17 @@ function asocolderma_inscription_update_9005(): void
     $storage->delete();
   }
 
-  field_purge_batch(50);
+  try {
+    field_purge_batch(50);
+  } catch (\Throwable $e) {
+    \Drupal::logger('asocolderma_inscription')->warning(
+      'No fue posible purgar completamente el campo @field durante la migración. Se continúa con la recreación del campo. Error: @message',
+      [
+        '@field' => $field_name,
+        '@message' => $e->getMessage(),
+      ]
+    );
+  }
 
   FieldStorageConfig::create([
     'field_name' => $field_name,
