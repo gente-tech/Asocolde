@@ -690,15 +690,15 @@ function asocolderma_inscription_migrate_string_field_to_taxonomy_reference(
     }
   }
 
-  if ($field) {
-    $field->delete();
-  }
-
-  if ($storage) {
-    $storage->delete();
-  }
-
   try {
+    if ($field) {
+      $field->delete();
+    }
+
+    if ($storage) {
+      $storage->delete();
+    }
+
     field_purge_batch(50);
   } catch (\Throwable $e) {
     \Drupal::logger('asocolderma_inscription')->warning(
