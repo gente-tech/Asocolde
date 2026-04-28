@@ -104,12 +104,8 @@ final class SolicitudIngresoWizardForm extends FormBase
         '#title' => $this->t('Tipo de asociado al que aspira'),
         '#description' => $this->t('Seleccione la categoría de miembro a la cual desea postularse, de acuerdo con los criterios establecidos por la Asociación.'),
         '#required' => TRUE,
-        '#options' => [
-          'numero' => $this->t('Número'),
-          'adherente' => $this->t('Adherente'),
-          'correspondiente' => $this->t('Correspondiente'),
-          'internacional' => $this->t('Internacional'),
-        ],
+        '#empty_option' => $this->t('- Seleccione -'),
+        '#options' => $this->getTaxonomyOptions('tipo_de_asociado'),
         '#default_value' => $wizard_values['general']['tipo_asociado'] ?? NULL,
       ];
 
@@ -663,7 +659,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       'field_state' => ['target_id' => $estado_tid],
       'field_terms_accepted' => 1,
 
-      'field_tipo_asociado' => $wizard_values['general']['tipo_asociado'],
+      'field_tipo_asociado' => ['target_id' => (int) $wizard_values['general']['tipo_asociado'],],
       'field_nombre1' => $wizard_values['general']['nombre1'],
       'field_nombre2' => $wizard_values['general']['nombre2'] ?? '',
       'field_apellido1' => $wizard_values['general']['apellido1'],
@@ -734,5 +730,30 @@ final class SolicitudIngresoWizardForm extends FormBase
 
     $this->messenger()->addStatus($this->t('Solicitud creada correctamente con ID: @id', ['@id' => $id_solicitud]));
     $form_state->setRedirect('asocolderma_inscription.user_zone_requests');
+  }
+
+  /**
+   * Retorna opciones de términos publicados de un vocabulario.
+   */
+  private function getTaxonomyOptions(string $vocabulary): array
+  {
+    $options = [];
+
+    $terms = \Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term')
+      ->loadByProperties([
+        'vid' => $vocabulary,
+        'status' => 1,
+      ]);
+
+    uasort($terms, static function ($a, $b) {
+      return $a->getWeight() <=> $b->getWeight();
+    });
+
+    foreach ($terms as $term) {
+      $options[$term->id()] = $term->label();
+    }
+
+    return $options;
   }
 }

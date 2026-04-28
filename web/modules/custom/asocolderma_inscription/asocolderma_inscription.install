@@ -149,8 +149,23 @@ function asocolderma_inscription_update_9001(): void
   $ensure_field('field_terms_accepted', 'Aceptó términos', [], TRUE);
 
   // 3) Paso 1: Información general.
-  $ensure_storage('field_tipo_asociado', 'string', ['max_length' => 32]);
-  $ensure_field('field_tipo_asociado', 'Tipo de asociado', [], TRUE);
+  $ensure_storage('field_tipo_asociado', 'entity_reference', [
+    'target_type' => 'taxonomy_term',
+  ]);
+
+  $ensure_field('field_tipo_asociado', 'Tipo de asociado', [
+    'handler' => 'default:taxonomy_term',
+    'handler_settings' => [
+      'target_bundles' => [
+        'tipo_de_asociado' => 'tipo_de_asociado',
+      ],
+      'sort' => [
+        'field' => 'weight',
+        'direction' => 'ASC',
+      ],
+      'auto_create' => FALSE,
+    ],
+  ], TRUE);
 
   $ensure_storage('field_nombre1', 'string', ['max_length' => 100]);
   $ensure_field('field_nombre1', 'Primer nombre', [], TRUE);
@@ -300,7 +315,8 @@ function asocolderma_inscription_update_9001(): void
   $view_display->save();
 }
 
-function asocolderma_inscription_update_9003(): void {
+function asocolderma_inscription_update_9003(): void
+{
   $type = 'solicitud_ingreso';
 
   $form_display = EntityFormDisplay::load("node.$type.default");
@@ -341,7 +357,8 @@ function asocolderma_inscription_update_9003(): void {
   $form_display->save();
 }
 
-function asocolderma_inscription_schema() {
+function asocolderma_inscription_schema()
+{
   $schema['asocolderma_solicitud_historial'] = [
     'description' => 'Historial append-only de transiciones de estado de solicitudes.',
     'fields' => [
@@ -407,7 +424,8 @@ function asocolderma_inscription_schema() {
 /**
  * Update hook para crear tabla en sitios ya instalados.
  */
-function asocolderma_inscription_update_9004(): void {
+function asocolderma_inscription_update_9004(): void
+{
   $schema = \Drupal::database()->schema();
 
   if ($schema->tableExists('asocolderma_solicitud_historial')) {
@@ -416,4 +434,134 @@ function asocolderma_inscription_update_9004(): void {
 
   $table = asocolderma_inscription_schema()['asocolderma_solicitud_historial'];
   $schema->createTable('asocolderma_solicitud_historial', $table);
+}
+
+/**
+ * Migra field_tipo_asociado de string a referencia de taxonomía.
+ */
+function asocolderma_inscription_update_9005(): void
+{
+  $entity_type = 'node';
+  $bundle = 'solicitud_ingreso';
+  $field_name = 'field_tipo_asociado';
+  $vocabulary = 'tipo_de_asociado';
+
+  $storage = FieldStorageConfig::loadByName($entity_type, $field_name);
+  $field = FieldConfig::loadByName($entity_type, $bundle, $field_name);
+
+  if ($storage && $storage->getType() === 'entity_reference') {
+    return;
+  }
+
+  $connection = \Drupal::database();
+
+  $backup = [];
+
+  if ($connection->schema()->tableExists("node__{$field_name}")) {
+    $records = $connection->select("node__{$field_name}", 'f')
+      ->fields('f', ['entity_id', "{$field_name}_value"])
+      ->execute()
+      ->fetchAll();
+
+    foreach ($records as $record) {
+      $backup[(int) $record->entity_id] = (string) $record->{$field_name . '_value'};
+    }
+  }
+
+  if ($field) {
+    $field->delete();
+  }
+
+  if ($storage) {
+    $storage->delete();
+  }
+
+  field_purge_batch(50);
+
+  FieldStorageConfig::create([
+    'field_name' => $field_name,
+    'entity_type' => $entity_type,
+    'type' => 'entity_reference',
+    'settings' => [
+      'target_type' => 'taxonomy_term',
+    ],
+    'cardinality' => 1,
+    'translatable' => FALSE,
+  ])->save();
+
+  FieldConfig::create([
+    'field_name' => $field_name,
+    'entity_type' => $entity_type,
+    'bundle' => $bundle,
+    'label' => 'Tipo de asociado',
+    'required' => TRUE,
+    'settings' => [
+      'handler' => 'default:taxonomy_term',
+      'handler_settings' => [
+        'target_bundles' => [
+          $vocabulary => $vocabulary,
+        ],
+        'sort' => [
+          'field' => 'weight',
+          'direction' => 'ASC',
+        ],
+        'auto_create' => FALSE,
+      ],
+    ],
+  ])->save();
+
+  $form_display = EntityFormDisplay::load("{$entity_type}.{$bundle}.default");
+  if ($form_display) {
+    $form_display->setComponent($field_name, [
+      'type' => 'options_select',
+      'weight' => 10,
+    ]);
+    $form_display->save();
+  }
+
+  $view_display = EntityViewDisplay::load("{$entity_type}.{$bundle}.default");
+  if ($view_display) {
+    $view_display->setComponent($field_name, [
+      'type' => 'entity_reference_label',
+      'label' => 'above',
+      'settings' => [
+        'link' => FALSE,
+      ],
+    ]);
+    $view_display->save();
+  }
+
+  if ($backup) {
+    $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+
+    $terms = $term_storage->loadByProperties([
+      'vid' => $vocabulary,
+    ]);
+
+    $term_map = [];
+    foreach ($terms as $term) {
+      $term_map[strtolower(trim($term->label()))] = $term->id();
+    }
+
+    foreach ($backup as $nid => $old_value) {
+      $key = strtolower(trim($old_value));
+
+      if ($key === '' || !isset($term_map[$key])) {
+        continue;
+      }
+
+      $node = $node_storage->load($nid);
+      if (!$node) {
+        continue;
+      }
+
+      $node->set($field_name, [
+        'target_id' => $term_map[$key],
+      ]);
+      $node->save();
+    }
+  }
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
 }
