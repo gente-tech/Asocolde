@@ -152,13 +152,8 @@ final class SolicitudIngresoWizardForm extends FormBase
         '#title' => $this->t('Estado civil'),
         '#description' => $this->t('Seleccione su estado civil actual. Esta información será utilizada únicamente para fines administrativos del proceso.'),
         '#required' => TRUE,
-        '#options' => [
-          'soltero' => $this->t('Soltero'),
-          'casado' => $this->t('Casado'),
-          'union_libre' => $this->t('Unión libre'),
-          'divorciado' => $this->t('Divorciado'),
-          'viudo' => $this->t('Viudo'),
-        ],
+        '#empty_option' => $this->t('- Seleccione -'),
+        '#options' => $this->getTaxonomyOptions('estado_civil'),
         '#default_value' => $wizard_values['general']['estado_civil'] ?? NULL,
       ];
 
@@ -167,11 +162,8 @@ final class SolicitudIngresoWizardForm extends FormBase
         '#title' => $this->t('Sexo'),
         '#description' => $this->t('Seleccione la opción correspondiente según su información personal.'),
         '#required' => TRUE,
-        '#options' => [
-          'm' => $this->t('Masculino'),
-          'f' => $this->t('Femenino'),
-          'o' => $this->t('Otro'),
-        ],
+        '#empty_option' => $this->t('- Seleccione -'),
+        '#options' => $this->getTaxonomyOptions('sexo'),
         '#default_value' => $wizard_values['general']['sexo'] ?? NULL,
       ];
 
@@ -180,11 +172,8 @@ final class SolicitudIngresoWizardForm extends FormBase
         '#title' => $this->t('Tipo de documento'),
         '#description' => $this->t('Seleccione el tipo de documento con el cual se identifica formalmente.'),
         '#required' => TRUE,
-        '#options' => [
-          'cc' => $this->t('Cédula de ciudadanía'),
-          'ce' => $this->t('Cédula de extranjería'),
-          'pasaporte' => $this->t('Pasaporte'),
-        ],
+        '#empty_option' => $this->t('- Seleccione -'),
+        '#options' => $this->getTaxonomyOptions('tipo_de_documento'),
         '#default_value' => $wizard_values['general']['tipo_documento'] ?? NULL,
       ];
 
@@ -665,9 +654,9 @@ final class SolicitudIngresoWizardForm extends FormBase
       'field_apellido1' => $wizard_values['general']['apellido1'],
       'field_apellido2' => $wizard_values['general']['apellido2'] ?? '',
       'field_fecha_nacimiento' => $wizard_values['general']['fecha_nacimiento'],
-      'field_estado_civil' => $wizard_values['general']['estado_civil'],
-      'field_sexo' => $wizard_values['general']['sexo'],
-      'field_tipo_documento' => $wizard_values['general']['tipo_documento'],
+      'field_estado_civil' => ['target_id' => (int) $wizard_values['general']['estado_civil'],],
+      'field_sexo' => ['target_id' => (int) $wizard_values['general']['sexo'],],
+      'field_tipo_documento' => ['target_id' => (int) $wizard_values['general']['tipo_documento'],],
       'field_numero_documento' => $wizard_values['general']['numero_documento'],
       'field_registro_medico' => $wizard_values['general']['registro_medico'],
       'field_pais' => $wizard_values['general']['pais'],

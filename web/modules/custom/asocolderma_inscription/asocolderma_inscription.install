@@ -182,14 +182,59 @@ function asocolderma_inscription_update_9001(): void
   $ensure_storage('field_fecha_nacimiento', 'datetime', ['datetime_type' => 'date']);
   $ensure_field('field_fecha_nacimiento', 'Fecha de nacimiento', [], TRUE);
 
-  $ensure_storage('field_estado_civil', 'string', ['max_length' => 100]);
-  $ensure_field('field_estado_civil', 'Estado civil', [], TRUE);
+  $ensure_storage('field_estado_civil', 'entity_reference', [
+    'target_type' => 'taxonomy_term',
+  ]);
 
-  $ensure_storage('field_sexo', 'string', ['max_length' => 32]);
-  $ensure_field('field_sexo', 'Sexo', [], TRUE);
+  $ensure_field('field_estado_civil', 'Estado civil', [
+    'handler' => 'default:taxonomy_term',
+    'handler_settings' => [
+      'target_bundles' => [
+        'estado_civil' => 'estado_civil',
+      ],
+      'sort' => [
+        'field' => 'weight',
+        'direction' => 'ASC',
+      ],
+      'auto_create' => FALSE,
+    ],
+  ], TRUE);
 
-  $ensure_storage('field_tipo_documento', 'string', ['max_length' => 50]);
-  $ensure_field('field_tipo_documento', 'Tipo de documento', [], TRUE);
+  $ensure_storage('field_sexo', 'entity_reference', [
+    'target_type' => 'taxonomy_term',
+  ]);
+
+  $ensure_field('field_sexo', 'Sexo', [
+    'handler' => 'default:taxonomy_term',
+    'handler_settings' => [
+      'target_bundles' => [
+        'sexo' => 'sexo',
+      ],
+      'sort' => [
+        'field' => 'weight',
+        'direction' => 'ASC',
+      ],
+      'auto_create' => FALSE,
+    ],
+  ], TRUE);
+
+  $ensure_storage('field_tipo_documento', 'entity_reference', [
+    'target_type' => 'taxonomy_term',
+  ]);
+
+  $ensure_field('field_tipo_documento', 'Tipo de documento', [
+    'handler' => 'default:taxonomy_term',
+    'handler_settings' => [
+      'target_bundles' => [
+        'tipo_de_documento' => 'tipo_de_documento',
+      ],
+      'sort' => [
+        'field' => 'weight',
+        'direction' => 'ASC',
+      ],
+      'auto_create' => FALSE,
+    ],
+  ], TRUE);
 
   $ensure_storage('field_numero_documento', 'string', ['max_length' => 50]);
   $ensure_field('field_numero_documento', 'Número de documento', [], TRUE);
@@ -574,4 +619,181 @@ function asocolderma_inscription_update_9005(): void
   }
 
   \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
+
+/**
+ * Migra estado civil, sexo y tipo de documento a referencias de taxonomía.
+ */
+function asocolderma_inscription_update_9006(): void
+{
+  $fields = [
+    'field_estado_civil' => [
+      'label' => 'Estado civil',
+      'vocabulary' => 'estado_civil',
+      'weight' => 11,
+    ],
+    'field_sexo' => [
+      'label' => 'Sexo',
+      'vocabulary' => 'sexo',
+      'weight' => 12,
+    ],
+    'field_tipo_documento' => [
+      'label' => 'Tipo de documento',
+      'vocabulary' => 'tipo_de_documento',
+      'weight' => 13,
+    ],
+  ];
+
+  foreach ($fields as $field_name => $definition) {
+    asocolderma_inscription_migrate_string_field_to_taxonomy_reference(
+      'node',
+      'solicitud_ingreso',
+      $field_name,
+      $definition['label'],
+      $definition['vocabulary'],
+      $definition['weight']
+    );
+  }
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
+
+/**
+ * Migra un campo string existente a referencia de taxonomía.
+ */
+function asocolderma_inscription_migrate_string_field_to_taxonomy_reference(
+  string $entity_type,
+  string $bundle,
+  string $field_name,
+  string $label,
+  string $vocabulary,
+  int $weight = 10,
+): void {
+  $storage = FieldStorageConfig::loadByName($entity_type, $field_name);
+  $field = FieldConfig::loadByName($entity_type, $bundle, $field_name);
+
+  if ($storage && $storage->getType() === 'entity_reference') {
+    return;
+  }
+
+  $connection = \Drupal::database();
+  $backup = [];
+
+  if ($connection->schema()->tableExists("{$entity_type}__{$field_name}")) {
+    $records = $connection->select("{$entity_type}__{$field_name}", 'f')
+      ->fields('f', ['entity_id', "{$field_name}_value"])
+      ->execute()
+      ->fetchAll();
+
+    foreach ($records as $record) {
+      $backup[(int) $record->entity_id] = (string) $record->{$field_name . '_value'};
+    }
+  }
+
+  if ($field) {
+    $field->delete();
+  }
+
+  if ($storage) {
+    $storage->delete();
+  }
+
+  try {
+    field_purge_batch(50);
+  } catch (\Throwable $e) {
+    \Drupal::logger('asocolderma_inscription')->warning(
+      'No fue posible purgar completamente el campo @field durante la migración. Se continúa con la recreación del campo. Error: @message',
+      [
+        '@field' => $field_name,
+        '@message' => $e->getMessage(),
+      ]
+    );
+  }
+
+  FieldStorageConfig::create([
+    'field_name' => $field_name,
+    'entity_type' => $entity_type,
+    'type' => 'entity_reference',
+    'settings' => [
+      'target_type' => 'taxonomy_term',
+    ],
+    'cardinality' => 1,
+    'translatable' => FALSE,
+  ])->save();
+
+  FieldConfig::create([
+    'field_name' => $field_name,
+    'entity_type' => $entity_type,
+    'bundle' => $bundle,
+    'label' => $label,
+    'required' => TRUE,
+    'settings' => [
+      'handler' => 'default:taxonomy_term',
+      'handler_settings' => [
+        'target_bundles' => [
+          $vocabulary => $vocabulary,
+        ],
+        'sort' => [
+          'field' => 'weight',
+          'direction' => 'ASC',
+        ],
+        'auto_create' => FALSE,
+      ],
+    ],
+  ])->save();
+
+  $form_display = EntityFormDisplay::load("{$entity_type}.{$bundle}.default");
+  if ($form_display) {
+    $form_display->setComponent($field_name, [
+      'type' => 'options_select',
+      'weight' => $weight,
+    ]);
+    $form_display->save();
+  }
+
+  $view_display = EntityViewDisplay::load("{$entity_type}.{$bundle}.default");
+  if ($view_display) {
+    $view_display->setComponent($field_name, [
+      'type' => 'entity_reference_label',
+      'label' => 'above',
+      'settings' => [
+        'link' => FALSE,
+      ],
+    ]);
+    $view_display->save();
+  }
+
+  if (!$backup) {
+    return;
+  }
+
+  $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+  $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+
+  $terms = $term_storage->loadByProperties([
+    'vid' => $vocabulary,
+  ]);
+
+  $term_map = [];
+  foreach ($terms as $term) {
+    $term_map[strtolower(trim($term->label()))] = $term->id();
+  }
+
+  foreach ($backup as $nid => $old_value) {
+    $key = strtolower(trim($old_value));
+
+    if ($key === '' || !isset($term_map[$key])) {
+      continue;
+    }
+
+    $node = $node_storage->load($nid);
+    if (!$node) {
+      continue;
+    }
+
+    $node->set($field_name, [
+      'target_id' => $term_map[$key],
+    ]);
+    $node->save();
+  }
 }
