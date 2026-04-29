@@ -89,3 +89,15 @@ function asocolderma_data_core_schema()
 
 	return $schema;
 }
+
+/**
+ * Create import batch table for CSV processing.
+ */
+function asocolderma_data_core_update_10001() {
+  $schema = \Drupal::database()->schema();
+
+  if (!$schema->tableExists('asocolderma_import_batch')) {
+    $table = asocolderma_data_core_schema();
+    $schema->createTable('asocolderma_import_batch', $table['asocolderma_import_batch']);
+  }
+}
