@@ -1,0 +1,91 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for AsoColDerma Data Core.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function asocolderma_data_core_schema()
+{
+	$schema['asocolderma_import_batch'] = [
+		'description' => 'Stores metadata for massive CSV import batches.',
+		'fields' => [
+			'id' => [
+				'description' => 'Primary key of the import batch.',
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'import_type' => [
+				'description' => 'Type of data being imported.',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => TRUE,
+			],
+			'filename' => [
+				'description' => 'Original uploaded filename.',
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'status' => [
+				'description' => 'Current status of the import batch.',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => TRUE,
+				'default' => 'uploaded',
+			],
+			'total_records' => [
+				'description' => 'Total records detected in the file.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'valid_records' => [
+				'description' => 'Total valid records after validation.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'error_records' => [
+				'description' => 'Total records with validation errors.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'created_by' => [
+				'description' => 'User ID who uploaded the file.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'created' => [
+				'description' => 'Unix timestamp when the batch was created.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'changed' => [
+				'description' => 'Unix timestamp when the batch was last updated.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'import_type' => ['import_type'],
+			'status' => ['status'],
+			'created_by' => ['created_by'],
+			'created' => ['created'],
+		],
+	];
+
+	return $schema;
+}

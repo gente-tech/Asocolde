@@ -1,0 +1,12 @@
+name: 'AsoColDerma Data Core'
+type: module
+description: 'Módulo base para la gestión centralizada de datos institucionales en AsoColDerma.'
+package: 'AsoColDerma'
+core_version_requirement: ^10 || ^11
+dependencies:
+  - drupal:user
+  - drupal:views
+  - drupal:file
+  - drupal:taxonomy
+  - drupal:datetime
+  - drupal:options
