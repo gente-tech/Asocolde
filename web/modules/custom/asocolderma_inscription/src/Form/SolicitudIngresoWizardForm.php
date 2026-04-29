@@ -233,10 +233,34 @@ final class SolicitudIngresoWizardForm extends FormBase
 
       $form['contacto']['direccion'] = [
         '#type' => 'textfield',
-        '#title' => $this->t('Dirección'),
+        '#title' => $this->t('Dirección física principal/institucional'),
         '#description' => $this->t('Ingrese su dirección completa de residencia o correspondencia. Ejemplo: Calle 123 # 45-67, Apartamento 201.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['contacto']['direccion'] ?? '',
+      ];
+
+      $form['contacto']['email'] = [
+        '#type' => 'email',
+        '#title' => $this->t('Correo electrónico principal'),
+        '#description' => $this->t('Ingrese el correo electrónico principal donde recibirá comunicaciones oficiales del proceso. Ejemplo: nombre@dominio.com.'),
+        '#required' => TRUE,
+        '#default_value' => $wizard_values['contacto']['email'] ?? '',
+      ];
+
+      $form['contacto']['celular'] = [
+        '#type' => 'textfield',
+        '#title' => $this->t('Teléfono celular de contacto'),
+        '#description' => $this->t('Ingrese un número de celular activo para contacto y notificaciones. Ejemplo: 1001234567.'),
+        '#required' => TRUE,
+        '#default_value' => $wizard_values['contacto']['celular'] ?? '',
+      ];
+
+      $form['contacto']['correspondencia_fisica'] = [
+        '#type' => 'textfield',
+        '#title' => $this->t('Dirección de correspondencia física'),
+        '#description' => $this->t('En caso de ser ratificado ¿Dónde desea recibir la correspondencia física?'),
+        '#required' => TRUE,
+        '#default_value' => $wizard_values['contacto']['correspondencia_fisica'] ?? '',
       ];
 
       $form['contacto']['telefono'] = [
@@ -245,22 +269,6 @@ final class SolicitudIngresoWizardForm extends FormBase
         '#description' => $this->t('Ingrese su número de teléfono fijo, incluyendo indicativo si corresponde. Ejemplo: 6011234567.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['contacto']['telefono'] ?? '',
-      ];
-
-      $form['contacto']['celular'] = [
-        '#type' => 'textfield',
-        '#title' => $this->t('Celular'),
-        '#description' => $this->t('Ingrese un número de celular activo para contacto y notificaciones. Ejemplo: 3001234567.'),
-        '#required' => TRUE,
-        '#default_value' => $wizard_values['contacto']['celular'] ?? '',
-      ];
-
-      $form['contacto']['email'] = [
-        '#type' => 'email',
-        '#title' => $this->t('Correo electrónico'),
-        '#description' => $this->t('Ingrese el correo electrónico principal donde recibirá comunicaciones oficiales del proceso. Ejemplo: nombre@dominio.com.'),
-        '#required' => TRUE,
-        '#default_value' => $wizard_values['contacto']['email'] ?? '',
       ];
     }
 
@@ -577,6 +585,7 @@ final class SolicitudIngresoWizardForm extends FormBase
     if ($step === 2) {
       $wizard_values['contacto'] = [
         'direccion' => $input['contacto']['direccion'] ?? '',
+        'correspondencia_fisica' => $input['contacto']['correspondencia_fisica'] ?? '',
         'telefono' => $input['contacto']['telefono'] ?? '',
         'celular' => $input['contacto']['celular'] ?? '',
         'email' => $input['contacto']['email'] ?? '',
@@ -678,7 +687,8 @@ final class SolicitudIngresoWizardForm extends FormBase
       'field_departamento' => ['target_id' => (int) $wizard_values['general']['departamento'],],
       'field_ciudad_ejercicio' => ['target_id' => (int) $wizard_values['general']['ciudad_ejercicio'],],
 
-      'field_direccion' => $wizard_values['contacto']['direccion'],
+      'field_direccion' => $wizard_values['contacto']['direccion'] ?? '',
+      'field_correspondencia_fisica' => $wizard_values['contacto']['correspondencia_fisica'] ?? '',
       'field_telefono' => $wizard_values['contacto']['telefono'],
       'field_celular' => $wizard_values['contacto']['celular'],
       'field_email' => $wizard_values['contacto']['email'],
