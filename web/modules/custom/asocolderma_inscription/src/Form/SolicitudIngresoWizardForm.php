@@ -194,19 +194,33 @@ final class SolicitudIngresoWizardForm extends FormBase
       ];
 
       $form['general']['pais'] = [
-        '#type' => 'textfield',
+        '#type' => 'select',
         '#title' => $this->t('País'),
         '#description' => $this->t('Indique el país de residencia actual. Ejemplo: Colombia.'),
         '#required' => TRUE,
-        '#default_value' => $wizard_values['general']['pais'] ?? '',
+        '#empty_option' => $this->t('- Seleccione -'),
+        '#options' => $this->getTaxonomyOptions('country'),
+        '#default_value' => $wizard_values['general']['pais'] ?? NULL,
+      ];
+
+      $form['general']['departamento'] = [
+        '#type' => 'select',
+        '#title' => $this->t('Departamento'),
+        '#description' => $this->t('Seleccione el departamento de residencia actual.'),
+        '#required' => TRUE,
+        '#empty_option' => $this->t('- Seleccione -'),
+        '#options' => $this->getTaxonomyOptions('departametos'),
+        '#default_value' => $wizard_values['general']['departamento'] ?? NULL,
       ];
 
       $form['general']['ciudad_ejercicio'] = [
-        '#type' => 'textfield',
+        '#type' => 'select',
         '#title' => $this->t('Ciudad de ejercicio'),
         '#description' => $this->t('Digite la ciudad donde desarrolla actualmente su ejercicio profesional. Ejemplo: Bogotá.'),
         '#required' => TRUE,
-        '#default_value' => $wizard_values['general']['ciudad_ejercicio'] ?? '',
+        '#empty_option' => $this->t('- Seleccione -'),
+        '#options' => $this->getTaxonomyOptions('city'),
+        '#default_value' => $wizard_values['general']['ciudad_ejercicio'] ?? NULL,
       ];
     }
 
@@ -555,6 +569,7 @@ final class SolicitudIngresoWizardForm extends FormBase
         'numero_documento' => $input['general']['numero_documento'] ?? '',
         'registro_medico' => $input['general']['registro_medico'] ?? '',
         'pais' => $input['general']['pais'] ?? '',
+        'departamento' => $input['general']['departamento'] ?? NULL,
         'ciudad_ejercicio' => $input['general']['ciudad_ejercicio'] ?? '',
       ];
     }
@@ -659,8 +674,9 @@ final class SolicitudIngresoWizardForm extends FormBase
       'field_tipo_documento' => ['target_id' => (int) $wizard_values['general']['tipo_documento'],],
       'field_numero_documento' => $wizard_values['general']['numero_documento'],
       'field_registro_medico' => $wizard_values['general']['registro_medico'],
-      'field_pais' => $wizard_values['general']['pais'],
-      'field_ciudad_ejercicio' => $wizard_values['general']['ciudad_ejercicio'],
+      'field_pais' => ['target_id' => (int) $wizard_values['general']['pais'],],
+      'field_departamento' => ['target_id' => (int) $wizard_values['general']['departamento'],],
+      'field_ciudad_ejercicio' => ['target_id' => (int) $wizard_values['general']['ciudad_ejercicio'],],
 
       'field_direccion' => $wizard_values['contacto']['direccion'],
       'field_telefono' => $wizard_values['contacto']['telefono'],

@@ -213,7 +213,7 @@ final class SolicitudSignatureController extends ControllerBase
 				? (string) $node->get('field_registro_medico')->value
 				: '',
 			'ciudad' => $node->hasField('field_ciudad_ejercicio') && !$node->get('field_ciudad_ejercicio')->isEmpty()
-				? (string) $node->get('field_ciudad_ejercicio')->value
+				? ($node->get('field_ciudad_ejercicio')->entity?->label() ?? '')
 				: '',
 		];
 	}

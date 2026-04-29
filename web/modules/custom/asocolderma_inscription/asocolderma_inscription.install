@@ -242,14 +242,59 @@ function asocolderma_inscription_update_9001(): void
   $ensure_storage('field_registro_medico', 'string', ['max_length' => 100]);
   $ensure_field('field_registro_medico', 'Registro médico / tarjeta profesional', [], TRUE);
 
-  $ensure_storage('field_pais', 'string', ['max_length' => 100]);
-  $ensure_field('field_pais', 'País', [], TRUE);
+  $ensure_storage('field_pais', 'entity_reference', [
+    'target_type' => 'taxonomy_term',
+  ]);
 
-  $ensure_storage('field_departamento', 'string', ['max_length' => 100]);
-  $ensure_field('field_departamento', 'Departamento', [], TRUE);
+  $ensure_field('field_pais', 'País', [
+    'handler' => 'default:taxonomy_term',
+    'handler_settings' => [
+      'target_bundles' => [
+        'country' => 'country',
+      ],
+      'sort' => [
+        'field' => 'name',
+        'direction' => 'ASC',
+      ],
+      'auto_create' => FALSE,
+    ],
+  ], TRUE);
 
-  $ensure_storage('field_ciudad_ejercicio', 'string', ['max_length' => 100]);
-  $ensure_field('field_ciudad_ejercicio', 'Ciudad de ejercicio principal', [], TRUE);
+  $ensure_storage('field_departamento', 'entity_reference', [
+    'target_type' => 'taxonomy_term',
+  ]);
+
+  $ensure_field('field_departamento', 'Departamento', [
+    'handler' => 'default:taxonomy_term',
+    'handler_settings' => [
+      'target_bundles' => [
+        'departametos' => 'departametos',
+      ],
+      'sort' => [
+        'field' => 'name',
+        'direction' => 'ASC',
+      ],
+      'auto_create' => FALSE,
+    ],
+  ], TRUE);
+
+  $ensure_storage('field_ciudad_ejercicio', 'entity_reference', [
+    'target_type' => 'taxonomy_term',
+  ]);
+
+  $ensure_field('field_ciudad_ejercicio', 'Ciudad de ejercicio principal', [
+    'handler' => 'default:taxonomy_term',
+    'handler_settings' => [
+      'target_bundles' => [
+        'city' => 'city',
+      ],
+      'sort' => [
+        'field' => 'name',
+        'direction' => 'ASC',
+      ],
+      'auto_create' => FALSE,
+    ],
+  ], TRUE);
 
   // 4) Paso 2: Institucional.
   $ensure_storage('field_direccion_institucional', 'string', ['max_length' => 255]);
@@ -796,4 +841,41 @@ function asocolderma_inscription_migrate_string_field_to_taxonomy_reference(
     ]);
     $node->save();
   }
+}
+
+/**
+ * Migra país, departamento y ciudad de ejercicio a referencias de taxonomía.
+ */
+function asocolderma_inscription_update_9007(): void
+{
+  $fields = [
+    'field_pais' => [
+      'label' => 'País',
+      'vocabulary' => 'country',
+      'weight' => 14,
+    ],
+    'field_departamento' => [
+      'label' => 'Departamento',
+      'vocabulary' => 'departametos',
+      'weight' => 15,
+    ],
+    'field_ciudad_ejercicio' => [
+      'label' => 'Ciudad de ejercicio principal',
+      'vocabulary' => 'city',
+      'weight' => 16,
+    ],
+  ];
+
+  foreach ($fields as $field_name => $definition) {
+    asocolderma_inscription_migrate_string_field_to_taxonomy_reference(
+      'node',
+      'solicitud_ingreso',
+      $field_name,
+      $definition['label'],
+      $definition['vocabulary'],
+      $definition['weight']
+    );
+  }
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
 }
