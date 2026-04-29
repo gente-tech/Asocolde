@@ -879,3 +879,46 @@ function asocolderma_inscription_update_9007(): void
 
   \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
 }
+
+/**
+ * Ajusta campos de dirección en solicitud de ingreso.
+ */
+function asocolderma_inscription_update_9008(): void
+{
+  $type = 'solicitud_ingreso';
+
+  // Crear field_direccion si no existe.
+  if (!FieldStorageConfig::loadByName('node', 'field_direccion')) {
+    FieldStorageConfig::create([
+      'field_name' => 'field_direccion',
+      'entity_type' => 'node',
+      'type' => 'string',
+      'settings' => [
+        'max_length' => 255,
+      ],
+      'cardinality' => 1,
+      'translatable' => FALSE,
+    ])->save();
+  }
+
+  if (!FieldConfig::loadByName('node', $type, 'field_direccion')) {
+    FieldConfig::create([
+      'field_name' => 'field_direccion',
+      'entity_type' => 'node',
+      'bundle' => $type,
+      'label' => 'Dirección',
+      'required' => TRUE,
+      'settings' => [],
+    ])->save();
+  }
+
+  // Ajustar label del campo ya existente.
+  $field = FieldConfig::loadByName('node', $type, 'field_correspondencia_fisica');
+  if ($field) {
+    $field->setLabel('Dirección de correspondencia física');
+    $field->setRequired(TRUE);
+    $field->save();
+  }
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
