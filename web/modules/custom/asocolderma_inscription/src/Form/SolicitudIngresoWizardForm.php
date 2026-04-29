@@ -687,11 +687,11 @@ final class SolicitudIngresoWizardForm extends FormBase
       'field_departamento' => ['target_id' => (int) $wizard_values['general']['departamento'],],
       'field_ciudad_ejercicio' => ['target_id' => (int) $wizard_values['general']['ciudad_ejercicio'],],
 
-      'field_direccion' => $wizard_values['contacto']['direccion'] ?? '',
+      'field_direccion_institucional' => $wizard_values['contacto']['direccion'] ?? '',
       'field_correspondencia_fisica' => $wizard_values['contacto']['correspondencia_fisica'] ?? '',
       'field_telefono' => $wizard_values['contacto']['telefono'],
       'field_celular' => $wizard_values['contacto']['celular'],
-      'field_email' => $wizard_values['contacto']['email'],
+      'field_email_principal' => $wizard_values['contacto']['email'],
 
       'field_universidad' => $wizard_values['profesional']['universidad'],
       'field_titulo' => $wizard_values['profesional']['titulo'],
