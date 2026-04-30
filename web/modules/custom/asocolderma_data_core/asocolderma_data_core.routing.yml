@@ -1,0 +1,15 @@
+asocolderma_data_core.gestion_data:
+  path: '/admin/asocolderma/data-core'
+  defaults:
+    _controller: '\Drupal\asocolderma_data_core\Controller\DataCoreAdminController::overview'
+    _title: 'Gestión de la data'
+  requirements:
+    _permission: 'import data in asocolderma data core'
+
+asocolderma_data_core.importacion:
+  path: '/admin/asocolderma/data-core/importacion'
+  defaults:
+    _form: '\Drupal\asocolderma_data_core\Form\DataImportForm'
+    _title: 'Importación de data'
+  requirements:
+    _permission: 'import data in asocolderma data core'

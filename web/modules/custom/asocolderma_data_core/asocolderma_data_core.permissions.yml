@@ -1,0 +1,4 @@
+import data in asocolderma data core:
+  title: 'Importar data en AsoColDerma Data Core'
+  description: 'Permite importar información institucional desde archivos Excel.'
+  restrict access: true

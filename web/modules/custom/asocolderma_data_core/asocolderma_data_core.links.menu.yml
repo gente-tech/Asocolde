@@ -1,0 +1,13 @@
+asocolderma_data_core.gestion_data:
+  title: 'Gestión de la data'
+  description: 'Gestión centralizada de la data institucional de AsoColDerma.'
+  route_name: asocolderma_data_core.gestion_data
+  parent: enterprise_integrations.asocolderma
+  weight: 20
+
+asocolderma_data_core.importacion:
+  title: 'Importación'
+  description: 'Importación de datos institucionales.'
+  route_name: asocolderma_data_core.importacion
+  parent: asocolderma_data_core.gestion_data
+  weight: 10
