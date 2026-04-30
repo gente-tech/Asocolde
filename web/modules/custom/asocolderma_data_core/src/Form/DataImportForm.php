@@ -381,6 +381,54 @@ class DataImportForm extends FormBase
 					'@table' => $table,
 				]
 			));
+
+			$database = \Drupal::database();
+			$batch_id = \Drupal::time()->getRequestTime();
+			$created = \Drupal::time()->getRequestTime();
+
+			$inserted = 0;
+
+			foreach (array_slice($rows, 1) as $index => $row) {
+				$row_number = $index + 2;
+
+				$is_empty_row = TRUE;
+				foreach ($row as $cell) {
+					if (trim((string) $cell) !== '') {
+						$is_empty_row = FALSE;
+						break;
+					}
+				}
+
+				if ($is_empty_row) {
+					continue;
+				}
+
+				$values = [
+					'batch_id' => $batch_id,
+					'row_number' => $row_number,
+					'created' => $created,
+					'raw_payload' => json_encode($row, JSON_UNESCAPED_UNICODE),
+					'validation_status' => 'pending',
+				];
+
+				foreach ($expected as $position => $column_name) {
+					$values[$column_name] = $row[$position] ?? NULL;
+				}
+
+				$database->insert($table)
+					->fields($values)
+					->execute();
+
+				$inserted++;
+			}
+
+			$this->messenger()->addStatus($this->t(
+				'Importación completada. Se insertaron @count registros en la tabla @table.',
+				[
+					'@count' => $inserted,
+					'@table' => $table,
+				]
+			));
 		} catch (\Throwable $e) {
 			$this->messenger()->addError($this->t('Error procesando el archivo: @message', [
 				'@message' => $e->getMessage(),
