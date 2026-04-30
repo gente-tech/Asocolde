@@ -182,6 +182,378 @@ function asocolderma_data_core_schema()
 		],
 	];
 
+	$schema['asocolderma_audit_change'] = [
+		'description' => 'Stores field-level changes related to audit events.',
+		'fields' => [
+			'id' => [
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'audit_event_id' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'field_name' => [
+				'type' => 'varchar',
+				'length' => 150,
+				'not null' => TRUE,
+			],
+			'field_label' => [
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'change_type' => [
+				'type' => 'varchar',
+				'length' => 30,
+				'not null' => TRUE,
+			],
+			'old_value' => [
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+			'new_value' => [
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+			'created' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'audit_event_id' => ['audit_event_id'],
+			'field_name' => ['field_name'],
+			'change_type' => ['change_type'],
+			'created' => ['created'],
+		],
+	];
+
+	$schema['asocolderma_audit_query'] = [
+		'description' => 'Stores query, search and filter audit details.',
+		'fields' => [
+			'id' => [
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'audit_event_id' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'target_table' => [
+				'type' => 'varchar',
+				'length' => 100,
+				'not null' => TRUE,
+			],
+			'query_type' => [
+				'type' => 'varchar',
+				'length' => 30,
+				'not null' => TRUE,
+			],
+			'search_text' => [
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'filters_payload' => [
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+			'columns_payload' => [
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+			'result_count' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'created' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'audit_event_id' => ['audit_event_id'],
+			'target_table' => ['target_table'],
+			'query_type' => ['query_type'],
+			'created' => ['created'],
+		],
+	];
+
+	$schema['asocolderma_audit_import'] = [
+		'description' => 'Stores import audit details.',
+		'fields' => [
+			'id' => [
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'audit_event_id' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'batch_id' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => FALSE,
+			],
+			'target_table' => [
+				'type' => 'varchar',
+				'length' => 100,
+				'not null' => TRUE,
+			],
+			'filename' => [
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'file_uri' => [
+				'type' => 'varchar',
+				'length' => 500,
+				'not null' => FALSE,
+			],
+			'total_rows' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'valid_rows' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'error_rows' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'created' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'audit_event_id' => ['audit_event_id'],
+			'batch_id' => ['batch_id'],
+			'target_table' => ['target_table'],
+			'created' => ['created'],
+		],
+	];
+
+	$schema['asocolderma_audit_export'] = [
+		'description' => 'Stores export audit details.',
+		'fields' => [
+			'id' => [
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'audit_event_id' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'target_table' => [
+				'type' => 'varchar',
+				'length' => 100,
+				'not null' => TRUE,
+			],
+			'export_format' => [
+				'type' => 'varchar',
+				'length' => 20,
+				'not null' => TRUE,
+			],
+			'file_name' => [
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'file_uri' => [
+				'type' => 'varchar',
+				'length' => 500,
+				'not null' => FALSE,
+			],
+			'filters_payload' => [
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+			'columns_payload' => [
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+			'result_count' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'created' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'audit_event_id' => ['audit_event_id'],
+			'target_table' => ['target_table'],
+			'export_format' => ['export_format'],
+			'created' => ['created'],
+		],
+	];
+
+	$schema['asocolderma_audit_record_link'] = [
+		'description' => 'Links audit events with one or many affected records.',
+		'fields' => [
+			'id' => [
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'audit_event_id' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'target_table' => [
+				'type' => 'varchar',
+				'length' => 100,
+				'not null' => TRUE,
+			],
+			'target_record_id' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'relation_type' => [
+				'type' => 'varchar',
+				'length' => 30,
+				'not null' => TRUE,
+			],
+			'created' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'audit_event_id' => ['audit_event_id'],
+			'target_table' => ['target_table'],
+			'target_record_id' => ['target_record_id'],
+			'relation_type' => ['relation_type'],
+			'created' => ['created'],
+		],
+	];
+
+	$schema['asocolderma_import_patrocinadores'] = [
+		'description' => 'Staging table for patrocinadores CSV imports.',
+		'fields' => [
+			'id' => [
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'batch_id' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'row_number' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'id_asocolderma' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'estado_patrocinador' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'tipo_patrocinador' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'anios_vinculacion' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'razon_social' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'nombre_comercial' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'nit' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'pais' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'ciudad_sede_principal' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'direccion_fiscal' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'sitio_web_corporativo' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'nombre_contacto_principal' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'cargo_contacto' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'correo_corporativo' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'telefono_corporativo' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'celular_contacto' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'correo_contacto_2' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'nombre_contacto_2' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'cargo_contacto_2' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'estado_pago' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'valor_comprometido_evento_1' => ['type' => 'numeric', 'precision' => 14, 'scale' => 2, 'not null' => FALSE],
+			'valor_pagado_evento_1' => ['type' => 'numeric', 'precision' => 14, 'scale' => 2, 'not null' => FALSE],
+			'valor_comprometido_evento_2' => ['type' => 'numeric', 'precision' => 14, 'scale' => 2, 'not null' => FALSE],
+			'valor_pagado_evento_2' => ['type' => 'numeric', 'precision' => 14, 'scale' => 2, 'not null' => FALSE],
+			'valor_comprometido_evento_3' => ['type' => 'numeric', 'precision' => 14, 'scale' => 2, 'not null' => FALSE],
+			'valor_pagado_evento_3' => ['type' => 'numeric', 'precision' => 14, 'scale' => 2, 'not null' => FALSE],
+			'metodo_pago' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'iva_aplicable' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'datos_bancarios' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'carta_compromiso_evento_1' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'carta_compromiso_evento_2' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'carta_compromiso_evento_3' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'contrato_evento_1' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'contrato_evento_2' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'contrato_evento_3' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_rut' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_camara_comercio' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_cedula_representante' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_certificacion_bancaria' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'otros_documentos_adjuntos' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'observaciones_generales' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'eventos_vinculados' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'beneficios_pactados' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'contacto_comercial_asocolderma' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'raw_payload' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'validation_status' => [
+				'type' => 'varchar',
+				'length' => 20,
+				'not null' => TRUE,
+				'default' => 'pending',
+			],
+			'validation_errors' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'created' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'batch_id' => ['batch_id'],
+			'id_asocolderma' => ['id_asocolderma'],
+			'nit' => ['nit'],
+			'correo_corporativo' => ['correo_corporativo'],
+			'validation_status' => ['validation_status'],
+		],
+	];
+
 	return $schema;
 }
 
@@ -209,4 +581,81 @@ function asocolderma_data_core_update_10002()
 		$tables = asocolderma_data_core_schema();
 		$schema->createTable('asocolderma_audit_event', $tables['asocolderma_audit_event']);
 	}
+}
+
+/**
+ * Create audit change table.
+ */
+function asocolderma_data_core_update_10003()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_audit_change')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_audit_change', $tables['asocolderma_audit_change']);
+	}
+}
+
+/**
+ * Create audit query table.
+ */
+function asocolderma_data_core_update_10004()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_audit_query')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_audit_query', $tables['asocolderma_audit_query']);
+	}
+}
+
+/**
+ * Create audit import table.
+ */
+function asocolderma_data_core_update_10005()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_audit_import')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_audit_import', $tables['asocolderma_audit_import']);
+	}
+}
+
+/**
+ * Create audit export table.
+ */
+function asocolderma_data_core_update_10006()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_audit_export')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_audit_export', $tables['asocolderma_audit_export']);
+	}
+}
+
+/**
+ * Create audit record link table.
+ */
+function asocolderma_data_core_update_10007()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_audit_record_link')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_audit_record_link', $tables['asocolderma_audit_record_link']);
+	}
+}
+
+/**
+ * Create patrocinadores import staging table.
+ */
+function asocolderma_data_core_update_10008() {
+  $schema = \Drupal::database()->schema();
+
+  if (!$schema->tableExists('asocolderma_import_patrocinadores')) {
+    $tables = asocolderma_data_core_schema();
+    $schema->createTable('asocolderma_import_patrocinadores', $tables['asocolderma_import_patrocinadores']);
+  }
 }
