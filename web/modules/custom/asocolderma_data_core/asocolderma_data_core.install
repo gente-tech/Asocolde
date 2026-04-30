@@ -706,6 +706,133 @@ function asocolderma_data_core_schema()
 		],
 	];
 
+	$schema['asocolderma_import_proveedores'] = [
+		'description' => 'Staging table for proveedores imports.',
+		'fields' => [
+			'id' => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
+			'batch_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+			'row_number' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+
+			'id_asocolderma' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'estado_proveedor' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'tipo_proveedor' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'anios_vinculacion_desde' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'razon_social' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'nombre_comercial' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'nit' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'pais' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'ciudad_sede_principal' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'direccion_fiscal' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'sitio_web_corporativo' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'nombre_contacto_principal' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'cargo_contacto' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'correo_corporativo' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'telefono_corporativo' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'celular_contacto' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'descripcion_servicio_prestado' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'eventos_proyectos_vinculados' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'responsable_asocolderma_gestiona' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'observaciones_generales' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'estado_pago' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'valor_contrato_vigente' => ['type' => 'numeric', 'precision' => 14, 'scale' => 2, 'not null' => FALSE],
+			'valor_pagado' => ['type' => 'numeric', 'precision' => 14, 'scale' => 2, 'not null' => FALSE],
+			'metodo_pago' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'iva' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'datos_bancarios' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'copia_contrato_vigente' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_rut' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_camara_comercio' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_cedula_representante' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_certificacion_bancaria' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'otros_documentos_adjuntos' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+
+			'raw_payload' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'validation_status' => ['type' => 'varchar', 'length' => 20, 'not null' => TRUE, 'default' => 'pending'],
+			'validation_errors' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'batch_id' => ['batch_id'],
+			'id_asocolderma' => ['id_asocolderma'],
+			'nit' => ['nit'],
+			'correo_corporativo' => ['correo_corporativo'],
+			'validation_status' => ['validation_status'],
+		],
+	];
+
+	$schema['asocolderma_import_empleados'] = [
+		'description' => 'Staging table for empleados imports.',
+		'fields' => [
+			'id' => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
+			'batch_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+			'row_number' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+
+			'id_asocolderma' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'estado_empleado' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'cargo' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'area_dependencia' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'tipo_contrato' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'fecha_ingreso' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'fecha_retiro' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+
+			'primer_nombre' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'segundo_nombre' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'primer_apellido' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'segundo_apellido' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'fecha_nacimiento' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'estado_civil' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'sexo' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'tipo_documento' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'numero_documento' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+
+			'pais' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'ciudad_residencia' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'departamento' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'direccion_fisica_personal' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'correo_personal' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'telefono_celular_personal' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'correo_corporativo' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+
+			'observaciones_administrativas' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'contacto_emergencia_nombre' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'contacto_emergencia_telefono' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'contacto_emergencia_relacion' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+
+			'salario_mensual' => ['type' => 'numeric', 'precision' => 14, 'scale' => 2, 'not null' => FALSE],
+			'tipo_pago' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'eps' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'fondo_pensiones' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'arl' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'caja_compensacion' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+
+			'datos_bancarios_banco' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'datos_bancarios_tipo_cuenta' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'datos_bancarios_numero_cuenta' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+
+			'copia_contrato_vigente' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_rut' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_cedula' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_certificacion_bancaria' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_hoja_vida' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'otros_documentos_adjuntos' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+
+			'raw_payload' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'validation_status' => ['type' => 'varchar', 'length' => 20, 'not null' => TRUE, 'default' => 'pending'],
+			'validation_errors' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'batch_id' => ['batch_id'],
+			'id_asocolderma' => ['id_asocolderma'],
+			'numero_documento' => ['numero_documento'],
+			'correo_personal' => ['correo_personal'],
+			'correo_corporativo' => ['correo_corporativo'],
+			'validation_status' => ['validation_status'],
+		],
+	];
+
 	return $schema;
 }
 
@@ -829,11 +956,38 @@ function asocolderma_data_core_update_10009()
 /**
  * Create residentes import staging table.
  */
-function asocolderma_data_core_update_10010() {
-  $schema = \Drupal::database()->schema();
+function asocolderma_data_core_update_10010()
+{
+	$schema = \Drupal::database()->schema();
 
-  if (!$schema->tableExists('asocolderma_import_residentes')) {
-    $tables = asocolderma_data_core_schema();
-    $schema->createTable('asocolderma_import_residentes', $tables['asocolderma_import_residentes']);
-  }
+	if (!$schema->tableExists('asocolderma_import_residentes')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_import_residentes', $tables['asocolderma_import_residentes']);
+	}
+}
+
+/**
+ * Create proveedores import staging table.
+ */
+function asocolderma_data_core_update_10011()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_import_proveedores')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_import_proveedores', $tables['asocolderma_import_proveedores']);
+	}
+}
+
+/**
+ * Create empleados import staging table.
+ */
+function asocolderma_data_core_update_10012()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_import_empleados')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_import_empleados', $tables['asocolderma_import_empleados']);
+	}
 }
