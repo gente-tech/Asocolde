@@ -554,6 +554,158 @@ function asocolderma_data_core_schema()
 		],
 	];
 
+	$schema['asocolderma_import_asociados'] = [
+		'description' => 'Staging table for asociados imports.',
+		'fields' => [
+			'id' => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
+			'batch_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+			'row_number' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+
+			'id_asocolderma' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'estado_afiliacion' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'tipo_asociado' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'fecha_ingreso_asocolderma' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'edad' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'miembro_numero_1' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'miembro_numero_2' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'capitulo_regional' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'primer_nombre' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'segundo_nombre' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'primer_apellido' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'segundo_apellido' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'fecha_nacimiento' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'estado_civil' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'sexo' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'tipo_documento' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'numero_documento' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'pais_nacimiento' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'direccion_principal' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'correspondencia_en' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'correo_principal' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'telefono_celular' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'registro_medico_tarjeta' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'pais_ejercicio' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'ciudad_ejercicio' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'departamento' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'facultad_pregrado' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'pais_pregrado' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'titulo_universitario' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'universidad_residencia' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'pais_residencia' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'especialidad' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'subespecialidad' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'pertenece_filial' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'grupos_estudio' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'recertificado_camec' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'fecha_inicio_recertificacion' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'fecha_fin_recertificacion' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'mostrar_perfil_publico' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'correo_publico' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'sitio_web_publico' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'horario_atencion' => ['type' => 'text', 'size' => 'normal', 'not null' => FALSE],
+			'telefono_publico_1' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'telefono_publico_2' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'perfil_profesional' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'direccion_consultorio' => ['type' => 'text', 'size' => 'normal', 'not null' => FALSE],
+			'imagenes_consultorio' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'palabras_clave_tags' => ['type' => 'text', 'size' => 'normal', 'not null' => FALSE],
+			'capilaroscopia' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'cicatrices_acne' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'dermatologia_general' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'dermatologia_oncologica' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'dermatologia_pediatrica' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'dermatopatologia' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'fototerapia' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'laser' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'microdermoabrasion' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'peeling' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'inyectables' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'trasplante_pelo' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'otros_servicios' => ['type' => 'text', 'size' => 'normal', 'not null' => FALSE],
+			'estado_cuota' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'valor_cuota_vigente' => ['type' => 'numeric', 'precision' => 14, 'scale' => 2, 'not null' => FALSE],
+			'fecha_ultimo_pago' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'comprobante_pago' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'carta_presentacion_1' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'carta_presentacion_2' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_rut' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_cedula_id' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'carta_solicitud_ingreso' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'hoja_vida' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_diploma_medico' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_diploma_dermatologo' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'registro_rethus' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'carta_autorizacion_verificacion' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'certificacion_congreso_publicacion' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'otros_documentos_adjuntos' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+
+			'raw_payload' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'validation_status' => ['type' => 'varchar', 'length' => 20, 'not null' => TRUE, 'default' => 'pending'],
+			'validation_errors' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'batch_id' => ['batch_id'],
+			'id_asocolderma' => ['id_asocolderma'],
+			'numero_documento' => ['numero_documento'],
+			'correo_principal' => ['correo_principal'],
+			'validation_status' => ['validation_status'],
+		],
+	];
+
+	$schema['asocolderma_import_residentes'] = [
+		'description' => 'Staging table for residentes imports.',
+		'fields' => [
+			'id' => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
+			'batch_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+			'row_number' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+
+			'id_asocolderma' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'estado_residente' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'primer_nombre' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'segundo_nombre' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'primer_apellido' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'segundo_apellido' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'fecha_nacimiento' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'estado_civil' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'sexo' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'tipo_documento' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'numero_documento' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'pais' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'ciudad' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'departamento' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'direccion_fisica_institucional' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'correo_principal' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'telefono_celular' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'registro_medico_tarjeta' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'universidad_residencia' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'programa_especialidad' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'anio_residencia' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'fecha_estimada_finalizacion' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'aspira_asociarse' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'eventos_participados' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'ponencia_presentacion' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'observaciones' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'copia_cedula_id' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'carta_aval_universidad' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'otros_documentos_adjuntos' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+
+			'raw_payload' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'validation_status' => ['type' => 'varchar', 'length' => 20, 'not null' => TRUE, 'default' => 'pending'],
+			'validation_errors' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'batch_id' => ['batch_id'],
+			'id_asocolderma' => ['id_asocolderma'],
+			'numero_documento' => ['numero_documento'],
+			'correo_principal' => ['correo_principal'],
+			'validation_status' => ['validation_status'],
+		],
+	];
+
 	return $schema;
 }
 
@@ -651,11 +803,37 @@ function asocolderma_data_core_update_10007()
 /**
  * Create patrocinadores import staging table.
  */
-function asocolderma_data_core_update_10008() {
+function asocolderma_data_core_update_10008()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_import_patrocinadores')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_import_patrocinadores', $tables['asocolderma_import_patrocinadores']);
+	}
+}
+
+/**
+ * Create asociados import staging table.
+ */
+function asocolderma_data_core_update_10009()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_import_asociados')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_import_asociados', $tables['asocolderma_import_asociados']);
+	}
+}
+
+/**
+ * Create residentes import staging table.
+ */
+function asocolderma_data_core_update_10010() {
   $schema = \Drupal::database()->schema();
 
-  if (!$schema->tableExists('asocolderma_import_patrocinadores')) {
+  if (!$schema->tableExists('asocolderma_import_residentes')) {
     $tables = asocolderma_data_core_schema();
-    $schema->createTable('asocolderma_import_patrocinadores', $tables['asocolderma_import_patrocinadores']);
+    $schema->createTable('asocolderma_import_residentes', $tables['asocolderma_import_residentes']);
   }
 }
