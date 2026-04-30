@@ -28,10 +28,11 @@ class DataImportForm extends FormBase
 			'#title' => $this->t('Tabla a importar'),
 			'#description' => $this->t('Seleccione el tipo de información que desea importar desde el Excel.'),
 			'#required' => TRUE,
+			'#empty_option' => $this->t('Seleccione una tabla'),
 			'#options' => [
-				'' => $this->t('- Seleccione -'),
 				'asocolderma_import_patrocinadores' => $this->t('Patrocinadores'),
 				'asocolderma_import_asociados' => $this->t('Asociados'),
+				'asocolderma_import_residentes' => $this->t('Residentes'),
 				'asocolderma_import_proveedores' => $this->t('Proveedores'),
 				'asocolderma_import_empleados' => $this->t('Empleados'),
 			],
@@ -66,12 +67,21 @@ class DataImportForm extends FormBase
 			'file_validate_extensions' => ['xlsx'],
 		];
 
-		$file = file_save_upload('excel_file', $validators, FALSE, 0);
+		$directory = 'public://imports/data_core';
+		\Drupal::service('file_system')->prepareDirectory(
+			$directory,
+			\Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY | \Drupal\Core\File\FileSystemInterface::MODIFY_PERMISSIONS
+		);
+
+		$file = file_save_upload('excel_file', $validators, $directory, 0);
 
 		if (!$file) {
 			$form_state->setErrorByName('excel_file', $this->t('Debe cargar un archivo Excel válido con extensión .xlsx.'));
 			return;
 		}
+
+		$file->setPermanent();
+		$file->save();
 
 		$form_state->setValue('uploaded_file', $file);
 	}
