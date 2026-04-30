@@ -87,17 +87,126 @@ function asocolderma_data_core_schema()
 		],
 	];
 
+	$schema['asocolderma_audit_event'] = [
+		'description' => 'Stores global audit events for AsoColDerma data operations.',
+		'fields' => [
+			'id' => [
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'event_type' => [
+				'type' => 'varchar',
+				'length' => 50,
+				'not null' => TRUE,
+			],
+			'source' => [
+				'type' => 'varchar',
+				'length' => 50,
+				'not null' => TRUE,
+			],
+			'target_table' => [
+				'type' => 'varchar',
+				'length' => 100,
+				'not null' => FALSE,
+			],
+			'target_record_id' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => FALSE,
+			],
+			'target_record_label' => [
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'user_id' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'user_name' => [
+				'type' => 'varchar',
+				'length' => 150,
+				'not null' => FALSE,
+			],
+			'user_email' => [
+				'type' => 'varchar',
+				'length' => 150,
+				'not null' => FALSE,
+			],
+			'user_roles' => [
+				'type' => 'text',
+				'size' => 'normal',
+				'not null' => FALSE,
+			],
+			'user_permissions_snapshot' => [
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+			'ip_address' => [
+				'type' => 'varchar',
+				'length' => 45,
+				'not null' => FALSE,
+			],
+			'user_agent' => [
+				'type' => 'text',
+				'size' => 'normal',
+				'not null' => FALSE,
+			],
+			'request_uri' => [
+				'type' => 'varchar',
+				'length' => 500,
+				'not null' => FALSE,
+			],
+			'created' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'context' => [
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'event_type' => ['event_type'],
+			'source' => ['source'],
+			'target_table' => ['target_table'],
+			'target_record_id' => ['target_record_id'],
+			'user_id' => ['user_id'],
+			'created' => ['created'],
+		],
+	];
+
 	return $schema;
 }
 
 /**
  * Create import batch table for CSV processing.
  */
-function asocolderma_data_core_update_10001() {
-  $schema = \Drupal::database()->schema();
+function asocolderma_data_core_update_10001()
+{
+	$schema = \Drupal::database()->schema();
 
-  if (!$schema->tableExists('asocolderma_import_batch')) {
-    $table = asocolderma_data_core_schema();
-    $schema->createTable('asocolderma_import_batch', $table['asocolderma_import_batch']);
-  }
+	if (!$schema->tableExists('asocolderma_import_batch')) {
+		$table = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_import_batch', $table['asocolderma_import_batch']);
+	}
+}
+
+/**
+ * Create audit event table.
+ */
+function asocolderma_data_core_update_10002()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_audit_event')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_audit_event', $tables['asocolderma_audit_event']);
+	}
 }
