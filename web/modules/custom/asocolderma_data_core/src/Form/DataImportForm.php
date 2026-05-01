@@ -133,7 +133,7 @@ class DataImportForm extends FormBase
 				'trasplante_pelo',
 				'otros_servicios',
 				'estado_cuota',
-				'valor_cuota',
+				'valor_cuota_vigente',
 				'fecha_ultimo_pago',
 				'comprobante_pago',
 				'carta_presentacion_1',
