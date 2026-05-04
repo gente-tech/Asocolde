@@ -13,3 +13,11 @@ asocolderma_data_core.importacion:
     _title: 'Importación de data'
   requirements:
     _permission: 'import data in asocolderma data core'
+
+asocolderma_data_core.export_patrocinadores_pdf:
+  path: '/admin/asocolderma/patrocinadores/export/pdf'
+  defaults:
+    _controller: '\Drupal\asocolderma_data_core\Controller\PatrocinadoresExportController::exportPdf'
+    _title: 'Exportar patrocinadores PDF'
+  requirements:
+    _permission: 'access administration pages'
