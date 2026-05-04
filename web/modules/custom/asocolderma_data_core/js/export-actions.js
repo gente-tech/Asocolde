@@ -17,8 +17,8 @@
 							return;
 						}
 
-						const firstCell = row.querySelector('td');
-						const rowId = firstCell ? firstCell.textContent.trim() : '';
+						const idCell = row.querySelector('td.views-field-id');
+						const rowId = idCell ? idCell.textContent.trim() : '';
 
 						const td = document.createElement('td');
 						td.className = 'asocolderma-select-column';
