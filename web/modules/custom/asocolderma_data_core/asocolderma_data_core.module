@@ -1,0 +1,46 @@
+<?php
+
+use Drupal\views\ViewExecutable;
+use Drupal\views\Plugin\views\cache\CachePluginBase;
+
+/**
+ * Implements hook_views_post_render().
+ */
+function asocolderma_data_core_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache)
+{
+	// Solo aplica para la vista de Patrocinadores.
+	if ($view->id() !== 'patrocinadores') {
+		return;
+	}
+
+	$actions_markup = [
+		'#type' => 'container',
+		'#attributes' => [
+			'class' => ['asocolderma-data-actions'],
+		],
+		'selected' => [
+			'#markup' => '<span class="asocolderma-data-actions__selected">No items selected</span>',
+		],
+		'action' => [
+			'#type' => 'select',
+			'#title' => t('Action'),
+			'#options' => [
+				'' => t('- Seleccionar -'),
+				'pdf' => t('Exportar PDF'),
+			],
+			'#attributes' => [
+				'id' => 'asocolderma-export-action',
+			],
+		],
+		'submit' => [
+			'#type' => 'button',
+			'#value' => t('Aplicar a los elementos seleccionados'),
+			'#attributes' => [
+				'id' => 'asocolderma-export-submit',
+				'class' => ['button', 'button--primary'],
+			],
+		],
+	];
+
+	$output['asocolderma_data_actions'] = $actions_markup;
+}
