@@ -39,24 +39,19 @@
 					});
 				}
 
-				const selectedLabel = view.querySelector('.asocolderma-export-actions__label');
-
 				function updateSelectedLabel() {
+					const selectedLabel = view.querySelector('.asocolderma-export-actions__label');
+
+					if (!selectedLabel || !table) {
+						return;
+					}
+
 					const selectedCount = table.querySelectorAll('.asocolderma-row-select:checked').length;
+
 					selectedLabel.textContent = selectedCount === 1
 						? '1 item selected'
 						: selectedCount + ' items selected';
 				}
-
-				rowCheckboxes.forEach(function (checkbox) {
-					checkbox.addEventListener('change', updateSelectedLabel);
-				});
-
-				if (selectAll) {
-					selectAll.addEventListener('change', updateSelectedLabel);
-				}
-
-				updateSelectedLabel();
 
 				const wrapper = document.createElement('div');
 
@@ -80,6 +75,16 @@
 				`;
 
 				view.appendChild(wrapper);
+
+				rowCheckboxes.forEach(function (checkbox) {
+					checkbox.addEventListener('change', updateSelectedLabel);
+				});
+
+				if (selectAll) {
+					selectAll.addEventListener('change', updateSelectedLabel);
+				}
+
+				updateSelectedLabel();
 			});
 		}
 	};
