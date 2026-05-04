@@ -1,15 +1,40 @@
 <?php
 
-use Drupal\views\ViewExecutable;
-use Drupal\views\Plugin\views\cache\CachePluginBase;
-
 /**
- * Implements hook_views_post_render().
+ * Implements hook_preprocess_views_view_table().
  */
-function asocolderma_data_core_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
-  $actions_markup = [
-    '#markup' => '<div style="padding:16px;background:#111;color:#fff;margin-top:16px;">TEST FOOTER - ' . $view->id() . ' / ' . $view->current_display . '</div>',
-  ];
+function asocolderma_data_core_preprocess_views_view_table(array &$variables)
+{
+	$view = $variables['view'];
 
-  $output['asocolderma_data_actions'] = $actions_markup;
+	if ($view->id() !== 'asocolderma_patrocinadores') {
+		return;
+	}
+
+	$variables['asocolderma_export_actions'] = [
+		'#type' => 'container',
+		'#attributes' => [
+			'class' => ['asocolderma-export-actions'],
+		],
+		'label' => [
+			'#markup' => '<span>No items selected</span>',
+		],
+		'select' => [
+			'#type' => 'select',
+			'#options' => [
+				'' => '- Seleccionar -',
+				'pdf' => 'Exportar PDF',
+			],
+			'#attributes' => [
+				'class' => ['asocolderma-export-actions__select'],
+			],
+		],
+		'button' => [
+			'#type' => 'button',
+			'#value' => t('Aplicar a los elementos seleccionados'),
+			'#attributes' => [
+				'class' => ['button', 'button--primary'],
+			],
+		],
+	];
 }
