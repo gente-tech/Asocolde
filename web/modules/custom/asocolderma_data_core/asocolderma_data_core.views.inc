@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Views integration for AsoColDerma custom data tables.
+ * Views integration for AsoColDerma Data Core custom tables.
  */
 
 /**
@@ -10,6 +10,13 @@
  */
 function asocolderma_data_core_views_data()
 {
+	module_load_include('install', 'asocolderma_data_core');
+
+	if (!function_exists('asocolderma_data_core_schema')) {
+		return [];
+	}
+
+	$schema = asocolderma_data_core_schema();
 	$data = [];
 
 	$tables = [
@@ -21,6 +28,10 @@ function asocolderma_data_core_views_data()
 	];
 
 	foreach ($tables as $table_name => $label) {
+		if (empty($schema[$table_name]['fields'])) {
+			continue;
+		}
+
 		$data[$table_name]['table']['group'] = t('AsoColDerma Data Core');
 
 		$data[$table_name]['table']['base'] = [
@@ -30,30 +41,96 @@ function asocolderma_data_core_views_data()
 			'weight' => -10,
 		];
 
-		$data[$table_name]['id'] = [
-			'title' => t('ID'),
-			'help' => t('ID interno del registro.'),
-			'field' => ['id' => 'numeric'],
-			'filter' => ['id' => 'numeric'],
-			'sort' => ['id' => 'standard'],
-		];
+		foreach ($schema[$table_name]['fields'] as $field_name => $field_definition) {
+			$type = $field_definition['type'] ?? 'varchar';
 
-		$data[$table_name]['created'] = [
-			'title' => t('Fecha de creación'),
-			'help' => t('Fecha de creación del registro.'),
-			'field' => ['id' => 'date'],
-			'filter' => ['id' => 'date'],
-			'sort' => ['id' => 'date'],
-		];
+			$views_field_type = asocolderma_data_core_views_field_type($type);
+			$views_filter_type = asocolderma_data_core_views_filter_type($type);
+			$views_sort_type = asocolderma_data_core_views_sort_type($type);
 
-		$data[$table_name]['changed'] = [
-			'title' => t('Última modificación'),
-			'help' => t('Fecha de última modificación del registro.'),
-			'field' => ['id' => 'date'],
-			'filter' => ['id' => 'date'],
-			'sort' => ['id' => 'date'],
-		];
+			$data[$table_name][$field_name] = [
+				'title' => t(asocolderma_data_core_views_human_label($field_name)),
+				'help' => t('Campo @field de la tabla @table.', [
+					'@field' => $field_name,
+					'@table' => $table_name,
+				]),
+				'field' => [
+					'id' => $views_field_type,
+				],
+				'filter' => [
+					'id' => $views_filter_type,
+				],
+				'sort' => [
+					'id' => $views_sort_type,
+				],
+			];
+		}
 	}
 
 	return $data;
+}
+
+/**
+ * Converts database field type to Views field plugin.
+ */
+function asocolderma_data_core_views_field_type($type)
+{
+	switch ($type) {
+		case 'serial':
+		case 'int':
+		case 'float':
+		case 'numeric':
+			return 'numeric';
+
+		case 'text':
+		case 'varchar':
+		default:
+			return 'standard';
+	}
+}
+
+/**
+ * Converts database field type to Views filter plugin.
+ */
+function asocolderma_data_core_views_filter_type($type)
+{
+	switch ($type) {
+		case 'serial':
+		case 'int':
+		case 'float':
+		case 'numeric':
+			return 'numeric';
+
+		case 'text':
+		case 'varchar':
+		default:
+			return 'string';
+	}
+}
+
+/**
+ * Converts database field type to Views sort plugin.
+ */
+function asocolderma_data_core_views_sort_type($type)
+{
+	switch ($type) {
+		case 'serial':
+		case 'int':
+		case 'float':
+		case 'numeric':
+			return 'standard';
+
+		case 'text':
+		case 'varchar':
+		default:
+			return 'standard';
+	}
+}
+
+/**
+ * Converts machine field name to readable label.
+ */
+function asocolderma_data_core_views_human_label($field_name)
+{
+	return ucwords(str_replace('_', ' ', $field_name));
 }
