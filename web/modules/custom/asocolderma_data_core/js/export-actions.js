@@ -79,14 +79,16 @@
 
 				if (exportButton && exportSelect) {
 					exportButton.addEventListener('click', function () {
+						alert('click export');
 						const action = exportSelect.value;
+						alert('action: ' + action);
 
 						if (!action) {
 							return;
 						}
 
 						if (action === 'pdf') {
-							window.open('/admin/asocolderma/patrocinadores/export/pdf', '_blank');
+							window.location.href = '/admin/asocolderma/patrocinadores/export/pdf';
 						}
 					});
 				}
