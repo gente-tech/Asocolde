@@ -1,0 +1,11 @@
+{% extends "views-view-table.html.twig" %}
+
+{% block table %}
+	{{ parent() }}
+
+	{% if asocolderma_export_actions %}
+		<div class="asocolderma-export-actions-wrapper">
+			{{ asocolderma_export_actions }}
+		</div>
+	{% endif %}
+{% endblock %}
