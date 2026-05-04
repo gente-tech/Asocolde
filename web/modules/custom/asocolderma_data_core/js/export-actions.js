@@ -6,20 +6,22 @@
 
 				wrapper.className = 'asocolderma-export-actions';
 				wrapper.innerHTML = `
-          <span>No items selected</span>
+					<div class="asocolderma-export-actions__inner">
+						<span class="asocolderma-export-actions__label">No items selected</span>
 
-          <label>
-            <strong>Action:</strong>
-            <select id="asocolderma-export-action">
-              <option value="">- Seleccionar -</option>
-              <option value="pdf">Exportar PDF</option>
-            </select>
-          </label>
+						<label class="asocolderma-export-actions__control">
+						<span>Action:</span>
+						<select id="asocolderma-export-action">
+							<option value="">- Seleccionar -</option>
+							<option value="pdf">Exportar PDF</option>
+						</select>
+						</label>
 
-          <button type="button" class="button button--primary" id="asocolderma-export-submit">
-            Aplicar a los elementos seleccionados
-          </button>
-        `;
+						<button type="button" class="button button--primary" id="asocolderma-export-submit">
+						Aplicar
+						</button>
+					</div>
+				`;
 
 				view.appendChild(wrapper);
 			});
