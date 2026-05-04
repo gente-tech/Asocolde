@@ -8,10 +8,10 @@ use Symfony\Component\HttpFoundation\Response;
 class PatrocinadoresExportController extends ControllerBase
 {
 
-	public function exportPdf()
+	public function exportExcel()
 	{
 		$ids = \Drupal::request()->query->get('ids');
 
-		return new Response('Export PDF OK | IDs: ' . ($ids ?: 'none'));
+		return new Response('Export Excel OK | IDs: ' . ($ids ?: 'none'));
 	}
 }

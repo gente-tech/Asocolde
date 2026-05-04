@@ -64,7 +64,7 @@
 						<span>Action:</span>
 						<select id="asocolderma-export-action">
 							<option value="">- Seleccionar -</option>
-							<option value="pdf">Exportar PDF</option>
+							<option value="excel">Exportar Excel</option>
 						</select>
 						</label>
 
@@ -87,7 +87,7 @@
 							return;
 						}
 
-						if (action === 'pdf') {
+						if (action === 'excel') {
 							const selectedIds = Array.from(
 								table.querySelectorAll('.asocolderma-row-select:checked')
 							).map(function (checkbox) {
@@ -100,7 +100,7 @@
 								query.set('ids', selectedIds.join(','));
 							}
 
-							window.location.href = '/admin/asocolderma/patrocinadores/export/pdf?' + query.toString();
+							window.location.href = '/admin/asocolderma/patrocinadores/export/excel?' + query.toString();
 						}
 					});
 				}
