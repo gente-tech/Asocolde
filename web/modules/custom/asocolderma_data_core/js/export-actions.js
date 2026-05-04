@@ -28,6 +28,17 @@
 					});
 				}
 
+				const selectAll = table.querySelector('#asocolderma-select-all');
+				const rowCheckboxes = table.querySelectorAll('.asocolderma-row-select');
+
+				if (selectAll) {
+					selectAll.addEventListener('change', function () {
+						rowCheckboxes.forEach(function (checkbox) {
+							checkbox.checked = selectAll.checked;
+						});
+					});
+				}
+
 				const wrapper = document.createElement('div');
 
 				wrapper.className = 'asocolderma-export-actions';
