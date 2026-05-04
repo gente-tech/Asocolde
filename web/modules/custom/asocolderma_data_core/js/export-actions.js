@@ -74,6 +74,23 @@
 					</div>
 				`;
 
+				const exportButton = view.querySelector('#asocolderma-export-submit');
+				const exportSelect = view.querySelector('#asocolderma-export-action');
+
+				if (exportButton && exportSelect) {
+					exportButton.addEventListener('click', function () {
+						const action = exportSelect.value;
+
+						if (!action) {
+							return;
+						}
+
+						if (action === 'pdf') {
+							window.open('/admin/asocolderma/patrocinadores/export/pdf', '_blank');
+						}
+					});
+				}
+
 				view.appendChild(wrapper);
 
 				rowCheckboxes.forEach(function (checkbox) {
