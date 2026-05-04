@@ -75,22 +75,32 @@
 				`;
 
 				view.appendChild(wrapper);
-				
+
 				const exportButton = view.querySelector('#asocolderma-export-submit');
 				const exportSelect = view.querySelector('#asocolderma-export-action');
 
 				if (exportButton && exportSelect) {
 					exportButton.addEventListener('click', function () {
-						alert('click export');
 						const action = exportSelect.value;
-						alert('action: ' + action);
 
 						if (!action) {
 							return;
 						}
 
 						if (action === 'pdf') {
-							window.location.href = '/admin/asocolderma/patrocinadores/export/pdf';
+							const selectedIds = Array.from(
+								table.querySelectorAll('.asocolderma-row-select:checked')
+							).map(function (checkbox) {
+								return checkbox.value;
+							});
+
+							const query = new URLSearchParams();
+
+							if (selectedIds.length) {
+								query.set('ids', selectedIds.join(','));
+							}
+
+							window.location.href = '/admin/asocolderma/patrocinadores/export/pdf?' + query.toString();
 						}
 					});
 				}

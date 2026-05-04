@@ -10,6 +10,8 @@ class PatrocinadoresExportController extends ControllerBase
 
 	public function exportPdf()
 	{
-		return new Response('Export PDF OK');
+		$ids = \Drupal::request()->query->get('ids');
+
+		return new Response('Export PDF OK | IDs: ' . ($ids ?: 'none'));
 	}
 }
