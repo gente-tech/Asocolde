@@ -74,6 +74,8 @@
 					</div>
 				`;
 
+				view.appendChild(wrapper);
+				
 				const exportButton = view.querySelector('#asocolderma-export-submit');
 				const exportSelect = view.querySelector('#asocolderma-export-action');
 
@@ -92,8 +94,6 @@
 						}
 					});
 				}
-
-				view.appendChild(wrapper);
 
 				rowCheckboxes.forEach(function (checkbox) {
 					checkbox.addEventListener('change', updateSelectedLabel);
