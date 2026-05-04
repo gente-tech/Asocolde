@@ -1,0 +1,6 @@
+export_actions:
+  js:
+    js/export-actions.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
