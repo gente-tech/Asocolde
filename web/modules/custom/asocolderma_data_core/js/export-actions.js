@@ -94,7 +94,7 @@
 								return checkbox.value;
 							});
 
-							const query = new URLSearchParams();
+							const query = new URLSearchParams(window.location.search);
 
 							if (selectedIds.length) {
 								query.set('ids', selectedIds.join(','));
