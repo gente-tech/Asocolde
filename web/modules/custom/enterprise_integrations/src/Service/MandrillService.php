@@ -21,6 +21,11 @@ final class MandrillService
 	private const ENDPOINT_SEND = 'https://mandrillapp.com/api/1.0/messages/send.json';
 
 	/**
+	 * Mandrill endpoint for sending messages with templates.
+	 */
+	private const ENDPOINT_SEND_TEMPLATE = 'https://mandrillapp.com/api/1.0/messages/send-template.json';
+
+	/**
 	 * HTTP client.
 	 *
 	 * @var \GuzzleHttp\ClientInterface
@@ -489,12 +494,99 @@ final class MandrillService
 			if (($group['key'] ?? '') === $key) {
 				return [
 					'key' => (string) ($group['key'] ?? ''),
-					'subject' => (string) ($group['subject'] ?? ''),
-					'message' => (string) ($group['message'] ?? ''),
+					'mandrill_template_slug' => (string) ($group['mandrill_template_slug'] ?? ''),
 				];
 			}
 		}
 
 		return NULL;
+	}
+
+	public function sendTemplate(string $template_slug, array $params = [], array $merge_vars = []): array
+	{
+		$config = $this->getSettings();
+		$this->validateBaseConfiguration($config);
+
+		if ($template_slug === '') {
+			throw new \InvalidArgumentException('El slug de la plantilla Mandrill es obligatorio.');
+		}
+
+		if (empty($params['subject'])) {
+			throw new \InvalidArgumentException('El parámetro "subject" es obligatorio.');
+		}
+
+		if (empty($params['to_email'])) {
+			throw new \InvalidArgumentException('El parámetro "to_email" es obligatorio.');
+		}
+
+		$message = [
+			'from_email' => $config['from_email'],
+			'from_name' => $config['from_name'],
+			'subject' => $params['subject'],
+			'to' => [
+				[
+					'email' => $params['to_email'],
+					'name' => $params['to_name'] ?? '',
+					'type' => 'to',
+				],
+			],
+			'global_merge_vars' => $merge_vars,
+		];
+
+		$payload = [
+			'key' => $config['api_key'],
+			'template_name' => $template_slug,
+			'template_content' => [],
+			'message' => $message,
+		];
+
+		$response = $this->httpClient->request('POST', self::ENDPOINT_SEND_TEMPLATE, [
+			'json' => $payload,
+			'timeout' => 30,
+			'connect_timeout' => 10,
+			'http_errors' => FALSE,
+			'headers' => [
+				'Content-Type' => 'application/json',
+				'Accept' => 'application/json',
+			],
+		]);
+
+		$status_code = $response->getStatusCode();
+		$body = (string) $response->getBody();
+		$decoded = json_decode($body, TRUE);
+
+		if ($status_code < 200 || $status_code >= 300) {
+			$this->logger->error(
+				'Mandrill send-template HTTP error. Status: @status Response: @response',
+				[
+					'@status' => $status_code,
+					'@response' => $body,
+				]
+			);
+
+			return [
+				'success' => FALSE,
+				'mandrill_response' => $decoded,
+			];
+		}
+
+		if (is_array($decoded) && isset($decoded[0]['status']) && in_array($decoded[0]['status'], ['rejected', 'invalid'], TRUE)) {
+			$this->logger->error(
+				'Mandrill send-template rejected email. Response: @response',
+				[
+					'@response' => json_encode($decoded, JSON_UNESCAPED_UNICODE),
+				]
+			);
+
+			return [
+				'success' => FALSE,
+				'mandrill_response' => $decoded,
+			];
+		}
+
+		return [
+			'success' => TRUE,
+			'mandrill_response' => $decoded,
+		];
 	}
 }

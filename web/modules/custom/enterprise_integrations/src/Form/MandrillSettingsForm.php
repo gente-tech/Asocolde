@@ -119,8 +119,7 @@ class MandrillSettingsForm extends ConfigFormBase
 
       $group_default = $saved_groups[$i] ?? [
         'key' => '',
-        'subject' => '',
-        'message' => '',
+        'mandrill_template_slug' => '',
       ];
 
       $form['mandrill']['message_groups_wrapper']['message_groups'][$i]['key'] = [
@@ -130,17 +129,12 @@ class MandrillSettingsForm extends ConfigFormBase
         '#attributes' => ['readonly' => 'readonly'],
       ];
 
-      $form['mandrill']['message_groups_wrapper']['message_groups'][$i]['subject'] = [
+      $form['mandrill']['message_groups_wrapper']['message_groups'][$i]['mandrill_template_slug'] = [
         '#type' => 'textfield',
-        '#title' => $this->t('Subject'),
-        '#default_value' => $group_default['subject'] ?? '',
-      ];
-
-      $form['mandrill']['message_groups_wrapper']['message_groups'][$i]['message'] = [
-        '#type' => 'textarea',
-        '#title' => $this->t('Mensaje'),
-        '#default_value' => $group_default['message'] ?? '',
-        '#rows' => 6,
+        '#title' => $this->t('Slug de plantilla Mandrill'),
+        '#description' => $this->t('Nombre exacto de la plantilla creada en Mandrill. Ejemplo: dermau-preinscripcion-programa'),
+        '#default_value' => $group_default['mandrill_template_slug'] ?? '',
+        '#required' => TRUE,
       ];
 
       if ($groups_count > 1) {
@@ -192,8 +186,7 @@ class MandrillSettingsForm extends ConfigFormBase
     $new_id = $last_id + 1;
     $values[] = [
       'key' => 'mail_text_' . $new_id,
-      'subject' => '',
-      'message' => '',
+      'mandrill_template_slug' => '',
     ];
 
     $form_state->setValue('message_groups', $values);
@@ -263,11 +256,10 @@ class MandrillSettingsForm extends ConfigFormBase
         continue;
       }
 
-      $subject = trim((string) ($group['subject'] ?? ''));
-      $message = trim((string) ($group['message'] ?? ''));
+      $template_slug = trim((string) ($group['mandrill_template_slug'] ?? ''));
       $key = trim((string) ($group['key'] ?? ''));
 
-      if ($subject === '' && $message === '') {
+      if ($template_slug === '') {
         continue;
       }
 
@@ -278,8 +270,7 @@ class MandrillSettingsForm extends ConfigFormBase
 
       $clean_groups[] = [
         'key' => $key,
-        'subject' => $subject,
-        'message' => $message,
+        'mandrill_template_slug' => $template_slug,
       ];
     }
 

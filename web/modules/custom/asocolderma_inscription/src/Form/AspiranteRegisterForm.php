@@ -117,35 +117,53 @@ class AspiranteRegisterForm extends FormBase
 
 		// Enviar correo
 		try {
-			$this->mandrillService->sendConfiguredTemplateMessage(
-				'mail_text_1',
-				'base-mail',
+			$config_email = $this->mandrillService->getMessageGroupByKey('mail_text_1');
+
+			if (!$config_email) {
+				throw new \RuntimeException('No existe la configuración de correo mail_text_1.');
+			}
+
+			$template_slug = $config_email['mandrill_template_slug'] ?? '';
+
+			if ($template_slug === '') {
+				throw new \RuntimeException('La configuración mail_text_1 no tiene slug de plantilla Mandrill.');
+			}
+
+			$result = $this->mandrillService->sendTemplate(
+				$template_slug,
 				[
+					'subject' => 'Preinscripción programa ' . $programa,
 					'to_email' => $mail,
-					'to_name' => $mail,
-					'internal_copy' => FALSE,
-					'tags' => ['registro_aspirante', 'activacion_cuenta'],
-					'metadata' => [
-						'user_id' => (string) $user->id(),
-						'mail_type' => 'activation',
-					],
+					'to_name' => $nombre,
 				],
 				[
-					'nombre' => $mail,
-					'email_title' => 'Asocolderma',
-					'email_description' => 'Asociación Colombiana de Dermatología',
-					'action_url' => $activation_url,
-					'action_text' => 'Activar cuenta',
+					[
+						'name' => 'FNAME',
+						'content' => $nombre,
+					],
 				]
 			);
 
+			if (empty($result['success'])) {
+				throw new \RuntimeException('Mandrill no confirmó el envío del correo.');
+			}
+
+			$response = $result['mandrill_response'] ?? [];
+
+			if (isset($response[0]['status']) && in_array($response[0]['status'], ['rejected', 'invalid'], TRUE)) {
+				throw new \RuntimeException('Mandrill rechazó el correo. Estado: ' . $response[0]['status']);
+			}
+
 			$this->logger->info(
-				'Correo de activación enviado a @mail.',
-				['@mail' => $mail]
+				'Correo de preinscripción enviado a @mail usando plantilla @template.',
+				[
+					'@mail' => $mail,
+					'@template' => $template_slug,
+				]
 			);
 		} catch (\Throwable $e) {
 			$this->logger->error(
-				'Error enviando correo de activación a @mail: @error',
+				'Error enviando correo de preinscripción a @mail: @error',
 				[
 					'@mail' => $mail,
 					'@error' => $e->getMessage(),
