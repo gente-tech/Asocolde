@@ -97,7 +97,7 @@ class MandrillSettingsForm extends ConfigFormBase
       if ($groups_count > 1) {
         $form['mandrill']['message_groups_wrapper']['message_groups'][$i]['remove_group'] = [
           '#type' => 'submit',
-          '#value' => $this->t('Eliminar este grupo'),
+          '#value' => $this->t('Eliminar plantilla'),
           '#name' => 'remove_group_' . $i,
           '#submit' => ['::removeMessageGroupSubmit'],
           '#ajax' => [
@@ -116,7 +116,7 @@ class MandrillSettingsForm extends ConfigFormBase
 
     $form['mandrill']['message_groups_wrapper']['actions']['add_group'] = [
       '#type' => 'submit',
-      '#value' => $this->t('Agregar grupo'),
+      '#value' => $this->t('Agregar plantilla'),
       '#submit' => ['::addMessageGroupSubmit'],
       '#ajax' => [
         'callback' => '::messageGroupsAjaxCallback',
