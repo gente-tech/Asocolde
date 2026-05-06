@@ -4,7 +4,6 @@ namespace Drupal\enterprise_integrations\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\file\Entity\File;
 
 class MandrillSettingsForm extends ConfigFormBase
 {
@@ -50,48 +49,6 @@ class MandrillSettingsForm extends ConfigFormBase
       '#required' => TRUE,
     ];
 
-    $form['mandrill']['from_email'] = [
-      '#type' => 'email',
-      '#title' => $this->t('Email de Origen'),
-      '#default_value' => $config->get('mandrill.from_email'),
-      '#required' => TRUE,
-    ];
-
-    $form['mandrill']['from_name'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Nombre (Desde)'),
-      '#default_value' => $config->get('mandrill.from_name'),
-      '#required' => TRUE,
-    ];
-
-    $form['mandrill']['default_subject'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Asunto por defecto'),
-      '#default_value' => $config->get('mandrill.default_subject'),
-    ];
-
-    $form['mail_logo'] = [
-      '#type' => 'managed_file',
-      '#title' => $this->t('Logo del correo'),
-      '#upload_location' => 'public://dermau_mail/',
-      '#default_value' => $config->get('mail_logo'),
-    ];
-
-    $form['mail_banner'] = [
-      '#type' => 'managed_file',
-      '#title' => $this->t('Banner del correo'),
-      '#upload_location' => 'public://dermau_mail/',
-      '#default_value' => $config->get('mail_banner'),
-    ];
-
-    $form['mandrill']['default_html_template'] = [
-      '#type' => 'textarea',
-      '#title' => $this->t('HTML Template'),
-      '#description' => $this->t('Usa tokens como {{subject}} y {{message}} dentro de la plantilla base. Esta plantilla será la misma para todos los correos.'),
-      '#default_value' => $config->get('mandrill.default_html_template'),
-      '#rows' => 10,
-    ];
-
     $form['mandrill']['message_groups_wrapper'] = [
       '#type' => 'container',
       '#attributes' => [
@@ -101,8 +58,8 @@ class MandrillSettingsForm extends ConfigFormBase
 
     $form['mandrill']['message_groups_wrapper']['message_groups_title'] = [
       '#type' => 'item',
-      '#title' => $this->t('Mensajes configurables'),
-      '#markup' => '<p>Agrega los grupos de mensaje que necesites. Cada grupo tendrá asunto y mensaje.</p>',
+      '#title' => $this->t('Plantillas configurables'),
+      '#markup' => '<p>Agrega las plantillas Mandrill que necesites. Cada grupo tendrá una clave interna y un slug de plantilla.</p>',
     ];
 
     $form['mandrill']['message_groups_wrapper']['message_groups'] = [
@@ -113,7 +70,7 @@ class MandrillSettingsForm extends ConfigFormBase
     for ($i = 0; $i < $groups_count; $i++) {
       $form['mandrill']['message_groups_wrapper']['message_groups'][$i] = [
         '#type' => 'details',
-        '#title' => $this->t('Grupo de mensaje @num', ['@num' => $i + 1]),
+        '#title' => $this->t('Plantilla Mandrill @num', ['@num' => $i + 1]),
         '#open' => TRUE,
       ];
 
@@ -219,32 +176,7 @@ class MandrillSettingsForm extends ConfigFormBase
     $config = $this->configFactory->getEditable('enterprise_integrations.settings');
 
     $config
-      ->set('mandrill.api_key', $form_state->getValue('api_key'))
-      ->set('mandrill.from_email', $form_state->getValue('from_email'))
-      ->set('mandrill.from_name', $form_state->getValue('from_name'))
-      ->set('mandrill.default_subject', $form_state->getValue('default_subject'))
-      ->set('mandrill.default_html_template', $form_state->getValue('default_html_template'))
-      ->set('mandrill.internal_copy_enabled', $form_state->getValue('internal_copy_enabled'))
-      ->set('mandrill.internal_copy_email', $form_state->getValue('internal_copy_email'))
-      ->set('mandrill.internal_copy_name', $form_state->getValue('internal_copy_name'));
-
-    // Guardar logo.
-    $logo = $form_state->getValue('mail_logo');
-    if (!empty($logo[0])) {
-      $file = File::load($logo[0]);
-      $file->setPermanent();
-      $file->save();
-      $config->set('mail_logo', $logo);
-    }
-
-    // Guardar banner.
-    $banner = $form_state->getValue('mail_banner');
-    if (!empty($banner[0])) {
-      $file = File::load($banner[0]);
-      $file->setPermanent();
-      $file->save();
-      $config->set('mail_banner', $banner);
-    }
+      ->set('mandrill.api_key', $form_state->getValue('api_key'));
 
     $message_groups = $form_state->getValue('message_groups') ?? [];
     $last_id = (int) ($config->get('mandrill.message_groups_last_id') ?? 0);

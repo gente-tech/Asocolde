@@ -9,27 +9,6 @@ enterprise_integrations.settings:
         api_key:
           type: string
           label: 'API key'
-        from_email:
-          type: string
-          label: 'From email'
-        from_name:
-          type: string
-          label: 'From name'
-        default_subject:
-          type: string
-          label: 'Default subject'
-        default_html_template:
-          type: text
-          label: 'Default HTML template'
-        internal_copy_enabled:
-          type: boolean
-          label: 'Internal copy enabled'
-        internal_copy_email:
-          type: string
-          label: 'Internal copy email'
-        internal_copy_name:
-          type: string
-          label: 'Internal copy name'
         message_groups_last_id:
           type: integer
           label: 'Last message group ID'
@@ -43,9 +22,6 @@ enterprise_integrations.settings:
               key:
                 type: string
                 label: 'Key'
-              subject:
+              mandrill_template_slug:
                 type: string
-                label: 'Subject'
-              message:
-                type: text
-                label: 'Message'
+                label: 'Mandrill template slug'
