@@ -25,3 +25,9 @@ enterprise_integrations.settings:
               mandrill_template_slug:
                 type: string
                 label: 'Mandrill template slug'
+              copy_emails:
+                type: sequence
+                label: 'Copy emails'
+                sequence:
+                  type: string
+                  label: 'Copy email'

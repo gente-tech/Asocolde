@@ -138,6 +138,7 @@ class AspiranteRegisterForm extends FormBase
 					'subject' => 'Preinscripción programa ' . $programa,
 					'to_email' => $mail,
 					'to_name' => $nombre,
+					'copy_emails' => $config_email['copy_emails'] ?? [],
 				],
 				[
 					[

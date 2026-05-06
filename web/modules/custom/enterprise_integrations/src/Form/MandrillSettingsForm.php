@@ -77,6 +77,7 @@ class MandrillSettingsForm extends ConfigFormBase
       $group_default = $saved_groups[$i] ?? [
         'key' => '',
         'mandrill_template_slug' => '',
+        'copy_emails' => [],
       ];
 
       $form['mandrill']['message_groups_wrapper']['message_groups'][$i]['key'] = [
@@ -92,6 +93,16 @@ class MandrillSettingsForm extends ConfigFormBase
         '#description' => $this->t('Nombre exacto de la plantilla creada en Mandrill. Ejemplo: dermau-preinscripcion-programa'),
         '#default_value' => $group_default['mandrill_template_slug'] ?? '',
         '#required' => TRUE,
+      ];
+
+      $form['mandrill']['message_groups_wrapper']['message_groups'][$i]['copy_emails'] = [
+        '#type' => 'textarea',
+        '#title' => $this->t('Correos en copia oculta'),
+        '#description' => $this->t('Ingrese un correo por línea. Estos correos recibirán copia oculta del envío.'),
+        '#default_value' => !empty($group_default['copy_emails']) && is_array($group_default['copy_emails'])
+          ? implode("\n", $group_default['copy_emails'])
+          : '',
+        '#required' => FALSE,
       ];
 
       if ($groups_count > 1) {
@@ -200,9 +211,24 @@ class MandrillSettingsForm extends ConfigFormBase
         $key = 'mail_text_' . $last_id;
       }
 
+      $copy_emails = [];
+
+      if (!empty($group['copy_emails'])) {
+        $lines = preg_split('/\r\n|\r|\n/', (string) $group['copy_emails']);
+
+        foreach ($lines as $line) {
+          $email = trim($line);
+
+          if ($email !== '') {
+            $copy_emails[] = $email;
+          }
+        }
+      }
+
       $clean_groups[] = [
         'key' => $key,
         'mandrill_template_slug' => $template_slug,
+        'copy_emails' => $copy_emails,
       ];
     }
 

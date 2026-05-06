@@ -123,10 +123,7 @@ final class MandrillService
 			}
 
 			if (($group['key'] ?? '') === $key) {
-				return [
-					'key' => (string) ($group['key'] ?? ''),
-					'mandrill_template_slug' => (string) ($group['mandrill_template_slug'] ?? ''),
-				];
+				return $group;
 			}
 		}
 
@@ -150,15 +147,30 @@ final class MandrillService
 			throw new \InvalidArgumentException('El parámetro "to_email" es obligatorio.');
 		}
 
+		$recipients = [
+			[
+				'email' => $params['to_email'],
+				'name' => $params['to_name'] ?? '',
+				'type' => 'to',
+			],
+		];
+
+		if (!empty($params['copy_emails']) && is_array($params['copy_emails'])) {
+			foreach ($params['copy_emails'] as $copy_email) {
+				$copy_email = trim((string) $copy_email);
+
+				if ($copy_email !== '') {
+					$recipients[] = [
+						'email' => $copy_email,
+						'type' => 'bcc',
+					];
+				}
+			}
+		}
+
 		$message = [
 			'subject' => $params['subject'],
-			'to' => [
-				[
-					'email' => $params['to_email'],
-					'name' => $params['to_name'] ?? '',
-					'type' => 'to',
-				],
-			],
+			'to' => $recipients,
 			'global_merge_vars' => $merge_vars,
 		];
 
