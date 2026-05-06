@@ -77,6 +77,8 @@ class MandrillSettingsForm extends ConfigFormBase
       $group_default = $saved_groups[$i] ?? [
         'key' => '',
         'mandrill_template_slug' => '',
+        'send_copy' => FALSE,
+        'copy_template_slug' => '',
         'copy_emails' => [],
       ];
 
@@ -95,6 +97,24 @@ class MandrillSettingsForm extends ConfigFormBase
         '#required' => TRUE,
       ];
 
+      $form['mandrill']['message_groups_wrapper']['message_groups'][$i]['send_copy'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Enviar copia'),
+        '#default_value' => !empty($group_default['send_copy']),
+      ];
+
+      $form['mandrill']['message_groups_wrapper']['message_groups'][$i]['copy_template_slug'] = [
+        '#type' => 'textfield',
+        '#title' => $this->t('Slug de plantilla Mandrill para copia'),
+        '#description' => $this->t('Nombre exacto de la plantilla Mandrill que se usará para el correo de copia interna.'),
+        '#default_value' => $group_default['copy_template_slug'] ?? '',
+        '#states' => [
+          'visible' => [
+            ':input[name="message_groups[' . $i . '][send_copy]"]' => ['checked' => TRUE],
+          ],
+        ],
+      ];
+
       $form['mandrill']['message_groups_wrapper']['message_groups'][$i]['copy_emails'] = [
         '#type' => 'textarea',
         '#title' => $this->t('Correos en copia oculta'),
@@ -102,7 +122,11 @@ class MandrillSettingsForm extends ConfigFormBase
         '#default_value' => !empty($group_default['copy_emails']) && is_array($group_default['copy_emails'])
           ? implode("\n", $group_default['copy_emails'])
           : '',
-        '#required' => FALSE,
+        '#states' => [
+          'visible' => [
+            ':input[name="message_groups[' . $i . '][send_copy]"]' => ['checked' => TRUE],
+          ],
+        ],
       ];
 
       if ($groups_count > 1) {
@@ -228,6 +252,8 @@ class MandrillSettingsForm extends ConfigFormBase
       $clean_groups[] = [
         'key' => $key,
         'mandrill_template_slug' => $template_slug,
+        'send_copy' => !empty($group['send_copy']),
+        'copy_template_slug' => trim((string) ($group['copy_template_slug'] ?? '')),
         'copy_emails' => $copy_emails,
       ];
     }

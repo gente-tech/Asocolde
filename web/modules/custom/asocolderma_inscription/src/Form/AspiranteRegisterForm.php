@@ -138,7 +138,6 @@ class AspiranteRegisterForm extends FormBase
 					'subject' => 'Preinscripción programa ' . $programa,
 					'to_email' => $mail,
 					'to_name' => $nombre,
-					'copy_emails' => $config_email['copy_emails'] ?? [],
 				],
 				[
 					[
@@ -165,6 +164,40 @@ class AspiranteRegisterForm extends FormBase
 					'@template' => $template_slug,
 				]
 			);
+
+			if (
+				!empty($config_email['send_copy']) &&
+				!empty($config_email['copy_template_slug']) &&
+				!empty($config_email['copy_emails']) &&
+				is_array($config_email['copy_emails'])
+			) {
+				foreach ($config_email['copy_emails'] as $copy_email) {
+					$copy_email = trim((string) $copy_email);
+
+					if ($copy_email === '') {
+						continue;
+					}
+
+					$this->mandrillService->sendTemplate(
+						$config_email['copy_template_slug'],
+						[
+							'subject' => 'Copia interna preinscripción programa ' . $programa,
+							'to_email' => $copy_email,
+							'to_name' => 'Destino interno',
+						],
+						[
+							[
+								'name' => 'FNAME',
+								'content' => $nombre,
+							],
+							[
+								'name' => 'USER_EMAIL',
+								'content' => $mail,
+							],
+						]
+					);
+				}
+			}
 		} catch (\Throwable $e) {
 			$this->logger->error(
 				'Error enviando correo de preinscripción a @mail: @error',
