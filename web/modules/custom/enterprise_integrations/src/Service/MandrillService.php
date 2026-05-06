@@ -520,8 +520,6 @@ final class MandrillService
 		}
 
 		$message = [
-			'from_email' => $config['from_email'],
-			'from_name' => $config['from_name'],
 			'subject' => $params['subject'],
 			'to' => [
 				[
