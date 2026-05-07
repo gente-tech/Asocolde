@@ -129,8 +129,9 @@ class AspiranteRegisterForm extends FormBase
 				throw new \RuntimeException('La configuración mail_text_1 no tiene slug de plantilla Mandrill.');
 			}
 
-			$programa = "Programa de prueba";
+			$programa = "Curso creado por Virgilio";
 			$nombre = "Virgilio Manuel Padilla Ruiz";
+			$correo_v = "jajja_vpadillar8@gmail.com";
 
 			$result = $this->mandrillService->sendTemplate(
 				$template_slug,
@@ -191,8 +192,12 @@ class AspiranteRegisterForm extends FormBase
 								'content' => $nombre,
 							],
 							[
-								'name' => 'USER_EMAIL',
-								'content' => $mail,
+								'name' => 'FPROGRAMA',
+								'content' => $programa,
+							],
+							[
+								'name' => 'FEMAIL',
+								'content' => $correo_v,
 							],
 						]
 					);
