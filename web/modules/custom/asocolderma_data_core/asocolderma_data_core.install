@@ -10,6 +10,35 @@
  */
 function asocolderma_data_core_schema()
 {
+	$record_status_fields = [
+		'is_active' => [
+			'description' => 'Indicates whether the record is active or disabled.',
+			'type' => 'int',
+			'size' => 'tiny',
+			'unsigned' => TRUE,
+			'not null' => TRUE,
+			'default' => 1,
+		],
+		'status_changed' => [
+			'description' => 'Unix timestamp when the active status was last changed.',
+			'type' => 'int',
+			'unsigned' => TRUE,
+			'not null' => FALSE,
+		],
+		'status_changed_by' => [
+			'description' => 'User ID who last changed the active status.',
+			'type' => 'int',
+			'unsigned' => TRUE,
+			'not null' => FALSE,
+		],
+		'status_change_reason' => [
+			'description' => 'Reason or context of the latest active status change.',
+			'type' => 'text',
+			'size' => 'normal',
+			'not null' => FALSE,
+		],
+	];
+
 	$schema['asocolderma_import_batch'] = [
 		'description' => 'Stores metadata for massive CSV import batches.',
 		'fields' => [
@@ -486,6 +515,7 @@ function asocolderma_data_core_schema()
 				'unsigned' => TRUE,
 				'not null' => TRUE,
 			],
+		] + $record_status_fields + [
 			'id_asocolderma' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
 			'estado_patrocinador' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
 			'tipo_patrocinador' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
@@ -551,6 +581,7 @@ function asocolderma_data_core_schema()
 			'nit' => ['nit'],
 			'correo_corporativo' => ['correo_corporativo'],
 			'validation_status' => ['validation_status'],
+			'is_active' => ['is_active'],
 		],
 	];
 
@@ -560,7 +591,7 @@ function asocolderma_data_core_schema()
 			'id' => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
 			'batch_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
 			'row_number' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
-
+		] + $record_status_fields + [
 			'id_asocolderma' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
 			'estado_afiliacion' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
 			'tipo_asociado' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
@@ -651,6 +682,7 @@ function asocolderma_data_core_schema()
 			'numero_documento' => ['numero_documento'],
 			'correo_principal' => ['correo_principal'],
 			'validation_status' => ['validation_status'],
+			'is_active' => ['is_active'],
 		],
 	];
 
@@ -660,7 +692,7 @@ function asocolderma_data_core_schema()
 			'id' => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
 			'batch_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
 			'row_number' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
-
+		] + $record_status_fields + [
 			'id_asocolderma' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
 			'estado_residente' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
 			'primer_nombre' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
@@ -703,6 +735,7 @@ function asocolderma_data_core_schema()
 			'numero_documento' => ['numero_documento'],
 			'correo_principal' => ['correo_principal'],
 			'validation_status' => ['validation_status'],
+			'is_active' => ['is_active'],
 		],
 	];
 
@@ -712,7 +745,7 @@ function asocolderma_data_core_schema()
 			'id' => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
 			'batch_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
 			'row_number' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
-
+		] + $record_status_fields + [
 			'id_asocolderma' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
 			'estado_proveedor' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
 			'tipo_proveedor' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
@@ -758,6 +791,7 @@ function asocolderma_data_core_schema()
 			'nit' => ['nit'],
 			'correo_corporativo' => ['correo_corporativo'],
 			'validation_status' => ['validation_status'],
+			'is_active' => ['is_active'],
 		],
 	];
 
@@ -767,7 +801,7 @@ function asocolderma_data_core_schema()
 			'id' => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
 			'batch_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
 			'row_number' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
-
+		] + $record_status_fields + [
 			'id_asocolderma' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
 			'estado_empleado' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
 			'cargo' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
@@ -830,6 +864,7 @@ function asocolderma_data_core_schema()
 			'correo_personal' => ['correo_personal'],
 			'correo_corporativo' => ['correo_corporativo'],
 			'validation_status' => ['validation_status'],
+			'is_active' => ['is_active'],
 		],
 	];
 
@@ -989,5 +1024,66 @@ function asocolderma_data_core_update_10012()
 	if (!$schema->tableExists('asocolderma_import_empleados')) {
 		$tables = asocolderma_data_core_schema();
 		$schema->createTable('asocolderma_import_empleados', $tables['asocolderma_import_empleados']);
+	}
+}
+
+/**
+ * Add active/disabled status fields to imported data tables.
+ */
+function asocolderma_data_core_update_10013()
+{
+	$schema = \Drupal::database()->schema();
+
+	$tables = [
+		'asocolderma_import_patrocinadores',
+		'asocolderma_import_asociados',
+		'asocolderma_import_residentes',
+		'asocolderma_import_proveedores',
+		'asocolderma_import_empleados',
+	];
+
+	$fields = [
+		'is_active' => [
+			'description' => 'Indicates whether the record is active or disabled.',
+			'type' => 'int',
+			'size' => 'tiny',
+			'unsigned' => TRUE,
+			'not null' => TRUE,
+			'default' => 1,
+		],
+		'status_changed' => [
+			'description' => 'Unix timestamp when the active status was last changed.',
+			'type' => 'int',
+			'unsigned' => TRUE,
+			'not null' => FALSE,
+		],
+		'status_changed_by' => [
+			'description' => 'User ID who last changed the active status.',
+			'type' => 'int',
+			'unsigned' => TRUE,
+			'not null' => FALSE,
+		],
+		'status_change_reason' => [
+			'description' => 'Reason or context of the latest active status change.',
+			'type' => 'text',
+			'size' => 'normal',
+			'not null' => FALSE,
+		],
+	];
+
+	foreach ($tables as $table) {
+		if (!$schema->tableExists($table)) {
+			continue;
+		}
+
+		foreach ($fields as $field_name => $field_definition) {
+			if (!$schema->fieldExists($table, $field_name)) {
+				$schema->addField($table, $field_name, $field_definition);
+			}
+		}
+
+		if (!$schema->indexExists($table, 'is_active')) {
+			$schema->addIndex($table, 'is_active', ['is_active']);
+		}
 	}
 }
