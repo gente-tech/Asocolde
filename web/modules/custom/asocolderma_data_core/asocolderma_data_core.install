@@ -1083,7 +1083,22 @@ function asocolderma_data_core_update_10013()
 		}
 
 		if (!$schema->indexExists($table, 'is_active')) {
-			$schema->addIndex($table, 'is_active', ['is_active']);
+			$table_spec = [
+				'fields' => [
+					'is_active' => [
+						'type' => 'int',
+						'size' => 'tiny',
+						'unsigned' => TRUE,
+						'not null' => TRUE,
+						'default' => 1,
+					],
+				],
+				'indexes' => [
+					'is_active' => ['is_active'],
+				],
+			];
+
+			$schema->addIndex($table, 'is_active', ['is_active'], $table_spec);
 		}
 	}
 }
