@@ -130,7 +130,49 @@ class DataImportForm extends FormBase
 			return $value ? '1' : '0';
 		}
 
-		return trim((string) $value);
+		$value = trim((string) $value);
+
+		if ($value === '') {
+			return '';
+		}
+
+		// Elimina espacios internos comunes en valores numéricos.
+		$numeric_candidate = str_replace(' ', '', $value);
+
+		// Normaliza formatos numéricos comunes:
+		// 100000.00
+		// 100000,00
+		// 1.000.000,80
+		// 1,000,000.80
+		if (preg_match('/^-?[\d.,]+$/', $numeric_candidate)) {
+			$has_comma = str_contains($numeric_candidate, ',');
+			$has_dot = str_contains($numeric_candidate, '.');
+
+			if ($has_comma && $has_dot) {
+				$last_comma = strrpos($numeric_candidate, ',');
+				$last_dot = strrpos($numeric_candidate, '.');
+
+				if ($last_comma > $last_dot) {
+					// Formato latino: 1.000.000,80
+					$numeric_candidate = str_replace('.', '', $numeric_candidate);
+					$numeric_candidate = str_replace(',', '.', $numeric_candidate);
+				} else {
+					// Formato inglés: 1,000,000.80
+					$numeric_candidate = str_replace(',', '', $numeric_candidate);
+				}
+			} elseif ($has_comma && !$has_dot) {
+				// Formato decimal latino simple: 100000,80
+				$numeric_candidate = str_replace(',', '.', $numeric_candidate);
+			}
+
+			if (is_numeric($numeric_candidate)) {
+				$normalized = rtrim(rtrim(number_format((float) $numeric_candidate, 6, '.', ''), '0'), '.');
+
+				return $normalized === '-0' ? '0' : $normalized;
+			}
+		}
+
+		return $value;
 	}
 
 	/**
