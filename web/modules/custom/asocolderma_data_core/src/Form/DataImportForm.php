@@ -651,7 +651,7 @@ class DataImportForm extends FormBase
 				$existing_record_id = $this->findExistingImportRecordId($table, $unique_column, $unique_value);
 
 				if ($existing_record_id) {
-					$has_changes = $this->importRowHasChanges($table, $existing_record_id, $values, $expected_columns);
+					$has_changes = $this->importRowHasChanges($table, $existing_record_id, $values, $expected);
 
 					if ($has_changes) {
 						$database->update($table)
