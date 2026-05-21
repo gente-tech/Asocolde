@@ -195,6 +195,17 @@ class DataImportForm extends FormBase
 			$current_value = $this->normalizeImportValue($existing[$column_name] ?? NULL);
 
 			if ($new_value !== $current_value) {
+				\Drupal::logger('asocolderma_data_core')->notice(
+					'Diferencia detectada en importación. Tabla: @table | ID: @id | Columna: @column | Actual: "@current" | Nuevo: "@new"',
+					[
+						'@table' => $table,
+						'@id' => $record_id,
+						'@column' => $column_name,
+						'@current' => $current_value,
+						'@new' => $new_value,
+					]
+				);
+
 				return TRUE;
 			}
 		}
