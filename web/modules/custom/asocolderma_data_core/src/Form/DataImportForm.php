@@ -237,17 +237,6 @@ class DataImportForm extends FormBase
 			$current_value = $this->normalizeImportValue($existing[$column_name] ?? NULL);
 
 			if ($new_value !== $current_value) {
-				\Drupal::logger('asocolderma_data_core')->notice(
-					'Diferencia detectada en importación. Tabla: @table | ID: @id | Columna: @column | Actual: "@current" | Nuevo: "@new"',
-					[
-						'@table' => $table,
-						'@id' => $record_id,
-						'@column' => $column_name,
-						'@current' => $current_value,
-						'@new' => $new_value,
-					]
-				);
-
 				return TRUE;
 			}
 		}
@@ -644,6 +633,9 @@ class DataImportForm extends FormBase
 
 			$total_rows = 0;
 			$inserted = 0;
+			$inserted_count = 0;
+			$updated_count = 0;
+			$skipped_count = 0;
 			$failed = 0;
 
 			foreach (array_slice($rows, 1) as $row) {
@@ -714,46 +706,86 @@ class DataImportForm extends FormBase
 				$unique_column = $this->getUniqueIdentifierColumn($table);
 				$unique_value = $unique_column ? ($values[$unique_column] ?? NULL) : NULL;
 
+				$reference_label = $this->buildReferenceLabel($table, $values);
+				$reference_document = $this->buildReferenceDocument($table, $values);
+				$target_record_id = NULL;
+				$operation = 'error';
+				$row_status = 'failed';
+				$row_message = '';
+
 				if (!$unique_column || $this->normalizeImportValue($unique_value) === '') {
 					$failed++;
+					$operation = 'error';
+					$row_status = 'failed';
+					$row_message = 'No se pudo procesar la fila porque no tiene identificador único.';
+				} else {
+					$existing_record_id = $this->findExistingImportRecordId($table, $unique_column, $unique_value);
 
-					continue;
-				}
+					if ($existing_record_id) {
+						$target_record_id = $existing_record_id;
+						$has_changes = $this->importRowHasChanges($table, $existing_record_id, $values, $expected);
 
-				$existing_record_id = $this->findExistingImportRecordId($table, $unique_column, $unique_value);
+						if ($has_changes) {
+							$update_values = $values;
 
-				if ($existing_record_id) {
-					$has_changes = $this->importRowHasChanges($table, $existing_record_id, $values, $expected);
+							unset($update_values['id']);
+							unset($update_values['created']);
+							unset($update_values['created_at']);
 
-					if ($has_changes) {
-						$update_values = $values;
+							$database->update($table)
+								->fields($update_values)
+								->condition('id', $existing_record_id)
+								->execute();
 
-						unset($update_values['id']);
-						unset($update_values['created']);
-						unset($update_values['created_at']);
-
-						$database->update($table)
-							->fields($update_values)
-							->condition('id', $existing_record_id)
+							$inserted++;
+							$updated_count++;
+							$operation = 'update';
+							$row_status = 'success';
+							$row_message = 'Registro existente actualizado correctamente.';
+						} else {
+							$skipped_count++;
+							$operation = 'skip';
+							$row_status = 'skipped';
+							$row_message = 'Registro existente sin cambios. No fue actualizado.';
+						}
+					} else {
+						$target_record_id = $database->insert($table)
+							->fields($values)
 							->execute();
 
 						$inserted++;
+						$inserted_count++;
+						$operation = 'insert';
+						$row_status = 'success';
+						$row_message = 'Registro nuevo importado correctamente.';
 					}
-				} else {
-					$database->insert($table)
-						->fields($values)
-						->execute();
-
-					$inserted++;
 				}
+
+				$database->insert('asocolderma_data_import_log_item')
+					->fields([
+						'import_uuid' => $import_uuid,
+						'row_number' => $row_number,
+						'reference_label' => $reference_label,
+						'reference_document' => $reference_document,
+						'target_record_id' => $target_record_id ? (int) $target_record_id : NULL,
+						'operation' => $operation,
+						'status' => $row_status,
+						'message' => $row_message,
+						'created' => \Drupal::time()->getRequestTime(),
+					])
+					->execute();
 			}
 
 			$finished = \Drupal::time()->getRequestTime();
 			$duration_seconds = $finished - $started;
 			$status = $failed > 0 ? 'completed_with_errors' : 'completed';
-			$message = $failed > 0
-				? 'Importación finalizada con errores en algunas filas.'
-				: 'Importación finalizada correctamente.';
+			$message = sprintf(
+				'Importación finalizada. Insertados: %d. Actualizados: %d. Sin cambios: %d. Fallidos: %d.',
+				$inserted_count,
+				$updated_count,
+				$skipped_count,
+				$failed
+			);
 
 			$database->update('asocolderma_data_import_log')
 				->fields([
@@ -768,10 +800,13 @@ class DataImportForm extends FormBase
 				->execute();
 
 			$this->messenger()->addStatus($this->t(
-				'Importación completada. Se procesaron @count registros con cambios en la tabla @table.',
+				'Importación completada en la tabla @table. Insertados: @inserted. Actualizados: @updated. Sin cambios: @skipped. Fallidos: @failed.',
 				[
-					'@count' => $inserted,
 					'@table' => $table,
+					'@inserted' => $inserted_count,
+					'@updated' => $updated_count,
+					'@skipped' => $skipped_count,
+					'@failed' => $failed,
 				]
 			));
 		} catch (\Throwable $e) {
