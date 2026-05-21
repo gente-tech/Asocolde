@@ -1081,6 +1081,68 @@ function asocolderma_data_core_schema()
 		],
 	];
 
+	$schema['asocolderma_data_import_log_item_change'] = [
+		'description' => 'Stores field-level changes detected during import update operations.',
+		'fields' => [
+			'id' => [
+				'description' => 'Primary key of the import item change.',
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'import_uuid' => [
+				'description' => 'Unique identifier of the related import process.',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => TRUE,
+			],
+			'import_log_item_id' => [
+				'description' => 'Related row-level import log item ID.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'target_record_id' => [
+				'description' => 'ID of the updated destination record.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => FALSE,
+			],
+			'field_name' => [
+				'description' => 'Machine name of the field or column that changed.',
+				'type' => 'varchar',
+				'length' => 128,
+				'not null' => TRUE,
+			],
+			'old_value' => [
+				'description' => 'Previous value before the import update.',
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+			'new_value' => [
+				'description' => 'New value received from the imported file.',
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+			'created' => [
+				'description' => 'Unix timestamp when the field-level change was created.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'import_uuid' => ['import_uuid'],
+			'import_log_item_id' => ['import_log_item_id'],
+			'target_record_id' => ['target_record_id'],
+			'field_name' => ['field_name'],
+			'created' => ['created'],
+		],
+	];
+
 	return $schema;
 }
 
@@ -1330,5 +1392,18 @@ function asocolderma_data_core_update_10014()
 
 	if (!$schema->tableExists('asocolderma_data_import_log_item')) {
 		$schema->createTable('asocolderma_data_import_log_item', $module_schema['asocolderma_data_import_log_item']);
+	}
+}
+
+/**
+ * Create import field-level change tracking table.
+ */
+function asocolderma_data_core_update_10015()
+{
+	$schema = \Drupal::database()->schema();
+	$module_schema = asocolderma_data_core_schema();
+
+	if (!$schema->tableExists('asocolderma_data_import_log_item_change')) {
+		$schema->createTable('asocolderma_data_import_log_item_change', $module_schema['asocolderma_data_import_log_item_change']);
 	}
 }
