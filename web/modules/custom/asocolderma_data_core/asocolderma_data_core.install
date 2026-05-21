@@ -868,6 +868,219 @@ function asocolderma_data_core_schema()
 		],
 	];
 
+	$schema['asocolderma_data_import_log'] = [
+		'description' => 'Stores master logs for data import processes.',
+		'fields' => [
+			'id' => [
+				'description' => 'Primary key of the import log.',
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'import_uuid' => [
+				'description' => 'Unique identifier of the import process.',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => TRUE,
+			],
+			'uid' => [
+				'description' => 'Drupal user ID who executed the import.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'username' => [
+				'description' => 'Username snapshot at the time of import.',
+				'type' => 'varchar',
+				'length' => 150,
+				'not null' => FALSE,
+			],
+			'target_label' => [
+				'description' => 'Human-readable destination label of the imported data.',
+				'type' => 'varchar',
+				'length' => 100,
+				'not null' => TRUE,
+			],
+			'original_filename' => [
+				'description' => 'Original uploaded filename.',
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'stored_filename' => [
+				'description' => 'Internal stored filename.',
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'file_uri' => [
+				'description' => 'Internal file URI where the imported file was stored.',
+				'type' => 'varchar',
+				'length' => 500,
+				'not null' => FALSE,
+			],
+			'file_count' => [
+				'description' => 'Number of files included in the import process.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 1,
+			],
+			'total_rows' => [
+				'description' => 'Total rows detected in the imported file.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'imported_rows' => [
+				'description' => 'Total rows imported successfully.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'failed_rows' => [
+				'description' => 'Total rows that failed during import.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'status' => [
+				'description' => 'General import process status.',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => TRUE,
+				'default' => 'pending',
+			],
+			'message' => [
+				'description' => 'General import result message.',
+				'type' => 'text',
+				'size' => 'normal',
+				'not null' => FALSE,
+			],
+			'ip' => [
+				'description' => 'IP address from which the import was executed.',
+				'type' => 'varchar',
+				'length' => 45,
+				'not null' => FALSE,
+			],
+			'user_agent' => [
+				'description' => 'Browser or client user agent used during import.',
+				'type' => 'text',
+				'size' => 'normal',
+				'not null' => FALSE,
+			],
+			'created' => [
+				'description' => 'Unix timestamp when the import process was created.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'finished' => [
+				'description' => 'Unix timestamp when the import process finished.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => FALSE,
+			],
+			'duration_seconds' => [
+				'description' => 'Total import duration in seconds.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => FALSE,
+			],
+		],
+		'primary key' => ['id'],
+		'unique keys' => [
+			'import_uuid' => ['import_uuid'],
+		],
+		'indexes' => [
+			'uid' => ['uid'],
+			'target_label' => ['target_label'],
+			'status' => ['status'],
+			'created' => ['created'],
+		],
+	];
+
+	$schema['asocolderma_data_import_log_item'] = [
+		'description' => 'Stores row-level details for data import processes.',
+		'fields' => [
+			'id' => [
+				'description' => 'Primary key of the import log item.',
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'import_uuid' => [
+				'description' => 'Unique identifier of the related import process.',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => TRUE,
+			],
+			'row_number' => [
+				'description' => 'Source row number from the imported file.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => FALSE,
+			],
+			'reference_label' => [
+				'description' => 'Main readable reference of the imported record.',
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'reference_document' => [
+				'description' => 'Document number, NIT or secondary identifier of the imported record.',
+				'type' => 'varchar',
+				'length' => 100,
+				'not null' => FALSE,
+			],
+			'target_record_id' => [
+				'description' => 'ID of the inserted or updated destination record.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => FALSE,
+			],
+			'operation' => [
+				'description' => 'Operation performed for the row: insert, update, skip or error.',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => TRUE,
+				'default' => 'insert',
+			],
+			'status' => [
+				'description' => 'Processing status of the row: success, failed, warning or skipped.',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => TRUE,
+				'default' => 'success',
+			],
+			'message' => [
+				'description' => 'Specific result message for the processed row.',
+				'type' => 'text',
+				'size' => 'normal',
+				'not null' => FALSE,
+			],
+			'created' => [
+				'description' => 'Unix timestamp when the row log was created.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'import_uuid' => ['import_uuid'],
+			'reference_label' => ['reference_label'],
+			'reference_document' => ['reference_document'],
+			'target_record_id' => ['target_record_id'],
+			'operation' => ['operation'],
+			'status' => ['status'],
+			'created' => ['created'],
+		],
+	];
+
 	return $schema;
 }
 
@@ -1100,5 +1313,22 @@ function asocolderma_data_core_update_10013()
 
 			$schema->addIndex($table, 'is_active', ['is_active'], $table_spec);
 		}
+	}
+}
+
+/**
+ * Create import tracking log tables.
+ */
+function asocolderma_data_core_update_10014()
+{
+	$schema = \Drupal::database()->schema();
+	$module_schema = asocolderma_data_core_schema();
+
+	if (!$schema->tableExists('asocolderma_data_import_log')) {
+		$schema->createTable('asocolderma_data_import_log', $module_schema['asocolderma_data_import_log']);
+	}
+
+	if (!$schema->tableExists('asocolderma_data_import_log_item')) {
+		$schema->createTable('asocolderma_data_import_log_item', $module_schema['asocolderma_data_import_log_item']);
 	}
 }
