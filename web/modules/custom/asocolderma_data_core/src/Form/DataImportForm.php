@@ -768,7 +768,7 @@ class DataImportForm extends FormBase
 				->execute();
 
 			$this->messenger()->addStatus($this->t(
-				'Importación completada. Se insertaron @count registros en la tabla @table.',
+				'Importación completada. Se procesaron @count registros con cambios en la tabla @table.',
 				[
 					'@count' => $inserted,
 					'@table' => $table,
