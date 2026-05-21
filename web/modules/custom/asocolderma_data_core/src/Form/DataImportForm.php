@@ -557,6 +557,25 @@ class DataImportForm extends FormBase
 				$inserted++;
 			}
 
+			$finished = \Drupal::time()->getRequestTime();
+			$duration_seconds = $finished - $started;
+			$status = $failed > 0 ? 'completed_with_errors' : 'completed';
+			$message = $failed > 0
+				? 'Importación finalizada con errores en algunas filas.'
+				: 'Importación finalizada correctamente.';
+
+			$database->update('asocolderma_data_import_log')
+				->fields([
+					'imported_rows' => $inserted,
+					'failed_rows' => $failed,
+					'status' => $status,
+					'message' => $message,
+					'finished' => $finished,
+					'duration_seconds' => $duration_seconds,
+				])
+				->condition('import_uuid', $import_uuid)
+				->execute();
+
 			$this->messenger()->addStatus($this->t(
 				'Importación completada. Se insertaron @count registros en la tabla @table.',
 				[
