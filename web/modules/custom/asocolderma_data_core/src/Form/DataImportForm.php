@@ -95,6 +95,95 @@ class DataImportForm extends FormBase
 	}
 
 	/**
+	 * Retorna la columna única usada para detectar si un registro ya existe.
+	 */
+	protected function getUniqueIdentifierColumn(string $table): ?string
+	{
+		if (in_array($table, [
+			'asocolderma_import_patrocinadores',
+			'asocolderma_import_proveedores',
+		], TRUE)) {
+			return 'nit';
+		}
+
+		if (in_array($table, [
+			'asocolderma_import_asociados',
+			'asocolderma_import_residentes',
+			'asocolderma_import_empleados',
+		], TRUE)) {
+			return 'numero_documento';
+		}
+
+		return NULL;
+	}
+
+	/**
+	 * Normaliza valores para comparar datos provenientes del Excel contra la base de datos.
+	 */
+	protected function normalizeImportValue($value): string
+	{
+		if ($value === NULL) {
+			return '';
+		}
+
+		if (is_bool($value)) {
+			return $value ? '1' : '0';
+		}
+
+		return trim((string) $value);
+	}
+
+	/**
+	 * Busca un registro existente por la columna única definida para la tabla.
+	 */
+	protected function findExistingImportRecordId(string $table, string $unique_column, $unique_value): ?int
+	{
+		$unique_value = $this->normalizeImportValue($unique_value);
+
+		if ($unique_value === '') {
+			return NULL;
+		}
+
+		$record_id = \Drupal::database()
+			->select($table, 't')
+			->fields('t', ['id'])
+			->condition($unique_column, $unique_value)
+			->range(0, 1)
+			->execute()
+			->fetchField();
+
+		return $record_id ? (int) $record_id : NULL;
+	}
+
+	/**
+	 * Determina si los datos importados son diferentes a los datos existentes.
+	 */
+	protected function importRowHasChanges(string $table, int $record_id, array $values, array $expected_columns): bool
+	{
+		$existing = \Drupal::database()
+			->select($table, 't')
+			->fields('t', $expected_columns)
+			->condition('id', $record_id)
+			->execute()
+			->fetchAssoc();
+
+		if (!$existing) {
+			return TRUE;
+		}
+
+		foreach ($expected_columns as $column_name) {
+			$new_value = $this->normalizeImportValue($values[$column_name] ?? NULL);
+			$current_value = $this->normalizeImportValue($existing[$column_name] ?? NULL);
+
+			if ($new_value !== $current_value) {
+				return TRUE;
+			}
+		}
+
+		return FALSE;
+	}
+
+	/**
 	 * Retorna las columnas esperadas por tabla de importación.
 	 */
 	protected function getExpectedColumns(): array
@@ -550,11 +639,35 @@ class DataImportForm extends FormBase
 					$values[$column_name] = $row[$position] ?? NULL;
 				}
 
-				$database->insert($table)
-					->fields($values)
-					->execute();
+				$unique_column = $this->getUniqueIdentifierColumn($table);
+				$unique_value = $unique_column ? ($values[$unique_column] ?? NULL) : NULL;
 
-				$inserted++;
+				if (!$unique_column || $this->normalizeImportValue($unique_value) === '') {
+					$failed++;
+
+					continue;
+				}
+
+				$existing_record_id = $this->findExistingImportRecordId($table, $unique_column, $unique_value);
+
+				if ($existing_record_id) {
+					$has_changes = $this->importRowHasChanges($table, $existing_record_id, $values, $expected_columns);
+
+					if ($has_changes) {
+						$database->update($table)
+							->fields($values)
+							->condition('id', $existing_record_id)
+							->execute();
+
+						$inserted++;
+					}
+				} else {
+					$database->insert($table)
+						->fields($values)
+						->execute();
+
+					$inserted++;
+				}
 			}
 
 			$finished = \Drupal::time()->getRequestTime();
