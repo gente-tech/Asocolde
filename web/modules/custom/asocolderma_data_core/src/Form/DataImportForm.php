@@ -157,12 +157,31 @@ class DataImportForm extends FormBase
 
 	/**
 	 * Determina si los datos importados son diferentes a los datos existentes.
+	 *
+	 * No compara campos técnicos del proceso de importación, porque cambian en
+	 * cada carga y generarían falsos positivos.
 	 */
 	protected function importRowHasChanges(string $table, int $record_id, array $values, array $expected_columns): bool
 	{
+		$excluded_columns = [
+			'id',
+			'batch_id',
+			'created',
+			'changed',
+			'updated',
+			'updated_at',
+			'created_at',
+		];
+
+		$columns_to_compare = array_values(array_diff($expected_columns, $excluded_columns));
+
+		if (empty($columns_to_compare)) {
+			return FALSE;
+		}
+
 		$existing = \Drupal::database()
 			->select($table, 't')
-			->fields('t', $expected_columns)
+			->fields('t', $columns_to_compare)
 			->condition('id', $record_id)
 			->execute()
 			->fetchAssoc();
@@ -171,7 +190,7 @@ class DataImportForm extends FormBase
 			return TRUE;
 		}
 
-		foreach ($expected_columns as $column_name) {
+		foreach ($columns_to_compare as $column_name) {
 			$new_value = $this->normalizeImportValue($values[$column_name] ?? NULL);
 			$current_value = $this->normalizeImportValue($existing[$column_name] ?? NULL);
 
@@ -654,8 +673,14 @@ class DataImportForm extends FormBase
 					$has_changes = $this->importRowHasChanges($table, $existing_record_id, $values, $expected);
 
 					if ($has_changes) {
+						$update_values = $values;
+
+						unset($update_values['id']);
+						unset($update_values['created']);
+						unset($update_values['created_at']);
+
 						$database->update($table)
-							->fields($values)
+							->fields($update_values)
 							->condition('id', $existing_record_id)
 							->execute();
 
