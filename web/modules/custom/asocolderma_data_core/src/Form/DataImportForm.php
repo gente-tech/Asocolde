@@ -245,6 +245,59 @@ class DataImportForm extends FormBase
 	}
 
 	/**
+	 * Retorna los cambios detectados por columna para un registro existente.
+	 *
+	 * Excluye campos técnicos del proceso de importación para evitar falsos
+	 * positivos en auditoría.
+	 */
+	protected function getImportRowChanges(string $table, int $record_id, array $values, array $expected_columns): array
+	{
+		$excluded_columns = [
+			'id',
+			'batch_id',
+			'created',
+			'changed',
+			'updated',
+			'updated_at',
+			'created_at',
+		];
+
+		$columns_to_compare = array_values(array_diff($expected_columns, $excluded_columns));
+
+		if (empty($columns_to_compare)) {
+			return [];
+		}
+
+		$existing = \Drupal::database()
+			->select($table, 't')
+			->fields('t', $columns_to_compare)
+			->condition('id', $record_id)
+			->execute()
+			->fetchAssoc();
+
+		if (!$existing) {
+			return [];
+		}
+
+		$changes = [];
+
+		foreach ($columns_to_compare as $column_name) {
+			$new_value = $this->normalizeImportValue($values[$column_name] ?? NULL);
+			$current_value = $this->normalizeImportValue($existing[$column_name] ?? NULL);
+
+			if ($new_value !== $current_value) {
+				$changes[] = [
+					'field_name' => $column_name,
+					'old_value' => $existing[$column_name] ?? NULL,
+					'new_value' => $values[$column_name] ?? NULL,
+				];
+			}
+		}
+
+		return $changes;
+	}
+
+	/**
 	 * Retorna las columnas esperadas por tabla de importación.
 	 */
 	protected function getExpectedColumns(): array
@@ -721,11 +774,17 @@ class DataImportForm extends FormBase
 				} else {
 					$existing_record_id = $this->findExistingImportRecordId($table, $unique_column, $unique_value);
 
+					$target_record_id = NULL;
+					$operation = 'error';
+					$row_status = 'failed';
+					$row_message = '';
+					$row_changes = [];
+
 					if ($existing_record_id) {
 						$target_record_id = $existing_record_id;
-						$has_changes = $this->importRowHasChanges($table, $existing_record_id, $values, $expected);
+						$row_changes = $this->getImportRowChanges($table, $existing_record_id, $values, $expected);
 
-						if ($has_changes) {
+						if (!empty($row_changes)) {
 							$update_values = $values;
 
 							unset($update_values['id']);
@@ -761,7 +820,7 @@ class DataImportForm extends FormBase
 					}
 				}
 
-				$database->insert('asocolderma_data_import_log_item')
+				$import_log_item_id = $database->insert('asocolderma_data_import_log_item')
 					->fields([
 						'import_uuid' => $import_uuid,
 						'row_number' => $row_number,
@@ -774,6 +833,22 @@ class DataImportForm extends FormBase
 						'created' => \Drupal::time()->getRequestTime(),
 					])
 					->execute();
+
+				if ($operation === 'update' && !empty($row_changes)) {
+					foreach ($row_changes as $change) {
+						$database->insert('asocolderma_data_import_log_item_change')
+							->fields([
+								'import_uuid' => $import_uuid,
+								'import_log_item_id' => (int) $import_log_item_id,
+								'target_record_id' => $target_record_id ? (int) $target_record_id : NULL,
+								'field_name' => $change['field_name'],
+								'old_value' => $change['old_value'],
+								'new_value' => $change['new_value'],
+								'created' => \Drupal::time()->getRequestTime(),
+							])
+							->execute();
+					}
+				}
 			}
 
 			$finished = \Drupal::time()->getRequestTime();
