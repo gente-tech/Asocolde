@@ -18,6 +18,83 @@ class DataImportForm extends FormBase
 	}
 
 	/**
+	 * Retorna las etiquetas legibles por tabla de importación.
+	 */
+	protected function getImportTypeLabels(): array
+	{
+		return [
+			'asocolderma_import_patrocinadores' => 'Patrocinadores',
+			'asocolderma_import_asociados' => 'Asociados',
+			'asocolderma_import_residentes' => 'Residentes',
+			'asocolderma_import_proveedores' => 'Proveedores',
+			'asocolderma_import_empleados' => 'Empleados',
+		];
+	}
+
+	/**
+	 * Genera un UUID único para identificar el proceso de importación.
+	 */
+	protected function generateImportUuid(): string
+	{
+		return \Drupal::service('uuid')->generate();
+	}
+
+	/**
+	 * Construye la referencia principal del registro importado.
+	 */
+	protected function buildReferenceLabel(string $table, array $values): string
+	{
+		if (in_array($table, [
+			'asocolderma_import_asociados',
+			'asocolderma_import_residentes',
+			'asocolderma_import_empleados',
+		], TRUE)) {
+			$parts = [
+				$values['primer_nombre'] ?? '',
+				$values['segundo_nombre'] ?? '',
+				$values['primer_apellido'] ?? '',
+				$values['segundo_apellido'] ?? '',
+			];
+
+			$parts = array_filter(array_map('trim', $parts));
+
+			return trim(implode(' ', $parts));
+		}
+
+		if (in_array($table, [
+			'asocolderma_import_patrocinadores',
+			'asocolderma_import_proveedores',
+		], TRUE)) {
+			return trim((string) ($values['razon_social'] ?? ''));
+		}
+
+		return '';
+	}
+
+	/**
+	 * Obtiene el documento o NIT del registro importado.
+	 */
+	protected function buildReferenceDocument(string $table, array $values): string
+	{
+		if (in_array($table, [
+			'asocolderma_import_patrocinadores',
+			'asocolderma_import_proveedores',
+		], TRUE)) {
+			return trim((string) ($values['nit'] ?? ''));
+		}
+
+		if (in_array($table, [
+			'asocolderma_import_asociados',
+			'asocolderma_import_residentes',
+			'asocolderma_import_empleados',
+		], TRUE)) {
+			return trim((string) ($values['numero_documento'] ?? ''));
+		}
+
+		return '';
+	}
+
+	/**
 	 * Retorna las columnas esperadas por tabla de importación.
 	 */
 	protected function getExpectedColumns(): array
@@ -341,6 +418,10 @@ class DataImportForm extends FormBase
 	{
 		$table = $form_state->getValue('import_type');
 		$file = $form_state->getValue('uploaded_file');
+		$import_uuid = $this->generateImportUuid();
+		$import_labels = $this->getImportTypeLabels();
+		$target_label = $import_labels[$table] ?? $table;
+		$request_time = \Drupal::time()->getRequestTime();
 
 		if (!$file) {
 			$this->messenger()->addError($this->t('No fue posible procesar el archivo cargado.'));
@@ -393,10 +474,54 @@ class DataImportForm extends FormBase
 			));
 
 			$database = \Drupal::database();
-			$batch_id = \Drupal::time()->getRequestTime();
-			$created = \Drupal::time()->getRequestTime();
+			$batch_id = $request_time;
+			$created = $request_time;
+			$started = $request_time;
 
+			$current_user = \Drupal::currentUser();
+			$request = \Drupal::request();
+
+			$total_rows = 0;
 			$inserted = 0;
+			$failed = 0;
+
+			foreach (array_slice($rows, 1) as $row) {
+				$is_empty_row = TRUE;
+
+				foreach ($row as $cell) {
+					if (trim((string) $cell) !== '') {
+						$is_empty_row = FALSE;
+						break;
+					}
+				}
+
+				if (!$is_empty_row) {
+					$total_rows++;
+				}
+			}
+
+			$database->insert('asocolderma_data_import_log')
+				->fields([
+					'import_uuid' => $import_uuid,
+					'uid' => (int) $current_user->id(),
+					'username' => $current_user->getAccountName(),
+					'target_label' => $target_label,
+					'original_filename' => $file->getFilename(),
+					'stored_filename' => basename($file->getFileUri()),
+					'file_uri' => $file->getFileUri(),
+					'file_count' => 1,
+					'total_rows' => $total_rows,
+					'imported_rows' => 0,
+					'failed_rows' => 0,
+					'status' => 'processing',
+					'message' => 'Importación en proceso.',
+					'ip' => $request->getClientIp(),
+					'user_agent' => $request->headers->get('User-Agent'),
+					'created' => $created,
+					'finished' => NULL,
+					'duration_seconds' => NULL,
+				])
+				->execute();
 
 			foreach (array_slice($rows, 1) as $index => $row) {
 				$row_number = $index + 2;
