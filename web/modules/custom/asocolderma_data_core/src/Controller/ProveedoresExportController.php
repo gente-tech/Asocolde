@@ -9,12 +9,14 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 /**
  * Exports proveedores data and stores export logs.
  */
-class ProveedoresExportController extends ControllerBase {
+class ProveedoresExportController extends ControllerBase
+{
 
 	/**
 	 * Exports proveedores as CSV file compatible with Excel.
 	 */
-	public function exportExcel() {
+	public function exportExcel()
+	{
 		$request = \Drupal::request();
 
 		$ids = (string) $request->query->get('ids', '');
@@ -66,8 +68,7 @@ class ProveedoresExportController extends ControllerBase {
 
 		if (!empty($ids_array)) {
 			$query->condition('p.id', $ids_array, 'IN');
-		}
-		else {
+		} else {
 			$this->applyFiltersToQuery($query, $filter_values);
 		}
 
@@ -129,7 +130,8 @@ class ProveedoresExportController extends ControllerBase {
 	/**
 	 * Extracts valid filters from current query string.
 	 */
-	protected function getAppliedFilterValues(array $query_params, array $allowed_columns): array {
+	protected function getAppliedFilterValues(array $query_params, array $allowed_columns): array
+	{
 		$ignored_params = [
 			'ids',
 			'page',
@@ -150,7 +152,7 @@ class ProveedoresExportController extends ControllerBase {
 			'none',
 		];
 
-		$allowed_filters = array_merge($allowed_columns, ['is_active']);
+		$allowed_filters = array_merge($allowed_columns, ['is_active', 'combine']);
 
 		$filters = [];
 
@@ -186,9 +188,27 @@ class ProveedoresExportController extends ControllerBase {
 	/**
 	 * Applies supported filters to the export query.
 	 */
-	protected function applyFiltersToQuery($query, array $filter_values): void {
+	protected function applyFiltersToQuery($query, array $filter_values): void
+	{
 		foreach ($filter_values as $field => $value) {
 			if ($field === 'created') {
+				continue;
+			}
+
+			if ($field === 'combine') {
+				$or = $query->orConditionGroup()
+					->condition('p.razon_social', '%' . \Drupal::database()->escapeLike($value) . '%', 'LIKE')
+					->condition('p.nombre_comercial', '%' . \Drupal::database()->escapeLike($value) . '%', 'LIKE')
+					->condition('p.nit', '%' . \Drupal::database()->escapeLike($value) . '%', 'LIKE')
+					->condition('p.correo_corporativo', '%' . \Drupal::database()->escapeLike($value) . '%', 'LIKE')
+					->condition('p.nombre_contacto_principal', '%' . \Drupal::database()->escapeLike($value) . '%', 'LIKE')
+					->condition('p.cargo_contacto', '%' . \Drupal::database()->escapeLike($value) . '%', 'LIKE')
+					->condition('p.ciudad_sede_principal', '%' . \Drupal::database()->escapeLike($value) . '%', 'LIKE')
+					->condition('p.pais', '%' . \Drupal::database()->escapeLike($value) . '%', 'LIKE')
+					->condition('p.tipo_proveedor', '%' . \Drupal::database()->escapeLike($value) . '%', 'LIKE')
+					->condition('p.id_asocolderma', '%' . \Drupal::database()->escapeLike($value) . '%', 'LIKE');
+
+				$query->condition($or);
 				continue;
 			}
 
@@ -223,7 +243,8 @@ class ProveedoresExportController extends ControllerBase {
 	/**
 	 * Resolves export scope.
 	 */
-	protected function resolveExportScope(array $ids_array, array $filter_values): string {
+	protected function resolveExportScope(array $ids_array, array $filter_values): string
+	{
 		if (!empty($ids_array)) {
 			return 'selected';
 		}
@@ -238,7 +259,8 @@ class ProveedoresExportController extends ControllerBase {
 	/**
 	 * Builds human-readable filter text.
 	 */
-	protected function buildFiltersAppliedText(string $export_scope, array $filter_values): string {
+	protected function buildFiltersAppliedText(string $export_scope, array $filter_values): string
+	{
 		if ($export_scope === 'all') {
 			return 'Sin filtros aplicados';
 		}
@@ -261,7 +283,8 @@ class ProveedoresExportController extends ControllerBase {
 	/**
 	 * Builds export notes.
 	 */
-	protected function buildNotes(string $export_scope): string {
+	protected function buildNotes(string $export_scope): string
+	{
 		if ($export_scope === 'selected') {
 			return 'Exportación Excel de proveedores seleccionados manualmente';
 		}
@@ -276,8 +299,10 @@ class ProveedoresExportController extends ControllerBase {
 	/**
 	 * Formats filters as readable plain text.
 	 */
-	protected function formatFilters(array $filter_values): string {
+	protected function formatFilters(array $filter_values): string
+	{
 		$labels = [
+			'combine' => 'Búsqueda general',
 			'id_asocolderma' => 'ID AsoColDerma',
 			'estado_proveedor' => 'Estado',
 			'is_active' => 'Estado',
@@ -318,5 +343,4 @@ class ProveedoresExportController extends ControllerBase {
 
 		return implode(', ', $parts);
 	}
-
 }
