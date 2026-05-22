@@ -21,3 +21,19 @@ asocolderma_data_core.export_patrocinadores_excel:
     _title: 'Exportar patrocinadores EXCEL'
   requirements:
     _permission: 'access administration pages'
+
+asocolderma_data_core.bulk_status:
+  path: '/admin/asocolderma/data-core/bulk-status'
+  defaults:
+    _controller: '\Drupal\asocolderma_data_core\Controller\DataBulkActionController::bulkStatus'
+  methods: [POST]
+  requirements:
+    _permission: 'import data in asocolderma data core'
+
+asocolderma_data_core.bulk_delete:
+  path: '/admin/asocolderma/data-core/bulk-delete'
+  defaults:
+    _controller: '\Drupal\asocolderma_data_core\Controller\DataBulkActionController::bulkDelete'
+  methods: [POST]
+  requirements:
+    _permission: 'import data in asocolderma data core'

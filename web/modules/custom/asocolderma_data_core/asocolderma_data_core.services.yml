@@ -1,0 +1,7 @@
+services:
+  asocolderma_data_core.record_action_logger:
+    class: Drupal\asocolderma_data_core\Service\RecordActionLogger
+    arguments:
+      - '@database'
+      - '@current_user'
+      - '@request_stack'

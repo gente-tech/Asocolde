@@ -93,33 +93,56 @@
 					});
 				});
 
-				const wrapper = document.createElement('div');
+				if (!view.querySelector('.asocolderma-export-actions')) {
+					const wrapper = document.createElement('div');
 
-				wrapper.className = 'asocolderma-export-actions';
-				wrapper.innerHTML = `
-					<div class="asocolderma-export-actions__inner">
-						<span class="asocolderma-export-actions__label">0 items selected</span>
+					wrapper.className = 'asocolderma-export-actions';
+					wrapper.innerHTML = `
+						<div class="asocolderma-export-actions__inner">
+							<span class="asocolderma-export-actions__label">0 items selected</span>
 
-						<label class="asocolderma-export-actions__control">
-							<span>Action:</span>
-							<select id="asocolderma-export-action">
-								<option value="">- Seleccionar -</option>
-								<option value="excel">Exportar Excel</option>
-								<option value="activate">Activar</option>
-								<option value="deactivate">Desactivar</option>
-							</select>
-						</label>
+							<label class="asocolderma-export-actions__control">
+								<span>Action:</span>
+								<select id="asocolderma-export-action">
+									<option value="">- Seleccionar -</option>
+									<option value="excel">Exportar Excel</option>
+									<option value="activate">Activar</option>
+									<option value="deactivate">Desactivar</option>
+									<option value="delete">Eliminar definitivamente</option>
+								</select>
+							</label>
 
-						<button type="button" class="button button--primary" id="asocolderma-export-submit">
-							Aplicar
-						</button>
-					</div>
-				`;
+							<button type="button" class="button button--primary" id="asocolderma-export-submit">
+								Aplicar
+							</button>
+						</div>
+					`;
 
-				view.appendChild(wrapper);
+					view.appendChild(wrapper);
+				}
 
 				const actionButton = view.querySelector('#asocolderma-export-submit');
 				const actionSelect = view.querySelector('#asocolderma-export-action');
+
+				async function postJson(url, data) {
+					const response = await fetch(url, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'Accept': 'application/json'
+						},
+						credentials: 'same-origin',
+						body: JSON.stringify(data)
+					});
+
+					const result = await response.json();
+
+					if (!response.ok || !result.success) {
+						throw new Error(result.message || 'No fue posible ejecutar la acción seleccionada.');
+					}
+
+					return result;
+				}
 
 				async function applyBulkStatus(operation, selectedIds) {
 					const confirmMessage = operation === 'activate'
@@ -134,33 +157,18 @@
 					actionButton.textContent = 'Procesando...';
 
 					try {
-						const response = await fetch('/admin/asocolderma/data-core/bulk-status', {
-							method: 'POST',
-							headers: {
-								'Content-Type': 'application/json',
-								'Accept': 'application/json'
-							},
-							credentials: 'same-origin',
-							body: JSON.stringify({
-								table: tableKey,
-								operation: operation,
-								ids: selectedIds
-							})
+						const result = await postJson('/admin/asocolderma/data-core/bulk-status', {
+							table: tableKey,
+							operation: operation,
+							ids: selectedIds
 						});
-
-						const result = await response.json();
-
-						if (!response.ok || !result.success) {
-							window.alert(result.message || 'No fue posible ejecutar la acción seleccionada.');
-							return;
-						}
 
 						window.alert(result.message || 'Acción ejecutada correctamente.');
 						window.location.reload();
 					}
 					catch (error) {
 						console.error(error);
-						window.alert('Ocurrió un error al ejecutar la acción seleccionada.');
+						window.alert(error.message || 'Ocurrió un error al ejecutar la acción seleccionada.');
 					}
 					finally {
 						actionButton.disabled = false;
@@ -168,7 +176,48 @@
 					}
 				}
 
-				if (actionButton && actionSelect) {
+				async function applyBulkDelete(selectedIds) {
+					const firstConfirm = window.confirm(
+						'¿Está seguro que desea eliminar definitivamente estos registros? Esta acción no es un borrado lógico.'
+					);
+
+					if (!firstConfirm) {
+						return;
+					}
+
+					const secondConfirm = window.confirm(
+						'Confirmación final: los registros seleccionados se eliminarán físicamente de la tabla. ¿Desea continuar?'
+					);
+
+					if (!secondConfirm) {
+						return;
+					}
+
+					actionButton.disabled = true;
+					actionButton.textContent = 'Eliminando...';
+
+					try {
+						const result = await postJson('/admin/asocolderma/data-core/bulk-delete', {
+							table: tableKey,
+							ids: selectedIds
+						});
+
+						window.alert(result.message || 'Registros eliminados correctamente.');
+						window.location.reload();
+					}
+					catch (error) {
+						console.error(error);
+						window.alert(error.message || 'Ocurrió un error al eliminar los registros seleccionados.');
+					}
+					finally {
+						actionButton.disabled = false;
+						actionButton.textContent = 'Aplicar';
+					}
+				}
+
+				if (actionButton && actionSelect && !actionButton.dataset.asocoldermaBound) {
+					actionButton.dataset.asocoldermaBound = '1';
+
 					actionButton.addEventListener('click', function () {
 						const action = actionSelect.value;
 
@@ -190,13 +239,18 @@
 							return;
 						}
 
-						if (action === 'activate' || action === 'deactivate') {
-							if (!selectedIds.length) {
-								window.alert('Debe seleccionar al menos un registro.');
-								return;
-							}
+						if (!selectedIds.length) {
+							window.alert('Debe seleccionar al menos un registro.');
+							return;
+						}
 
+						if (action === 'activate' || action === 'deactivate') {
 							applyBulkStatus(action, selectedIds);
+							return;
+						}
+
+						if (action === 'delete') {
+							applyBulkDelete(selectedIds);
 						}
 					});
 				}
