@@ -50,7 +50,7 @@ function asocolderma_data_core_views_data()
 			$views_filter_type = asocolderma_data_core_views_filter_type($type);
 			$views_sort_type = asocolderma_data_core_views_sort_type($type);
 
-			$data[$table_name][$field_name] = [
+			$field_data = [
 				'title' => t(asocolderma_data_core_views_human_label($field_name)),
 				'help' => t('Campo @field de la tabla @table.', [
 					'@field' => $field_name,
@@ -66,6 +66,22 @@ function asocolderma_data_core_views_data()
 					'id' => $views_sort_type,
 				],
 			];
+
+			if ($field_name === 'created') {
+				$field_data['field'] = [
+					'id' => 'date',
+				];
+
+				$field_data['filter'] = [
+					'id' => 'date',
+				];
+
+				$field_data['sort'] = [
+					'id' => 'date',
+				];
+			}
+
+			$data[$table_name][$field_name] = $field_data;
 		}
 	}
 
