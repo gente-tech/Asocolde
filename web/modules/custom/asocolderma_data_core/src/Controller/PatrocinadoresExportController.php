@@ -142,7 +142,9 @@ class PatrocinadoresExportController extends ControllerBase
 				continue;
 			}
 
-			if (!in_array($key, $allowed_columns, TRUE)) {
+			$allowed_filters = array_merge($allowed_columns, ['is_active']);
+
+			if (!in_array($key, $allowed_filters, TRUE)) {
 				continue;
 			}
 
@@ -173,6 +175,28 @@ class PatrocinadoresExportController extends ControllerBase
 	{
 		foreach ($filter_values as $field => $value) {
 			if ($field === 'created') {
+				continue;
+			}
+
+			/*
+		 * El filtro expuesto "Estado" de la vista representa el estado operativo
+		 * activo/inactivo del registro, almacenado en is_active.
+		 *
+		 * En la URL puede llegar como estado_patrocinador = 1,
+		 * pero en la tabla el campo correcto para activar/desactivar es is_active.
+		 */
+			if ($field === 'estado_patrocinador' && in_array((string) $value, ['0', '1'], TRUE)) {
+				$query->condition('p.is_active', (int) $value);
+				continue;
+			}
+
+			if ($field === 'is_active' && in_array((string) $value, ['0', '1'], TRUE)) {
+				$query->condition('p.is_active', (int) $value);
+				continue;
+			}
+
+			if ($field === 'validation_status') {
+				$query->condition('p.validation_status', $value);
 				continue;
 			}
 
@@ -249,6 +273,7 @@ class PatrocinadoresExportController extends ControllerBase
 		$labels = [
 			'id_asocolderma' => 'ID AsoColDerma',
 			'estado_patrocinador' => 'Estado',
+			'is_active' => 'Estado',
 			'razon_social' => 'Razón social',
 			'nombre_comercial' => 'Nombre comercial',
 			'nit' => 'NIT',
