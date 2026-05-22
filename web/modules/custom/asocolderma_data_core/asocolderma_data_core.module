@@ -1,5 +1,9 @@
 <?php
 
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Drupal\user\Entity\User;
+
 /**
  * Implements hook_page_attachments().
  */
@@ -17,5 +21,37 @@ function asocolderma_data_core_page_attachments(array &$attachments)
 
 	if (in_array($route_name, $allowed_routes, TRUE)) {
 		$attachments['#attached']['library'][] = 'asocolderma_data_core/export_actions';
+	}
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Redirects gestor_data_asocolderma users to proveedores after login.
+ */
+function asocolderma_data_core_form_user_login_form_alter(array &$form, FormStateInterface $form_state, $form_id)
+{
+	$form['#submit'][] = 'asocolderma_data_core_user_login_redirect_submit';
+}
+
+/**
+ * Custom submit handler for login redirect.
+ */
+function asocolderma_data_core_user_login_redirect_submit(array &$form, FormStateInterface $form_state)
+{
+	$uid = $form_state->get('uid');
+
+	if (empty($uid)) {
+		return;
+	}
+
+	$account = User::load($uid);
+
+	if (!$account) {
+		return;
+	}
+
+	if ($account->hasRole('gestor_data_asocolderma')) {
+		$form_state->setRedirectUrl(Url::fromUri('internal:/admin/asocolderma/proveedores'));
 	}
 }
