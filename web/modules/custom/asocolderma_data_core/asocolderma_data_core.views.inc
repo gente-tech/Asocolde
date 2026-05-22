@@ -25,8 +25,13 @@ function asocolderma_data_core_views_data()
 		'asocolderma_import_residentes' => 'Residentes',
 		'asocolderma_import_proveedores' => 'Proveedores',
 		'asocolderma_import_empleados' => 'Empleados',
+
 		'asocolderma_record_action_log' => 'Auditoría acciones de registros',
 		'asocolderma_export_log' => 'Auditoría exportaciones',
+
+		'asocolderma_data_import_log' => 'Auditoría importaciones',
+		'asocolderma_data_import_log_item' => 'Detalle importación',
+		'asocolderma_data_import_log_item_change' => 'Cambios de importación',
 	];
 
 	foreach ($tables as $table_name => $label) {
@@ -67,7 +72,7 @@ function asocolderma_data_core_views_data()
 				],
 			];
 
-			if ($field_name === 'created') {
+			if (in_array($field_name, ['created', 'finished'], TRUE)) {
 				$field_data['field'] = [
 					'id' => 'date',
 				];
@@ -152,6 +157,7 @@ function asocolderma_data_core_views_human_label($field_name)
 {
 	$labels = [
 		'id' => 'ID',
+
 		'action' => 'Acción',
 		'table_name' => 'Tabla',
 		'record_id' => 'ID registro',
@@ -159,18 +165,46 @@ function asocolderma_data_core_views_human_label($field_name)
 		'identifier_value' => 'Identificación',
 		'record_label' => 'Nombre / Razón social',
 		'record_summary' => 'Registro',
-		'uid' => 'ID usuario',
-		'username' => 'Usuario',
-		'ip_address' => 'IP',
-		'request_uri' => 'Ruta',
-		'created' => 'Fecha',
-		'notes' => 'Detalle',
+
 		'module_key' => 'Módulo',
 		'export_type' => 'Tipo exportación',
 		'export_scope' => 'Alcance',
 		'record_count' => 'Cantidad registros',
 		'filters_applied' => 'Filtros aplicados',
 		'export_filename' => 'Archivo exportado',
+
+		'import_uuid' => 'UUID importación',
+		'uid' => 'ID usuario',
+		'username' => 'Usuario',
+		'target_label' => 'Tabla destino',
+		'original_filename' => 'Archivo original',
+		'stored_filename' => 'Archivo almacenado',
+		'file_uri' => 'URI archivo',
+		'file_count' => 'Cantidad archivos',
+		'total_rows' => 'Filas totales',
+		'imported_rows' => 'Filas importadas',
+		'failed_rows' => 'Filas fallidas',
+		'status' => 'Estado',
+		'message' => 'Mensaje',
+		'ip' => 'IP',
+		'user_agent' => 'User agent',
+		'created' => 'Fecha creación',
+		'finished' => 'Fecha finalización',
+		'duration_seconds' => 'Duración segundos',
+
+		'row_number' => 'Fila',
+		'reference_label' => 'Registro',
+		'reference_document' => 'NIT / Documento',
+		'target_record_id' => 'ID registro destino',
+		'operation' => 'Operación',
+		'import_log_item_id' => 'ID detalle importación',
+		'field_name' => 'Campo modificado',
+		'old_value' => 'Valor anterior',
+		'new_value' => 'Valor nuevo',
+
+		'ip_address' => 'IP',
+		'request_uri' => 'Ruta',
+		'notes' => 'Detalle',
 	];
 
 	return $labels[$field_name] ?? ucwords(str_replace('_', ' ', $field_name));
