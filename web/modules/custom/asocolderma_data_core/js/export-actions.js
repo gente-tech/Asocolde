@@ -40,7 +40,7 @@
 		if (pathname.includes('/proveedores')) {
 			return {
 				tableKey: 'proveedores',
-				exportUrl: null
+				exportUrl: '/admin/asocolderma/proveedores/export/excel'
 			};
 		}
 

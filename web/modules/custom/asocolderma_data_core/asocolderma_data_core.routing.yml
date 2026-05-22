@@ -37,3 +37,10 @@ asocolderma_data_core.bulk_delete:
   methods: [POST]
   requirements:
     _permission: 'import data in asocolderma data core'
+
+asocolderma_data_core.proveedores_export_excel:
+  path: '/admin/asocolderma/proveedores/export/excel'
+  defaults:
+    _controller: '\Drupal\asocolderma_data_core\Controller\ProveedoresExportController::exportExcel'
+  requirements:
+    _permission: 'import data in asocolderma data core'
