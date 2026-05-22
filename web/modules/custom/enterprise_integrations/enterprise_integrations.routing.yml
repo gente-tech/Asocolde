@@ -85,11 +85,3 @@ enterprise_integrations.twilio_templates_settings:
     _title: 'Twilio Templates'
   requirements:
     _permission: 'administer site configuration'
-
-enterprise_integrations.twilio_test_template:
-  path: '/admin/config/asocolderma/integraciones/twilio/test-template'
-  defaults:
-    _controller: '\Drupal\enterprise_integrations\Controller\tests\TwilioTestController::sendTemplateTest'
-    _title: 'Test Twilio Template'
-  requirements:
-    _permission: 'administer site configuration'
