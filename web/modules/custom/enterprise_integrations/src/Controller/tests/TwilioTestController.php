@@ -53,8 +53,8 @@ final class TwilioTestController extends ControllerBase
 				'+573215574712',
 				[
 					'1' => 'Virgilio Manuel',
-					'2' => 'SOL-2026-001',
-					'3' => 'Pendiente firma de documentos',
+					'2' => 'Prueba-solicitud-001',
+					'3' => 'Probando Envio de whatsapp',
 				]
 			);
 
