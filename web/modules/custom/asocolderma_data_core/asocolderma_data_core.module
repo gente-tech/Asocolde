@@ -7,7 +7,15 @@ function asocolderma_data_core_page_attachments(array &$attachments)
 {
 	$route_name = \Drupal::routeMatch()->getRouteName();
 
-	if ($route_name === 'view.patrocinadores.page_1') {
+	$allowed_routes = [
+		'view.patrocinadores.page_1',
+		'view.proveedores.page_1',
+		'view.asociados.page_1',
+		'view.residentes.page_1',
+		'view.empleados.page_1',
+	];
+
+	if (in_array($route_name, $allowed_routes, TRUE)) {
 		$attachments['#attached']['library'][] = 'asocolderma_data_core/export_actions';
 	}
 }
