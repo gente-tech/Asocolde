@@ -47,21 +47,21 @@
 		if (pathname.includes('/asociados')) {
 			return {
 				tableKey: 'asociados',
-				exportUrl: null
+				exportUrl: '/admin/asocolderma/asociados/export/excel'
 			};
 		}
 
 		if (pathname.includes('/residentes')) {
 			return {
 				tableKey: 'residentes',
-				exportUrl: null
+				exportUrl: '/admin/asocolderma/residentes/export/excel'
 			};
 		}
 
 		if (pathname.includes('/empleados')) {
 			return {
 				tableKey: 'empleados',
-				exportUrl: null
+				exportUrl: '/admin/asocolderma/empleados/export/excel'
 			};
 		}
 

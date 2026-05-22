@@ -44,3 +44,24 @@ asocolderma_data_core.proveedores_export_excel:
     _controller: '\Drupal\asocolderma_data_core\Controller\ProveedoresExportController::exportExcel'
   requirements:
     _permission: 'import data in asocolderma data core'
+
+asocolderma_data_core.asociados_export_excel:
+  path: '/admin/asocolderma/asociados/export/excel'
+  defaults:
+    _controller: '\Drupal\asocolderma_data_core\Controller\AsociadosExportController::exportExcel'
+  requirements:
+    _permission: 'import data in asocolderma data core'
+
+asocolderma_data_core.residentes_export_excel:
+  path: '/admin/asocolderma/residentes/export/excel'
+  defaults:
+    _controller: '\Drupal\asocolderma_data_core\Controller\ResidentesExportController::exportExcel'
+  requirements:
+    _permission: 'import data in asocolderma data core'
+
+asocolderma_data_core.empleados_export_excel:
+  path: '/admin/asocolderma/empleados/export/excel'
+  defaults:
+    _controller: '\Drupal\asocolderma_data_core\Controller\EmpleadosExportController::exportExcel'
+  requirements:
+    _permission: 'import data in asocolderma data core'
