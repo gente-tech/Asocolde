@@ -24,3 +24,10 @@ services:
       - '@config.factory'
       - '@logger.factory'
       - '@database'
+  
+  enterprise_integrations.twilio_whatsapp:
+    class: Drupal\enterprise_integrations\Service\TwilioWhatsAppService
+    arguments:
+      - '@http_client'
+      - '@config.factory'
+      - '@logger.channel.enterprise_integrations'
