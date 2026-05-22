@@ -50,7 +50,7 @@ final class TwilioTestController extends ControllerBase
 		try {
 			$result = $this->twilioWhatsApp->sendTemplateByKey(
 				'twilio_template_1',
-				'+573016517493',
+				'+573215574712',
 				[
 					'1' => 'Virgilio Manuel',
 					'2' => 'SOL-2026-001',
