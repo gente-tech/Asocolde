@@ -125,6 +125,16 @@ class PatrocinadoresExportController extends ControllerBase
 			'ajax_page_state',
 		];
 
+		$ignored_values = [
+			'all',
+			'todos',
+			'todas',
+			'- any -',
+			'any',
+			'_none',
+			'none',
+		];
+
 		$filters = [];
 
 		foreach ($query_params as $key => $value) {
@@ -143,6 +153,10 @@ class PatrocinadoresExportController extends ControllerBase
 			$value = trim((string) $value);
 
 			if ($value === '') {
+				continue;
+			}
+
+			if (in_array(mb_strtolower($value), $ignored_values, TRUE)) {
 				continue;
 			}
 
