@@ -25,6 +25,9 @@ services:
       - '@logger.factory'
       - '@database'
   
+  enterprise_integrations.token_resolver:
+    class: Drupal\enterprise_integrations\Service\TokenResolver
+
   enterprise_integrations.twilio_whatsapp:
     class: Drupal\enterprise_integrations\Service\TwilioWhatsAppService
     arguments:

@@ -77,8 +77,10 @@ class MandrillSettingsForm extends ConfigFormBase
       $group_default = $saved_groups[$i] ?? [
         'key' => '',
         'mandrill_template_slug' => '',
+        'subject' => '',
         'send_copy' => FALSE,
         'copy_template_slug' => '',
+        'copy_subject' => '',
         'copy_emails' => [],
       ];
 
@@ -97,6 +99,13 @@ class MandrillSettingsForm extends ConfigFormBase
         '#required' => TRUE,
       ];
 
+      $form['mandrill']['message_groups_wrapper']['message_groups'][$i]['subject'] = [
+        '#type' => 'textfield',
+        '#title' => $this->t('Asunto del correo'),
+        '#description' => $this->t('Puedes usar variables dinámicas como [programa], [nombre_usuario], [nombre], [apellido], [email].'),
+        '#default_value' => $group_default['subject'] ?? '',
+      ];
+
       $form['mandrill']['message_groups_wrapper']['message_groups'][$i]['send_copy'] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Enviar copia'),
@@ -108,6 +117,18 @@ class MandrillSettingsForm extends ConfigFormBase
         '#title' => $this->t('Slug de plantilla Mandrill para copia'),
         '#description' => $this->t('Nombre exacto de la plantilla Mandrill que se usará para el correo de copia interna.'),
         '#default_value' => $group_default['copy_template_slug'] ?? '',
+        '#states' => [
+          'visible' => [
+            ':input[name="message_groups[' . $i . '][send_copy]"]' => ['checked' => TRUE],
+          ],
+        ],
+      ];
+
+      $form['mandrill']['message_groups_wrapper']['message_groups'][$i]['copy_subject'] = [
+        '#type' => 'textfield',
+        '#title' => $this->t('Asunto del correo de copia'),
+        '#description' => $this->t('Puedes usar variables dinámicas como [programa], [nombre_usuario], [nombre], [apellido], [email].'),
+        '#default_value' => $group_default['copy_subject'] ?? '',
         '#states' => [
           'visible' => [
             ':input[name="message_groups[' . $i . '][send_copy]"]' => ['checked' => TRUE],
@@ -179,6 +200,11 @@ class MandrillSettingsForm extends ConfigFormBase
     $values[] = [
       'key' => 'mail_text_' . $new_id,
       'mandrill_template_slug' => '',
+      'subject' => '',
+      'send_copy' => FALSE,
+      'copy_template_slug' => '',
+      'copy_subject' => '',
+      'copy_emails' => [],
     ];
 
     $form_state->setValue('message_groups', $values);
@@ -225,6 +251,8 @@ class MandrillSettingsForm extends ConfigFormBase
 
       $template_slug = trim((string) ($group['mandrill_template_slug'] ?? ''));
       $key = trim((string) ($group['key'] ?? ''));
+      $subject = trim((string) ($group['subject'] ?? ''));
+      $copy_subject = trim((string) ($group['copy_subject'] ?? ''));
 
       if ($template_slug === '') {
         continue;
@@ -252,8 +280,10 @@ class MandrillSettingsForm extends ConfigFormBase
       $clean_groups[] = [
         'key' => $key,
         'mandrill_template_slug' => $template_slug,
+        'subject' => $subject,
         'send_copy' => !empty($group['send_copy']),
         'copy_template_slug' => trim((string) ($group['copy_template_slug'] ?? '')),
+        'copy_subject' => $copy_subject,
         'copy_emails' => $copy_emails,
       ];
     }
