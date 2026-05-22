@@ -22,11 +22,6 @@ class DataBulkActionController extends ControllerBase
 	protected Connection $database;
 
 	/**
-	 * Current user.
-	 */
-	protected AccountProxyInterface $currentUser;
-
-	/**
 	 * Record action logger.
 	 */
 	protected RecordActionLogger $recordActionLogger;
