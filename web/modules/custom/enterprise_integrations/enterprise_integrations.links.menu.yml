@@ -32,3 +32,17 @@ enterprise_integrations.hubspot_settings:
   route_name: enterprise_integrations.hubspot_settings
   parent: enterprise_integrations.integraciones
   weight: 200
+
+enterprise_integrations.twilio:
+  title: 'Twilio'
+  description: 'Configuración de integración con Twilio'
+  route_name: enterprise_integrations.twilio
+  parent: enterprise_integrations.integraciones
+  weight: 300
+
+enterprise_integrations.twilio_templates_settings:
+  title: 'Templates'
+  description: 'Configuración de plantillas de Twilio'
+  route_name: enterprise_integrations.twilio_templates_settings
+  parent: enterprise_integrations.twilio
+  weight: 10

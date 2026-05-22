@@ -69,3 +69,19 @@ enterprise_integrations.zoho_sign_request_status_test:
     _title: 'Request Status Test Zoho Sign'
   requirements:
     _permission: 'administer site configuration'
+
+enterprise_integrations.twilio:
+  path: '/admin/config/asocolderma/integraciones/twilio'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Twilio'
+  requirements:
+    _permission: 'administer site configuration'
+
+enterprise_integrations.twilio_templates_settings:
+  path: '/admin/config/asocolderma/integraciones/twilio/templates'
+  defaults:
+    _form: '\Drupal\enterprise_integrations\Form\TwilioTemplatesSettingsForm'
+    _title: 'Twilio Templates'
+  requirements:
+    _permission: 'administer site configuration'
