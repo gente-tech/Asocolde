@@ -25,6 +25,8 @@ function asocolderma_data_core_views_data()
 		'asocolderma_import_residentes' => 'Residentes',
 		'asocolderma_import_proveedores' => 'Proveedores',
 		'asocolderma_import_empleados' => 'Empleados',
+		'asocolderma_record_action_log' => 'Auditoría acciones de registros',
+		'asocolderma_export_log' => 'Auditoría exportaciones',
 	];
 
 	foreach ($tables as $table_name => $label) {
@@ -132,5 +134,28 @@ function asocolderma_data_core_views_sort_type($type)
  */
 function asocolderma_data_core_views_human_label($field_name)
 {
-	return ucwords(str_replace('_', ' ', $field_name));
+	$labels = [
+		'id' => 'ID',
+		'action' => 'Acción',
+		'table_name' => 'Tabla',
+		'record_id' => 'ID registro',
+		'identifier_type' => 'Tipo identificación',
+		'identifier_value' => 'Identificación',
+		'record_label' => 'Nombre / Razón social',
+		'record_summary' => 'Registro',
+		'uid' => 'ID usuario',
+		'username' => 'Usuario',
+		'ip_address' => 'IP',
+		'request_uri' => 'Ruta',
+		'created' => 'Fecha',
+		'notes' => 'Detalle',
+		'module_key' => 'Módulo',
+		'export_type' => 'Tipo exportación',
+		'export_scope' => 'Alcance',
+		'record_count' => 'Cantidad registros',
+		'filters_applied' => 'Filtros aplicados',
+		'export_filename' => 'Archivo exportado',
+	];
+
+	return $labels[$field_name] ?? ucwords(str_replace('_', ' ', $field_name));
 }
