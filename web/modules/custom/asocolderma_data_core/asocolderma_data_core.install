@@ -1242,6 +1242,99 @@ function asocolderma_data_core_schema()
 		],
 	];
 
+	$schema['asocolderma_export_log'] = [
+		'description' => 'Stores export logs for AsoColDerma institutional data.',
+		'fields' => [
+			'id' => [
+				'description' => 'Primary key of the export log.',
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'module_key' => [
+				'description' => 'Functional module exported, for example patrocinadores.',
+				'type' => 'varchar',
+				'length' => 50,
+				'not null' => TRUE,
+			],
+			'export_type' => [
+				'description' => 'Export format, for example excel.',
+				'type' => 'varchar',
+				'length' => 30,
+				'not null' => TRUE,
+			],
+			'export_scope' => [
+				'description' => 'Export scope: selected, filtered or all.',
+				'type' => 'varchar',
+				'length' => 30,
+				'not null' => TRUE,
+			],
+			'record_count' => [
+				'description' => 'Number of exported records.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'filters_applied' => [
+				'description' => 'Human-readable filters applied at export time.',
+				'type' => 'text',
+				'size' => 'normal',
+				'not null' => FALSE,
+			],
+			'export_filename' => [
+				'description' => 'Generated export file name.',
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'uid' => [
+				'description' => 'Drupal user ID who executed the export.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'username' => [
+				'description' => 'Username snapshot at export time.',
+				'type' => 'varchar',
+				'length' => 150,
+				'not null' => FALSE,
+			],
+			'ip_address' => [
+				'description' => 'IP address from which the export was executed.',
+				'type' => 'varchar',
+				'length' => 45,
+				'not null' => FALSE,
+			],
+			'request_uri' => [
+				'description' => 'Request URI from which the export was executed.',
+				'type' => 'varchar',
+				'length' => 500,
+				'not null' => FALSE,
+			],
+			'created' => [
+				'description' => 'Unix timestamp when the export log was created.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'notes' => [
+				'description' => 'Simple description of the export performed.',
+				'type' => 'text',
+				'size' => 'normal',
+				'not null' => FALSE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'module_key' => ['module_key'],
+			'export_type' => ['export_type'],
+			'export_scope' => ['export_scope'],
+			'uid' => ['uid'],
+			'created' => ['created'],
+		],
+	];
+
 	return $schema;
 }
 
@@ -1517,5 +1610,18 @@ function asocolderma_data_core_update_10016()
 
 	if (!$schema->tableExists('asocolderma_record_action_log')) {
 		$schema->createTable('asocolderma_record_action_log', $module_schema['asocolderma_record_action_log']);
+	}
+}
+
+/**
+ * Create export log table.
+ */
+function asocolderma_data_core_update_10017()
+{
+	$schema = \Drupal::database()->schema();
+	$module_schema = asocolderma_data_core_schema();
+
+	if (!$schema->tableExists('asocolderma_export_log')) {
+		$schema->createTable('asocolderma_export_log', $module_schema['asocolderma_export_log']);
 	}
 }

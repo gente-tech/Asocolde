@@ -5,3 +5,10 @@ services:
       - '@database'
       - '@current_user'
       - '@request_stack'
+
+  asocolderma_data_core.export_logger:
+    class: Drupal\asocolderma_data_core\Service\ExportLogger
+    arguments:
+      - '@database'
+      - '@current_user'
+      - '@request_stack'
