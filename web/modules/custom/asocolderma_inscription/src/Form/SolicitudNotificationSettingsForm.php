@@ -257,13 +257,12 @@ final class SolicitudNotificationSettingsForm extends ConfigFormBase
 
 			$key = trim((string) ($template['key'] ?? ''));
 			$label = trim((string) ($template['label'] ?? ''));
-			$content_sid = trim((string) ($template['content_sid'] ?? ''));
 
-			if ($key === '' || $content_sid === '') {
+			if ($key === '') {
 				continue;
 			}
 
-			$option_label = $key . ' - ' . $content_sid;
+			$option_label = $key;
 
 			if ($label !== '') {
 				$option_label .= ' - ' . $label;
