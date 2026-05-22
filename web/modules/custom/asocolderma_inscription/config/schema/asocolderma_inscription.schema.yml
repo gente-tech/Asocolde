@@ -1,0 +1,58 @@
+asocolderma_inscription.notification_settings:
+  type: config_object
+  label: 'Asocolderma inscription notification settings'
+  mapping:
+    phases:
+      type: mapping
+      label: 'Notification phases'
+      mapping:
+        solicitud_creada:
+          type: asocolderma_inscription.notification_phase
+          label: 'Solicitud creada'
+        pendiente_aclaracion:
+          type: asocolderma_inscription.notification_phase
+          label: 'Pendiente aclaración'
+        aprobada_secretaria:
+          type: asocolderma_inscription.notification_phase
+          label: 'Aprobada por Secretaría General'
+        rechazada_secretaria:
+          type: asocolderma_inscription.notification_phase
+          label: 'Rechazada por Secretaría General'
+        aprobada_junta_directiva:
+          type: asocolderma_inscription.notification_phase
+          label: 'Aprobada por Junta Directiva'
+        rechazada_junta_directiva:
+          type: asocolderma_inscription.notification_phase
+          label: 'Rechazada por Junta Directiva'
+        aprobada_asamblea_general:
+          type: asocolderma_inscription.notification_phase
+          label: 'Aprobada por Asamblea General'
+        rechazada_asamblea_general:
+          type: asocolderma_inscription.notification_phase
+          label: 'Rechazada por Asamblea General'
+        pendiente_pago_ingreso:
+          type: asocolderma_inscription.notification_phase
+          label: 'Pendiente pago de ingreso'
+        pendiente_firma_documentos:
+          type: asocolderma_inscription.notification_phase
+          label: 'Pendiente firma de documentos'
+        documentos_firmados:
+          type: asocolderma_inscription.notification_phase
+          label: 'Documentos firmados'
+        miembro_activo:
+          type: asocolderma_inscription.notification_phase
+          label: 'Miembro activo'
+
+asocolderma_inscription.notification_phase:
+  type: mapping
+  label: 'Notification phase'
+  mapping:
+    label:
+      type: label
+      label: 'Label'
+    mandrill_template_key:
+      type: string
+      label: 'Mandrill template key'
+    twilio_template_key:
+      type: string
+      label: 'Twilio template key'

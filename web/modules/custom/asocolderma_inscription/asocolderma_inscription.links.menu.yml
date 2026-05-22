@@ -9,3 +9,17 @@ asocolderma_inscription.sg_list:
   parent: system.admin_content
   route_name: asocolderma_inscription.sg_list
   weight: 20
+
+asocolderma_inscription.usuarios_nuevos:
+  title: 'Usuarios nuevos'
+  description: 'Configuración y gestión del flujo de nuevos aspirantes.'
+  route_name: asocolderma_inscription.usuarios_nuevos
+  parent: enterprise_integrations.asocolderma
+  weight: 20
+
+asocolderma_inscription.notification_settings:
+  title: 'Configuración de notificaciones'
+  description: 'Configuración de plantillas Mandrill y Twilio por fase de solicitud.'
+  route_name: asocolderma_inscription.notification_settings
+  parent: asocolderma_inscription.usuarios_nuevos
+  weight: 10

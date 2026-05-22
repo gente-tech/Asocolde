@@ -124,3 +124,19 @@ asocolderma_inscription.solicitud_signed_document:
     parameters:
       node:
         type: entity:node
+
+asocolderma_inscription.usuarios_nuevos:
+  path: '/admin/config/asocolderma/usuarios-nuevos'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Usuarios nuevos'
+  requirements:
+    _permission: 'administer site configuration'
+
+asocolderma_inscription.notification_settings:
+  path: '/admin/config/asocolderma/usuarios-nuevos/notificaciones'
+  defaults:
+    _form: '\Drupal\asocolderma_inscription\Form\SolicitudNotificationSettingsForm'
+    _title: 'Configuración de notificaciones'
+  requirements:
+    _permission: 'administer site configuration'
