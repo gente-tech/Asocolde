@@ -1,4 +1,8 @@
 services:
+  logger.channel.asocolderma_inscription:
+    parent: logger.channel_base
+    arguments: ['asocolderma_inscription']
+
   asocolderma_inscription.solicitud_id_generator:
     class: Drupal\asocolderma_inscription\Service\SolicitudIdGenerator
     arguments: ["@entity_type.manager", "@lock", "@datetime.time"]
@@ -29,3 +33,11 @@ services:
       - "@asocolderma_inscription.solicitud_historial_logger"
       - "@entity_type.manager"
       - "@enterprise_integrations.zoho_sign"
+  
+  asocolderma_inscription.solicitud_notification_manager:
+    class: Drupal\asocolderma_inscription\Service\SolicitudNotificationManager
+    arguments:
+      - '@config.factory'
+      - '@enterprise_integrations.mandrill'
+      - '@enterprise_integrations.twilio_whatsapp'
+      - '@logger.channel.asocolderma_inscription'
