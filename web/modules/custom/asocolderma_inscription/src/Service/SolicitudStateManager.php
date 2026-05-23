@@ -7,6 +7,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\node\NodeInterface;
 use Drupal\enterprise_integrations\Service\ZohoSignService;
+use Drupal\asocolderma_inscription\Service\SolicitudNotificationManager;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 final class SolicitudStateManager
@@ -18,6 +19,7 @@ final class SolicitudStateManager
     private readonly SolicitudHistorialLogger $logger,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly ZohoSignService $zohoSignService,
+    private readonly SolicitudNotificationManager $notificationManager,
   ) {}
 
   public function transitionByTid(
@@ -58,6 +60,7 @@ final class SolicitudStateManager
       );
 
       $this->handlePostTransitionActions($node, $from_name, $to_name);
+      $this->handlePostTransitionNotifications($node, $from_name, $to_name, $origin, $comment, $metadata);
     } catch (\Throwable $e) {
       $tx->rollBack();
       throw $e;
@@ -178,5 +181,120 @@ final class SolicitudStateManager
 
     $term = $this->entityTypeManager->getStorage('taxonomy_term')->load($tid);
     return $term ? (string) $term->getName() : NULL;
+  }
+
+  /**
+   * Sends configured notifications after a state transition.
+   */
+  private function handlePostTransitionNotifications(
+    NodeInterface $node,
+    ?string $from_name,
+    ?string $to_name,
+    string $origin,
+    string $comment,
+    array $metadata,
+  ): void {
+    $phase_key = $this->resolveNotificationPhaseKey($from_name, $to_name);
+
+    if ($phase_key === NULL) {
+      return;
+    }
+
+    try {
+      $this->notificationManager->sendForPhase($node, $phase_key, [
+        'from_state' => $from_name,
+        'to_state' => $to_name,
+        'origin' => $origin,
+        'comment' => $comment,
+        'metadata' => $metadata,
+      ]);
+    } catch (\Throwable $e) {
+      \Drupal::logger('asocolderma_inscription')->error(
+        'Error ejecutando notificaciones para solicitud @nid en fase @phase: @message',
+        [
+          '@nid' => $node->id(),
+          '@phase' => $phase_key,
+          '@message' => $e->getMessage(),
+        ]
+      );
+    }
+  }
+
+  /**
+   * Resolves the notification phase key from the target state label.
+   */
+  private function resolveNotificationPhaseKey(?string $from_name, ?string $to_name): ?string
+  {
+    $normalized_to = $this->normalizeStateName($to_name);
+
+    return match ($normalized_to) {
+      'en tramite' => 'solicitud_creada',
+      'pendiente aclaracion' => 'pendiente_aclaracion',
+
+      'aprobado',
+      'aprobada',
+      'aprobado secretaria',
+      'aprobada secretaria',
+      'aprobado secretaria general',
+      'aprobada secretaria general' => 'aprobada_secretaria',
+
+      'rechazado',
+      'rechazada' => 'rechazada_secretaria',
+
+      'aprobado junta d',
+      'aprobada junta d',
+      'aprobado junta directiva',
+      'aprobada junta directiva' => 'aprobada_junta_directiva',
+
+      'rechazado junta d',
+      'rechazada junta d',
+      'rechazado junta directiva',
+      'rechazada junta directiva' => 'rechazada_junta_directiva',
+
+      'aprobado asamblea g',
+      'aprobada asamblea g',
+      'aprobado asamblea general',
+      'aprobada asamblea general' => 'aprobada_asamblea_general',
+
+      'rechazado asamblea g',
+      'rechazada asamblea g',
+      'rechazado asamblea general',
+      'rechazada asamblea general' => 'rechazada_asamblea_general',
+
+      'pendiente pago de ingreso',
+      'pago de ingreso pendiente' => 'pendiente_pago_ingreso',
+
+      'pendiente firma de documentos' => 'pendiente_firma_documentos',
+
+      'documentos firmados' => 'documentos_firmados',
+
+      'miembro activo',
+      'documentos firmados miembro activo' => 'miembro_activo',
+
+      default => NULL,
+    };
+  }
+
+  /**
+   * Normalizes state labels for stable comparison.
+   */
+  private function normalizeStateName(?string $value): string
+  {
+    $value = trim((string) $value);
+
+    if ($value === '') {
+      return '';
+    }
+
+    $value = mb_strtolower($value, 'UTF-8');
+
+    $search = ['á', 'é', 'í', 'ó', 'ú', 'ü', 'ñ'];
+    $replace = ['a', 'e', 'i', 'o', 'u', 'u', 'n'];
+    $value = str_replace($search, $replace, $value);
+
+    $value = str_replace(['.', ',', ';', ':'], '', $value);
+    $value = preg_replace('/\s+/', ' ', $value);
+
+    return trim((string) $value);
   }
 }
