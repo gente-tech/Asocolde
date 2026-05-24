@@ -1,0 +1,11 @@
+.iti {
+	width: 100%;
+}
+
+.iti input[type="tel"] {
+	width: 100%;
+}
+
+.asocolderma-phone-hidden {
+	display: none;
+}

@@ -93,6 +93,8 @@ final class SolicitudIngresoWizardForm extends FormBase
 
     $form['#tree'] = TRUE;
 
+    $form['#attached']['library'][] = 'asocolderma_inscription/intl_phone_field';
+
     $form['step_title'] = [
       '#type' => 'item',
       '#title' => $this->t('Paso @step de 5', ['@step' => $step]),
@@ -253,12 +255,34 @@ final class SolicitudIngresoWizardForm extends FormBase
         '#default_value' => $wizard_values['contacto']['email'] ?? '',
       ];
 
+      $form['contacto']['celular_indicativo'] = [
+        '#type' => 'hidden',
+        '#default_value' => $wizard_values['contacto']['celular_indicativo'] ?? '+57',
+        '#attributes' => [
+          'id' => 'edit-contacto-celular-indicativo',
+        ],
+      ];
+
+      $form['contacto']['celular_full'] = [
+        '#type' => 'hidden',
+        '#default_value' => $wizard_values['contacto']['celular_full'] ?? $wizard_values['contacto']['celular'] ?? '',
+        '#attributes' => [
+          'id' => 'edit-contacto-celular-full',
+        ],
+      ];
+
       $form['contacto']['celular'] = [
-        '#type' => 'textfield',
+        '#type' => 'tel',
         '#title' => $this->t('Teléfono celular de contacto'),
-        '#description' => $this->t('Ingrese un número de celular activo para contacto y notificaciones. Ejemplo: 1001234567.'),
+        '#description' => $this->t('Seleccione el indicativo del país e ingrese únicamente el número celular nacional. Ejemplo para Colombia: 3001234567.'),
         '#required' => TRUE,
-        '#default_value' => $wizard_values['contacto']['celular'] ?? '',
+        '#default_value' => $wizard_values['contacto']['celular_nacional'] ?? '',
+        '#attributes' => [
+          'class' => ['asocolderma-intl-phone'],
+          'data-indicativo-target' => '#edit-contacto-celular-indicativo',
+          'data-full-phone-target' => '#edit-contacto-celular-full',
+          'autocomplete' => 'tel-national',
+        ],
       ];
 
       $form['contacto']['correspondencia_fisica'] = [
@@ -589,11 +613,22 @@ final class SolicitudIngresoWizardForm extends FormBase
     }
 
     if ($step === 2) {
+      $celular_indicativo = trim((string) ($input['contacto']['celular_indicativo'] ?? '+57'));
+      $celular_nacional = preg_replace('/\D+/', '', (string) ($input['contacto']['celular'] ?? ''));
+      $celular_full = trim((string) ($input['contacto']['celular_full'] ?? ''));
+
+      if ($celular_full === '' && $celular_nacional !== '') {
+        $celular_full = $celular_indicativo . $celular_nacional;
+      }
+
       $wizard_values['contacto'] = [
         'direccion' => $input['contacto']['direccion'] ?? '',
         'correspondencia_fisica' => $input['contacto']['correspondencia_fisica'] ?? '',
         'telefono' => $input['contacto']['telefono'] ?? '',
-        'celular' => $input['contacto']['celular'] ?? '',
+        'celular_indicativo' => $celular_indicativo,
+        'celular_nacional' => $celular_nacional,
+        'celular_full' => $celular_full,
+        'celular' => $celular_full,
         'email' => $input['contacto']['email'] ?? '',
       ];
     }
@@ -696,7 +731,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       'field_direccion_institucional' => $wizard_values['contacto']['direccion'] ?? '',
       'field_correspondencia_fisica' => $wizard_values['contacto']['correspondencia_fisica'] ?? '',
       'field_telefono' => $wizard_values['contacto']['telefono'],
-      'field_celular' => $wizard_values['contacto']['celular'],
+      'field_celular' => $wizard_values['contacto']['celular_full'] ?? $wizard_values['contacto']['celular'] ?? '',
       'field_email_principal' => $wizard_values['contacto']['email'],
 
       'field_universidad' => $wizard_values['profesional']['universidad'],
