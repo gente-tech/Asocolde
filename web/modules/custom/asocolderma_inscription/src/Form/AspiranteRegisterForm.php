@@ -143,7 +143,7 @@ class AspiranteRegisterForm extends FormBase
 				[
 					[
 						'name' => 'FNAME',
-						'content' => $nombre,
+						'content' => $activation_url,
 					],
 				]
 			);
