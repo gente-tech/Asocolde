@@ -4,6 +4,7 @@ namespace Drupal\asocolderma_inscription\Form;
 
 use Drupal\asocolderma_inscription\Service\SolicitudIdGenerator;
 use Drupal\asocolderma_inscription\Service\SolicitudManager;
+use Drupal\asocolderma_inscription\Service\SolicitudNotificationManager;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -26,6 +27,11 @@ final class SolicitudIngresoWizardForm extends FormBase
   private function getIdGenerator(): SolicitudIdGenerator
   {
     return \Drupal::service('asocolderma_inscription.solicitud_id_generator');
+  }
+
+  private function getNotificationManager(): SolicitudNotificationManager
+  {
+    return \Drupal::service('asocolderma_inscription.solicitud_notification_manager');
   }
 
   /**
@@ -739,6 +745,22 @@ final class SolicitudIngresoWizardForm extends FormBase
     }
 
     $node->save();
+
+    try {
+      $this->getNotificationManager()->sendForPhase($node, 'solicitud_creada', [
+        'subject' => 'Solicitud de ingreso creada - ' . $id_solicitud,
+        'origin' => 'aspirante_wizard',
+        'solicitud_id' => $id_solicitud,
+      ]);
+    } catch (\Throwable $e) {
+      \Drupal::logger('asocolderma_inscription')->error(
+        'Error enviando notificación de solicitud creada para la solicitud @id: @message',
+        [
+          '@id' => $id_solicitud,
+          '@message' => $e->getMessage(),
+        ]
+      );
+    }
 
     // Limpieza draft.
     $this->getTempStore()->delete(self::TEMPSTORE_KEY);
