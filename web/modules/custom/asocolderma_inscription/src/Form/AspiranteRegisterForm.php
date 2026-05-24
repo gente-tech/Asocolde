@@ -129,20 +129,35 @@ class AspiranteRegisterForm extends FormBase
 				throw new \RuntimeException('La configuración mail_text_1 no tiene slug de plantilla Mandrill.');
 			}
 
-			$programa = "Curso creado por Virgilio";
-			$nombre = "Virgilio Manuel Padilla Ruiz";
-			$correo_v = "jajja_vpadillar8@gmail.com";
+			$subject_tokens = [
+				'email' => $mail,
+				'correo' => $mail,
+				'tipo_usuario' => 'aspirante',
+			];
+
+			$subject_resolver = \Drupal::service('enterprise_integrations.token_resolver');
+
+			$subject_config = trim((string) ($config_email['subject'] ?? ''));
+			if ($subject_config === '') {
+				$subject_config = 'Active su cuenta de aspirante Asocolderma';
+			}
+
+			$subject = $subject_resolver->replace($subject_config, $subject_tokens);
 
 			$result = $this->mandrillService->sendTemplate(
 				$template_slug,
 				[
-					'subject' => 'Preinscripción programa ' . $programa,
+					'subject' => $subject,
 					'to_email' => $mail,
-					'to_name' => $nombre,
+					'to_name' => $mail,
 				],
 				[
 					[
-						'name' => 'FNAME',
+						'name' => 'EMAIL',
+						'content' => $mail,
+					],
+					[
+						'name' => 'ACTIVATION_URL',
 						'content' => $activation_url,
 					],
 				]
@@ -159,7 +174,7 @@ class AspiranteRegisterForm extends FormBase
 			}
 
 			$this->logger->info(
-				'Correo de preinscripción enviado a @mail usando plantilla @template.',
+				'Correo de activación de cuenta enviado a @mail usando plantilla @template.',
 				[
 					'@mail' => $mail,
 					'@template' => $template_slug,
@@ -172,6 +187,19 @@ class AspiranteRegisterForm extends FormBase
 				!empty($config_email['copy_emails']) &&
 				is_array($config_email['copy_emails'])
 			) {
+				$copy_template_slug = trim((string) $config_email['copy_template_slug']);
+
+				$copy_subject_tokens = [
+					'email' => $mail,
+				];
+
+				$copy_subject_config = trim((string) ($config_email['copy_subject'] ?? ''));
+				if ($copy_subject_config === '') {
+					$copy_subject_config = 'Nuevo registro de aspirante Asocolderma - [email]';
+				}
+
+				$copy_subject = $subject_resolver->replace($copy_subject_config, $copy_subject_tokens);
+
 				foreach ($config_email['copy_emails'] as $copy_email) {
 					$copy_email = trim((string) $copy_email);
 
@@ -179,33 +207,33 @@ class AspiranteRegisterForm extends FormBase
 						continue;
 					}
 
-					$this->mandrillService->sendTemplate(
-						$config_email['copy_template_slug'],
+					$copy_result = $this->mandrillService->sendTemplate(
+						$copy_template_slug,
 						[
-							'subject' => 'Copia interna preinscripción programa ' . $programa,
+							'subject' => $copy_subject,
 							'to_email' => $copy_email,
-							'to_name' => 'Destino interno',
 						],
 						[
 							[
-								'name' => 'FNAME',
-								'content' => $nombre,
-							],
-							[
-								'name' => 'FPROGRAMA',
-								'content' => $programa,
-							],
-							[
-								'name' => 'FEMAIL',
-								'content' => $correo_v,
+								'name' => 'EMAIL',
+								'content' => $mail,
 							],
 						]
 					);
+
+					if (empty($copy_result['success'])) {
+						$this->logger->warning(
+							'Mandrill no confirmó el envío de copia interna de registro de aspirante a @mail.',
+							[
+								'@mail' => $copy_email,
+							]
+						);
+					}
 				}
 			}
 		} catch (\Throwable $e) {
 			$this->logger->error(
-				'Error enviando correo de preinscripción a @mail: @error',
+				'Error enviando correo de activación de cuenta a @mail: @error',
 				[
 					'@mail' => $mail,
 					'@error' => $e->getMessage(),
