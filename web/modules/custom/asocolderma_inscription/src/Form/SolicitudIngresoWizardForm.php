@@ -522,6 +522,7 @@ final class SolicitudIngresoWizardForm extends FormBase
     if ($step > 1) {
       $form['actions']['back'] = [
         '#type' => 'submit',
+        '#name' => 'back',
         '#value' => $this->t('Atrás'),
         '#submit' => ['::backSubmit'],
         '#limit_validation_errors' => [],
@@ -537,6 +538,7 @@ final class SolicitudIngresoWizardForm extends FormBase
 
       $form['actions']['save_exit'] = [
         '#type' => 'submit',
+        '#name' => 'save_exit',
         '#value' => $this->t('Guardar y salir'),
         '#submit' => ['::saveExitSubmit'],
         '#limit_validation_errors' => [],
@@ -574,6 +576,73 @@ final class SolicitudIngresoWizardForm extends FormBase
     $this->persistWizardValues($form_state);
     $this->messenger()->addStatus($this->t('Borrador guardado. Puedes continuar luego.'));
     $form_state->setRedirect('asocolderma_inscription.user_zone_requests');
+  }
+
+  public function validateForm(array &$form, FormStateInterface $form_state): void
+  {
+    $step = (int) $form_state->get('step');
+    $trigger = $form_state->getTriggeringElement();
+    $trigger_name = $trigger['#name'] ?? '';
+
+    // No validar el celular cuando el usuario va hacia atrás o guarda y sale.
+    if (in_array($trigger_name, ['back', 'save_exit'], TRUE)) {
+      return;
+    }
+
+    // Validación específica del paso 2: Información de contacto.
+    if ($step !== 2) {
+      return;
+    }
+
+    $values = (array) $form_state->getValues();
+    $contacto = (array) ($values['contacto'] ?? []);
+
+    $indicativo = trim((string) ($contacto['celular_indicativo'] ?? ''));
+    $celular_nacional = preg_replace('/\D+/', '', (string) ($contacto['celular'] ?? ''));
+    $celular_full = trim((string) ($contacto['celular_full'] ?? ''));
+
+    if ($indicativo === '') {
+      $form_state->setErrorByName(
+        'contacto][celular',
+        $this->t('Debe seleccionar el indicativo del país para el teléfono celular.')
+      );
+      return;
+    }
+
+    if (!preg_match('/^\+\d{1,4}$/', $indicativo)) {
+      $form_state->setErrorByName(
+        'contacto][celular',
+        $this->t('El indicativo del teléfono celular no tiene un formato válido.')
+      );
+      return;
+    }
+
+    if ($celular_nacional === '') {
+      $form_state->setErrorByName(
+        'contacto][celular',
+        $this->t('Debe ingresar el número celular.')
+      );
+      return;
+    }
+
+    if (strlen($celular_nacional) < 6 || strlen($celular_nacional) > 15) {
+      $form_state->setErrorByName(
+        'contacto][celular',
+        $this->t('El número celular debe tener entre 6 y 15 dígitos.')
+      );
+      return;
+    }
+
+    if ($celular_full === '') {
+      $celular_full = $indicativo . $celular_nacional;
+    }
+
+    if (!preg_match('/^\+\d{7,18}$/', $celular_full)) {
+      $form_state->setErrorByName(
+        'contacto][celular',
+        $this->t('El teléfono celular completo no tiene un formato internacional válido.')
+      );
+    }
   }
 
   /**
