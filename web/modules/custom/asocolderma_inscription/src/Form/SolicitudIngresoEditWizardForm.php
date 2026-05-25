@@ -4,36 +4,680 @@ namespace Drupal\asocolderma_inscription\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\asocolderma_inscription\Entity\SolicitudIngreso;
+use Drupal\node\NodeInterface;
 
-final class SolicitudIngresoEditWizardForm extends FormBase {
+/**
+ * Formulario de edición de solicitud por aclaración para aspirantes.
+ */
+final class SolicitudIngresoEditWizardForm extends FormBase
+{
 
-  public function getFormId(): string {
+  public function getFormId(): string
+  {
     return 'asocolderma_solicitud_ingreso_edit_wizard';
   }
 
-  public function buildForm(array $form, FormStateInterface $form_state, SolicitudIngreso $solicitud_ingreso = NULL): array {
-    if (!$solicitud_ingreso) {
-      return ['#markup' => $this->t('Solicitud no encontrada.')];
+  public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $node = NULL): array
+  {
+    if (!$node || $node->bundle() !== 'solicitud_ingreso') {
+      return [
+        '#markup' => $this->t('Solicitud no encontrada.'),
+      ];
     }
 
-    if ((int) $solicitud_ingreso->getOwnerId() !== (int) $this->currentUser()->id()) {
-      return ['#markup' => $this->t('No tienes acceso a esta solicitud.')];
-    }
+    $form_state->set('solicitud_node', $node);
 
-    if ((string) $solicitud_ingreso->get('state')->value !== 'needs_clarification') {
-      return ['#markup' => $this->t('Esta solicitud no está en estado de aclaración; no es editable.')];
-    }
+    $form['#tree'] = TRUE;
+    $form['#attached']['library'][] = 'asocolderma_inscription/intl_phone_field';
 
-    $form['msg'] = [
-      '#markup' => $this->t('Edición por aclaración pendiente de implementar (mapeo de campos).'),
+    $form['intro'] = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['solicitud-aclaracion-intro'],
+      ],
+    ];
+
+    $form['intro']['title'] = [
+      '#markup' => '<h2>' . $this->t('Editar solicitud por aclaración') . '</h2>',
+    ];
+
+    $form['intro']['description'] = [
+      '#markup' => '<p>' . $this->t('Actualice únicamente la información requerida por la Asociación. Al guardar los cambios deberá marcar la opción “Ajustes realizados” para que la solicitud vuelva al flujo de revisión institucional.') . '</p>',
+    ];
+
+    $form['general'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Información general'),
+      '#open' => TRUE,
+    ];
+
+    $form['general']['tipo_asociado'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Tipo de asociado al que aspira'),
+      '#required' => TRUE,
+      '#empty_option' => $this->t('- Seleccione -'),
+      '#options' => $this->getTaxonomyOptions('tipo_de_asociado'),
+      '#default_value' => $this->getTargetId($node, 'field_tipo_asociado'),
+    ];
+
+    $form['general']['nombre1'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Primer nombre'),
+      '#required' => TRUE,
+      '#default_value' => $this->getStringValue($node, 'field_nombre1'),
+    ];
+
+    $form['general']['nombre2'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Segundo nombre'),
+      '#default_value' => $this->getStringValue($node, 'field_nombre2'),
+    ];
+
+    $form['general']['apellido1'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Primer apellido'),
+      '#required' => TRUE,
+      '#default_value' => $this->getStringValue($node, 'field_apellido1'),
+    ];
+
+    $form['general']['apellido2'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Segundo apellido'),
+      '#default_value' => $this->getStringValue($node, 'field_apellido2'),
+    ];
+
+    $form['general']['fecha_nacimiento'] = [
+      '#type' => 'date',
+      '#title' => $this->t('Fecha de nacimiento'),
+      '#required' => TRUE,
+      '#default_value' => $this->getStringValue($node, 'field_fecha_nacimiento'),
+    ];
+
+    $form['general']['estado_civil'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Estado civil'),
+      '#required' => TRUE,
+      '#empty_option' => $this->t('- Seleccione -'),
+      '#options' => $this->getTaxonomyOptions('estado_civil'),
+      '#default_value' => $this->getTargetId($node, 'field_estado_civil'),
+    ];
+
+    $form['general']['sexo'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Sexo'),
+      '#required' => TRUE,
+      '#empty_option' => $this->t('- Seleccione -'),
+      '#options' => $this->getTaxonomyOptions('sexo'),
+      '#default_value' => $this->getTargetId($node, 'field_sexo'),
+    ];
+
+    $form['general']['tipo_documento'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Tipo de documento'),
+      '#required' => TRUE,
+      '#empty_option' => $this->t('- Seleccione -'),
+      '#options' => $this->getTaxonomyOptions('tipo_de_documento'),
+      '#default_value' => $this->getTargetId($node, 'field_tipo_documento'),
+    ];
+
+    $form['general']['numero_documento'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Número de documento'),
+      '#required' => TRUE,
+      '#default_value' => $this->getStringValue($node, 'field_numero_documento'),
+    ];
+
+    $form['general']['registro_medico'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Registro médico'),
+      '#required' => TRUE,
+      '#default_value' => $this->getStringValue($node, 'field_registro_medico'),
+    ];
+
+    $form['general']['pais'] = [
+      '#type' => 'select',
+      '#title' => $this->t('País'),
+      '#required' => TRUE,
+      '#empty_option' => $this->t('- Seleccione -'),
+      '#options' => $this->getTaxonomyOptions('country'),
+      '#default_value' => $this->getTargetId($node, 'field_pais'),
+    ];
+
+    $form['general']['departamento'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Departamento'),
+      '#required' => TRUE,
+      '#empty_option' => $this->t('- Seleccione -'),
+      '#options' => $this->getTaxonomyOptions('departametos'),
+      '#default_value' => $this->getTargetId($node, 'field_departamento'),
+    ];
+
+    $form['general']['ciudad_ejercicio'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Ciudad de ejercicio'),
+      '#required' => TRUE,
+      '#empty_option' => $this->t('- Seleccione -'),
+      '#options' => $this->getTaxonomyOptions('city'),
+      '#default_value' => $this->getTargetId($node, 'field_ciudad_ejercicio'),
+    ];
+
+    $phone = $this->splitPhone($this->getStringValue($node, 'field_celular'));
+
+    $form['contacto'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Información de contacto'),
+      '#open' => TRUE,
+    ];
+
+    $form['contacto']['direccion'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Dirección física principal'),
+      '#required' => TRUE,
+      '#default_value' => $this->getStringValue($node, 'field_correspondencia_fisica'),
+    ];
+
+    $form['contacto']['correspondencia_fisica'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Dirección institucional'),
+      '#required' => TRUE,
+      '#default_value' => $this->getStringValue($node, 'field_direccion_institucional'),
+    ];
+
+    $form['contacto']['email'] = [
+      '#type' => 'email',
+      '#title' => $this->t('Correo electrónico principal'),
+      '#required' => TRUE,
+      '#default_value' => $this->getStringValue($node, 'field_email_principal'),
+    ];
+
+    $form['contacto']['celular_indicativo'] = [
+      '#type' => 'hidden',
+      '#default_value' => $phone['indicativo'],
+      '#attributes' => [
+        'id' => 'edit-contacto-celular-indicativo',
+      ],
+    ];
+
+    $form['contacto']['celular_full'] = [
+      '#type' => 'hidden',
+      '#default_value' => $phone['full'],
+      '#attributes' => [
+        'id' => 'edit-contacto-celular-full',
+      ],
+    ];
+
+    $form['contacto']['celular'] = [
+      '#type' => 'tel',
+      '#title' => $this->t('Teléfono celular de contacto'),
+      '#required' => TRUE,
+      '#default_value' => $phone['national'],
+      '#attributes' => [
+        'class' => ['asocolderma-intl-phone'],
+        'data-indicativo-target' => '#edit-contacto-celular-indicativo',
+        'data-full-phone-target' => '#edit-contacto-celular-full',
+        'autocomplete' => 'tel-national',
+      ],
+    ];
+
+    $form['contacto']['lugar_correspondencia'] = [
+      '#type' => 'select',
+      '#title' => $this->t('En caso de ser ratificado ¿Dónde desea recibir la correspondencia física?'),
+      '#required' => TRUE,
+      '#empty_option' => $this->t('- Seleccione -'),
+      '#options' => $this->getTaxonomyOptions('lugar_de_correspondencia'),
+      '#default_value' => $this->getTargetId($node, 'field_lugar_correspondencia'),
+    ];
+
+    $form['profesional'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Información académica'),
+      '#open' => TRUE,
+    ];
+
+    $form['profesional']['facultad_pregrado'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Facultad de medicina – Pregrado'),
+      '#required' => TRUE,
+      '#empty_option' => $this->t('- Seleccione -'),
+      '#options' => $this->getTaxonomyOptions('university_undergraduate'),
+      '#default_value' => $this->getTargetId($node, 'field_facultad_pregrado'),
+    ];
+
+    $form['profesional']['pais_pregrado'] = [
+      '#type' => 'select',
+      '#title' => $this->t('País donde realizó el pregrado en medicina'),
+      '#required' => TRUE,
+      '#empty_option' => $this->t('- Seleccione -'),
+      '#options' => $this->getTaxonomyOptions('country'),
+      '#default_value' => $this->getTargetId($node, 'field_pais_pregrado'),
+    ];
+
+    $form['profesional']['titulo_universitario'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Título universitario'),
+      '#required' => TRUE,
+      '#empty_option' => $this->t('- Seleccione -'),
+      '#options' => $this->getTaxonomyOptions('university_degree'),
+      '#default_value' => $this->getTargetId($node, 'field_titulo_universitario'),
+    ];
+
+    $form['profesional']['universidad_residencia'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Universidad de residencia'),
+      '#required' => TRUE,
+      '#empty_option' => $this->t('- Seleccione -'),
+      '#options' => $this->getTaxonomyOptions('university_residence'),
+      '#default_value' => $this->getTargetId($node, 'field_universidad_residencia'),
+    ];
+
+    $form['profesional']['pais_residencia'] = [
+      '#type' => 'select',
+      '#title' => $this->t('País donde realizó la residencia'),
+      '#required' => TRUE,
+      '#empty_option' => $this->t('- Seleccione -'),
+      '#options' => $this->getTaxonomyOptions('country'),
+      '#default_value' => $this->getTargetId($node, 'field_pais_residencia'),
+    ];
+
+    $form['profesional']['recertificacion_camec'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Si es ratificado ¿le gustaría participar en el programa voluntario de Re-certificación médica en dermatología CAMEC?'),
+      '#default_value' => $this->getBooleanValue($node, 'field_recertificacion_camec'),
+    ];
+
+    $form['profesional']['tiene_subespecialidad'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('Tiene una Subespecialidad?'),
+      '#required' => TRUE,
+      '#options' => [
+        1 => $this->t('Sí'),
+        0 => $this->t('No'),
+      ],
+      '#default_value' => $this->getBooleanValue($node, 'field_tiene_subespecialidad'),
+    ];
+
+    $form['profesional']['subespecialidad_cual'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Subespecialidad'),
+      '#empty_option' => $this->t('- Seleccione -'),
+      '#options' => $this->getTaxonomyOptions('services_specialties'),
+      '#default_value' => $this->getTargetId($node, 'field_subespecialidad_cual'),
+      '#states' => [
+        'visible' => [
+          ':input[name="profesional[tiene_subespecialidad]"]' => ['value' => '1'],
+        ],
+        'required' => [
+          ':input[name="profesional[tiene_subespecialidad]"]' => ['value' => '1'],
+        ],
+      ],
+    ];
+
+    $form['adjuntos'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Información societaria / Adjuntos'),
+      '#open' => TRUE,
+    ];
+
+    $this->buildFileField($form, $node, 'adj_carta_1', 'field_adj_carta_1', 'Carta 1', 'private://solicitud_ingreso/carta_1/', 'pdf', TRUE);
+    $this->buildFileField($form, $node, 'adj_carta_2', 'field_adj_carta_2', 'Carta 2', 'private://solicitud_ingreso/carta_2/', 'pdf', TRUE);
+    $this->buildFileField($form, $node, 'adj_rut', 'field_adj_rut', 'RUT', 'private://solicitud_ingreso/rut/', 'pdf', TRUE);
+    $this->buildFileField($form, $node, 'adj_id', 'field_adj_id', 'Documento de identidad', 'private://solicitud_ingreso/id/', 'pdf jpg jpeg png', TRUE);
+    $this->buildFileField($form, $node, 'adj_carta_ingreso', 'field_adj_carta_ingreso', 'Carta de solicitud de ingreso', 'private://solicitud_ingreso/carta_ingreso/', 'pdf', TRUE);
+    $this->buildFileField($form, $node, 'adj_hv', 'field_adj_hv', 'Hoja de vida', 'private://solicitud_ingreso/hv/', 'pdf', TRUE);
+    $this->buildFileField($form, $node, 'adj_diploma_medico', 'field_adj_diploma_medico', 'Diploma médico', 'private://solicitud_ingreso/diploma_medico/', 'pdf', TRUE);
+    $this->buildFileField($form, $node, 'adj_diploma_dermatologo', 'field_adj_diploma_dermatologo', 'Diploma dermatólogo', 'private://solicitud_ingreso/diploma_dermatologo/', 'pdf', TRUE);
+    $this->buildFileField($form, $node, 'adj_rethus', 'field_adj_rethus', 'RETHUS', 'private://solicitud_ingreso/rethus/', 'pdf', TRUE);
+    $this->buildFileField($form, $node, 'adj_aut_verificacion', 'field_adj_aut_verificacion', 'Autorización de verificación', 'private://solicitud_ingreso/aut_verificacion/', 'pdf', TRUE);
+    $this->buildFileField($form, $node, 'adj_cert_publicacion', 'field_adj_cert_publicacion', 'Certificación de publicaciones', 'private://solicitud_ingreso/cert_publicacion/', 'pdf', FALSE);
+
+    $form['confirmacion'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Confirmación de ajustes'),
+      '#open' => TRUE,
+    ];
+
+    $form['confirmacion']['ajustes_realizados'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Ajustes realizados'),
+      '#description' => $this->t('Declaro que realicé los ajustes o aclaraciones solicitadas y autorizo que la solicitud vuelva al flujo de revisión institucional.'),
+      '#required' => TRUE,
+      '#default_value' => 0,
+    ];
+
+    $form['actions'] = [
+      '#type' => 'actions',
+    ];
+
+    $form['actions']['submit'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Guardar ajustes y reenviar solicitud'),
+      '#button_type' => 'primary',
+    ];
+
+    $form['actions']['cancel'] = [
+      '#type' => 'link',
+      '#title' => $this->t('Cancelar'),
+      '#url' => \Drupal\Core\Url::fromRoute('asocolderma_inscription.user_zone_requests'),
+      '#attributes' => [
+        'class' => ['button'],
+      ],
     ];
 
     return $form;
   }
 
-  public function submitForm(array &$form, FormStateInterface $form_state): void {
-    // No-op.
+  public function validateForm(array &$form, FormStateInterface $form_state): void
+  {
+    $values = (array) $form_state->getValues();
+
+    $contacto = (array) ($values['contacto'] ?? []);
+    $indicativo = trim((string) ($contacto['celular_indicativo'] ?? ''));
+    $celular_nacional = preg_replace('/\D+/', '', (string) ($contacto['celular'] ?? ''));
+    $celular_full = trim((string) ($contacto['celular_full'] ?? ''));
+
+    if ($indicativo === '') {
+      $form_state->setErrorByName('contacto][celular', $this->t('Debe seleccionar el indicativo del país para el teléfono celular.'));
+      return;
+    }
+
+    if (!preg_match('/^\+\d{1,4}$/', $indicativo)) {
+      $form_state->setErrorByName('contacto][celular', $this->t('El indicativo del teléfono celular no tiene un formato válido.'));
+      return;
+    }
+
+    if ($celular_nacional === '') {
+      $form_state->setErrorByName('contacto][celular', $this->t('Debe ingresar el número celular.'));
+      return;
+    }
+
+    if (strlen($celular_nacional) < 6 || strlen($celular_nacional) > 15) {
+      $form_state->setErrorByName('contacto][celular', $this->t('El número celular debe tener entre 6 y 15 dígitos.'));
+      return;
+    }
+
+    if ($celular_full === '') {
+      $celular_full = $indicativo . $celular_nacional;
+    }
+
+    if (!preg_match('/^\+\d{7,18}$/', $celular_full)) {
+      $form_state->setErrorByName('contacto][celular', $this->t('El teléfono celular completo no tiene un formato internacional válido.'));
+    }
+
+    $profesional = (array) ($values['profesional'] ?? []);
+    if ((int) ($profesional['tiene_subespecialidad'] ?? 0) === 1 && empty($profesional['subespecialidad_cual'])) {
+      $form_state->setErrorByName('profesional][subespecialidad_cual', $this->t('Debe seleccionar la subespecialidad.'));
+    }
+
+    $confirmacion = (array) ($values['confirmacion'] ?? []);
+    if (empty($confirmacion['ajustes_realizados'])) {
+      $form_state->setErrorByName('confirmacion][ajustes_realizados', $this->t('Debe marcar la opción Ajustes realizados para reenviar la solicitud.'));
+    }
   }
 
+  public function submitForm(array &$form, FormStateInterface $form_state): void
+  {
+    /** @var \Drupal\node\NodeInterface|null $node */
+    $node = $form_state->get('solicitud_node');
+
+    if (!$node || $node->bundle() !== 'solicitud_ingreso') {
+      $this->messenger()->addError($this->t('No fue posible actualizar la solicitud.'));
+      $form_state->setRedirect('asocolderma_inscription.user_zone_requests');
+      return;
+    }
+
+    $values = (array) $form_state->getValues();
+
+    $general = (array) ($values['general'] ?? []);
+    $contacto = (array) ($values['contacto'] ?? []);
+    $profesional = (array) ($values['profesional'] ?? []);
+    $adjuntos = (array) ($values['adjuntos'] ?? []);
+
+    $celular_indicativo = trim((string) ($contacto['celular_indicativo'] ?? '+57'));
+    $celular_nacional = preg_replace('/\D+/', '', (string) ($contacto['celular'] ?? ''));
+    $celular_full = trim((string) ($contacto['celular_full'] ?? ''));
+
+    if ($celular_full === '' && $celular_nacional !== '') {
+      $celular_full = $celular_indicativo . $celular_nacional;
+    }
+
+    $node->set('field_tipo_asociado', ['target_id' => (int) $general['tipo_asociado']]);
+    $node->set('field_nombre1', $general['nombre1']);
+    $node->set('field_nombre2', $general['nombre2'] ?? '');
+    $node->set('field_apellido1', $general['apellido1']);
+    $node->set('field_apellido2', $general['apellido2'] ?? '');
+    $node->set('field_fecha_nacimiento', $general['fecha_nacimiento']);
+    $node->set('field_estado_civil', ['target_id' => (int) $general['estado_civil']]);
+    $node->set('field_sexo', ['target_id' => (int) $general['sexo']]);
+    $node->set('field_tipo_documento', ['target_id' => (int) $general['tipo_documento']]);
+    $node->set('field_numero_documento', $general['numero_documento']);
+    $node->set('field_registro_medico', $general['registro_medico']);
+    $node->set('field_pais', ['target_id' => (int) $general['pais']]);
+    $node->set('field_departamento', ['target_id' => (int) $general['departamento']]);
+    $node->set('field_ciudad_ejercicio', ['target_id' => (int) $general['ciudad_ejercicio']]);
+
+    $node->set('field_correspondencia_fisica', $contacto['direccion'] ?? '');
+    $node->set('field_direccion_institucional', $contacto['correspondencia_fisica'] ?? '');
+    $node->set('field_email_principal', $contacto['email'] ?? '');
+    $node->set('field_celular', $celular_full);
+
+    if (!empty($contacto['lugar_correspondencia'])) {
+      $node->set('field_lugar_correspondencia', ['target_id' => (int) $contacto['lugar_correspondencia']]);
+    } else {
+      $node->set('field_lugar_correspondencia', NULL);
+    }
+
+    $node->set('field_facultad_pregrado', ['target_id' => (int) $profesional['facultad_pregrado']]);
+    $node->set('field_pais_pregrado', ['target_id' => (int) $profesional['pais_pregrado']]);
+    $node->set('field_titulo_universitario', ['target_id' => (int) $profesional['titulo_universitario']]);
+    $node->set('field_universidad_residencia', ['target_id' => (int) $profesional['universidad_residencia']]);
+    $node->set('field_pais_residencia', ['target_id' => (int) $profesional['pais_residencia']]);
+    $node->set('field_recertificacion_camec', !empty($profesional['recertificacion_camec']) ? 1 : 0);
+    $node->set('field_tiene_subespecialidad', !empty($profesional['tiene_subespecialidad']) ? 1 : 0);
+
+    if (!empty($profesional['tiene_subespecialidad']) && !empty($profesional['subespecialidad_cual'])) {
+      $node->set('field_subespecialidad_cual', ['target_id' => (int) $profesional['subespecialidad_cual']]);
+    } else {
+      $node->set('field_subespecialidad_cual', NULL);
+    }
+
+    $file_map = [
+      'adj_carta_1' => 'field_adj_carta_1',
+      'adj_carta_2' => 'field_adj_carta_2',
+      'adj_rut' => 'field_adj_rut',
+      'adj_id' => 'field_adj_id',
+      'adj_carta_ingreso' => 'field_adj_carta_ingreso',
+      'adj_hv' => 'field_adj_hv',
+      'adj_diploma_medico' => 'field_adj_diploma_medico',
+      'adj_diploma_dermatologo' => 'field_adj_diploma_dermatologo',
+      'adj_rethus' => 'field_adj_rethus',
+      'adj_aut_verificacion' => 'field_adj_aut_verificacion',
+      'adj_cert_publicacion' => 'field_adj_cert_publicacion',
+    ];
+
+    $file_storage = \Drupal::entityTypeManager()->getStorage('file');
+
+    foreach ($file_map as $form_key => $field_name) {
+      if (!$node->hasField($field_name)) {
+        continue;
+      }
+
+      if (empty($adjuntos[$form_key]) || empty($adjuntos[$form_key][0])) {
+        if ($field_name === 'field_adj_cert_publicacion') {
+          $node->set($field_name, NULL);
+        }
+        continue;
+      }
+
+      $fid = (int) $adjuntos[$form_key][0];
+      $file = $file_storage->load($fid);
+
+      if ($file) {
+        $file->setPermanent();
+        $file->save();
+
+        $node->set($field_name, [
+          'target_id' => $fid,
+        ]);
+      }
+    }
+
+    if (method_exists($node, 'setNewRevision')) {
+      $node->setNewRevision(TRUE);
+      $node->setRevisionCreationTime(\Drupal::time()->getRequestTime());
+      $node->setRevisionUserId((int) $this->currentUser()->id());
+
+      if (method_exists($node, 'setRevisionLogMessage')) {
+        $node->setRevisionLogMessage('Ajustes realizados por el aspirante desde el formulario de aclaración.');
+      }
+    }
+
+    $node->save();
+
+    $estado_en_tramite_tid = $this->getTidByName('estado_solicitud_ingreso', 'En trámite');
+
+    \Drupal::service('asocolderma_inscription.solicitud_state_manager')->transitionByTid(
+      $node,
+      $estado_en_tramite_tid,
+      'aspirante_ajustes_realizados',
+      'El aspirante marcó la opción Ajustes realizados y reenvió la solicitud al flujo institucional.',
+      [
+        'accion' => 'ajustes_realizados',
+        'form_id' => $this->getFormId(),
+      ]
+    );
+
+    $this->messenger()->addStatus($this->t('Los ajustes fueron guardados correctamente. La solicitud volvió al estado En trámite para continuar la revisión institucional.'));
+
+    $form_state->setRedirect('asocolderma_inscription.user_zone_requests');
+  }
+
+  private function buildFileField(
+    array &$form,
+    NodeInterface $node,
+    string $form_key,
+    string $field_name,
+    string $title,
+    string $upload_location,
+    string $extensions,
+    bool $required
+  ): void {
+    $form['adjuntos'][$form_key] = [
+      '#type' => 'managed_file',
+      '#title' => $this->t($title),
+      '#required' => $required,
+      '#upload_location' => $upload_location,
+      '#default_value' => $this->getFileDefaultValue($node, $field_name),
+      '#upload_validators' => [
+        'file_validate_extensions' => [$extensions],
+        'file_validate_size' => [10 * 1024 * 1024],
+      ],
+    ];
+  }
+
+  private function getTaxonomyOptions(string $vid): array
+  {
+    $options = [];
+
+    $terms = \Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term')
+      ->loadTree($vid, 0, NULL, TRUE);
+
+    foreach ($terms as $term) {
+      $options[(int) $term->id()] = $term->label();
+    }
+
+    return $options;
+  }
+
+  private function getTidByName(string $vid, string $name): int
+  {
+    $terms = \Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term')
+      ->loadByProperties([
+        'vid' => $vid,
+        'name' => $name,
+      ]);
+
+    if (empty($terms)) {
+      throw new \RuntimeException(sprintf('No existe el término "%s" en el vocabulario "%s".', $name, $vid));
+    }
+
+    $term = reset($terms);
+    return (int) $term->id();
+  }
+
+  private function getStringValue(NodeInterface $node, string $field_name): string
+  {
+    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
+      return '';
+    }
+
+    return (string) $node->get($field_name)->value;
+  }
+
+  private function getBooleanValue(NodeInterface $node, string $field_name): int
+  {
+    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
+      return 0;
+    }
+
+    return !empty($node->get($field_name)->value) ? 1 : 0;
+  }
+
+  private function getTargetId(NodeInterface $node, string $field_name): ?int
+  {
+    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
+      return NULL;
+    }
+
+    return (int) $node->get($field_name)->target_id;
+  }
+
+  private function getFileDefaultValue(NodeInterface $node, string $field_name): array
+  {
+    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
+      return [];
+    }
+
+    $target_id = $node->get($field_name)->target_id;
+
+    return $target_id ? [(int) $target_id] : [];
+  }
+
+  private function splitPhone(string $phone): array
+  {
+    $phone = trim($phone);
+
+    if ($phone === '') {
+      return [
+        'indicativo' => '+57',
+        'national' => '',
+        'full' => '',
+      ];
+    }
+
+    $clean = preg_replace('/[^\d\+]/', '', $phone);
+
+    if (str_starts_with($clean, '+57')) {
+      return [
+        'indicativo' => '+57',
+        'national' => substr($clean, 3),
+        'full' => $clean,
+      ];
+    }
+
+    if (preg_match('/^(\+\d{1,4})(\d{6,15})$/', $clean, $matches)) {
+      return [
+        'indicativo' => $matches[1],
+        'national' => $matches[2],
+        'full' => $clean,
+      ];
+    }
+
+    return [
+      'indicativo' => '+57',
+      'national' => preg_replace('/\D+/', '', $clean),
+      'full' => $clean,
+    ];
+  }
 }

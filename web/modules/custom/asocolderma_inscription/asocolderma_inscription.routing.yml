@@ -57,12 +57,16 @@ asocolderma_inscription.solicitud_create:
 
 # Aspirante: editar solicitud (solo si está en aclaración, por ejemplo)
 asocolderma_inscription.solicitud_edit:
-  path: '/zona/solicitudes/{solicitud_ingreso}/editar'
+  path: '/zona/solicitudes/{node}/editar'
   defaults:
     _form: '\Drupal\asocolderma_inscription\Form\SolicitudIngresoEditWizardForm'
     _title: 'Editar solicitud'
   requirements:
-    _permission: 'create solicitud ingreso'
+    _custom_access: 'asocolderma_inscription.solicitud_edit_clarification_access::access'
+  options:
+    parameters:
+      node:
+        type: entity:node
 
 # Secretaría General: listado
 asocolderma_inscription.sg_list:

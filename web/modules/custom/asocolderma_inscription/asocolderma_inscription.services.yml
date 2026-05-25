@@ -42,3 +42,6 @@ services:
       - '@enterprise_integrations.mandrill'
       - '@enterprise_integrations.twilio_whatsapp'
       - '@logger.channel.asocolderma_inscription'
+
+  asocolderma_inscription.solicitud_edit_clarification_access:
+    class: Drupal\asocolderma_inscription\Access\SolicitudEditClarificationAccess
