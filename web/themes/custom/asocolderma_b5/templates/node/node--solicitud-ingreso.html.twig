@@ -89,20 +89,28 @@
 
 			<p>
 				<strong>Tipo de asociado:</strong>
-				{{ node.field_tipo_asociado.value ?: '-' }}</p>
+				{{ node.field_tipo_asociado.entity ? node.field_tipo_asociado.entity.label : '-' }}
+			</p>
 
 			<p>
 				<strong>Primer nombre:</strong>
-				{{ node.field_nombre1.value ?: '-' }}</p>
+				{{ node.field_nombre1.value ?: '-' }}
+			</p>
+
 			<p>
 				<strong>Segundo nombre:</strong>
-				{{ node.field_nombre2.value ?: '-' }}</p>
+				{{ node.field_nombre2.value ?: '-' }}
+			</p>
+
 			<p>
 				<strong>Primer apellido:</strong>
-				{{ node.field_apellido1.value ?: '-' }}</p>
+				{{ node.field_apellido1.value ?: '-' }}
+			</p>
+
 			<p>
 				<strong>Segundo apellido:</strong>
-				{{ node.field_apellido2.value ?: '-' }}</p>
+				{{ node.field_apellido2.value ?: '-' }}
+			</p>
 
 			<p>
 				<strong>Fecha de nacimiento:</strong>
@@ -111,17 +119,23 @@
 
 			<p>
 				<strong>Estado civil:</strong>
-				{{ node.field_estado_civil.value ?: '-' }}</p>
+				{{ node.field_estado_civil.entity ? node.field_estado_civil.entity.label : '-' }}
+			</p>
+
 			<p>
 				<strong>Sexo:</strong>
-				{{ node.field_sexo.value ?: '-' }}</p>
+				{{ node.field_sexo.entity ? node.field_sexo.entity.label : '-' }}
+			</p>
 
 			<p>
 				<strong>Tipo de documento:</strong>
-				{{ node.field_tipo_documento.value ?: '-' }}</p>
+				{{ node.field_tipo_documento.entity ? node.field_tipo_documento.entity.label : '-' }}
+			</p>
+
 			<p>
 				<strong>Número de documento:</strong>
-				{{ node.field_numero_documento.value ?: '-' }}</p>
+				{{ node.field_numero_documento.value ?: '-' }}
+			</p>
 
 			<p>
 				<strong>Número Registro médico / tarjeta profesional:</strong>
@@ -130,13 +144,18 @@
 
 			<p>
 				<strong>País:</strong>
-				{{ node.field_pais.value ?: '-' }}</p>
+				{{ node.field_pais.entity ? node.field_pais.entity.label : '-' }}
+			</p>
+
 			<p>
 				<strong>Ciudad de ejercicio principal:</strong>
-				{{ node.field_ciudad_ejercicio.value ?: '-' }}</p>
+				{{ node.field_ciudad_ejercicio.entity ? node.field_ciudad_ejercicio.entity.label : '-' }}
+			</p>
+
 			<p>
 				<strong>Departamento:</strong>
-				{{ node.field_departamento.value ?: '-' }}</p>
+				{{ node.field_departamento.entity ? node.field_departamento.entity.label : '-' }}
+			</p>
 		</div>
 
 
