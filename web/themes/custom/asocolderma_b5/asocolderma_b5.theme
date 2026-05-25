@@ -130,3 +130,48 @@ function _get_views_top_link_more() {
     ],
   ];
 }
+
+/**
+ * Implements hook_preprocess_node().
+ */
+function asocolderma_b5_preprocess_node(array &$variables): void {
+  $variables['estado_color_solicitud'] = '';
+
+  if (empty($variables['node']) || !$variables['node'] instanceof \Drupal\node\NodeInterface) {
+    return;
+  }
+
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $variables['node'];
+
+  if ($node->bundle() !== 'solicitud_ingreso') {
+    return;
+  }
+
+  if (!$node->hasField('field_state') || $node->get('field_state')->isEmpty()) {
+    return;
+  }
+
+  $estado = $node->get('field_state')->entity;
+
+  if (!$estado || !$estado->hasField('field_color_estado_solicitud') || $estado->get('field_color_estado_solicitud')->isEmpty()) {
+    return;
+  }
+
+  $color_item = $estado->get('field_color_estado_solicitud')->first();
+
+  if (!$color_item) {
+    return;
+  }
+
+  $color_values = $color_item->toArray();
+
+  if (!empty($color_values['color'])) {
+    $variables['estado_color_solicitud'] = $color_values['color'];
+    return;
+  }
+
+  if (!empty($color_values['value'])) {
+    $variables['estado_color_solicitud'] = $color_values['value'];
+  }
+}
