@@ -1,5 +1,8 @@
 <?php
 
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\node\NodeInterface;
+
 /**
  * @file
  * asocolderma_B5 theme file.
@@ -153,6 +156,10 @@ function asocolderma_b5_preprocess_node(array &$variables): void {
   }
 
   $estado = $node->get('field_state')->entity;
+  
+  if ($estado) {
+    CacheableMetadata::createFromObject($estado)->applyTo($variables['elements']);
+  }
 
   if (!$estado || !$estado->hasField('field_color_estado_solicitud') || $estado->get('field_color_estado_solicitud')->isEmpty()) {
     return;
