@@ -19,6 +19,7 @@ final class SolicitudStateInlineForm extends FormBase
 
   protected EntityTypeManagerInterface $etm;
   protected SolicitudStateManager $stateManager;
+  protected RequestStack $requestStack;
 
   public function __construct(
     EntityTypeManagerInterface $etm,
@@ -104,6 +105,7 @@ final class SolicitudStateInlineForm extends FormBase
       '#default_value' => $selected_tid ?: NULL,
       '#empty_option' => $this->t('- Seleccione -'),
       '#required' => TRUE,
+      '#parents' => ['state_tid'],
       '#ajax' => [
         'callback' => '::refreshStateFields',
         'wrapper' => 'asocolderma-state-wrapper',
@@ -115,21 +117,16 @@ final class SolicitudStateInlineForm extends FormBase
       ],
     ];
 
-    if ($requires_motivo) {
-      $form['state_wrapper']['motivo'] = [
-        '#type' => 'textarea',
-        '#title' => $this->t('Motivo'),
-        '#description' => $this->t('Este estado requiere registrar un motivo administrativo. Mínimo 10 caracteres.'),
-        '#required' => TRUE,
-        '#default_value' => (string) ($form_state->getValue('motivo') ?? ''),
-        '#rows' => 4,
-      ];
-    } else {
-      $form['state_wrapper']['motivo'] = [
-        '#type' => 'hidden',
-        '#value' => '',
-      ];
-    }
+    $form['state_wrapper']['motivo'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Motivo'),
+      '#description' => $this->t('Este estado requiere registrar un motivo administrativo. Mínimo 10 caracteres.'),
+      '#required' => $requires_motivo,
+      '#default_value' => (string) ($form_state->getValue('motivo') ?? ''),
+      '#rows' => 4,
+      '#parents' => ['motivo'],
+      '#access' => $requires_motivo,
+    ];
 
     $form['actions'] = [
       '#type' => 'actions',
@@ -173,6 +170,7 @@ final class SolicitudStateInlineForm extends FormBase
 
   public function refreshStateFields(array &$form, FormStateInterface $form_state): array
   {
+    $form_state->setRebuild(TRUE);
     return $form['state_wrapper'];
   }
 

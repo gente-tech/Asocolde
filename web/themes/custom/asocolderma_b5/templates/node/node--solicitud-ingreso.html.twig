@@ -40,7 +40,8 @@
 
 <br>
 
-{% set estado = node.field_state.entity.label %}
+{% set estado_entity = node.field_state.entity %}
+{% set estado = estado_entity ? estado_entity.label : '' %}
 
 {% if estado == 'Documentos firmados' %}
 
@@ -66,7 +67,7 @@
 
 		<p>
 			<strong>Estado:</strong>
-			{{ node.field_state.entity ? node.field_state.entity.name.value : '-' }}
+			{{ estado ?: '-' }}
 		</p>
 
 		<p>
