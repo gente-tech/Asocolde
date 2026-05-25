@@ -130,7 +130,32 @@
 
 			<p>
 				<strong>Fecha de nacimiento:</strong>
-				{{ node.field_fecha_nacimiento.value ? node.field_fecha_nacimiento.value|date('Y-m-d') : '-' }}
+
+				{% if node.field_fecha_nacimiento.value %}
+					{% set fecha_nacimiento = node.field_fecha_nacimiento.value|date('U') %}
+					{% set mes_nacimiento = node.field_fecha_nacimiento.value|date('n') %}
+
+					{% set meses = {
+						'1': 'Enero',
+						'2': 'Febrero',
+						'3': 'Marzo',
+						'4': 'Abril',
+						'5': 'Mayo',
+						'6': 'Junio',
+						'7': 'Julio',
+						'8': 'Agosto',
+						'9': 'Septiembre',
+						'10': 'Octubre',
+						'11': 'Noviembre',
+						'12': 'Diciembre'
+					} %}
+
+					{{ node.field_fecha_nacimiento.value|date('j') }}
+					{{ meses[mes_nacimiento] }}
+					{{ node.field_fecha_nacimiento.value|date('Y') }}
+				{% else %}
+					-
+				{% endif %}
 			</p>
 
 			<p>
