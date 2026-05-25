@@ -120,23 +120,44 @@ final class UserZoneController extends ControllerBase
 
       $action = '';
 
-      if ($estado_label === 'Pendiente firma de documentos') {
-        $action = [
-          'data' => [
-            '#type' => 'link',
-            '#title' => $this->t('Firmar documentos'),
-            '#url' => \Drupal\Core\Url::fromRoute(
-              'asocolderma_inscription.solicitud_sign_redirect',
-              ['node' => $n->id()]
-            ),
-            '#attributes' => [
-              'class' => ['button', 'button--primary'],
-            ],
+      $actions = [
+        '#type' => 'container',
+        '#attributes' => [
+          'class' => ['solicitud-user-actions'],
+        ],
+      ];
+
+      if ($estado_label === 'Pendiente aclaración') {
+        $actions['edit'] = [
+          '#type' => 'link',
+          '#title' => $this->t('Editar solicitud'),
+          '#url' => \Drupal\Core\Url::fromRoute(
+            'asocolderma_inscription.solicitud_edit',
+            ['node' => $n->id()]
+          ),
+          '#attributes' => [
+            'class' => ['button', 'button--primary'],
           ],
         ];
-      } else {
-        $action = '-';
       }
+
+      if ($estado_label === 'Pendiente firma de documentos') {
+        $actions['sign'] = [
+          '#type' => 'link',
+          '#title' => $this->t('Firmar documentos'),
+          '#url' => \Drupal\Core\Url::fromRoute(
+            'asocolderma_inscription.solicitud_sign_redirect',
+            ['node' => $n->id()]
+          ),
+          '#attributes' => [
+            'class' => ['button', 'button--primary'],
+          ],
+        ];
+      }
+
+      $action = !empty($actions['edit']) || !empty($actions['sign'])
+        ? ['data' => $actions]
+        : '-';
 
       $rows[] = [
         'id' => $n->get('field_solicitud_id')->value ?? ('NID ' . $n->id()),
