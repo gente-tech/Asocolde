@@ -12,14 +12,17 @@ use Drupal\node\NodeInterface;
  * Preprocess variables for html templates.
  * @param $variables
  */
-function asocolderma_b5_preprocess_html(&$variables) {
+function asocolderma_b5_preprocess_html(&$variables)
+{
   $node = \Drupal::routeMatch()->getParameter('node');
   // dpm($node);
   // Check for a node.
-  if ($node instanceof \Drupal\node\NodeInterface
+  if (
+    $node instanceof \Drupal\node\NodeInterface
     && $node->hasField('field_body_class')
-    && !$node->field_body_class->isEmpty()) {
-      $variables['attributes']['class'][] = \Drupal\Component\Utility\Html::cleanCssIdentifier($node->field_body_class->getString());
+    && !$node->field_body_class->isEmpty()
+  ) {
+    $variables['attributes']['class'][] = \Drupal\Component\Utility\Html::cleanCssIdentifier($node->field_body_class->getString());
   }
 }
 
@@ -27,12 +30,15 @@ function asocolderma_b5_preprocess_html(&$variables) {
  * Implements template_preprocess_views_view().
  *
  */
-function asocolderma_b5_preprocess_views_view(&$variables) {
+function asocolderma_b5_preprocess_views_view(&$variables)
+{
   $view = $variables['view'];
   $views_top_link_more = _get_views_top_link_more();
-  if(in_array($view->id(), array_keys($views_top_link_more)) &&
-    in_array($view->current_display, $views_top_link_more[$view->id()])) {
-      $variables['title'] = $view->getTitle();
+  if (
+    in_array($view->id(), array_keys($views_top_link_more)) &&
+    in_array($view->current_display, $views_top_link_more[$view->id()])
+  ) {
+    $variables['title'] = $view->getTitle();
   }
 }
 
@@ -43,20 +49,24 @@ function asocolderma_b5_preprocess_views_view(&$variables) {
  *
  * @inheritdoc
  */
-function asocolderma_b5_theme_suggestions_views_view_alter(array &$suggestions, array $variables) {
+function asocolderma_b5_theme_suggestions_views_view_alter(array &$suggestions, array $variables)
+{
   $view = $variables['view'];
   $views_top_link_more = _get_views_top_link_more();
-  if(in_array($view->id(), array_keys($views_top_link_more)) &&
-    in_array($view->current_display, $views_top_link_more[$view->id()])) {
-      $suggestions[] = 'views_view__top__link_more';
+  if (
+    in_array($view->id(), array_keys($views_top_link_more)) &&
+    in_array($view->current_display, $views_top_link_more[$view->id()])
+  ) {
+    $suggestions[] = 'views_view__top__link_more';
   }
 }
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
  */
-function asocolderma_b5_theme_suggestions_form_alter(array &$suggestions, array $variables) {
-  switch($variables['element']['#form_id']) {
+function asocolderma_b5_theme_suggestions_form_alter(array &$suggestions, array $variables)
+{
+  switch ($variables['element']['#form_id']) {
     case 'user_login_form':
       $suggestions[] = $variables['theme_hook_original'] . '__user_login';
       break;
@@ -84,7 +94,8 @@ function asocolderma_b5_theme_suggestions_form_alter(array &$suggestions, array 
 /**
  * Implements hook_preprocess_HOOK() for user_services form.
  */
-function asocolderma_b5_preprocess_form__user_services(&$variables) {
+function asocolderma_b5_preprocess_form__user_services(&$variables)
+{
   if ($account = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id())) {
     $variables['user_link'] = $account->toLink('Vista actual de mi perfil');
   }
@@ -93,7 +104,8 @@ function asocolderma_b5_preprocess_form__user_services(&$variables) {
 /**
  * Implements hook_preprocess_HOOK() for user_services form.
  */
-function asocolderma_b5_preprocess_form__user_public(&$variables) {
+function asocolderma_b5_preprocess_form__user_public(&$variables)
+{
   if ($account = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id())) {
     $variables['user_link'] = $account->toLink('Vista actual de mi perfil')->toRenderable();
     $variables['user_link']['#attributes']['class'][] = 'btn btn--primary';
@@ -103,7 +115,8 @@ function asocolderma_b5_preprocess_form__user_public(&$variables) {
 /**
  * Implements hook_preprocess_HOOK() for block.html.twig.
  */
-function asocolderma_b5_preprocess_block(&$variables) {
+function asocolderma_b5_preprocess_block(&$variables)
+{
   // adding custom attribute class for block
   if ($variables['elements']['#base_plugin_id'] == 'block_content') {
     $blockType = strtr($variables['content']['#block_content']->bundle(), '_', '-');
@@ -111,7 +124,8 @@ function asocolderma_b5_preprocess_block(&$variables) {
   }
 }
 
-function _get_views_top_link_more() {
+function _get_views_top_link_more()
+{
   return [
     'patient_articles' => [
       'block_other_news',
@@ -137,7 +151,8 @@ function _get_views_top_link_more() {
 /**
  * Implements hook_preprocess_node().
  */
-function asocolderma_b5_preprocess_node(array &$variables): void {
+function asocolderma_b5_preprocess_node(array &$variables): void
+{
   $variables['estado_color_solicitud'] = '';
 
   if (empty($variables['node']) || !$variables['node'] instanceof \Drupal\node\NodeInterface) {
@@ -150,6 +165,10 @@ function asocolderma_b5_preprocess_node(array &$variables): void {
   if ($node->bundle() !== 'solicitud_ingreso') {
     return;
   }
+
+  $variables['elements']['#cache']['max-age'] = 0;
+  $variables['elements']['#cache']['contexts'][] = 'url.path';
+  $variables['elements']['#cache']['contexts'][] = 'user.roles';
 
   $variables['elements']['#cache']['tags'][] = 'asocolderma_estado_solicitud_colors';
 
@@ -183,4 +202,26 @@ function asocolderma_b5_preprocess_node(array &$variables): void {
   if (!empty($color_values['value'])) {
     $variables['estado_color_solicitud'] = $color_values['value'];
   }
+}
+
+/**
+ * Implements hook_entity_view_alter().
+ */
+function asocolderma_b5_entity_view_alter(array &$build, \Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display): void
+{
+  if ($entity->getEntityTypeId() !== 'node') {
+    return;
+  }
+
+  if (!$entity instanceof \Drupal\node\NodeInterface) {
+    return;
+  }
+
+  if ($entity->bundle() !== 'solicitud_ingreso') {
+    return;
+  }
+
+  $build['#cache']['max-age'] = 0;
+  $build['#cache']['contexts'][] = 'url.path';
+  $build['#cache']['contexts'][] = 'user.roles';
 }
