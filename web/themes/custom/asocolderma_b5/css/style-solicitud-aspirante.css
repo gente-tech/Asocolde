@@ -60,12 +60,12 @@
 }
 
 .solicitud-semaforo__dot::before {
-    counter-increment: mCount;
-    content: counter(mCount);
+  counter-increment: mCount;
+  content: counter(mCount);
 }
 
 .solicitud-semaforo__item--current .solicitud-semaforo__dot {
-    color: #06e4eb;
+  color: #06e4eb;
 }
 
 .solicitud-semaforo__content {
@@ -142,4 +142,20 @@
 .solicitud-semaforo__date .hora {
   font-size: 11px;
   color: #9ca3af;
+}
+
+.solicitud-semaforo__item--has-note {
+  cursor: help;
+}
+
+.solicitud-semaforo__item--has-note .solicitud-semaforo__dot {
+  box-shadow: 0 0 0 4px rgba(183, 121, 31, 0.22);
+}
+
+.solicitud-semaforo__note-indicator {
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #8a5a10;
 }

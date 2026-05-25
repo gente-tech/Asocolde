@@ -9,7 +9,10 @@
 
 		<div class="solicitud-semaforo" role="list" aria-label="Estados de la solicitud">
 			{% for step in semaforo_steps %}
-				<div class="solicitud-semaforo__item solicitud-semaforo__item--{{ step.status }}" role="listitem">
+				{% set has_note = step.note is defined and step.note|striptags|trim is not empty %}
+				{% set clean_note = has_note ? step.note|striptags|trim : '' %}
+
+				<div class="solicitud-semaforo__item solicitud-semaforo__item--{{ step.status }}{% if has_note %} solicitud-semaforo__item--has-note{% endif %}" role="listitem" {% if has_note %} title="{{ clean_note|e('html_attr') }}" data-note="{{ clean_note|e('html_attr') }}" {% endif %}>
 
 					{% if not loop.first %}
 						<div class="solicitud-semaforo__line"></div>
@@ -27,8 +30,21 @@
 
 							<div class="solicitud-semaforo__date">
 								<span class="fecha">{{ parts[0] }}</span>
-								<span class="hora">{{ parts[1] }}
-									{{ parts[2] }}</span>
+
+								{% if parts[1] is defined %}
+									<span class="hora">
+										{{ parts[1] }}
+										{% if parts[2] is defined %}
+											{{ parts[2] }}
+										{% endif %}
+									</span>
+								{% endif %}
+							</div>
+						{% endif %}
+
+						{% if has_note %}
+							<div class="solicitud-semaforo__note-indicator">
+								Ver motivo
 							</div>
 						{% endif %}
 					</div>

@@ -3,7 +3,8 @@
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 
-function asocolderma_inscription_preprocess_node(array &$variables) {
+function asocolderma_inscription_preprocess_node(array &$variables)
+{
   if (empty($variables['node']) || !$variables['node'] instanceof NodeInterface) {
     return;
   }
@@ -45,36 +46,120 @@ function asocolderma_inscription_preprocess_node(array &$variables) {
 /**
  * Construye el semáforo horizontal de una solicitud.
  */
-function asocolderma_inscription_build_semaforo_steps(NodeInterface $node): array {
+function asocolderma_inscription_build_semaforo_steps(NodeInterface $node): array
+{
   $current_tid = (int) ($node->get('field_state')->target_id ?? 0);
   $current_name = asocolderma_inscription_get_term_name_by_tid($current_tid) ?? '';
 
-  $flow = asocolderma_inscription_get_visible_flow($current_name);
+  $history_rows = asocolderma_inscription_get_state_history_rows((int) $node->id());
 
-  $current_step_label = asocolderma_inscription_map_current_state_to_flow_label($current_name);
-  $current_index = array_search($current_step_label, $flow, TRUE);
+  $history_steps = [];
+  $has_rejected = asocolderma_inscription_is_cancelled_state($current_name);
 
-  if ($current_index === FALSE) {
-    $current_index = 0;
+  foreach ($history_rows as $row) {
+    $state_name = asocolderma_inscription_get_term_name_by_tid((int) $row->to_tid);
+
+    if (!$state_name) {
+      continue;
+    }
+
+    $label = asocolderma_inscription_map_current_state_to_flow_label($state_name);
+
+    $history_steps[] = [
+      'label' => $label,
+      'status' => 'done',
+      'date' => \Drupal::service('date.formatter')->format((int) $row->created, 'custom', 'd/m/Y h:i A'),
+      'note' => trim((string) ($row->comment ?? '')),
+      'state_name' => $state_name,
+      'origin' => (string) ($row->origin ?? ''),
+      'history_id' => (int) $row->id,
+    ];
   }
+
+  if (empty($history_steps)) {
+    $history_steps[] = [
+      'label' => asocolderma_inscription_map_current_state_to_flow_label($current_name),
+      'status' => asocolderma_inscription_is_cancelled_state($current_name) ? 'cancelled' : 'current',
+      'date' => \Drupal::service('date.formatter')->format($node->getCreatedTime(), 'custom', 'd/m/Y h:i A'),
+      'note' => '',
+      'state_name' => $current_name,
+      'origin' => 'current_node_state',
+      'history_id' => 0,
+    ];
+  }
+
+  $last_index = count($history_steps) - 1;
+
+  foreach ($history_steps as $index => &$step) {
+    if ($index === $last_index) {
+      $step['status'] = $has_rejected ? 'cancelled' : 'current';
+    } else {
+      $step['status'] = 'done';
+    }
+  }
+  unset($step);
+
+  $last_visible_label = $history_steps[$last_index]['label'] ?? asocolderma_inscription_map_current_state_to_flow_label($current_name);
+  $future_steps = asocolderma_inscription_get_future_flow_steps($last_visible_label, $current_name);
+
+  return array_merge($history_steps, $future_steps);
+}
+
+function asocolderma_inscription_get_state_history_rows(int $nid): array
+{
+  $connection = \Drupal::database();
+
+  $query = $connection->select('asocolderma_solicitud_historial', 'h');
+  $query->fields('h', [
+    'id',
+    'to_tid',
+    'created',
+    'origin',
+    'comment',
+  ]);
+  $query->condition('h.solicitud_nid', $nid);
+  $query->orderBy('h.created', 'ASC');
+  $query->orderBy('h.id', 'ASC');
+
+  return $query->execute()->fetchAll();
+}
+
+function asocolderma_inscription_get_future_flow_steps(string $last_visible_label, string $current_name): array
+{
+  if (asocolderma_inscription_is_cancelled_state($current_name)) {
+    return [];
+  }
+
+  $base_flow = [
+    'En trámite',
+    'Aprobada',
+    'Junta directiva',
+    'Asamblea general',
+    'Pago de ingreso',
+    'Firma de documentos',
+    'Aprobación documentos firmados',
+    'Miembro activo',
+  ];
+
+  $last_index = array_search($last_visible_label, $base_flow, TRUE);
+
+  if ($last_index === FALSE) {
+    return [];
+  }
+
+  $future_labels = array_slice($base_flow, $last_index + 1);
 
   $steps = [];
 
-  foreach ($flow as $index => $label) {
-    $status = 'pending';
-
-    if ($index < $current_index) {
-      $status = 'done';
-    }
-    elseif ($index === $current_index) {
-      $status = asocolderma_inscription_is_cancelled_state($current_name) ? 'cancelled' : 'current';
-    }
-
+  foreach ($future_labels as $label) {
     $steps[] = [
       'label' => $label,
-      'status' => $status,
-      'date' => asocolderma_inscription_get_date_for_step($node, $label, $current_name),
+      'status' => 'pending',
+      'date' => '',
       'note' => '',
+      'state_name' => '',
+      'origin' => 'future',
+      'history_id' => 0,
     ];
   }
 
@@ -84,7 +169,8 @@ function asocolderma_inscription_build_semaforo_steps(NodeInterface $node): arra
 /**
  * Devuelve el flujo visible del semáforo según el estado actual.
  */
-function asocolderma_inscription_get_visible_flow(string $current_name): array {
+function asocolderma_inscription_get_visible_flow(string $current_name): array
+{
   $later_flow = [
     'Junta directiva',
     'Asamblea general',
@@ -116,7 +202,8 @@ function asocolderma_inscription_get_visible_flow(string $current_name): array {
 /**
  * Mapea el estado actual real al label del nodo del semáforo.
  */
-function asocolderma_inscription_map_current_state_to_flow_label(string $current_name): string {
+function asocolderma_inscription_map_current_state_to_flow_label(string $current_name): string
+{
   return match ($current_name) {
     'En trámite' => 'En trámite',
     'Pendiente aclaración' => 'Pendiente aclaración',
@@ -141,7 +228,8 @@ function asocolderma_inscription_map_current_state_to_flow_label(string $current
 /**
  * Indica si el estado actual es de rechazo/cancelación.
  */
-function asocolderma_inscription_is_cancelled_state(string $current_name): bool {
+function asocolderma_inscription_is_cancelled_state(string $current_name): bool
+{
   $cancelled_states = [
     'Rechazada',
     'Rechazado Junta D.',
@@ -154,7 +242,8 @@ function asocolderma_inscription_is_cancelled_state(string $current_name): bool 
 /**
  * Devuelve los nombres de estados recorridos por la solicitud, en orden cronológico.
  */
-function asocolderma_inscription_get_state_history_names(int $nid): array {
+function asocolderma_inscription_get_state_history_names(int $nid): array
+{
   $connection = \Drupal::database();
 
   $query = $connection->select('asocolderma_solicitud_historial', 'h');
@@ -180,7 +269,8 @@ function asocolderma_inscription_get_state_history_names(int $nid): array {
 /**
  * Devuelve la primera fecha en que la solicitud llegó a un estado del flujo.
  */
-function asocolderma_inscription_get_first_date_for_state(int $nid, string $state_name): string {
+function asocolderma_inscription_get_first_date_for_state(int $nid, string $state_name): string
+{
   $tid = asocolderma_inscription_get_tid_by_term_name('estado_solicitud_ingreso', $state_name);
 
   if (!$tid) {
@@ -208,7 +298,8 @@ function asocolderma_inscription_get_first_date_for_state(int $nid, string $stat
 /**
  * Devuelve el nombre del término por tid.
  */
-function asocolderma_inscription_get_term_name_by_tid(int $tid): ?string {
+function asocolderma_inscription_get_term_name_by_tid(int $tid): ?string
+{
   if ($tid <= 0) {
     return NULL;
   }
@@ -220,7 +311,8 @@ function asocolderma_inscription_get_term_name_by_tid(int $tid): ?string {
 /**
  * Busca un tid por nombre dentro de un vocabulario.
  */
-function asocolderma_inscription_get_tid_by_term_name(string $vid, string $name): ?int {
+function asocolderma_inscription_get_tid_by_term_name(string $vid, string $name): ?int
+{
   $terms = \Drupal::entityTypeManager()
     ->getStorage('taxonomy_term')
     ->loadByProperties([
@@ -239,7 +331,8 @@ function asocolderma_inscription_get_tid_by_term_name(string $vid, string $name)
 /**
  * Mapea el estado rechazado al paso del flujo que debe quedar en rojo.
  */
-function asocolderma_inscription_get_cancelled_from_state(string $current_name): ?string {
+function asocolderma_inscription_get_cancelled_from_state(string $current_name): ?string
+{
   return match ($current_name) {
     'Rechazada' => 'Aprobada',
     'Rechazado Junta D.' => 'Aprobado Junta D.',
@@ -251,7 +344,8 @@ function asocolderma_inscription_get_cancelled_from_state(string $current_name):
 /**
  * Devuelve la fecha a mostrar para un paso del semáforo.
  */
-function asocolderma_inscription_get_date_for_step(NodeInterface $node, string $step_label, string $current_name): string {
+function asocolderma_inscription_get_date_for_step(NodeInterface $node, string $step_label, string $current_name): string
+{
   $history = asocolderma_inscription_get_state_history_names_with_dates((int) $node->id());
 
   $state_names_for_step = match ($step_label) {
@@ -284,7 +378,8 @@ function asocolderma_inscription_get_date_for_step(NodeInterface $node, string $
 /**
  * Devuelve el histórico de estados con su primera fecha, indexado por nombre.
  */
-function asocolderma_inscription_get_state_history_names_with_dates(int $nid): array {
+function asocolderma_inscription_get_state_history_names_with_dates(int $nid): array
+{
   $connection = \Drupal::database();
 
   $query = $connection->select('asocolderma_solicitud_historial', 'h');
