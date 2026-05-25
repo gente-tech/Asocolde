@@ -150,8 +150,8 @@
 						'12': 'Diciembre'
 					} %}
 
-					{{ node.field_fecha_nacimiento.value|date('j') }}
-					{{ meses[mes_nacimiento] }}
+					{{ node.field_fecha_nacimiento.value|date('j') }} de 
+					{{ meses[mes_nacimiento] }} de 
 					{{ node.field_fecha_nacimiento.value|date('Y') }}
 				{% else %}
 					-
