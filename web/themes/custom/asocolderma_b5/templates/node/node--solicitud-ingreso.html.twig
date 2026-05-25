@@ -247,19 +247,20 @@
 		<div class="solicitud-ingreso__section">
 			<h2>Información societaria (Adjuntos)</h2>
 
-			{% set adjuntos = [
-        {'label':'Carta de solicitud de ingreso', 'field':'field_adj_carta_ingreso'},
-        {'label':'Copia carta 1 de presentación', 'field':'field_adj_carta_1'},
-        {'label':'Copia carta 2 de presentación', 'field':'field_adj_carta_2'},
-        {'label':'Hoja de vida', 'field':'field_adj_hv'},
-        {'label':'Copia cédula o ID', 'field':'field_adj_id'},
-        {'label':'Copia RUT', 'field':'field_adj_rut'},
-        {'label':'Copia diploma médico general', 'field':'field_adj_diploma_medico'},
-        {'label':'Copia diploma dermatólogo', 'field':'field_adj_diploma_dermatologo'},
-        {'label':'Registro médico / RETHUS', 'field':'field_adj_rethus'},
-        {'label':'Carta autorización verificación títulos', 'field':'field_adj_aut_verificacion'},
-        {'label':'Certificación conferencia/caso/póster/publicación', 'field':'field_adj_cert_publicacion'}
-      ] %}
+			{% 	set adjuntos = [
+					{'label':'Copia carta 1 de presentación', 'field':'field_adj_carta_1'},
+					{'label':'Copia carta 2 de presentación', 'field':'field_adj_carta_2'},
+					{'label':'Copia RUT', 'field':'field_adj_rut'},
+					{'label':'Copia cédula o ID', 'field':'field_adj_id'},
+					{'label':'Carta de solicitud de ingreso', 'field':'field_adj_carta_ingreso'},
+					{'label':'Hoja de vida', 'field':'field_adj_hv'},
+					{'label':'Copia diploma médico general', 'field':'field_adj_diploma_medico'},
+					{'label':'Copia diploma dermatólogo', 'field':'field_adj_diploma_dermatologo'},
+					{'label':'Registro médico / RETHUS', 'field':'field_adj_rethus'},
+					{'label':'Carta autorización verificación títulos', 'field':'field_adj_aut_verificacion'},
+					{'label':'Certificación conferencia/caso/póster/publicación', 'field':'field_adj_cert_publicacion'}
+				] 
+			%}
 
 			<ul>
 				{% set any_file = false %}
