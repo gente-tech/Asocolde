@@ -761,3 +761,234 @@
     border-radius: 18px;
   }
 }
+
+.solicitud-ingreso {
+  max-width: 1500px;
+  margin: 0 auto 20px;
+  padding: 0 4px 12px;
+}
+
+/* Header principal más compacto */
+.solicitud-ingreso > .solicitud-ingreso__header:first-of-type {
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.solicitud-ingreso > .solicitud-ingreso__header:first-of-type h1 {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 32px;
+  line-height: 1;
+}
+
+.solicitud-ingreso > .solicitud-ingreso__header:first-of-type > p {
+  min-height: auto;
+  padding: 10px 14px 10px 16px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.solicitud-ingreso > .solicitud-ingreso__header:first-of-type > p strong {
+  display: inline;
+  margin: 0 4px 0 0;
+  font-size: 13px;
+  text-transform: none;
+}
+
+/* Menos separación entre bloques */
+.solicitud-ingreso__body {
+  gap: 12px;
+}
+
+/* Secciones más compactas */
+.solicitud-ingreso__body > .solicitud-ingreso__section:nth-child(1),
+.solicitud-ingreso__body > .solicitud-ingreso__section:nth-child(2),
+.solicitud-section--academica,
+.solicitud-ingreso__body > .solicitud-ingreso__section:last-child {
+  padding: 14px;
+  border-radius: 18px;
+}
+
+/* Más columnas en desktop para reducir altura */
+.solicitud-ingreso__body > .solicitud-ingreso__section:nth-child(1),
+.solicitud-ingreso__body > .solicitud-ingreso__section:nth-child(2) {
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  gap: 8px 10px;
+}
+
+/* Títulos compactos */
+.solicitud-ingreso__body > .solicitud-ingreso__section:nth-child(1) h2,
+.solicitud-ingreso__body > .solicitud-ingreso__section:nth-child(2) h2,
+.solicitud-section--academica h3,
+.solicitud-ingreso__body > .solicitud-ingreso__section:last-child h2 {
+  margin: 0 0 4px;
+  padding-left: 12px;
+  font-size: 18px;
+  line-height: 1.1;
+}
+
+/* Campos mucho más compactos */
+.solicitud-ingreso__body > .solicitud-ingreso__section:nth-child(1) p,
+.solicitud-ingreso__body > .solicitud-ingreso__section:nth-child(2) p,
+.solicitud-field {
+  min-height: 56px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+/* Label y valor más compactos */
+.solicitud-ingreso__body > .solicitud-ingreso__section:nth-child(1) p strong,
+.solicitud-ingreso__body > .solicitud-ingreso__section:nth-child(2) p strong,
+.solicitud-field strong {
+  margin-bottom: 3px;
+  font-size: 12px;
+  line-height: 1.15;
+}
+
+.solicitud-ingreso__body > .solicitud-ingreso__section:nth-child(1) p,
+.solicitud-ingreso__body > .solicitud-ingreso__section:nth-child(2) p,
+.solicitud-field span {
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+/* Académica compacta en 4 columnas */
+.solicitud-grid {
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  gap: 8px 10px;
+}
+
+/* Adjuntos en dos columnas para reducir scroll */
+.solicitud-ingreso__body > .solicitud-ingreso__section:last-child ul {
+  grid-template-columns: repeat(2, minmax(280px, 1fr));
+  gap: 8px;
+}
+
+.solicitud-ingreso__body > .solicitud-ingreso__section:last-child li {
+  grid-template-columns: minmax(180px, 1fr) auto;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 12px;
+}
+
+.solicitud-ingreso__body > .solicitud-ingreso__section:last-child li strong {
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.solicitud-ingreso__body > .solicitud-ingreso__section:last-child .btn-pdf {
+  min-height: 32px;
+  max-width: 260px;
+  padding: 7px 12px;
+  font-size: 13px;
+  line-height: 1.1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Semáforo más compacto */
+.solicitud-semaforo-wrapper {
+  margin: 14px 0 12px;
+  padding: 12px 14px 6px;
+  border-radius: 18px;
+}
+
+.solicitud-semaforo-title {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.solicitud-semaforo {
+  padding-block: 8px 12px;
+}
+
+.solicitud-semaforo__item {
+  min-width: 118px;
+  flex: 1 1 118px;
+}
+
+.solicitud-semaforo__dot {
+  width: 26px;
+  height: 26px;
+  font-size: 11px;
+  padding-top: 3px;
+}
+
+.solicitud-semaforo__line {
+  top: 12px;
+  height: 3px;
+}
+
+.solicitud-semaforo__content {
+  margin-top: 10px;
+  width: 112px;
+}
+
+.solicitud-semaforo__label {
+  font-size: 12.5px;
+  line-height: 1.15;
+}
+
+.solicitud-semaforo__date {
+  margin-top: 3px;
+}
+
+.solicitud-semaforo__date .fecha {
+  font-size: 11px;
+}
+
+.solicitud-semaforo__date .hora {
+  font-size: 10px;
+}
+
+.solicitud-semaforo__note-indicator {
+  margin-top: 3px;
+  font-size: 10.5px;
+}
+
+/* Menos animación vertical en hover para que no salte visualmente */
+.solicitud-ingreso__body > .solicitud-ingreso__section:nth-child(1) p:hover,
+.solicitud-ingreso__body > .solicitud-ingreso__section:nth-child(2) p:hover,
+.solicitud-field:hover,
+.solicitud-ingreso__body > .solicitud-ingreso__section:last-child li:hover {
+  transform: none;
+}
+
+/* Responsivo */
+@media (max-width: 1300px) {
+  .solicitud-ingreso__body > .solicitud-ingreso__section:nth-child(1),
+  .solicitud-ingreso__body > .solicitud-ingreso__section:nth-child(2),
+  .solicitud-grid {
+    grid-template-columns: repeat(3, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 992px) {
+  .solicitud-ingreso > .solicitud-ingreso__header:first-of-type,
+  .solicitud-ingreso__body > .solicitud-ingreso__section:nth-child(1),
+  .solicitud-ingreso__body > .solicitud-ingreso__section:nth-child(2),
+  .solicitud-grid,
+  .solicitud-ingreso__body > .solicitud-ingreso__section:last-child ul {
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .solicitud-ingreso > .solicitud-ingreso__header:first-of-type,
+  .solicitud-ingreso__body > .solicitud-ingreso__section:nth-child(1),
+  .solicitud-ingreso__body > .solicitud-ingreso__section:nth-child(2),
+  .solicitud-grid,
+  .solicitud-ingreso__body > .solicitud-ingreso__section:last-child ul,
+  .solicitud-ingreso__body > .solicitud-ingreso__section:last-child li {
+    grid-template-columns: 1fr;
+  }
+
+  .solicitud-ingreso > .solicitud-ingreso__header:first-of-type h1 {
+    font-size: 28px;
+  }
+}
