@@ -309,30 +309,91 @@ function asocolderma_inscription_update_9001(): void
   $ensure_storage('field_correspondencia_fisica', 'string', ['max_length' => 32]);
   $ensure_field('field_correspondencia_fisica', 'Correspondencia física', [], TRUE);
 
-  // 5) Paso 3: Académico.
-  $ensure_storage('field_facultad_pregrado', 'string', ['max_length' => 255]);
-  $ensure_field('field_facultad_pregrado', 'Facultad pregrado', [], TRUE);
+  // 5) Paso 3: Información académica.
+  $taxonomy_reference_settings = [
+    'target_type' => 'taxonomy_term',
+  ];
 
-  $ensure_storage('field_pais_pregrado', 'string', ['max_length' => 100]);
-  $ensure_field('field_pais_pregrado', 'País pregrado', [], TRUE);
+  $taxonomy_handler = static function (string $vocabulary): array {
+    return [
+      'handler' => 'default:taxonomy_term',
+      'handler_settings' => [
+        'target_bundles' => [
+          $vocabulary => $vocabulary,
+        ],
+        'sort' => [
+          'field' => 'name',
+          'direction' => 'ASC',
+        ],
+        'auto_create' => FALSE,
+        'auto_create_bundle' => '',
+      ],
+    ];
+  };
 
-  $ensure_storage('field_titulo_universitario', 'string', ['max_length' => 255]);
-  $ensure_field('field_titulo_universitario', 'Título universitario', [], TRUE);
+  $ensure_storage('field_facultad_pregrado', 'entity_reference', $taxonomy_reference_settings);
+  $ensure_field(
+    'field_facultad_pregrado',
+    'Facultad de medicina – Pregrado',
+    $taxonomy_handler('university_undergraduate'),
+    TRUE
+  );
 
-  $ensure_storage('field_universidad_residencia', 'string', ['max_length' => 255]);
-  $ensure_field('field_universidad_residencia', 'Universidad residencia', [], TRUE);
+  $ensure_storage('field_pais_pregrado', 'entity_reference', $taxonomy_reference_settings);
+  $ensure_field(
+    'field_pais_pregrado',
+    'País donde realizó el pregrado en medicina',
+    $taxonomy_handler('country'),
+    TRUE
+  );
 
-  $ensure_storage('field_pais_residencia', 'string', ['max_length' => 100]);
-  $ensure_field('field_pais_residencia', 'País residencia', [], TRUE);
+  $ensure_storage('field_titulo_universitario', 'entity_reference', $taxonomy_reference_settings);
+  $ensure_field(
+    'field_titulo_universitario',
+    'Título universitario',
+    $taxonomy_handler('university_degree'),
+    TRUE
+  );
+
+  $ensure_storage('field_universidad_residencia', 'entity_reference', $taxonomy_reference_settings);
+  $ensure_field(
+    'field_universidad_residencia',
+    'Universidad de residencia',
+    $taxonomy_handler('university_residence'),
+    TRUE
+  );
+
+  $ensure_storage('field_pais_residencia', 'entity_reference', $taxonomy_reference_settings);
+  $ensure_field(
+    'field_pais_residencia',
+    'País donde realizó la residencia',
+    $taxonomy_handler('country'),
+    TRUE
+  );
 
   $ensure_storage('field_recertificacion_camec', 'boolean');
-  $ensure_field('field_recertificacion_camec', 'Participa en CAMEC', [], TRUE);
+  $ensure_field(
+    'field_recertificacion_camec',
+    'Si es ratificado ¿le gustaría participar en el programa voluntario de Re-certificación médica en dermatología CAMEC?',
+    [],
+    FALSE
+  );
 
   $ensure_storage('field_tiene_subespecialidad', 'boolean');
-  $ensure_field('field_tiene_subespecialidad', 'Tiene subespecialidad', [], TRUE);
+  $ensure_field(
+    'field_tiene_subespecialidad',
+    'Tiene una Subespecialidad?',
+    [],
+    TRUE
+  );
 
   $ensure_storage('field_subespecialidad_cual', 'string', ['max_length' => 255]);
-  $ensure_field('field_subespecialidad_cual', 'Subespecialidad (Cuál)', [], FALSE);
+  $ensure_field(
+    'field_subespecialidad_cual',
+    'Subespecialidad',
+    [],
+    FALSE
+  );
 
   // 6) Adjuntos (file, private://).
   $file_storage_settings = [
@@ -983,6 +1044,244 @@ function asocolderma_inscription_update_9009(): void
         ],
       ],
     ])->save();
+  }
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
+
+/**
+ * Corrige campos académicos del tipo de contenido solicitud_ingreso.
+ */
+function asocolderma_inscription_update_9010(): void
+{
+  $type = 'solicitud_ingreso';
+
+  $delete_field_completely = static function (string $field_name) use ($type): void {
+    $field = FieldConfig::loadByName('node', $type, $field_name);
+    if ($field) {
+      $field->delete();
+    }
+
+    $storage = FieldStorageConfig::loadByName('node', $field_name);
+    if ($storage) {
+      $storage->delete();
+    }
+  };
+
+  $ensure_taxonomy_reference_field = static function (
+    string $field_name,
+    string $label,
+    string $vocabulary,
+    bool $required = TRUE
+  ) use ($type, $delete_field_completely): void {
+    $storage = FieldStorageConfig::loadByName('node', $field_name);
+
+    if ($storage && $storage->getType() !== 'entity_reference') {
+      $delete_field_completely($field_name);
+      if (function_exists('field_purge_batch')) {
+        field_purge_batch(1000);
+      }
+      $storage = NULL;
+    }
+
+    if (!$storage) {
+      FieldStorageConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => 'node',
+        'type' => 'entity_reference',
+        'settings' => [
+          'target_type' => 'taxonomy_term',
+        ],
+        'cardinality' => 1,
+        'translatable' => FALSE,
+      ])->save();
+    }
+
+    $field = FieldConfig::loadByName('node', $type, $field_name);
+
+    if (!$field) {
+      FieldConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => 'node',
+        'bundle' => $type,
+        'label' => $label,
+        'required' => $required,
+        'settings' => [
+          'handler' => 'default:taxonomy_term',
+          'handler_settings' => [
+            'target_bundles' => [
+              $vocabulary => $vocabulary,
+            ],
+            'sort' => [
+              'field' => 'name',
+              'direction' => 'ASC',
+            ],
+            'auto_create' => FALSE,
+            'auto_create_bundle' => '',
+          ],
+        ],
+      ])->save();
+      return;
+    }
+
+    $field->setLabel($label);
+    $field->setRequired($required);
+    $field->setSettings([
+      'handler' => 'default:taxonomy_term',
+      'handler_settings' => [
+        'target_bundles' => [
+          $vocabulary => $vocabulary,
+        ],
+        'sort' => [
+          'field' => 'name',
+          'direction' => 'ASC',
+        ],
+        'auto_create' => FALSE,
+        'auto_create_bundle' => '',
+      ],
+    ]);
+    $field->save();
+  };
+
+  $ensure_boolean_field = static function (
+    string $field_name,
+    string $label,
+    bool $required = FALSE
+  ) use ($type): void {
+    $storage = FieldStorageConfig::loadByName('node', $field_name);
+
+    if (!$storage) {
+      FieldStorageConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => 'node',
+        'type' => 'boolean',
+        'cardinality' => 1,
+        'translatable' => FALSE,
+      ])->save();
+    }
+
+    $field = FieldConfig::loadByName('node', $type, $field_name);
+
+    if (!$field) {
+      FieldConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => 'node',
+        'bundle' => $type,
+        'label' => $label,
+        'required' => $required,
+      ])->save();
+      return;
+    }
+
+    $field->setLabel($label);
+    $field->setRequired($required);
+    $field->save();
+  };
+
+  $ensure_string_field = static function (
+    string $field_name,
+    string $label,
+    bool $required = FALSE
+  ) use ($type): void {
+    $storage = FieldStorageConfig::loadByName('node', $field_name);
+
+    if (!$storage) {
+      FieldStorageConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => 'node',
+        'type' => 'string',
+        'settings' => [
+          'max_length' => 255,
+        ],
+        'cardinality' => 1,
+        'translatable' => FALSE,
+      ])->save();
+    }
+
+    $field = FieldConfig::loadByName('node', $type, $field_name);
+
+    if (!$field) {
+      FieldConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => 'node',
+        'bundle' => $type,
+        'label' => $label,
+        'required' => $required,
+      ])->save();
+      return;
+    }
+
+    $field->setLabel($label);
+    $field->setRequired($required);
+    $field->save();
+  };
+
+  // Campos académicos como referencias a taxonomía.
+  $ensure_taxonomy_reference_field(
+    'field_facultad_pregrado',
+    'Facultad de medicina – Pregrado',
+    'university_undergraduate',
+    TRUE
+  );
+
+  $ensure_taxonomy_reference_field(
+    'field_pais_pregrado',
+    'País donde realizó el pregrado en medicina',
+    'country',
+    TRUE
+  );
+
+  $ensure_taxonomy_reference_field(
+    'field_titulo_universitario',
+    'Título universitario',
+    'university_degree',
+    TRUE
+  );
+
+  $ensure_taxonomy_reference_field(
+    'field_universidad_residencia',
+    'Universidad de residencia',
+    'university_residence',
+    TRUE
+  );
+
+  $ensure_taxonomy_reference_field(
+    'field_pais_residencia',
+    'País donde realizó la residencia',
+    'country',
+    TRUE
+  );
+
+  // Campos booleanos.
+  $ensure_boolean_field(
+    'field_recertificacion_camec',
+    'Si es ratificado ¿le gustaría participar en el programa voluntario de Re-certificación médica en dermatología CAMEC?',
+    FALSE
+  );
+
+  $ensure_boolean_field(
+    'field_tiene_subespecialidad',
+    'Tiene una Subespecialidad?',
+    TRUE
+  );
+
+  // Campo texto libre.
+  $ensure_string_field(
+    'field_subespecialidad_cual',
+    'Subespecialidad',
+    FALSE
+  );
+
+  // Campos antiguos del Paso 3 que ya no deben usarse.
+  $delete_field_completely('field_universidad');
+  $delete_field_completely('field_titulo');
+  $delete_field_completely('field_fecha_grado');
+  $delete_field_completely('field_especialidad');
+  $delete_field_completely('field_subespecialidad');
+  $delete_field_completely('field_lugar_trabajo');
+
+  if (function_exists('field_purge_batch')) {
+    field_purge_batch(1000);
   }
 
   \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();

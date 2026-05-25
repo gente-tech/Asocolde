@@ -306,55 +306,89 @@ final class SolicitudIngresoWizardForm extends FormBase
     if ($step === 3) {
       $form['profesional'] = [
         '#type' => 'details',
-        '#title' => $this->t('Paso 3: Información profesional'),
+        '#title' => $this->t('Paso 3: Información académica'),
         '#open' => TRUE,
       ];
 
-      $form['profesional']['universidad'] = [
-        '#type' => 'textfield',
-        '#title' => $this->t('Universidad'),
-        '#description' => $this->t('Digite el nombre completo de la institución donde obtuvo su título de médico. Ejemplo: Universidad Nacional de Colombia.'),
+      $form['profesional']['facultad_pregrado'] = [
+        '#type' => 'select',
+        '#title' => $this->t('Facultad de medicina – Pregrado'),
+        '#description' => $this->t('Seleccione la institución donde obtuvo su título de médico.'),
         '#required' => TRUE,
-        '#default_value' => $wizard_values['profesional']['universidad'] ?? '',
+        '#empty_option' => $this->t('- Seleccione -'),
+        '#options' => $this->getTaxonomyOptions('university_undergraduate'),
+        '#default_value' => $wizard_values['profesional']['facultad_pregrado'] ?? NULL,
       ];
 
-      $form['profesional']['titulo'] = [
-        '#type' => 'textfield',
-        '#title' => $this->t('Título'),
-        '#description' => $this->t('Ingrese el título profesional obtenido. Ejemplo: Médico Cirujano.'),
+      $form['profesional']['pais_pregrado'] = [
+        '#type' => 'select',
+        '#title' => $this->t('País donde realizó el pregrado en medicina'),
         '#required' => TRUE,
-        '#default_value' => $wizard_values['profesional']['titulo'] ?? '',
+        '#empty_option' => $this->t('- Seleccione -'),
+        '#options' => $this->getTaxonomyOptions('country'),
+        '#default_value' => $wizard_values['profesional']['pais_pregrado'] ?? NULL,
       ];
 
-      $form['profesional']['fecha_grado'] = [
-        '#type' => 'date',
-        '#title' => $this->t('Fecha de grado'),
-        '#description' => $this->t('Seleccione la fecha en la que obtuvo el título profesional registrado anteriormente.'),
+      $form['profesional']['titulo_universitario'] = [
+        '#type' => 'select',
+        '#title' => $this->t('Título universitario'),
+        '#description' => $this->t('Seleccione el título profesional obtenido.'),
         '#required' => TRUE,
-        '#default_value' => $wizard_values['profesional']['fecha_grado'] ?? '',
+        '#empty_option' => $this->t('- Seleccione -'),
+        '#options' => $this->getTaxonomyOptions('university_degree'),
+        '#default_value' => $wizard_values['profesional']['titulo_universitario'] ?? NULL,
       ];
 
-      $form['profesional']['especialidad'] = [
-        '#type' => 'textfield',
-        '#title' => $this->t('Especialidad'),
-        '#description' => $this->t('Digite su especialidad médica principal. Ejemplo: Dermatología.'),
+      $form['profesional']['universidad_residencia'] = [
+        '#type' => 'select',
+        '#title' => $this->t('Universidad de residencia'),
         '#required' => TRUE,
-        '#default_value' => $wizard_values['profesional']['especialidad'] ?? '',
+        '#empty_option' => $this->t('- Seleccione -'),
+        '#options' => $this->getTaxonomyOptions('university_residence'),
+        '#default_value' => $wizard_values['profesional']['universidad_residencia'] ?? NULL,
       ];
 
-      $form['profesional']['subespecialidad'] = [
+      $form['profesional']['pais_residencia'] = [
+        '#type' => 'select',
+        '#title' => $this->t('País donde realizó la residencia'),
+        '#required' => TRUE,
+        '#empty_option' => $this->t('- Seleccione -'),
+        '#options' => $this->getTaxonomyOptions('country'),
+        '#default_value' => $wizard_values['profesional']['pais_residencia'] ?? NULL,
+      ];
+
+      $form['profesional']['recertificacion_camec'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Si es ratificado ¿le gustaría participar en el programa voluntario de Re-certificación médica en dermatología CAMEC?'),
+        '#default_value' => !empty($wizard_values['profesional']['recertificacion_camec']) ? 1 : 0,
+      ];
+
+      $form['profesional']['tiene_subespecialidad'] = [
+        '#type' => 'radios',
+        '#title' => $this->t('Tiene una Subespecialidad?'),
+        '#required' => TRUE,
+        '#options' => [
+          1 => $this->t('Sí'),
+          0 => $this->t('No'),
+        ],
+        '#default_value' => isset($wizard_values['profesional']['tiene_subespecialidad'])
+          ? (int) $wizard_values['profesional']['tiene_subespecialidad']
+          : NULL,
+      ];
+
+      $form['profesional']['subespecialidad_cual'] = [
         '#type' => 'textfield',
-        '#title' => $this->t('Subespecialidad (si aplica)'),
+        '#title' => $this->t('Subespecialidad'),
         '#description' => $this->t('Ingrese su subespecialidad, en caso de contar con ella. Ejemplo: Dermatopatología.'),
-        '#default_value' => $wizard_values['profesional']['subespecialidad'] ?? '',
-      ];
-
-      $form['profesional']['lugar_trabajo'] = [
-        '#type' => 'textfield',
-        '#title' => $this->t('Lugar de trabajo'),
-        '#description' => $this->t('Indique la institución, clínica, hospital, consultorio o entidad donde ejerce actualmente. Ejemplo: Clínica del Country.'),
-        '#required' => TRUE,
-        '#default_value' => $wizard_values['profesional']['lugar_trabajo'] ?? '',
+        '#default_value' => $wizard_values['profesional']['subespecialidad_cual'] ?? '',
+        '#states' => [
+          'visible' => [
+            ':input[name="profesional[tiene_subespecialidad]"]' => ['value' => '1'],
+          ],
+          'required' => [
+            ':input[name="profesional[tiene_subespecialidad]"]' => ['value' => '1'],
+          ],
+        ],
       ];
     }
 
@@ -705,12 +739,16 @@ final class SolicitudIngresoWizardForm extends FormBase
 
     if ($step === 3) {
       $wizard_values['profesional'] = [
-        'universidad' => $input['profesional']['universidad'] ?? '',
-        'titulo' => $input['profesional']['titulo'] ?? '',
-        'fecha_grado' => $input['profesional']['fecha_grado'] ?? '',
-        'especialidad' => $input['profesional']['especialidad'] ?? '',
-        'subespecialidad' => $input['profesional']['subespecialidad'] ?? '',
-        'lugar_trabajo' => $input['profesional']['lugar_trabajo'] ?? '',
+        'facultad_pregrado' => $input['profesional']['facultad_pregrado'] ?? NULL,
+        'pais_pregrado' => $input['profesional']['pais_pregrado'] ?? NULL,
+        'titulo_universitario' => $input['profesional']['titulo_universitario'] ?? NULL,
+        'universidad_residencia' => $input['profesional']['universidad_residencia'] ?? NULL,
+        'pais_residencia' => $input['profesional']['pais_residencia'] ?? NULL,
+        'recertificacion_camec' => !empty($input['profesional']['recertificacion_camec']) ? 1 : 0,
+        'tiene_subespecialidad' => isset($input['profesional']['tiene_subespecialidad'])
+          ? (int) $input['profesional']['tiene_subespecialidad']
+          : 0,
+        'subespecialidad_cual' => $input['profesional']['subespecialidad_cual'] ?? '',
       ];
     }
 
@@ -806,12 +844,33 @@ final class SolicitudIngresoWizardForm extends FormBase
         ? ['target_id' => (int) $wizard_values['contacto']['lugar_correspondencia']]
         : NULL,
 
-      'field_universidad' => $wizard_values['profesional']['universidad'],
-      'field_titulo' => $wizard_values['profesional']['titulo'],
-      'field_fecha_grado' => $wizard_values['profesional']['fecha_grado'],
-      'field_especialidad' => $wizard_values['profesional']['especialidad'],
-      'field_subespecialidad' => $wizard_values['profesional']['subespecialidad'] ?? '',
-      'field_lugar_trabajo' => $wizard_values['profesional']['lugar_trabajo'],
+      'field_facultad_pregrado' => !empty($wizard_values['profesional']['facultad_pregrado'])
+        ? ['target_id' => (int) $wizard_values['profesional']['facultad_pregrado']]
+        : NULL,
+
+      'field_pais_pregrado' => !empty($wizard_values['profesional']['pais_pregrado'])
+        ? ['target_id' => (int) $wizard_values['profesional']['pais_pregrado']]
+        : NULL,
+
+      'field_titulo_universitario' => !empty($wizard_values['profesional']['titulo_universitario'])
+        ? ['target_id' => (int) $wizard_values['profesional']['titulo_universitario']]
+        : NULL,
+
+      'field_universidad_residencia' => !empty($wizard_values['profesional']['universidad_residencia'])
+        ? ['target_id' => (int) $wizard_values['profesional']['universidad_residencia']]
+        : NULL,
+
+      'field_pais_residencia' => !empty($wizard_values['profesional']['pais_residencia'])
+        ? ['target_id' => (int) $wizard_values['profesional']['pais_residencia']]
+        : NULL,
+
+      'field_recertificacion_camec' => !empty($wizard_values['profesional']['recertificacion_camec']) ? 1 : 0,
+
+      'field_tiene_subespecialidad' => !empty($wizard_values['profesional']['tiene_subespecialidad']) ? 1 : 0,
+
+      'field_subespecialidad_cual' => !empty($wizard_values['profesional']['tiene_subespecialidad'])
+        ? ($wizard_values['profesional']['subespecialidad_cual'] ?? '')
+        : '',
     ]);
 
     // Adjuntos: convertir a permanentes y asignar.
