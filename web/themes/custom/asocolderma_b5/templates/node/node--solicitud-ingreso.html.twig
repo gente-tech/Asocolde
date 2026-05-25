@@ -143,7 +143,12 @@
 			<h2>Información uso institucional</h2>
 
 			<p>
-				<strong>Dirección física principal/institucional:</strong>
+				<strong>Dirección física principal:</strong>
+				{{ node.field_correspondencia_fisica.value ?: '-' }}
+			</p>
+
+			<p>
+				<strong>Dirección institucional:</strong>
 				{{ node.field_direccion_institucional.value ?: '-' }}
 			</p>
 
@@ -158,8 +163,8 @@
 			</p>
 
 			<p>
-				<strong>Lugar donde desea recibir la correspondencia física:</strong>
-				{{ node.field_correspondencia_fisica.value ?: '-' }}
+				<strong>En caso de ser ratificado ¿Dónde desea recibir la correspondencia física?:</strong>
+				{{ node.field_lugar_correspondencia.entity ? node.field_lugar_correspondencia.entity.label : '-' }}
 			</p>
 		</div>
 
