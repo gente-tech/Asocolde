@@ -169,49 +169,79 @@
 		</div>
 
 
-		<div class="solicitud-ingreso__section">
-			<h2>Información académica</h2>
+		<section class="solicitud-section solicitud-section--academica">
+			<h3>Información académica</h3>
 
-			<p>
-				<strong>Facultad de medicina – Pregrado:</strong>
-				{{ node.field_facultad_pregrado.value ?: '-' }}
-			</p>
+			<div class="solicitud-grid">
 
-			<p>
-				<strong>País donde realizó el pregrado en medicina:</strong>
-				{{ node.field_pais_pregrado.value ?: '-' }}
-			</p>
+				<div class="solicitud-field">
+					<strong>Facultad de medicina – Pregrado</strong>
+					<span>
+						{{ content.field_facultad_pregrado }}
+					</span>
+				</div>
 
-			<p>
-				<strong>Título universitario:</strong>
-				{{ node.field_titulo_universitario.value ?: '-' }}
-			</p>
+				<div class="solicitud-field">
+					<strong>País donde realizó el pregrado en medicina</strong>
+					<span>
+						{{ content.field_pais_pregrado }}
+					</span>
+				</div>
 
-			<p>
-				<strong>Universidad de residencia:</strong>
-				{{ node.field_universidad_residencia.value ?: '-' }}
-			</p>
+				<div class="solicitud-field">
+					<strong>Título universitario</strong>
+					<span>
+						{{ content.field_titulo_universitario }}
+					</span>
+				</div>
 
-			<p>
-				<strong>País donde realizó la residencia:</strong>
-				{{ node.field_pais_residencia.value ?: '-' }}
-			</p>
+				<div class="solicitud-field">
+					<strong>Universidad de residencia</strong>
+					<span>
+						{{ content.field_universidad_residencia }}
+					</span>
+				</div>
 
-			<p>
-				<strong>Participar en programa voluntario CAMEC:</strong>
-				{{ node.field_recertificacion_camec.value ? 'Sí' : 'No' }}
-			</p>
+				<div class="solicitud-field">
+					<strong>País donde realizó la residencia</strong>
+					<span>
+						{{ content.field_pais_residencia }}
+					</span>
+				</div>
 
-			<p>
-				<strong>Tiene subespecialidad:</strong>
-				{{ node.field_tiene_subespecialidad.value ? 'Sí' : 'No' }}
-			</p>
+				<div class="solicitud-field">
+					<strong>Programa voluntario de Re-certificación médica en dermatología CAMEC</strong>
+					<span>
+						{% if node.field_recertificacion_camec.value == '1' %}
+							Sí
+						{% else %}
+							No
+						{% endif %}
+					</span>
+				</div>
 
-			<p>
-				<strong>Subespecialidad (Cuál):</strong>
-				{{ node.field_subespecialidad_cual.value ?: '-' }}
-			</p>
-		</div>
+				<div class="solicitud-field">
+					<strong>Tiene una Subespecialidad?</strong>
+					<span>
+						{% if node.field_tiene_subespecialidad.value == '1' %}
+							Sí
+						{% else %}
+							No
+						{% endif %}
+					</span>
+				</div>
+
+				{% if node.field_tiene_subespecialidad.value == '1' %}
+					<div class="solicitud-field">
+						<strong>Subespecialidad</strong>
+						<span>
+							{{ node.field_subespecialidad_cual.value|default('') }}
+						</span>
+					</div>
+				{% endif %}
+
+			</div>
+		</section>
 
 
 		<div class="solicitud-ingreso__section">
