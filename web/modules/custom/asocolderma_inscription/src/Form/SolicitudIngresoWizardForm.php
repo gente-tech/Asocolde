@@ -235,16 +235,24 @@ final class SolicitudIngresoWizardForm extends FormBase
     if ($step === 2) {
       $form['contacto'] = [
         '#type' => 'details',
-        '#title' => $this->t('Paso 2: Información de contacto'),
+        '#title' => $this->t('Paso 2: Información uso institucional'),
         '#open' => TRUE,
       ];
 
       $form['contacto']['direccion'] = [
         '#type' => 'textfield',
-        '#title' => $this->t('Dirección física principal/institucional'),
-        '#description' => $this->t('Ingrese su dirección completa de residencia o correspondencia. Ejemplo: Calle 123 # 45-67, Apartamento 201.'),
+        '#title' => $this->t('Dirección física principal'),
+        '#description' => $this->t('Ingrese su dirección física principal. Ejemplo: Calle 123 # 45-67, Apartamento 201.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['contacto']['direccion'] ?? '',
+      ];
+
+      $form['contacto']['correspondencia_fisica'] = [
+        '#type' => 'textfield',
+        '#title' => $this->t('Dirección institucional'),
+        '#description' => $this->t('Ingrese la dirección institucional o profesional asociada a su ejercicio médico.'),
+        '#required' => TRUE,
+        '#default_value' => $wizard_values['contacto']['correspondencia_fisica'] ?? '',
       ];
 
       $form['contacto']['email'] = [
@@ -285,20 +293,13 @@ final class SolicitudIngresoWizardForm extends FormBase
         ],
       ];
 
-      $form['contacto']['correspondencia_fisica'] = [
-        '#type' => 'textfield',
-        '#title' => $this->t('Dirección de correspondencia física'),
-        '#description' => $this->t('En caso de ser ratificado ¿Dónde desea recibir la correspondencia física?'),
+      $form['contacto']['lugar_correspondencia'] = [
+        '#type' => 'select',
+        '#title' => $this->t('En caso de ser ratificado ¿Dónde desea recibir la correspondencia física?'),
         '#required' => TRUE,
-        '#default_value' => $wizard_values['contacto']['correspondencia_fisica'] ?? '',
-      ];
-
-      $form['contacto']['telefono'] = [
-        '#type' => 'textfield',
-        '#title' => $this->t('Teléfono'),
-        '#description' => $this->t('Ingrese su número de teléfono fijo, incluyendo indicativo si corresponde. Ejemplo: 6011234567.'),
-        '#required' => TRUE,
-        '#default_value' => $wizard_values['contacto']['telefono'] ?? '',
+        '#empty_option' => $this->t('- Seleccione -'),
+        '#options' => $this->getTaxonomyOptions('lugar_de_correspondencia'),
+        '#default_value' => $wizard_values['contacto']['lugar_correspondencia'] ?? NULL,
       ];
     }
 
