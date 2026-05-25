@@ -213,35 +213,35 @@
 				<div class="solicitud-field">
 					<strong>Facultad de medicina – Pregrado</strong>
 					<span>
-						{{ content.field_facultad_pregrado }}
+						{{ node.field_facultad_pregrado.entity ? node.field_facultad_pregrado.entity.label : '-' }}
 					</span>
 				</div>
 
 				<div class="solicitud-field">
 					<strong>País donde realizó el pregrado en medicina</strong>
 					<span>
-						{{ content.field_pais_pregrado }}
+						{{ node.field_pais_pregrado.entity ? node.field_pais_pregrado.entity.label : '-' }}
 					</span>
 				</div>
 
 				<div class="solicitud-field">
 					<strong>Título universitario</strong>
 					<span>
-						{{ content.field_titulo_universitario }}
+						{{ node.field_titulo_universitario.entity ? node.field_titulo_universitario.entity.label : '-' }}
 					</span>
 				</div>
 
 				<div class="solicitud-field">
 					<strong>Universidad de residencia</strong>
 					<span>
-						{{ content.field_universidad_residencia }}
+						{{ node.field_universidad_residencia.entity ? node.field_universidad_residencia.entity.label : '-' }}
 					</span>
 				</div>
 
 				<div class="solicitud-field">
 					<strong>País donde realizó la residencia</strong>
 					<span>
-						{{ content.field_pais_residencia }}
+						{{ node.field_pais_residencia.entity ? node.field_pais_residencia.entity.label : '-' }}
 					</span>
 				</div>
 
@@ -271,7 +271,7 @@
 					<div class="solicitud-field">
 						<strong>Subespecialidad</strong>
 						<span>
-							{{ content.field_subespecialidad_cual }}
+							{{ node.field_subespecialidad_cual.entity ? node.field_subespecialidad_cual.entity.label : '-' }}
 						</span>
 					</div>
 				{% endif %}
