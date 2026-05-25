@@ -161,3 +161,278 @@
   line-height: 1.2;
   color: #8a5a10;
 }
+
+.solicitud-ingreso {
+  max-width: 1480px;
+  margin: 0 auto 40px;
+  padding: 0 8px 24px;
+}
+
+.solicitud-documento-firmado {
+  max-width: 1480px;
+  margin: 0 auto 24px;
+  padding: 20px 24px;
+  border: 1px solid #d9ecec;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #f7fbfb 0%, #eef8f8 100%);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+}
+
+.solicitud-documento-firmado h3 {
+  margin: 0 0 14px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.solicitud-ingreso>.solicitud-ingreso__header:first-of-type {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  gap: 16px;
+  align-items: stretch;
+  margin-bottom: 24px;
+}
+
+.solicitud-ingreso>.solicitud-ingreso__header:first-of-type h1 {
+  grid-column: 1 / -1;
+  margin: 0 0 6px;
+  font-size: 42px;
+  line-height: 1.05;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.solicitud-ingreso>.solicitud-ingreso__header:first-of-type>p {
+  margin: 0;
+  padding: 16px 20px;
+  border: 1px solid #e7edf3;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+  font-size: 16px;
+  color: #111827;
+}
+
+.solicitud-ingreso>.solicitud-ingreso__header:first-of-type>p strong {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.solicitud-ingreso>.solicitud-ingreso__header+.solicitud-ingreso__header {
+  margin-bottom: 22px;
+}
+
+.solicitud-ingreso__body {
+  display: grid;
+  gap: 22px;
+}
+
+.solicitud-ingreso__body>.solicitud-ingreso__section:nth-child(1),
+.solicitud-ingreso__body>.solicitud-ingreso__section:nth-child(2) {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  gap: 18px 24px;
+  padding: 24px;
+  border: 1px solid #e7edf3;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+}
+
+.solicitud-ingreso__body>.solicitud-ingreso__section:nth-child(1) h2,
+.solicitud-ingreso__body>.solicitud-ingreso__section:nth-child(2) h2 {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.solicitud-ingreso__body>.solicitud-ingreso__section:nth-child(1) p,
+.solicitud-ingreso__body>.solicitud-ingreso__section:nth-child(2) p {
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid #edf2f7;
+  border-radius: 16px;
+  background: #f8fafc;
+  min-height: 86px;
+  color: #111827;
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.solicitud-ingreso__body>.solicitud-ingreso__section:nth-child(1) p strong,
+.solicitud-ingreso__body>.solicitud-ingreso__section:nth-child(2) p strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.solicitud-section--academica {
+  padding: 24px;
+  border: 1px solid #e7edf3;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+}
+
+.solicitud-section--academica h3 {
+  margin: 0 0 18px;
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.solicitud-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  gap: 18px 24px;
+}
+
+.solicitud-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 86px;
+  padding: 14px 16px;
+  border: 1px solid #edf2f7;
+  border-radius: 16px;
+  background: #f8fafc;
+}
+
+.solicitud-field strong {
+  display: block;
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.solicitud-field span {
+  color: #111827;
+  font-size: 16px;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.solicitud-ingreso__body>.solicitud-ingreso__section:last-child {
+  padding: 24px;
+  border: 1px solid #e7edf3;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+}
+
+.solicitud-ingreso__body>.solicitud-ingreso__section:last-child h2 {
+  margin: 0 0 18px;
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.solicitud-ingreso__body>.solicitud-ingreso__section:last-child ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 14px;
+}
+
+.solicitud-ingreso__body>.solicitud-ingreso__section:last-child li {
+  display: grid;
+  grid-template-columns: minmax(260px, 1.4fr) minmax(220px, 1fr);
+  gap: 14px 18px;
+  align-items: center;
+  padding: 14px 16px;
+  border: 1px solid #edf2f7;
+  border-radius: 16px;
+  background: #f8fafc;
+}
+
+.solicitud-ingreso__body>.solicitud-ingreso__section:last-child li strong {
+  display: block;
+  color: #111827;
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 700;
+}
+
+.solicitud-ingreso__body>.solicitud-ingreso__section:last-child .btn-pdf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-height: 44px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid #bfe9eb;
+  background: #e8f7f8;
+  color: #067b7f;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+  word-break: break-word;
+}
+
+.solicitud-ingreso__body>.solicitud-ingreso__section:last-child .btn-pdf:hover {
+  background: #d5f1f3;
+  border-color: #96dde0;
+  color: #055f62;
+  transform: translateY(-1px);
+}
+
+.solicitud-ingreso__body>.solicitud-ingreso__section:last-child>p {
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px dashed #d7dfe7;
+  border-radius: 14px;
+  background: #fafcfe;
+  color: #6b7280;
+}
+
+@media (max-width: 1200px) {
+
+  .solicitud-ingreso>.solicitud-ingreso__header:first-of-type,
+  .solicitud-ingreso__body>.solicitud-ingreso__section:nth-child(1),
+  .solicitud-ingreso__body>.solicitud-ingreso__section:nth-child(2),
+  .solicitud-grid {
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .solicitud-ingreso {
+    padding: 0 4px 24px;
+  }
+
+  .solicitud-ingreso>.solicitud-ingreso__header:first-of-type,
+  .solicitud-ingreso__body>.solicitud-ingreso__section:nth-child(1),
+  .solicitud-ingreso__body>.solicitud-ingreso__section:nth-child(2),
+  .solicitud-grid,
+  .solicitud-ingreso__body>.solicitud-ingreso__section:last-child li {
+    grid-template-columns: 1fr;
+  }
+
+  .solicitud-ingreso>.solicitud-ingreso__header:first-of-type h1 {
+    font-size: 32px;
+  }
+
+  .solicitud-ingreso__body>.solicitud-ingreso__section:nth-child(1),
+  .solicitud-ingreso__body>.solicitud-ingreso__section:nth-child(2),
+  .solicitud-section--academica,
+  .solicitud-ingreso__body>.solicitud-ingreso__section:last-child,
+  .solicitud-documento-firmado {
+    padding: 18px;
+    border-radius: 18px;
+  }
+}
