@@ -922,3 +922,68 @@ function asocolderma_inscription_update_9008(): void
 
   \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
 }
+
+/**
+ * Agrega el campo de lugar de correspondencia a la solicitud de ingreso.
+ */
+function asocolderma_inscription_update_9009(): void
+{
+  $type = 'solicitud_ingreso';
+
+  // Ajustar label del campo usado para Dirección física principal.
+  $field_correspondencia = FieldConfig::loadByName('node', $type, 'field_correspondencia_fisica');
+  if ($field_correspondencia) {
+    $field_correspondencia->setLabel('Dirección física principal');
+    $field_correspondencia->setRequired(TRUE);
+    $field_correspondencia->save();
+  }
+
+  // Ajustar label del campo usado para Dirección institucional.
+  $field_direccion_institucional = FieldConfig::loadByName('node', $type, 'field_direccion_institucional');
+  if ($field_direccion_institucional) {
+    $field_direccion_institucional->setLabel('Dirección institucional');
+    $field_direccion_institucional->setRequired(TRUE);
+    $field_direccion_institucional->save();
+  }
+
+  // Crear almacenamiento del campo taxonomy reference si no existe.
+  if (!FieldStorageConfig::loadByName('node', 'field_lugar_correspondencia')) {
+    FieldStorageConfig::create([
+      'field_name' => 'field_lugar_correspondencia',
+      'entity_type' => 'node',
+      'type' => 'entity_reference',
+      'settings' => [
+        'target_type' => 'taxonomy_term',
+      ],
+      'cardinality' => 1,
+      'translatable' => FALSE,
+    ])->save();
+  }
+
+  // Crear instancia del campo en solicitud_ingreso si no existe.
+  if (!FieldConfig::loadByName('node', $type, 'field_lugar_correspondencia')) {
+    FieldConfig::create([
+      'field_name' => 'field_lugar_correspondencia',
+      'entity_type' => 'node',
+      'bundle' => $type,
+      'label' => 'En caso de ser ratificado ¿Dónde desea recibir la correspondencia física?',
+      'required' => TRUE,
+      'settings' => [
+        'handler' => 'default:taxonomy_term',
+        'handler_settings' => [
+          'target_bundles' => [
+            'lugar_de_correspondencia' => 'lugar_de_correspondencia',
+          ],
+          'sort' => [
+            'field' => 'name',
+            'direction' => 'ASC',
+          ],
+          'auto_create' => FALSE,
+          'auto_create_bundle' => '',
+        ],
+      ],
+    ])->save();
+  }
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}

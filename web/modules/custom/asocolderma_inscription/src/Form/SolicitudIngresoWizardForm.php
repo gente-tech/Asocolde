@@ -694,12 +694,12 @@ final class SolicitudIngresoWizardForm extends FormBase
       $wizard_values['contacto'] = [
         'direccion' => $input['contacto']['direccion'] ?? '',
         'correspondencia_fisica' => $input['contacto']['correspondencia_fisica'] ?? '',
-        'telefono' => $input['contacto']['telefono'] ?? '',
+        'email' => $input['contacto']['email'] ?? '',
         'celular_indicativo' => $celular_indicativo,
         'celular_nacional' => $celular_nacional,
         'celular_full' => $celular_full,
         'celular' => $celular_full,
-        'email' => $input['contacto']['email'] ?? '',
+        'lugar_correspondencia' => $input['contacto']['lugar_correspondencia'] ?? NULL,
       ];
     }
 
