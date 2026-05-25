@@ -22,17 +22,19 @@
 
 .solicitud-semaforo__item {
   position: relative;
+  display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   flex-direction: column;
-  min-width: 120px;
-  flex: 1 1 0;
+  min-width: 140px;
+  flex: 1 1 140px;
+  text-align: center;
 }
 
 .solicitud-semaforo__line {
   position: absolute;
   top: 14px;
-  left: -50%;
+  right: 50%;
   width: 100%;
   height: 4px;
   background: #d1d5db;
@@ -70,8 +72,8 @@
 
 .solicitud-semaforo__content {
   margin-top: 52px;
-  margin-left: -36px;
-  width: 120px;
+  margin-left: 0;
+  width: 130px;
   text-align: center;
 }
 
