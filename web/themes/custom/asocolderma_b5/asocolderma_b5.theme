@@ -151,12 +151,14 @@ function asocolderma_b5_preprocess_node(array &$variables): void {
     return;
   }
 
+  $variables['elements']['#cache']['tags'][] = 'asocolderma_estado_solicitud_colors';
+
   if (!$node->hasField('field_state') || $node->get('field_state')->isEmpty()) {
     return;
   }
 
   $estado = $node->get('field_state')->entity;
-  
+
   if ($estado) {
     CacheableMetadata::createFromObject($estado)->applyTo($variables['elements']);
   }

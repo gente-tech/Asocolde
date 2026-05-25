@@ -402,3 +402,69 @@ function asocolderma_inscription_get_state_history_names_with_dates(int $nid): a
 
   return $history;
 }
+
+/**
+ * Implements hook_entity_update().
+ */
+function asocolderma_inscription_entity_update(\Drupal\Core\Entity\EntityInterface $entity): void
+{
+  if ($entity->getEntityTypeId() !== 'taxonomy_term') {
+    return;
+  }
+
+  if (!$entity instanceof \Drupal\taxonomy\TermInterface) {
+    return;
+  }
+
+  if ($entity->bundle() !== 'estado_solicitud_ingreso') {
+    return;
+  }
+
+  \Drupal\Core\Cache\Cache::invalidateTags([
+    'asocolderma_estado_solicitud_colors',
+  ]);
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function asocolderma_inscription_entity_insert(\Drupal\Core\Entity\EntityInterface $entity): void
+{
+  if ($entity->getEntityTypeId() !== 'taxonomy_term') {
+    return;
+  }
+
+  if (!$entity instanceof \Drupal\taxonomy\TermInterface) {
+    return;
+  }
+
+  if ($entity->bundle() !== 'estado_solicitud_ingreso') {
+    return;
+  }
+
+  \Drupal\Core\Cache\Cache::invalidateTags([
+    'asocolderma_estado_solicitud_colors',
+  ]);
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function asocolderma_inscription_entity_delete(\Drupal\Core\Entity\EntityInterface $entity): void
+{
+  if ($entity->getEntityTypeId() !== 'taxonomy_term') {
+    return;
+  }
+
+  if (!$entity instanceof \Drupal\taxonomy\TermInterface) {
+    return;
+  }
+
+  if ($entity->bundle() !== 'estado_solicitud_ingreso') {
+    return;
+  }
+
+  \Drupal\Core\Cache\Cache::invalidateTags([
+    'asocolderma_estado_solicitud_colors',
+  ]);
+}
