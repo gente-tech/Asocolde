@@ -397,30 +397,30 @@ final class SolicitudIngresoWizardForm extends FormBase
     if ($step === 4) {
       $form['adjuntos'] = [
         '#type' => 'details',
-        '#title' => $this->t('Paso 4: Adjuntos'),
+        '#title' => $this->t('Paso 4: Información societaria(Adjuntos)'),
         '#open' => TRUE,
       ];
 
-      $form['adjuntos']['adj_id'] = [
+      $form['adjuntos']['adj_carta_1'] = [
         '#type' => 'managed_file',
-        '#title' => $this->t('Documento de identidad'),
-        '#description' => $this->t('Adjunte una copia legible de su documento de identidad vigente. Formatos permitidos: PDF, JPG, JPEG o PNG. Tamaño máximo: 10 MB.'),
+        '#title' => $this->t('Carta 1'),
+        '#description' => $this->t('Adjunte la primera carta de presentación o recomendación en formato PDF, conforme a los requisitos del proceso de ingreso. Tamaño máximo: 10 MB.'),
         '#required' => TRUE,
-        '#upload_location' => 'private://solicitud_ingreso/id/',
-        '#default_value' => $wizard_values['adjuntos']['adj_id'] ?? NULL,
+        '#upload_location' => 'private://solicitud_ingreso/carta_1/',
+        '#default_value' => $wizard_values['adjuntos']['adj_carta_1'] ?? NULL,
         '#upload_validators' => [
-          'file_validate_extensions' => ['pdf jpg jpeg png'],
+          'file_validate_extensions' => ['pdf'],
           'file_validate_size' => [10 * 1024 * 1024],
         ],
       ];
 
-      $form['adjuntos']['adj_hv'] = [
+      $form['adjuntos']['adj_carta_2'] = [
         '#type' => 'managed_file',
-        '#title' => $this->t('Hoja de vida'),
-        '#description' => $this->t('Adjunte su hoja de vida actualizada en formato PDF. Se recomienda que el documento incluya formación académica, experiencia profesional y datos de contacto. Tamaño máximo: 10 MB.'),
+        '#title' => $this->t('Carta 2'),
+        '#description' => $this->t('Adjunte la segunda carta de presentación o recomendación en formato PDF, conforme a los requisitos del proceso de ingreso. Tamaño máximo: 10 MB.'),
         '#required' => TRUE,
-        '#upload_location' => 'private://solicitud_ingreso/hv/',
-        '#default_value' => $wizard_values['adjuntos']['adj_hv'] ?? NULL,
+        '#upload_location' => 'private://solicitud_ingreso/carta_2/',
+        '#default_value' => $wizard_values['adjuntos']['adj_carta_2'] ?? NULL,
         '#upload_validators' => [
           'file_validate_extensions' => ['pdf'],
           'file_validate_size' => [10 * 1024 * 1024],
@@ -440,13 +440,39 @@ final class SolicitudIngresoWizardForm extends FormBase
         ],
       ];
 
-      $form['adjuntos']['adj_rethus'] = [
+      $form['adjuntos']['adj_id'] = [
         '#type' => 'managed_file',
-        '#title' => $this->t('RETHUS'),
-        '#description' => $this->t('Adjunte el certificado o soporte de inscripción en RETHUS en formato PDF. Tamaño máximo: 10 MB.'),
+        '#title' => $this->t('Documento de identidad'),
+        '#description' => $this->t('Adjunte una copia legible de su documento de identidad vigente. Formatos permitidos: PDF, JPG, JPEG o PNG. Tamaño máximo: 10 MB.'),
         '#required' => TRUE,
-        '#upload_location' => 'private://solicitud_ingreso/rethus/',
-        '#default_value' => $wizard_values['adjuntos']['adj_rethus'] ?? NULL,
+        '#upload_location' => 'private://solicitud_ingreso/id/',
+        '#default_value' => $wizard_values['adjuntos']['adj_id'] ?? NULL,
+        '#upload_validators' => [
+          'file_validate_extensions' => ['pdf jpg jpeg png'],
+          'file_validate_size' => [10 * 1024 * 1024],
+        ],
+      ];
+
+      $form['adjuntos']['adj_carta_ingreso'] = [
+        '#type' => 'managed_file',
+        '#title' => $this->t('Carta de solicitud de ingreso'),
+        '#description' => $this->t('Adjunte la carta formal de solicitud de ingreso a la Asociación en formato PDF. Tamaño máximo: 10 MB.'),
+        '#required' => TRUE,
+        '#upload_location' => 'private://solicitud_ingreso/carta_ingreso/',
+        '#default_value' => $wizard_values['adjuntos']['adj_carta_ingreso'] ?? NULL,
+        '#upload_validators' => [
+          'file_validate_extensions' => ['pdf'],
+          'file_validate_size' => [10 * 1024 * 1024],
+        ],
+      ];
+
+      $form['adjuntos']['adj_hv'] = [
+        '#type' => 'managed_file',
+        '#title' => $this->t('Hoja de vida'),
+        '#description' => $this->t('Adjunte su hoja de vida actualizada en formato PDF. Se recomienda que el documento incluya formación académica, experiencia profesional y datos de contacto. Tamaño máximo: 10 MB.'),
+        '#required' => TRUE,
+        '#upload_location' => 'private://solicitud_ingreso/hv/',
+        '#default_value' => $wizard_values['adjuntos']['adj_hv'] ?? NULL,
         '#upload_validators' => [
           'file_validate_extensions' => ['pdf'],
           'file_validate_size' => [10 * 1024 * 1024],
@@ -479,12 +505,13 @@ final class SolicitudIngresoWizardForm extends FormBase
         ],
       ];
 
-      $form['adjuntos']['adj_cert_publicacion'] = [
+      $form['adjuntos']['adj_rethus'] = [
         '#type' => 'managed_file',
-        '#title' => $this->t('Certificación de publicaciones (si aplica)'),
-        '#description' => $this->t('Si cuenta con publicaciones, adjunte los certificados o soportes correspondientes en formato PDF. Este campo es opcional. Tamaño máximo: 10 MB.'),
-        '#upload_location' => 'private://solicitud_ingreso/cert_publicacion/',
-        '#default_value' => $wizard_values['adjuntos']['adj_cert_publicacion'] ?? NULL,
+        '#title' => $this->t('RETHUS'),
+        '#description' => $this->t('Adjunte el certificado o soporte de inscripción en RETHUS en formato PDF. Tamaño máximo: 10 MB.'),
+        '#required' => TRUE,
+        '#upload_location' => 'private://solicitud_ingreso/rethus/',
+        '#default_value' => $wizard_values['adjuntos']['adj_rethus'] ?? NULL,
         '#upload_validators' => [
           'file_validate_extensions' => ['pdf'],
           'file_validate_size' => [10 * 1024 * 1024],
@@ -504,26 +531,12 @@ final class SolicitudIngresoWizardForm extends FormBase
         ],
       ];
 
-      $form['adjuntos']['adj_carta_1'] = [
+      $form['adjuntos']['adj_cert_publicacion'] = [
         '#type' => 'managed_file',
-        '#title' => $this->t('Carta 1'),
-        '#description' => $this->t('Adjunte la primera carta de presentación o recomendación en formato PDF, conforme a los requisitos del proceso de ingreso. Tamaño máximo: 10 MB.'),
-        '#required' => TRUE,
-        '#upload_location' => 'private://solicitud_ingreso/carta_1/',
-        '#default_value' => $wizard_values['adjuntos']['adj_carta_1'] ?? NULL,
-        '#upload_validators' => [
-          'file_validate_extensions' => ['pdf'],
-          'file_validate_size' => [10 * 1024 * 1024],
-        ],
-      ];
-
-      $form['adjuntos']['adj_carta_2'] = [
-        '#type' => 'managed_file',
-        '#title' => $this->t('Carta 2'),
-        '#description' => $this->t('Adjunte la segunda carta de presentación o recomendación en formato PDF, conforme a los requisitos del proceso de ingreso. Tamaño máximo: 10 MB.'),
-        '#required' => TRUE,
-        '#upload_location' => 'private://solicitud_ingreso/carta_2/',
-        '#default_value' => $wizard_values['adjuntos']['adj_carta_2'] ?? NULL,
+        '#title' => $this->t('Certificación de publicaciones (si aplica)'),
+        '#description' => $this->t('Si cuenta con publicaciones, adjunte los certificados o soportes correspondientes en formato PDF. Este campo es opcional. Tamaño máximo: 10 MB.'),
+        '#upload_location' => 'private://solicitud_ingreso/cert_publicacion/',
+        '#default_value' => $wizard_values['adjuntos']['adj_cert_publicacion'] ?? NULL,
         '#upload_validators' => [
           'file_validate_extensions' => ['pdf'],
           'file_validate_size' => [10 * 1024 * 1024],
@@ -766,6 +779,7 @@ final class SolicitudIngresoWizardForm extends FormBase
         'adj_aut_verificacion' => $input['adjuntos']['adj_aut_verificacion'] ?? NULL,
         'adj_carta_1' => $input['adjuntos']['adj_carta_1'] ?? NULL,
         'adj_carta_2' => $input['adjuntos']['adj_carta_2'] ?? NULL,
+        'adj_carta_ingreso' => $input['adjuntos']['adj_carta_ingreso'] ?? NULL,
       ];
     }
 
@@ -880,6 +894,7 @@ final class SolicitudIngresoWizardForm extends FormBase
     $adj = $wizard_values['adjuntos'] ?? [];
 
     $map = [
+      'adj_carta_ingreso' => 'field_adj_carta_ingreso',
       'adj_id' => 'field_adj_id',
       'adj_hv' => 'field_adj_hv',
       'adj_rut' => 'field_adj_rut',
