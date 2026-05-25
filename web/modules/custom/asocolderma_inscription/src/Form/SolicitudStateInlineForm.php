@@ -14,7 +14,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-final class SolicitudStateInlineForm extends FormBase {
+final class SolicitudStateInlineForm extends FormBase
+{
 
   protected EntityTypeManagerInterface $etm;
   protected SolicitudStateManager $stateManager;
@@ -29,7 +30,8 @@ final class SolicitudStateInlineForm extends FormBase {
     $this->requestStack = $request_stack;
   }
 
-  public static function create(ContainerInterface $container): self {
+  public static function create(ContainerInterface $container): self
+  {
     return new self(
       $container->get('entity_type.manager'),
       $container->get('asocolderma_inscription.solicitud_state_manager'),
@@ -37,11 +39,13 @@ final class SolicitudStateInlineForm extends FormBase {
     );
   }
 
-  public function getFormId(): string {
+  public function getFormId(): string
+  {
     return 'asocolderma_solicitud_state_inline_form';
   }
 
-  public function buildForm(array $form, FormStateInterface $form_state, $nid = NULL): array {
+  public function buildForm(array $form, FormStateInterface $form_state, $nid = NULL): array
+  {
     if (
       !$this->currentUser()->hasRole('secretaria_general') &&
       !$this->currentUser()->hasRole('coordinacion_administrativa')
@@ -83,14 +87,49 @@ final class SolicitudStateInlineForm extends FormBase {
 
     $options = $this->resolveTidsByNames('estado_solicitud_ingreso', $allowed_names);
 
-    $form['state_tid'] = [
+    $selected_tid = (int) ($form_state->getValue('state_tid') ?? 0);
+    $requires_motivo = $selected_tid > 0 ? $this->termRequiresMotivo($selected_tid) : FALSE;
+
+    $form['state_wrapper'] = [
+      '#type' => 'container',
+      '#attributes' => [
+        'id' => 'asocolderma-state-wrapper',
+      ],
+    ];
+
+    $form['state_wrapper']['state_tid'] = [
       '#type' => 'select',
       '#title' => $this->t('Estado'),
       '#options' => $options,
-      '#default_value' => NULL,
+      '#default_value' => $selected_tid ?: NULL,
       '#empty_option' => $this->t('- Seleccione -'),
       '#required' => TRUE,
+      '#ajax' => [
+        'callback' => '::refreshStateFields',
+        'wrapper' => 'asocolderma-state-wrapper',
+        'event' => 'change',
+        'progress' => [
+          'type' => 'throbber',
+          'message' => $this->t('Validando estado...'),
+        ],
+      ],
     ];
+
+    if ($requires_motivo) {
+      $form['state_wrapper']['motivo'] = [
+        '#type' => 'textarea',
+        '#title' => $this->t('Motivo'),
+        '#description' => $this->t('Este estado requiere registrar un motivo administrativo. Mínimo 10 caracteres.'),
+        '#required' => TRUE,
+        '#default_value' => (string) ($form_state->getValue('motivo') ?? ''),
+        '#rows' => 4,
+      ];
+    } else {
+      $form['state_wrapper']['motivo'] = [
+        '#type' => 'hidden',
+        '#value' => '',
+      ];
+    }
 
     $form['actions'] = [
       '#type' => 'actions',
@@ -132,7 +171,13 @@ final class SolicitudStateInlineForm extends FormBase {
     return $form;
   }
 
-  public function openConfirmModal(array &$form, FormStateInterface $form_state): AjaxResponse {
+  public function refreshStateFields(array &$form, FormStateInterface $form_state): array
+  {
+    return $form['state_wrapper'];
+  }
+
+  public function openConfirmModal(array &$form, FormStateInterface $form_state): AjaxResponse
+  {
     if (
       !$this->currentUser()->hasRole('secretaria_general') &&
       !$this->currentUser()->hasRole('coordinacion_administrativa')
@@ -159,6 +204,20 @@ final class SolicitudStateInlineForm extends FormBase {
     if (empty($to_tid) || !isset($allowed_options[$to_tid])) {
       $this->messenger()->addError($this->t('Debe seleccionar un estado válido.'));
       return $response;
+    }
+
+    if ($this->termRequiresMotivo($to_tid)) {
+      $motivo = trim((string) $form_state->getValue('motivo'));
+
+      if ($motivo === '') {
+        $this->messenger()->addError($this->t('Debes registrar un motivo para este estado.'));
+        return $response;
+      }
+
+      if (mb_strlen($motivo) < 10) {
+        $this->messenger()->addError($this->t('El motivo debe tener mínimo 10 caracteres.'));
+        return $response;
+      }
     }
 
     $dialog_content = [
@@ -207,7 +266,8 @@ final class SolicitudStateInlineForm extends FormBase {
     return $response;
   }
 
-  public function submitForm(array &$form, FormStateInterface $form_state): void {
+  public function submitForm(array &$form, FormStateInterface $form_state): void
+  {
     if (
       !$this->currentUser()->hasRole('secretaria_general') &&
       !$this->currentUser()->hasRole('coordinacion_administrativa')
@@ -237,16 +297,24 @@ final class SolicitudStateInlineForm extends FormBase {
       return;
     }
 
+    $motivo = trim((string) $form_state->getValue('motivo'));
+    $requires_motivo = $this->termRequiresMotivo($to_tid);
+
+    $comment = $requires_motivo
+      ? $motivo
+      : 'Cambio de estado desde modal de confirmación';
+
     $this->stateManager->transitionByTid(
       $node,
       $to_tid,
       'node_view_inline_select',
-      'Cambio de estado desde modal de confirmación',
+      $comment,
       [
         'nid' => $nid,
         'from_state' => $current_name,
         'to_tid' => $to_tid,
         'actor_roles' => $this->currentUser()->getRoles(),
+        'requires_motivo' => $requires_motivo,
       ]
     );
 
@@ -254,7 +322,8 @@ final class SolicitudStateInlineForm extends FormBase {
     $form_state->setRedirectUrl(Url::fromUserInput($destination ?: '/'));
   }
 
-  private function getAllowedStateNamesByCurrentState(?string $current_name): array {
+  private function getAllowedStateNamesByCurrentState(?string $current_name): array
+  {
     if ($this->currentUser()->hasRole('secretaria_general')) {
       return match ($current_name) {
         'En trámite' => ['Pendiente aclaración', 'Aprobada', 'Rechazada'],
@@ -277,7 +346,8 @@ final class SolicitudStateInlineForm extends FormBase {
     return [];
   }
 
-  private function resolveTidsByNames(string $vid, array $names): array {
+  private function resolveTidsByNames(string $vid, array $names): array
+  {
     $storage = $this->etm->getStorage('taxonomy_term');
     $options = [];
 
@@ -296,7 +366,8 @@ final class SolicitudStateInlineForm extends FormBase {
     return $options;
   }
 
-  private function resolveTermNameByTid(int $tid): ?string {
+  private function resolveTermNameByTid(int $tid): ?string
+  {
     if ($tid <= 0) {
       return NULL;
     }
@@ -305,4 +376,48 @@ final class SolicitudStateInlineForm extends FormBase {
     return $term ? (string) $term->getName() : NULL;
   }
 
+  public function validateForm(array &$form, FormStateInterface $form_state): void
+  {
+    parent::validateForm($form, $form_state);
+
+    $to_tid = (int) $form_state->getValue('state_tid');
+
+    if ($to_tid <= 0) {
+      return;
+    }
+
+    if (!$this->termRequiresMotivo($to_tid)) {
+      return;
+    }
+
+    $motivo = trim((string) $form_state->getValue('motivo'));
+
+    if ($motivo === '') {
+      $form_state->setErrorByName('motivo', $this->t('Debes registrar un motivo para este estado.'));
+      return;
+    }
+
+    if (mb_strlen($motivo) < 10) {
+      $form_state->setErrorByName('motivo', $this->t('El motivo debe tener mínimo 10 caracteres.'));
+    }
+  }
+
+  private function termRequiresMotivo(int $tid): bool
+  {
+    if ($tid <= 0) {
+      return FALSE;
+    }
+
+    $term = $this->etm->getStorage('taxonomy_term')->load($tid);
+
+    if (!$term) {
+      return FALSE;
+    }
+
+    if (!$term->hasField('field_motivo') || $term->get('field_motivo')->isEmpty()) {
+      return FALSE;
+    }
+
+    return (bool) $term->get('field_motivo')->value;
+  }
 }
