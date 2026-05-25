@@ -194,7 +194,7 @@ final class SolicitudStateManager
     string $comment,
     array $metadata,
   ): void {
-    $phase_key = $this->resolveNotificationPhaseKey($from_name, $to_name);
+    $phase_key = $this->resolveNotificationPhaseKey($from_name, $to_name, $origin);
 
     if ($phase_key === NULL) {
       return;
@@ -223,9 +223,14 @@ final class SolicitudStateManager
   /**
    * Resolves the notification phase key from the target state label.
    */
-  private function resolveNotificationPhaseKey(?string $from_name, ?string $to_name): ?string
+  private function resolveNotificationPhaseKey(?string $from_name, ?string $to_name, string $origin = ''): ?string
   {
     $normalized_to = $this->normalizeStateName($to_name);
+    $normalized_origin = $this->normalizeStateName($origin);
+
+    if ($normalized_to === 'en tramite' && $normalized_origin === 'aspirante_ajustes_realizados') {
+      return 'ajustes_realizados';
+    }
 
     return match ($normalized_to) {
       'en tramite' => 'solicitud_creada',

@@ -18,3 +18,47 @@
   font-weight: 700;
   background: #f3f3f3;
 }
+
+.solicitud-user-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.solicitud-user-actions .button {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.solicitud-user-actions .button--primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.solicitud-aclaracion-motivo {
+  margin: 16px 0 24px;
+  padding: 16px;
+  border: 1px solid #d8d8d8;
+  border-left: 4px solid #b7791f;
+  border-radius: 6px;
+  background: #fffaf0;
+}
+
+.solicitud-aclaracion-motivo h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.solicitud-aclaracion-motivo__content {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #333;
+}
+
+.solicitud-aclaracion-motivo__content--empty {
+  color: #777;
+  font-style: italic;
+}

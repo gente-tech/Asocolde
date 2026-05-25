@@ -29,6 +29,7 @@ final class SolicitudIngresoEditWizardForm extends FormBase
 
     $form['#tree'] = TRUE;
     $form['#attached']['library'][] = 'asocolderma_inscription/intl_phone_field';
+    $form['#attached']['library'][] = 'asocolderma_inscription/user_zone';
 
     $form['intro'] = [
       '#type' => 'container',
@@ -43,6 +44,25 @@ final class SolicitudIngresoEditWizardForm extends FormBase
 
     $form['intro']['description'] = [
       '#markup' => '<p>' . $this->t('Actualice únicamente la información requerida por la Asociación. Al guardar los cambios deberá marcar la opción “Ajustes realizados” para que la solicitud vuelva al flujo de revisión institucional.') . '</p>',
+    ];
+
+    $clarification = $this->getLatestClarificationComment($node);
+
+    $form['intro']['clarification_reason'] = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['solicitud-aclaracion-motivo'],
+      ],
+    ];
+
+    $form['intro']['clarification_reason']['title'] = [
+      '#markup' => '<h3>' . $this->t('Motivo de la aclaración') . '</h3>',
+    ];
+
+    $form['intro']['clarification_reason']['content'] = [
+      '#markup' => $clarification !== ''
+        ? '<div class="solicitud-aclaracion-motivo__content">' . nl2br(htmlspecialchars($clarification, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')) . '</div>'
+        : '<div class="solicitud-aclaracion-motivo__content solicitud-aclaracion-motivo__content--empty">' . $this->t('No se encontró un motivo registrado para esta aclaración.') . '</div>',
     ];
 
     $form['general'] = [
@@ -679,5 +699,26 @@ final class SolicitudIngresoEditWizardForm extends FormBase
       'national' => preg_replace('/\D+/', '', $clean),
       'full' => $clean,
     ];
+  }
+
+  private function getLatestClarificationComment(NodeInterface $node): string
+  {
+    $pending_clarification_tid = $this->getTidByName('estado_solicitud_ingreso', 'Pendiente aclaración');
+
+    $record = \Drupal::database()
+      ->select('asocolderma_solicitud_historial', 'h')
+      ->fields('h', ['comment'])
+      ->condition('h.solicitud_nid', (int) $node->id())
+      ->condition('h.to_tid', $pending_clarification_tid)
+      ->orderBy('h.created', 'DESC')
+      ->range(0, 1)
+      ->execute()
+      ->fetchAssoc();
+
+    if (empty($record['comment'])) {
+      return '';
+    }
+
+    return trim((string) $record['comment']);
   }
 }

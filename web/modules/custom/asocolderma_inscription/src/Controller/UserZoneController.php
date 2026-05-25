@@ -222,6 +222,8 @@ final class UserZoneController extends ControllerBase
       'max-age' => 0,
     ];
 
+    $build['#attached']['library'][] = 'asocolderma_inscription/user_zone';
+
     return $build;
   }
 }

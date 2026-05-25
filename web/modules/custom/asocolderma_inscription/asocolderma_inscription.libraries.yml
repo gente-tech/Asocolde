@@ -25,3 +25,14 @@ intl_phone_field:
   dependencies:
     - core/drupal
     - core/once
+
+user_zone:
+  version: 1.x
+  css:
+    theme:
+      assets/css/user-zone.css: {}
+  js:
+    assets/js/user-zone.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
