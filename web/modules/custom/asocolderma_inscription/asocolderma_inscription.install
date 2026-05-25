@@ -1286,3 +1286,113 @@ function asocolderma_inscription_update_9010(): void
 
   \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
 }
+
+/**
+ * Configura los campos académicos de taxonomía como select en el formulario del contenido.
+ */
+function asocolderma_inscription_update_9011(): void
+{
+  $bundle = 'solicitud_ingreso';
+  $form_mode = 'default';
+
+  $form_display = \Drupal\Core\Entity\Entity\EntityFormDisplay::load("node.$bundle.$form_mode");
+
+  if (!$form_display) {
+    $form_display = \Drupal\Core\Entity\Entity\EntityFormDisplay::create([
+      'targetEntityType' => 'node',
+      'bundle' => $bundle,
+      'mode' => $form_mode,
+      'status' => TRUE,
+    ]);
+  }
+
+  $taxonomy_select_fields = [
+    'field_facultad_pregrado',
+    'field_pais_pregrado',
+    'field_titulo_universitario',
+    'field_universidad_residencia',
+    'field_pais_residencia',
+  ];
+
+  foreach ($taxonomy_select_fields as $field_name) {
+    $form_display->setComponent($field_name, [
+      'type' => 'options_select',
+      'weight' => match ($field_name) {
+        'field_facultad_pregrado' => 30,
+        'field_pais_pregrado' => 31,
+        'field_titulo_universitario' => 32,
+        'field_universidad_residencia' => 33,
+        'field_pais_residencia' => 34,
+        default => 50,
+      },
+      'region' => 'content',
+      'settings' => [],
+      'third_party_settings' => [],
+    ]);
+  }
+
+  $form_display->setComponent('field_recertificacion_camec', [
+    'type' => 'boolean_checkbox',
+    'weight' => 35,
+    'region' => 'content',
+    'settings' => [
+      'display_label' => TRUE,
+    ],
+    'third_party_settings' => [],
+  ]);
+
+  $form_display->setComponent('field_tiene_subespecialidad', [
+    'type' => 'options_buttons',
+    'weight' => 36,
+    'region' => 'content',
+    'settings' => [],
+    'third_party_settings' => [],
+  ]);
+
+  $form_display->setComponent('field_subespecialidad_cual', [
+    'type' => 'string_textfield',
+    'weight' => 37,
+    'region' => 'content',
+    'settings' => [
+      'size' => 60,
+      'placeholder' => '',
+    ],
+    'third_party_settings' => [],
+  ]);
+
+  $form_display->save();
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
+
+/**
+ * Configura el campo lugar de correspondencia como select en el formulario del contenido.
+ */
+function asocolderma_inscription_update_9012(): void
+{
+  $bundle = 'solicitud_ingreso';
+  $form_mode = 'default';
+
+  $form_display = EntityFormDisplay::load("node.$bundle.$form_mode");
+
+  if (!$form_display) {
+    $form_display = EntityFormDisplay::create([
+      'targetEntityType' => 'node',
+      'bundle' => $bundle,
+      'mode' => $form_mode,
+      'status' => TRUE,
+    ]);
+  }
+
+  $form_display->setComponent('field_lugar_correspondencia', [
+    'type' => 'options_select',
+    'weight' => 25,
+    'region' => 'content',
+    'settings' => [],
+    'third_party_settings' => [],
+  ]);
+
+  $form_display->save();
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
