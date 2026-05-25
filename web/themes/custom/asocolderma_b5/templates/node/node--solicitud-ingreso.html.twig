@@ -81,9 +81,22 @@
 			{{ node.field_solicitud_id.value ?: '-' }}
 		</p>
 
-		<p>
+		{% set estado_color = '' %}
+
+		{% if estado_entity and estado_entity.field_color_estado_solicitud is defined and estado_entity.field_color_estado_solicitud.value %}
+			{% set estado_color = estado_entity.field_color_estado_solicitud.value %}
+		{% endif %}
+
+		<p class="solicitud-ingreso__status-card{% if estado_color %} solicitud-ingreso__status-card--has-color{% endif %}"{% if estado_color %} style="--estado-color: {{ estado_color }};"{% endif %}>
 			<strong>Estado:</strong>
-			{{ estado ?: '-' }}
+
+			{% if estado_color %}
+				<span class="solicitud-ingreso__status-badge">
+					{{ estado ?: '-' }}
+				</span>
+			{% else %}
+				{{ estado ?: '-' }}
+			{% endif %}
 		</p>
 
 		<p>
