@@ -387,11 +387,11 @@ function asocolderma_inscription_update_9001(): void
     TRUE
   );
 
-  $ensure_storage('field_subespecialidad_cual', 'string', ['max_length' => 255]);
+  $ensure_storage('field_subespecialidad_cual', 'entity_reference', $taxonomy_reference_settings);
   $ensure_field(
     'field_subespecialidad_cual',
     'Subespecialidad',
-    [],
+    $taxonomy_handler('services_specialties'),
     FALSE
   );
 
@@ -1387,6 +1387,86 @@ function asocolderma_inscription_update_9012(): void
   $form_display->setComponent('field_lugar_correspondencia', [
     'type' => 'options_select',
     'weight' => 25,
+    'region' => 'content',
+    'settings' => [],
+    'third_party_settings' => [],
+  ]);
+
+  $form_display->save();
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
+
+/**
+ * Convierte el campo Subespecialidad en referencia a taxonomía services_specialties.
+ */
+function asocolderma_inscription_update_9013(): void
+{
+  $entity_type = 'node';
+  $bundle = 'solicitud_ingreso';
+  $field_name = 'field_subespecialidad_cual';
+
+  $field = FieldConfig::loadByName($entity_type, $bundle, $field_name);
+  if ($field) {
+    $field->delete();
+  }
+
+  $storage = FieldStorageConfig::loadByName($entity_type, $field_name);
+  if ($storage) {
+    $storage->delete();
+  }
+
+  if (function_exists('field_purge_batch')) {
+    field_purge_batch(1000);
+  }
+
+  FieldStorageConfig::create([
+    'field_name' => $field_name,
+    'entity_type' => $entity_type,
+    'type' => 'entity_reference',
+    'settings' => [
+      'target_type' => 'taxonomy_term',
+    ],
+    'cardinality' => 1,
+    'translatable' => FALSE,
+  ])->save();
+
+  FieldConfig::create([
+    'field_name' => $field_name,
+    'entity_type' => $entity_type,
+    'bundle' => $bundle,
+    'label' => 'Subespecialidad',
+    'required' => FALSE,
+    'settings' => [
+      'handler' => 'default:taxonomy_term',
+      'handler_settings' => [
+        'target_bundles' => [
+          'services_specialties' => 'services_specialties',
+        ],
+        'sort' => [
+          'field' => 'name',
+          'direction' => 'ASC',
+        ],
+        'auto_create' => FALSE,
+        'auto_create_bundle' => '',
+      ],
+    ],
+  ])->save();
+
+  $form_display = EntityFormDisplay::load("node.$bundle.default");
+
+  if (!$form_display) {
+    $form_display = EntityFormDisplay::create([
+      'targetEntityType' => $entity_type,
+      'bundle' => $bundle,
+      'mode' => 'default',
+      'status' => TRUE,
+    ]);
+  }
+
+  $form_display->setComponent($field_name, [
+    'type' => 'options_select',
+    'weight' => 37,
     'region' => 'content',
     'settings' => [],
     'third_party_settings' => [],

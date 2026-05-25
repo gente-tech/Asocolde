@@ -377,10 +377,12 @@ final class SolicitudIngresoWizardForm extends FormBase
       ];
 
       $form['profesional']['subespecialidad_cual'] = [
-        '#type' => 'textfield',
+        '#type' => 'select',
         '#title' => $this->t('Subespecialidad'),
-        '#description' => $this->t('Ingrese su subespecialidad, en caso de contar con ella. Ejemplo: Dermatopatología.'),
-        '#default_value' => $wizard_values['profesional']['subespecialidad_cual'] ?? '',
+        '#description' => $this->t('Seleccione su subespecialidad, en caso de contar con ella.'),
+        '#empty_option' => $this->t('- Seleccione -'),
+        '#options' => $this->getTaxonomyOptions('services_specialties'),
+        '#default_value' => $wizard_values['profesional']['subespecialidad_cual'] ?? NULL,
         '#states' => [
           'visible' => [
             ':input[name="profesional[tiene_subespecialidad]"]' => ['value' => '1'],
@@ -748,7 +750,7 @@ final class SolicitudIngresoWizardForm extends FormBase
         'tiene_subespecialidad' => isset($input['profesional']['tiene_subespecialidad'])
           ? (int) $input['profesional']['tiene_subespecialidad']
           : 0,
-        'subespecialidad_cual' => $input['profesional']['subespecialidad_cual'] ?? '',
+        'subespecialidad_cual' => $input['profesional']['subespecialidad_cual'] ?? NULL,
       ];
     }
 
@@ -868,9 +870,9 @@ final class SolicitudIngresoWizardForm extends FormBase
 
       'field_tiene_subespecialidad' => !empty($wizard_values['profesional']['tiene_subespecialidad']) ? 1 : 0,
 
-      'field_subespecialidad_cual' => !empty($wizard_values['profesional']['tiene_subespecialidad'])
-        ? ($wizard_values['profesional']['subespecialidad_cual'] ?? '')
-        : '',
+      'field_subespecialidad_cual' => !empty($wizard_values['profesional']['tiene_subespecialidad']) && !empty($wizard_values['profesional']['subespecialidad_cual'])
+        ? ['target_id' => (int) $wizard_values['profesional']['subespecialidad_cual']]
+        : NULL,
     ]);
 
     // Adjuntos: convertir a permanentes y asignar.
