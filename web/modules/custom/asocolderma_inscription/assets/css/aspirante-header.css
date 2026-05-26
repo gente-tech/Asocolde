@@ -5,44 +5,44 @@
  */
 
 body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .dropdown-menu .nav:before {
-  border-color: transparent transparent #7a1f3d transparent !important;
+  border-color: transparent transparent #2f2f2f transparent !important;
 }
 
 body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .dropdown-menu .nav-item:last-child .nav-link,
 body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .dropdown-menu .nav-item .nav-link__accent {
-  background: #7a1f3d !important;
-  background-color: #7a1f3d !important;
+  background: #2f2f2f !important;
+  background-color: #2f2f2f !important;
   color: #ffffff !important;
 }
 
 body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .dropdown-menu .nav-item:hover {
-  border-bottom-color: #7a1f3d !important;
+  border-bottom-color: #2f2f2f !important;
 }
 
 /* Botón principal del usuario logueado. */
 body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list > .dropdown-toggle,
 body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list > a,
 body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .user-menu-toggle {
-  background: #7a1f3d !important;
-  background-color: #7a1f3d !important;
+  background: #2f2f2f !important;
+  background-color: #2f2f2f !important;
   color: #ffffff !important;
 }
 
 /* Iconos superiores: carrito, configuración, campana, etc. */
 body.asocolderma-role-aspirante .top-menu .region-header .menu--user-tools .nav-item .nav-link,
 body.asocolderma-role-aspirante .top-menu .region-header .block-user-notifications .btn-notifications {
-  color: #7a1f3d !important;
+  color: #2f2f2f !important;
 }
 
 /* Iconos generados por pseudo-elementos del theme. */
 body.asocolderma-role-aspirante .top-menu .region-header .menu--user-tools .nav-item .nav-link:before,
 body.asocolderma-role-aspirante .top-menu .region-header .block-user-notifications .btn-notifications:before {
-  color: #7a1f3d !important;
+  color: #2f2f2f !important;
 }
 
 /* Triángulo del dropdown de notificaciones, si aparece. */
 body.asocolderma-role-aspirante .top-menu .region-header .block-user-notifications .dropdown-menu:before {
-  border-color: transparent transparent #7a1f3d transparent !important;
+  border-color: transparent transparent #2f2f2f transparent !important;
 }
 
 /*
@@ -52,10 +52,10 @@ body.asocolderma-role-aspirante .top-menu .region-header .block-user-notificatio
 body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user,
 body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user.dropdown-toggle,
 body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user.dropdown-toggle.show {
-  background: #7a1f3d !important;
-  background-color: #7a1f3d !important;
+  background: #2f2f2f !important;
+  background-color: #2f2f2f !important;
   color: #ffffff !important;
-  border-color: #7a1f3d !important;
+  border-color: #2f2f2f !important;
 }
 
 /*
@@ -74,16 +74,16 @@ body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .
 body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user:focus,
 body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user:active,
 body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user.show {
-  background: #7a1f3d !important;
-  background-color: #7a1f3d !important;
+  background: #2f2f2f !important;
+  background-color: #2f2f2f !important;
   color: #ffffff !important;
-  border-color: #7a1f3d !important;
+  border-color: #2f2f2f !important;
   box-shadow: none !important;
 }
 
 body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .dropdown-menu::before,
 body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .dropdown-menu .nav::before {
-  border-color: transparent transparent #7a1f3d transparent !important;
+  border-color: transparent transparent #2f2f2f transparent !important;
 }
 
 /*
