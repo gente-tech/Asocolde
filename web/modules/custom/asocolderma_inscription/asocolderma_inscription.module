@@ -468,3 +468,11 @@ function asocolderma_inscription_entity_delete(\Drupal\Core\Entity\EntityInterfa
     'asocolderma_estado_solicitud_colors',
   ]);
 }
+
+/**
+ * Implements hook_page_attachments().
+ */
+function asocolderma_inscription_page_attachments(array &$attachments): void
+{
+  $attachments['#attached']['library'][] = 'asocolderma_inscription/navbar_margin_top';
+}

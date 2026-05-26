@@ -36,3 +36,9 @@ user_zone:
   dependencies:
     - core/drupal
     - core/once
+
+navbar_margin_top:
+  version: 1.x
+  css:
+    theme:
+      css/asocolderma_inscription_front.css: {}
