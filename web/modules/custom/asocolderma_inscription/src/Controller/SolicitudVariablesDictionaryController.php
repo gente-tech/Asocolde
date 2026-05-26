@@ -139,8 +139,6 @@ final class SolicitudVariablesDictionaryController extends ControllerBase
 			'request_status_changed_date' => 'Fecha del cambio de estado',
 			'request_status_changed_by' => 'Usuario que realizó el cambio de estado',
 			'request_status_change_comment' => 'Observación o comentario del cambio de estado',
-			'request_rejection_reason' => 'Motivo de rechazo de la solicitud',
-			'request_clarification_comment' => 'Comentario de aclaración solicitado',
 		];
 	}
 }

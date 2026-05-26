@@ -947,10 +947,6 @@ final class SolicitudIngresoWizardForm extends FormBase
         'request_status_changed_by' => $account->getDisplayName(),
         'request_status_change_comment' => 'Solicitud creada por el aspirante.',
 
-        // Estas variables no aplican en la creación inicial.
-        'request_rejection_reason' => '',
-        'request_clarification_comment' => '',
-
         // En este punto del flujo la cuenta ya debería estar activa.
         // Si en otro flujo se crea una solicitud antes de activar cuenta,
         // esta URL debe pasarse desde el formulario/controlador que genere el token.

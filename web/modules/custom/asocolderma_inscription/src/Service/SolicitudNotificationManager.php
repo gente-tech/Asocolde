@@ -285,8 +285,6 @@ final class SolicitudNotificationManager
 			'request_status_changed_date' => $status_changed_date,
 			'request_status_changed_by' => $status_changed_by,
 			'request_status_change_comment' => trim((string) ($context['request_status_change_comment'] ?? $context['status_change_comment'] ?? $context['comment'] ?? '')),
-			'request_rejection_reason' => trim((string) ($context['request_rejection_reason'] ?? $context['rejection_reason'] ?? '')),
-			'request_clarification_comment' => trim((string) ($context['request_clarification_comment'] ?? $context['clarification_comment'] ?? '')),
 		];
 	}
 
