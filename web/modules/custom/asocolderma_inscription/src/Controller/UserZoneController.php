@@ -8,6 +8,9 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class UserZoneController extends ControllerBase
 {
@@ -159,8 +162,21 @@ final class UserZoneController extends ControllerBase
         ? ['data' => $actions]
         : '-';
 
+      $solicitud_id = $n->get('field_solicitud_id')->value ?? ('NID ' . $n->id());
+
       $rows[] = [
-        'id' => $n->get('field_solicitud_id')->value ?? ('NID ' . $n->id()),
+        'id' => [
+          'data' => [
+            '#type' => 'link',
+            '#title' => $solicitud_id,
+            '#url' => Url::fromRoute('asocolderma_inscription.user_zone_request_detail', [
+              'node' => $n->id(),
+            ]),
+            '#attributes' => [
+              'class' => ['solicitud-id-link'],
+            ],
+          ],
+        ],
         'state' => $estado_label,
         'created' => \Drupal::service('date.formatter')->format((int) $n->getCreatedTime(), 'short'),
         'actions' => $action,
@@ -223,6 +239,45 @@ final class UserZoneController extends ControllerBase
     ];
 
     $build['#attached']['library'][] = 'asocolderma_inscription/user_zone';
+
+    return $build;
+  }
+
+  public function requestDetail(NodeInterface $node): array
+  {
+    $account = $this->currentUser();
+
+    if ($node->bundle() !== 'solicitud_ingreso') {
+      throw new NotFoundHttpException();
+    }
+
+    if (!in_array('aspirante', $account->getRoles(), TRUE)) {
+      throw new NotFoundHttpException();
+    }
+
+    if ((int) $node->getOwnerId() !== (int) $account->id()) {
+      throw new NotFoundHttpException();
+    }
+
+    $view_builder = $this->etm->getViewBuilder('node');
+
+    $build = [];
+
+    $build['back'] = [
+      '#type' => 'link',
+      '#title' => $this->t('Volver a mis solicitudes'),
+      '#url' => Url::fromRoute('asocolderma_inscription.user_zone_requests'),
+      '#attributes' => [
+        'class' => ['button'],
+      ],
+    ];
+
+    $build['detail'] = $view_builder->view($node, 'full');
+
+    $build['#cache'] = [
+      'contexts' => ['user'],
+      'tags' => $node->getCacheTags(),
+    ];
 
     return $build;
   }

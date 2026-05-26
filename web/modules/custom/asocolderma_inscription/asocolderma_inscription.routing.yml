@@ -46,6 +46,19 @@ asocolderma_inscription.user_zone_requests:
   requirements:
     _user_is_logged_in: 'TRUE'
 
+asocolderma_inscription.user_zone_request_detail:
+  path: '/zona/solicitudes/{node}'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\UserZoneController::requestDetail'
+    _title: 'Detalle de solicitud'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    node: '\d+'
+  options:
+    parameters:
+      node:
+        type: entity:node
+
 asocolderma_inscription.solicitud_create:
   path: '/zona/solicitudes/crear'
   defaults:
