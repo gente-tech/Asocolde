@@ -24,6 +24,12 @@ function asocolderma_b5_preprocess_html(&$variables)
   ) {
     $variables['attributes']['class'][] = \Drupal\Component\Utility\Html::cleanCssIdentifier($node->field_body_class->getString());
   }
+
+  $current_user = \Drupal::currentUser();
+
+  if ($current_user->isAuthenticated() && in_array('aspirante', $current_user->getRoles(), TRUE)) {
+    $variables['attributes']['class'][] = 'user-role-aspirante';
+  }
 }
 
 /**

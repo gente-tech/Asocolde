@@ -102,3 +102,12 @@ body.asocolderma-role-aspirante #block-user-notifications {
 body.asocolderma-role-aspirante #block-user-menu-list {
   display: block !important;
 }
+
+
+/**
+ * Header scroll - ocultar búsqueda y título Dermatologos para aspirante.
+ */
+body.user-role-aspirante #block-asocol-search-scroll,
+body.user-role-aspirante #block-asocoltitle {
+  display: none !important;
+}
