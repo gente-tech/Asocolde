@@ -153,11 +153,11 @@ class AspiranteRegisterForm extends FormBase
 				],
 				[
 					[
-						'name' => 'user_email',
+						'name' => 'USER_EMAIL',
 						'content' => $mail,
 					],
 					[
-						'name' => 'user_activation_url',
+						'name' => 'USER_ACTIVATION_URL',
 						'content' => $activation_url,
 					],
 				]
@@ -215,7 +215,7 @@ class AspiranteRegisterForm extends FormBase
 						],
 						[
 							[
-								'name' => 'user_email',
+								'name' => 'USER_EMAIL',
 								'content' => $mail,
 							],
 						]
