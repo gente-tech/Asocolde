@@ -52,3 +52,4 @@ services:
     arguments:
       - "@entity_type.manager"
       - "@logger.channel.asocolderma_inscription"
+      - "@user.data"

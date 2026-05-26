@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\node\NodeInterface;
 use Drupal\user\UserInterface;
+use Drupal\user\UserDataInterface;
 
 /**
  * Convierte el usuario aspirante en dermatólogo activo.
@@ -16,9 +17,13 @@ final class SolicitudMemberActivator
 	private const ASPIRANTE_ROLE = 'aspirante';
 	private const DERMATOLOGIST_ROLE = 'dermatologist';
 
+	private const USER_DATA_MODULE = 'asocolderma_inscription';
+	private const POST_ACTIVATION_REDIRECT_KEY = 'post_member_activation_redirect_pending';
+
 	public function __construct(
 		private readonly EntityTypeManagerInterface $entityTypeManager,
 		private readonly LoggerChannelInterface $logger,
+		private readonly UserDataInterface $userData,
 	) {}
 
 	/**
@@ -46,6 +51,8 @@ final class SolicitudMemberActivator
 
 		$user->activate();
 		$user->save();
+
+		$this->markPostActivationRedirectPending($user);
 
 		$this->deleteAspiranteProfiles($user);
 
@@ -316,5 +323,21 @@ final class SolicitudMemberActivator
 		foreach ($profiles as $profile) {
 			$profile->delete();
 		}
+	}
+
+	/**
+	 * Marca que el usuario debe ser redirigido una sola vez después de activarse.
+	 */
+	private function markPostActivationRedirectPending(UserInterface $user): void
+	{
+		$this->userData->set(
+			self::USER_DATA_MODULE,
+			(int) $user->id(),
+			self::POST_ACTIVATION_REDIRECT_KEY,
+			[
+				'pending' => TRUE,
+				'created' => \Drupal::time()->getRequestTime(),
+			]
+		);
 	}
 }
