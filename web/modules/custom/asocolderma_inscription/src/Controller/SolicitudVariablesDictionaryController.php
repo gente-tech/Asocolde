@@ -117,6 +117,7 @@ final class SolicitudVariablesDictionaryController extends ControllerBase
 			'user_email' => 'Correo electrónico principal del usuario',
 			'user_mobile' => 'Celular principal del usuario',
 			'user_document_number' => 'Número de documento del usuario',
+			'user_activation_url' => 'URL de activación de cuenta del usuario',
 		];
 	}
 
