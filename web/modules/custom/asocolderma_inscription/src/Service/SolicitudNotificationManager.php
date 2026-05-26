@@ -238,7 +238,7 @@ final class SolicitudNotificationManager
 	/**
 	 * Builds Twilio WhatsApp template variables.
 	 *
-	 * Soporta temporalmente tres tipos de plantillas:
+	 * Soporta temporalmente varios tipos de plantillas:
 	 *
 	 * 1. Plantilla general de creación/cambio de estado:
 	 *    {{1}} = Nombre completo del aspirante
@@ -253,6 +253,14 @@ final class SolicitudNotificationManager
 	 *    {{name_user}} = Nombre completo del aspirante
 	 *    {{id_solicitud}} = Código público de la solicitud
 	 *    {{motivo_aclaracion}} = Motivo/comentario de aclaración
+	 *
+	 * 4. Plantilla de pendiente firma de documentos:
+	 *    {{name_user}} = Nombre completo del aspirante
+	 *    {{id_solicitud}} = Código público de la solicitud
+	 *
+	 * 5. Plantilla de pendiente pago de ingreso:
+	 *    {{name_user}} = Nombre completo del aspirante
+	 *    {{id_solicitud}} = Código público de la solicitud
 	 *
 	 * Más adelante este método podrá normalizarse usando el diccionario
 	 * institucional completo de variables.
@@ -304,6 +312,32 @@ final class SolicitudNotificationManager
 			|| $status_normalized === 'rechazado';
 
 		if ($is_rejected_phase) {
+			return [
+				'name_user' => $user_full_name,
+				'id_solicitud' => $request_code,
+			];
+		}
+
+		$is_signature_pending_phase = str_contains($phase_key_normalized, 'pendiente_firma')
+			|| str_contains($phase_key_normalized, 'firma')
+			|| str_contains($status_normalized, 'pendiente firma')
+			|| str_contains($status_normalized, 'pendiente de firma')
+			|| str_contains($status_normalized, 'firma de documentos');
+
+		if ($is_signature_pending_phase) {
+			return [
+				'name_user' => $user_full_name,
+				'id_solicitud' => $request_code,
+			];
+		}
+
+		$is_payment_pending_phase = str_contains($phase_key_normalized, 'pendiente_pago')
+			|| str_contains($phase_key_normalized, 'pago')
+			|| str_contains($status_normalized, 'pendiente pago')
+			|| str_contains($status_normalized, 'pendiente de pago')
+			|| str_contains($status_normalized, 'pago de ingreso');
+
+		if ($is_payment_pending_phase) {
 			return [
 				'name_user' => $user_full_name,
 				'id_solicitud' => $request_code,
