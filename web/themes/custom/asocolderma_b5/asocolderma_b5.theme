@@ -122,6 +122,14 @@ function asocolderma_b5_preprocess_block(&$variables)
     $blockType = strtr($variables['content']['#block_content']->bundle(), '_', '-');
     $variables['attributes']['class'][] = 'block--type-' . $blockType;
   }
+
+  // Importante: los menús cambian según rol.
+  if (
+    isset($variables['elements']['#base_plugin_id']) &&
+    $variables['elements']['#base_plugin_id'] === 'system_menu_block'
+  ) {
+    $variables['elements']['#cache']['contexts'][] = 'user.roles';
+  }
 }
 
 function _get_views_top_link_more()
@@ -224,4 +232,61 @@ function asocolderma_b5_entity_view_alter(array &$build, \Drupal\Core\Entity\Ent
   $build['#cache']['max-age'] = 0;
   $build['#cache']['contexts'][] = 'url.path';
   $build['#cache']['contexts'][] = 'user.roles';
+}
+
+/**
+ * Oculta enlaces de menú para usuarios con rol aspirante.
+ */
+function asocolderma_b5_preprocess_menu(array &$variables)
+{
+  $current_user = \Drupal::currentUser();
+
+  if (!$current_user->isAuthenticated()) {
+    return;
+  }
+
+  if (!in_array('aspirante', $current_user->getRoles(), TRUE)) {
+    return;
+  }
+
+  // Menús donde se aplicará la restricción.
+  // Si quieres aplicarlo a todos los menús, deja este arreglo vacío.
+  $allowed_menus = [
+    'top-header',
+  ];
+
+  if (!empty($allowed_menus) && !in_array($variables['menu_name'], $allowed_menus, TRUE)) {
+    return;
+  }
+
+  // Títulos de enlaces que NO debe ver el aspirante.
+  $hidden_titles = [
+    'Paute con nosotros',
+    'Contáctenos',
+  ];
+
+  _asocolderma_b5_filter_menu_items_for_aspirante($variables['items'], $hidden_titles);
+}
+
+/**
+ * Filtra recursivamente ítems de menú por título.
+ */
+function _asocolderma_b5_filter_menu_items_for_aspirante(array &$items, array $hidden_titles)
+{
+  foreach ($items as $key => &$item) {
+    if (!is_array($item)) {
+      continue;
+    }
+
+    $title = isset($item['title']) ? trim((string) $item['title']) : '';
+
+    if (in_array($title, $hidden_titles, TRUE)) {
+      unset($items[$key]);
+      continue;
+    }
+
+    if (!empty($item['below']) && is_array($item['below'])) {
+      _asocolderma_b5_filter_menu_items_for_aspirante($item['below'], $hidden_titles);
+    }
+  }
 }
