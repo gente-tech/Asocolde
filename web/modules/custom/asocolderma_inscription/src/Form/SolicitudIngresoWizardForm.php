@@ -35,6 +35,144 @@ final class SolicitudIngresoWizardForm extends FormBase
   }
 
   /**
+   * Applies configurable label, placeholder and helper text to wizard fields.
+   */
+  private function applyConfiguredFieldTexts(array &$form): void
+  {
+    $config = \Drupal::config('asocolderma_inscription.solicitud_form_settings');
+    $fields = $config->get('fields');
+
+    if (empty($fields) || !is_array($fields)) {
+      return;
+    }
+
+    foreach ($this->getConfigurableWizardFields() as $group_key => $field_keys) {
+      if (empty($form[$group_key]) || !is_array($form[$group_key])) {
+        continue;
+      }
+
+      foreach ($field_keys as $field_key) {
+        if (empty($form[$group_key][$field_key]) || !is_array($form[$group_key][$field_key])) {
+          continue;
+        }
+
+        $settings = $fields[$group_key][$field_key] ?? NULL;
+
+        if (empty($settings) || !is_array($settings)) {
+          continue;
+        }
+
+        $this->applyConfiguredFieldText($form[$group_key][$field_key], $settings);
+      }
+    }
+  }
+
+  /**
+   * Applies configured text values to a single form element.
+   */
+  private function applyConfiguredFieldText(array &$element, array $settings): void
+  {
+    $label = isset($settings['label']) ? trim((string) $settings['label']) : '';
+    $placeholder = isset($settings['placeholder']) ? trim((string) $settings['placeholder']) : NULL;
+    $description = array_key_exists('description', $settings)
+      ? trim((string) $settings['description'])
+      : NULL;
+
+    if ($label !== '') {
+      $element['#title'] = $label;
+    }
+
+    if ($description !== NULL) {
+      if ($description !== '') {
+        $element['#description'] = $description;
+      } else {
+        unset($element['#description']);
+      }
+    }
+
+    if ($placeholder !== NULL) {
+      $type = $element['#type'] ?? '';
+
+      if ($type === 'select') {
+        if ($placeholder !== '') {
+          $element['#empty_option'] = $placeholder;
+        }
+        return;
+      }
+
+      if (in_array($type, ['textfield', 'email', 'tel', 'textarea', 'number', 'search'], TRUE)) {
+        if (!isset($element['#attributes']) || !is_array($element['#attributes'])) {
+          $element['#attributes'] = [];
+        }
+
+        if ($placeholder !== '') {
+          $element['#attributes']['placeholder'] = $placeholder;
+        } else {
+          unset($element['#attributes']['placeholder']);
+        }
+      }
+    }
+  }
+
+  /**
+   * Returns wizard fields that can be configured from admin settings.
+   */
+  private function getConfigurableWizardFields(): array
+  {
+    return [
+      'general' => [
+        'tipo_asociado',
+        'nombre1',
+        'nombre2',
+        'apellido1',
+        'apellido2',
+        'fecha_nacimiento',
+        'estado_civil',
+        'sexo',
+        'tipo_documento',
+        'numero_documento',
+        'registro_medico',
+        'pais',
+        'departamento',
+        'ciudad_ejercicio',
+      ],
+      'contacto' => [
+        'direccion',
+        'correspondencia_fisica',
+        'email',
+        'celular',
+        'lugar_correspondencia',
+      ],
+      'profesional' => [
+        'facultad_pregrado',
+        'pais_pregrado',
+        'titulo_universitario',
+        'universidad_residencia',
+        'pais_residencia',
+        'recertificacion_camec',
+        'tiene_subespecialidad',
+        'subespecialidad_cual',
+      ],
+      'adjuntos' => [
+        'adj_carta_1',
+        'adj_carta_2',
+        'adj_rut',
+        'adj_id',
+        'adj_carta_ingreso',
+        'adj_hv',
+        'adj_diploma_medico',
+        'adj_diploma_dermatologo',
+        'adj_rethus',
+        'adj_aut_verificacion',
+        'adj_cert_publicacion',
+      ],
+      'confirm' => [
+        'terms',
+      ],
+    ];
+  }
+
+  /**
    * Obtiene el TID del término "En trámite" del vocabulario estado_solicitud_ingreso.
    *
    * Este término se usa como estado por defecto al crear una solicitud.
@@ -600,7 +738,7 @@ final class SolicitudIngresoWizardForm extends FormBase
         '#submit' => ['::submitSolicitud'],
       ];
     }
-
+    $this->applyConfiguredFieldTexts($form);
     return $form;
   }
 
