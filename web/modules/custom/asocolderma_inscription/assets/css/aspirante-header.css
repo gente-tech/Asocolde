@@ -85,3 +85,20 @@ body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .
 body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .dropdown-menu .nav::before {
   border-color: transparent transparent #7a1f3d transparent !important;
 }
+
+/*
+ * Aspirante:
+ * Oculta iconos superiores del header y deja visible solo el menú visual del usuario.
+ */
+
+body.asocolderma-role-aspirante #block-menu-usertools,
+body.asocolderma-role-aspirante #block-user-notifications {
+  display: none !important;
+}
+
+/*
+ * Conserva visible el menú principal del usuario aspirante.
+ */
+body.asocolderma-role-aspirante #block-user-menu-list {
+  display: block !important;
+}
