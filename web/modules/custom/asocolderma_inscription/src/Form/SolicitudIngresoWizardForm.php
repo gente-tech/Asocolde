@@ -934,7 +934,6 @@ final class SolicitudIngresoWizardForm extends FormBase
       $created_timestamp = \Drupal::time()->getRequestTime();
 
       $this->getNotificationManager()->sendForPhase($node, 'solicitud_creada', [
-        'subject' => 'Solicitud de ingreso creada - ' . $id_solicitud,
         'origin' => 'aspirante_wizard',
 
         // Identificación pública de la solicitud.

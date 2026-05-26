@@ -128,7 +128,7 @@ final class SolicitudNotificationManager
 			}
 
 			$params = [
-				'subject' => $this->buildEmailSubject($node, $phase_key, $context),
+				'subject' => $this->buildEmailSubject($node, $phase_key, $context, $message_group),
 				'to_email' => $recipient_email,
 				'to_name' => $recipient_name,
 			];
@@ -291,10 +291,16 @@ final class SolicitudNotificationManager
 	/**
 	 * Builds a default email subject.
 	 */
-	private function buildEmailSubject(NodeInterface $node, string $phase_key, array $context): string
+	private function buildEmailSubject(NodeInterface $node, string $phase_key, array $context, array $message_group = []): string
 	{
+		$subject_config = trim((string) ($message_group['subject'] ?? ''));
+
+		if ($subject_config !== '') {
+			return $this->replaceSubjectTokens($subject_config, $node, $phase_key, $context);
+		}
+
 		if (!empty($context['subject'])) {
-			return trim((string) $context['subject']);
+			return $this->replaceSubjectTokens(trim((string) $context['subject']), $node, $phase_key, $context);
 		}
 
 		$estado = $this->resolveCurrentStateName($node);
@@ -305,6 +311,25 @@ final class SolicitudNotificationManager
 		}
 
 		return sprintf('Actualización de solicitud de ingreso %s', $solicitud_id);
+	}
+
+	private function replaceSubjectTokens(string $subject, NodeInterface $node, string $phase_key, array $context): string
+	{
+		$variables = $this->buildNotificationVariables($node, $phase_key, $context);
+
+		$replacements = [];
+
+		foreach ($variables as $key => $value) {
+			$value = trim((string) $value);
+
+			// Soporta tokens tipo [request_code].
+			$replacements['[' . $key . ']'] = $value;
+
+			// Soporta tokens tipo *|request_code|* por si se usan también en asunto.
+			$replacements['*|' . $key . '|*'] = $value;
+		}
+
+		return trim(strtr($subject, $replacements));
 	}
 
 	/**
