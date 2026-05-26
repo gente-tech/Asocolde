@@ -30,3 +30,10 @@ asocolderma_inscription.variables_dictionary:
   route_name: asocolderma_inscription.variables_dictionary
   parent: asocolderma_inscription.usuarios_nuevos
   weight: 20
+
+asocolderma_inscription.solicitud_form_settings:
+  title: 'Formulario de solicitud'
+  description: 'Administrar títulos, placeholders y textos de ayuda del formulario de creación de solicitud.'
+  route_name: asocolderma_inscription.solicitud_form_settings
+  parent: asocolderma_inscription.usuarios_nuevos
+  weight: 30

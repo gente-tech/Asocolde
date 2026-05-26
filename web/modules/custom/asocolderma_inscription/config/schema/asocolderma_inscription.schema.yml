@@ -56,3 +56,27 @@ asocolderma_inscription.notification_phase:
     twilio_template_key:
       type: string
       label: 'Twilio template key'
+
+asocolderma_inscription.solicitud_form_settings:
+  type: config_object
+  label: 'Solicitud ingreso form settings'
+  mapping:
+    fields:
+      type: sequence
+      label: 'Fields'
+      sequence:
+        type: sequence
+        label: 'Field group'
+        sequence:
+          type: mapping
+          label: 'Field settings'
+          mapping:
+            label:
+              type: label
+              label: 'Label'
+            placeholder:
+              type: string
+              label: 'Placeholder'
+            description:
+              type: text
+              label: 'Description'

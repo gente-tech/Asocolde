@@ -152,3 +152,11 @@ asocolderma_inscription.variables_dictionary:
     _title: 'Diccionario de variables'
   requirements:
     _permission: 'administer site configuration'
+
+asocolderma_inscription.solicitud_form_settings:
+  path: '/admin/config/asocolderma/usuarios-nuevos/formulario-solicitud'
+  defaults:
+    _form: '\Drupal\asocolderma_inscription\Form\SolicitudFormSettingsForm'
+    _title: 'Configuración formulario de solicitud'
+  requirements:
+    _permission: 'administer site configuration'
