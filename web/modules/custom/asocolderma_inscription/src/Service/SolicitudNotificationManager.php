@@ -238,19 +238,26 @@ final class SolicitudNotificationManager
 	/**
 	 * Builds Twilio WhatsApp template variables.
 	 *
-	 * Temporalmente se usa el formato numérico requerido por la plantilla
-	 * actual de Twilio:
+	 * Soporta temporalmente dos tipos de plantillas:
 	 *
-	 * {{1}} = Nombre completo del aspirante
-	 * {{2}} = Código público de la solicitud
-	 * {{3}} = Estado de la solicitud
+	 * 1. Plantilla general de creación/cambio de estado:
+	 *    {{1}} = Nombre completo del aspirante
+	 *    {{2}} = Código público de la solicitud
+	 *    {{3}} = Estado de la solicitud
 	 *
-	 * Más adelante este método podrá volver a usar el diccionario institucional
-	 * completo cuando las plantillas de WhatsApp se estandaricen con esas variables.
+	 * 2. Plantilla de rechazo:
+	 *    {{name_user}} = Nombre completo del aspirante
+	 *    {{id_solicitud}} = Código público de la solicitud
+	 *
+	 * Más adelante este método podrá normalizarse usando el diccionario
+	 * institucional completo de variables.
 	 */
 	private function buildTwilioVariables(NodeInterface $node, string $phase_key, array $context): array
 	{
 		$variables = $this->buildNotificationVariables($node, $phase_key, $context);
+
+		$user_full_name = trim((string) ($variables['user_full_name'] ?? ''));
+		$request_code = trim((string) ($variables['request_code'] ?? ''));
 
 		$status = trim((string) ($variables['request_new_status'] ?? ''));
 
@@ -258,9 +265,21 @@ final class SolicitudNotificationManager
 			$status = trim((string) ($variables['request_current_status'] ?? ''));
 		}
 
+		$is_rejected_phase = str_contains($phase_key, 'rechazada')
+			|| str_contains($phase_key, 'rechazado')
+			|| mb_strtolower($status) === 'rechazada'
+			|| mb_strtolower($status) === 'rechazado';
+
+		if ($is_rejected_phase) {
+			return [
+				'name_user' => $user_full_name,
+				'id_solicitud' => $request_code,
+			];
+		}
+
 		return [
-			'1' => trim((string) ($variables['user_full_name'] ?? '')),
-			'2' => trim((string) ($variables['request_code'] ?? '')),
+			'1' => $user_full_name,
+			'2' => $request_code,
 			'3' => $status,
 		];
 	}
