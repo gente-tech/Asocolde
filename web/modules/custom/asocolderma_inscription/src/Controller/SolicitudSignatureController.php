@@ -10,18 +10,21 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Routing\TrustedRedirectResponse;
+use Drupal\asocolderma_inscription\Service\SolicitudStateManager;
 
 final class SolicitudSignatureController extends ControllerBase
 {
 
 	public function __construct(
 		private readonly ZohoSignService $zohoSignService,
+		private readonly SolicitudStateManager $stateManager,
 	) {}
 
 	public static function create(ContainerInterface $container): self
 	{
 		return new self(
 			$container->get('enterprise_integrations.zoho_sign'),
+			$container->get('asocolderma_inscription.solicitud_state_manager'),
 		);
 	}
 
@@ -135,8 +138,17 @@ final class SolicitudSignatureController extends ControllerBase
 				$documentos_firmados_tid = $this->getStateTidByName('Documentos firmados');
 
 				if ($documentos_firmados_tid) {
-					$node->set('field_state', ['target_id' => $documentos_firmados_tid]);
-					$node->save();
+					$this->stateManager->transitionByTid(
+						$node,
+						$documentos_firmados_tid,
+						'zoho_sign_return',
+						'Firma de documentos confirmada desde Zoho Sign.',
+						[
+							'zoho_request_id' => $request_id,
+							'request_status' => $request_status,
+							'action_status' => $action_status,
+						]
+					);
 
 					$this->messenger()->addStatus('La firma fue completada y la solicitud fue actualizada a Documentos firmados.');
 				} else {

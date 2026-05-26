@@ -201,12 +201,23 @@ final class SolicitudStateManager
     }
 
     try {
+      $changed_timestamp = \Drupal::time()->getRequestTime();
+      $changed_by = $this->currentUser->getDisplayName();
+
       $this->notificationManager->sendForPhase($node, $phase_key, [
         'from_state' => $from_name,
         'to_state' => $to_name,
         'origin' => $origin,
         'comment' => $comment,
         'metadata' => $metadata,
+
+        // Variables institucionales usadas por Mandrill y Twilio.
+        'request_previous_status' => $from_name ?? '',
+        'request_new_status' => $to_name ?? '',
+        'request_status_changed_timestamp' => $changed_timestamp,
+        'request_status_changed_date' => \Drupal::service('date.formatter')->format($changed_timestamp, 'custom', 'd/m/Y H:i'),
+        'request_status_changed_by' => $changed_by,
+        'request_status_change_comment' => $comment,
       ]);
     } catch (\Throwable $e) {
       \Drupal::logger('asocolderma_inscription')->error(

@@ -254,15 +254,42 @@ final class SolicitudNotificationManager
 	{
 		$current_status = $this->resolveCurrentStateName($node);
 
-		$previous_status = trim((string) ($context['request_previous_status'] ?? $context['previous_status'] ?? ''));
-		$new_status = trim((string) ($context['request_new_status'] ?? $context['new_status'] ?? $current_status));
+		$previous_status = trim((string) (
+			$context['request_previous_status']
+			?? $context['previous_status']
+			?? $context['from_state']
+			?? ''
+		));
 
-		$status_changed_date = trim((string) ($context['request_status_changed_date'] ?? $context['status_changed_date'] ?? ''));
-		if ($status_changed_date === '' && !empty($context['status_changed_timestamp'])) {
-			$status_changed_date = $this->formatTimestamp((int) $context['status_changed_timestamp']);
+		$new_status = trim((string) (
+			$context['request_new_status']
+			?? $context['new_status']
+			?? $context['to_state']
+			?? $current_status
+		));
+
+		$status_changed_date = trim((string) (
+			$context['request_status_changed_date']
+			?? $context['status_changed_date']
+			?? ''
+		));
+
+		if ($status_changed_date === '') {
+			$status_changed_timestamp = (int) (
+				$context['request_status_changed_timestamp']
+				?? $context['status_changed_timestamp']
+				?? $context['changed_timestamp']
+				?? \Drupal::time()->getRequestTime()
+			);
+
+			$status_changed_date = $this->formatTimestamp($status_changed_timestamp);
 		}
 
-		$status_changed_by = trim((string) ($context['request_status_changed_by'] ?? $context['status_changed_by'] ?? ''));
+		$status_changed_by = trim((string) (
+			$context['request_status_changed_by']
+			?? $context['status_changed_by']
+			?? ''
+		));
 		if ($status_changed_by === '' && !empty($context['changed_by'])) {
 			$status_changed_by = (string) $context['changed_by'];
 		}
