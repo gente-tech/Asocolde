@@ -34,6 +34,7 @@ services:
       - "@entity_type.manager"
       - "@enterprise_integrations.zoho_sign"
       - "@asocolderma_inscription.solicitud_notification_manager"
+      - "@asocolderma_inscription.solicitud_member_activator"
   
   asocolderma_inscription.solicitud_notification_manager:
     class: Drupal\asocolderma_inscription\Service\SolicitudNotificationManager
@@ -45,3 +46,9 @@ services:
 
   asocolderma_inscription.solicitud_edit_clarification_access:
     class: Drupal\asocolderma_inscription\Access\SolicitudEditClarificationAccess
+
+  asocolderma_inscription.solicitud_member_activator:
+    class: Drupal\asocolderma_inscription\Service\SolicitudMemberActivator
+    arguments:
+      - "@entity_type.manager"
+      - "@logger.channel.asocolderma_inscription"

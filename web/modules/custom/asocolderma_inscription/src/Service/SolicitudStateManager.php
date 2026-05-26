@@ -9,6 +9,7 @@ use Drupal\node\NodeInterface;
 use Drupal\enterprise_integrations\Service\ZohoSignService;
 use Drupal\asocolderma_inscription\Service\SolicitudNotificationManager;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Drupal\asocolderma_inscription\Service\SolicitudMemberActivator;
 
 final class SolicitudStateManager
 {
@@ -20,6 +21,7 @@ final class SolicitudStateManager
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly ZohoSignService $zohoSignService,
     private readonly SolicitudNotificationManager $notificationManager,
+    private readonly SolicitudMemberActivator $memberActivator,
   ) {}
 
   public function transitionByTid(
@@ -72,6 +74,11 @@ final class SolicitudStateManager
     ?string $from_name,
     ?string $to_name,
   ): void {
+    if ($this->normalizeStateName($to_name) === 'miembro activo') {
+      $this->memberActivator->activateFromSolicitud($node);
+      return;
+    }
+
     if ($to_name !== 'Pendiente firma de documentos') {
       return;
     }
