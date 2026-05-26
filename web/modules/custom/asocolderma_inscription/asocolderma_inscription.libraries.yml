@@ -41,4 +41,4 @@ navbar_margin_top:
   version: 1.x
   css:
     theme:
-      css/asocolderma_inscription_front.css: {}
+      assets/css/asocolderma_inscription_front.css: {}
