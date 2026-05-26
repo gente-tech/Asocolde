@@ -1,0 +1,47 @@
+body.asocolderma-role-aspirante header.main-header,
+body.asocolderma-role-aspirante header.main-header .top-menu,
+body.asocolderma-role-aspirante header.main-header .top-searcher,
+body.asocolderma-role-aspirante .wrapper-menus,
+body.asocolderma-role-aspirante nav.main-menu.navbar,
+body.asocolderma-role-aspirante nav.navbar,
+body.asocolderma-role-aspirante .navbar,
+body.asocolderma-role-aspirante .navbar-expand-lg {
+  background: #7a1f3d !important;
+  background-color: #7a1f3d !important;
+}
+
+body.asocolderma-role-aspirante header.main-header a,
+body.asocolderma-role-aspirante nav.main-menu.navbar a,
+body.asocolderma-role-aspirante nav.navbar a,
+body.asocolderma-role-aspirante .navbar-nav .nav-link,
+body.asocolderma-role-aspirante .navbar a {
+  color: #ffffff !important;
+}
+
+body.asocolderma-role-aspirante header.main-header a:hover,
+body.asocolderma-role-aspirante nav.main-menu.navbar a:hover,
+body.asocolderma-role-aspirante nav.navbar a:hover,
+body.asocolderma-role-aspirante .navbar-nav .nav-link:hover {
+  color: #ffffff !important;
+  opacity: 0.85;
+}
+
+body.asocolderma-role-aspirante .dropdown-menu,
+body.asocolderma-role-aspirante .dropdown-menu.show {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+}
+
+body.asocolderma-role-aspirante .dropdown-menu a,
+body.asocolderma-role-aspirante .dropdown-menu .dropdown-item {
+  color: #202020 !important;
+}
+
+body.asocolderma-role-aspirante .dropdown-menu a:hover,
+body.asocolderma-role-aspirante .dropdown-menu .dropdown-item:hover,
+body.asocolderma-role-aspirante .dropdown-menu .is-active,
+body.asocolderma-role-aspirante .dropdown-menu .active {
+  background: #7a1f3d !important;
+  background-color: #7a1f3d !important;
+  color: #ffffff !important;
+}

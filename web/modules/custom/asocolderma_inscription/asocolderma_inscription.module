@@ -476,3 +476,18 @@ function asocolderma_inscription_page_attachments(array &$attachments): void
 {
   $attachments['#attached']['library'][] = 'asocolderma_inscription/navbar_margin_top';
 }
+
+/**
+ * Implements hook_preprocess_HOOK() for html.html.twig.
+ */
+function asocolderma_inscription_preprocess_html(array &$variables): void
+{
+  $current_user = \Drupal::currentUser();
+
+  if ($current_user->isAuthenticated() && in_array('aspirante', $current_user->getRoles(), TRUE)) {
+    $variables['attributes']['class'][] = 'asocolderma-role-aspirante';
+
+    $variables['#attached']['library'][] = 'asocolderma_inscription/aspirante_header';
+    $variables['#cache']['contexts'][] = 'user.roles';
+  }
+}

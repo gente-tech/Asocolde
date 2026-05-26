@@ -42,3 +42,9 @@ navbar_margin_top:
   css:
     theme:
       assets/css/asocolderma_inscription_front.css: {}
+
+aspirante_header:
+  version: 1.x
+  css:
+    theme:
+      assets/css/aspirante-header.css: { weight: 200 }
