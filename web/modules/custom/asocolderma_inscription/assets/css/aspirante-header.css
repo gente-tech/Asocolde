@@ -44,3 +44,44 @@ body.asocolderma-role-aspirante .top-menu .region-header .block-user-notificatio
 body.asocolderma-role-aspirante .top-menu .region-header .block-user-notifications .dropdown-menu:before {
   border-color: transparent transparent #7a1f3d transparent !important;
 }
+
+/*
+ * Botón principal del menú de usuario aspirante.
+ * Reemplaza el verde #008b8f por violeta.
+ */
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user,
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user.dropdown-toggle,
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user.dropdown-toggle.show {
+  background: #7a1f3d !important;
+  background-color: #7a1f3d !important;
+  color: #ffffff !important;
+  border-color: #7a1f3d !important;
+}
+
+/*
+ * Flecha blanca del dropdown.
+ */
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user::after,
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user.dropdown-toggle::after {
+  color: #ffffff !important;
+  border-top-color: #ffffff !important;
+}
+
+/*
+ * Estado hover/focus/active del botón.
+ */
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user:hover,
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user:focus,
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user:active,
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user.show {
+  background: #7a1f3d !important;
+  background-color: #7a1f3d !important;
+  color: #ffffff !important;
+  border-color: #7a1f3d !important;
+  box-shadow: none !important;
+}
+
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .dropdown-menu::before,
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .dropdown-menu .nav::before {
+  border-color: transparent transparent #7a1f3d transparent !important;
+}
