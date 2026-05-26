@@ -146,6 +146,14 @@ final class SolicitudNotificationManager
 				]
 			);
 
+			$result['copy_results'] = $this->sendMandrillCopies(
+				$node,
+				$phase_key,
+				$context,
+				$message_group,
+				$merge_vars
+			);
+
 			return $result;
 		} catch (\Throwable $e) {
 			$this->logger->error(
@@ -160,8 +168,166 @@ final class SolicitudNotificationManager
 			return [
 				'success' => FALSE,
 				'message' => $e->getMessage(),
+				'copy_results' => [],
 			];
 		}
+	}
+
+	/**
+	 * Sends internal Mandrill copies configured in the selected message group.
+	 */
+	private function sendMandrillCopies(
+		NodeInterface $node,
+		string $phase_key,
+		array $context,
+		array $message_group,
+		array $merge_vars,
+	): array {
+		if (empty($message_group['send_copy'])) {
+			return [];
+		}
+
+		$copy_template_slug = trim((string) ($message_group['copy_template_slug'] ?? ''));
+
+		if ($copy_template_slug === '') {
+			$this->logger->warning(
+				'La fase @phase tiene copia Mandrill activa, pero no tiene plantilla de copia configurada.',
+				[
+					'@phase' => $phase_key,
+				]
+			);
+
+			return [];
+		}
+
+		$copy_emails = $this->normalizeCopyEmails($message_group['copy_emails'] ?? []);
+
+		if ($copy_emails === []) {
+			$this->logger->warning(
+				'La fase @phase tiene copia Mandrill activa, pero no tiene correos de copia configurados.',
+				[
+					'@phase' => $phase_key,
+				]
+			);
+
+			return [];
+		}
+
+		$copy_subject = $this->buildCopyEmailSubject($node, $phase_key, $context, $message_group);
+
+		$copy_results = [];
+
+		foreach ($copy_emails as $copy_email) {
+			try {
+				$copy_result = $this->mandrillService->sendTemplate(
+					$copy_template_slug,
+					[
+						'subject' => $copy_subject,
+						'to_email' => $copy_email,
+						'to_name' => $copy_email,
+					],
+					$merge_vars
+				);
+
+				$copy_results[$copy_email] = $copy_result;
+
+				if (empty($copy_result['success'])) {
+					$this->logger->warning(
+						'Mandrill no confirmó el envío de copia interna para solicitud @nid a @mail en fase @phase.',
+						[
+							'@nid' => $node->id(),
+							'@mail' => $copy_email,
+							'@phase' => $phase_key,
+						]
+					);
+				} else {
+					$this->logger->notice(
+						'Copia interna Mandrill enviada para solicitud @nid a @mail en fase @phase.',
+						[
+							'@nid' => $node->id(),
+							'@mail' => $copy_email,
+							'@phase' => $phase_key,
+						]
+					);
+				}
+			} catch (\Throwable $e) {
+				$copy_results[$copy_email] = [
+					'success' => FALSE,
+					'message' => $e->getMessage(),
+				];
+
+				$this->logger->error(
+					'Error enviando copia interna Mandrill para solicitud @nid a @mail en fase @phase: @message',
+					[
+						'@nid' => $node->id(),
+						'@mail' => $copy_email,
+						'@phase' => $phase_key,
+						'@message' => $e->getMessage(),
+					]
+				);
+			}
+		}
+
+		return $copy_results;
+	}
+
+	/**
+	 * Builds the subject used for internal copy emails.
+	 */
+	private function buildCopyEmailSubject(
+		NodeInterface $node,
+		string $phase_key,
+		array $context,
+		array $message_group,
+	): string {
+		$copy_subject_config = trim((string) ($message_group['copy_subject'] ?? ''));
+
+		if ($copy_subject_config !== '') {
+			return $this->replaceSubjectTokens($copy_subject_config, $node, $phase_key, $context);
+		}
+
+		$main_subject = $this->buildEmailSubject($node, $phase_key, $context, $message_group);
+
+		return trim('Copia interna - ' . $main_subject);
+	}
+
+	/**
+	 * Normalizes copy email configuration.
+	 */
+	private function normalizeCopyEmails(mixed $copy_emails): array
+	{
+		if (is_string($copy_emails)) {
+			$copy_emails = preg_split('/[\n,;]+/', $copy_emails) ?: [];
+		}
+
+		if (!is_array($copy_emails)) {
+			return [];
+		}
+
+		$clean_emails = [];
+
+		foreach ($copy_emails as $copy_email) {
+			$copy_email = trim((string) $copy_email);
+
+			if ($copy_email === '') {
+				continue;
+			}
+
+			if (!filter_var($copy_email, FILTER_VALIDATE_EMAIL)) {
+				$this->logger->warning(
+					'Correo de copia Mandrill inválido omitido: @mail.',
+					[
+						'@mail' => $copy_email,
+					]
+				);
+
+				continue;
+			}
+
+			$clean_emails[$copy_email] = $copy_email;
+		}
+
+		return array_values($clean_emails);
 	}
 
 	/**
