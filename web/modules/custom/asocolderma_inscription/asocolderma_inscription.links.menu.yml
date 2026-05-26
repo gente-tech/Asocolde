@@ -23,3 +23,10 @@ asocolderma_inscription.notification_settings:
   route_name: asocolderma_inscription.notification_settings
   parent: asocolderma_inscription.usuarios_nuevos
   weight: 10
+
+asocolderma_inscription.variables_dictionary:
+  title: 'Diccionario de variables'
+  description: 'Variables dinámicas disponibles para correos y WhatsApp del flujo de nuevos usuarios.'
+  route_name: asocolderma_inscription.variables_dictionary
+  parent: asocolderma_inscription.usuarios_nuevos
+  weight: 20

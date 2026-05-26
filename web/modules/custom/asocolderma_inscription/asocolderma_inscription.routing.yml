@@ -144,3 +144,11 @@ asocolderma_inscription.notification_settings:
     _title: 'Configuración de notificaciones'
   requirements:
     _permission: 'administer site configuration'
+
+asocolderma_inscription.variables_dictionary:
+  path: '/admin/config/asocolderma/usuarios-nuevos/diccionario-variables'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\SolicitudVariablesDictionaryController::build'
+    _title: 'Diccionario de variables'
+  requirements:
+    _permission: 'administer site configuration'
