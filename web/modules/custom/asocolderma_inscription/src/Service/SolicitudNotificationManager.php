@@ -9,6 +9,7 @@ use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\enterprise_integrations\Service\MandrillService;
 use Drupal\enterprise_integrations\Service\TwilioWhatsAppService;
 use Drupal\node\NodeInterface;
+use Drupal\Core\Url;
 
 /**
  * Handles notification delivery for solicitud_ingreso workflow phases.
@@ -213,49 +214,79 @@ final class SolicitudNotificationManager
 	/**
 	 * Builds Mandrill global merge vars.
 	 *
-	 * The names are intended to be used in Mandrill as:
-	 * (*|NOMBRE_USUARIO|*), (*|SOLICITUD_ID|*), (*|ESTADO_SOLICITUD|*).
+	 * These variable names are intended to be used in Mandrill as:
+	 * *|user_full_name|*
+	 * *|request_code|*
+	 * *|request_current_status|*
 	 */
 	private function buildMandrillMergeVars(NodeInterface $node, string $phase_key, array $context): array
 	{
-		return [
-			[
-				'name' => 'NOMBRE_USUARIO',
-				'content' => $this->resolveRecipientName($node),
-			],
-			[
-				'name' => 'SOLICITUD_ID',
-				'content' => $this->getSolicitudCode($node),
-			],
-			[
-				'name' => 'ESTADO_SOLICITUD',
-				'content' => $this->resolveCurrentStateName($node),
-			],
-			[
-				'name' => 'FASE_SOLICITUD',
-				'content' => $phase_key,
-			],
-			[
-				'name' => 'EMAIL_USUARIO',
-				'content' => $this->resolveRecipientEmail($node),
-			],
-		];
+		$variables = $this->buildNotificationVariables($node, $phase_key, $context);
+
+		$merge_vars = [];
+
+		foreach ($variables as $name => $content) {
+			$merge_vars[] = [
+				'name' => $name,
+				'content' => $content,
+			];
+		}
+
+		return $merge_vars;
 	}
 
 	/**
-	 * Builds Twilio template variables.
+	 * Builds Twilio WhatsApp template variables.
 	 *
-	 * Expected Twilio template variables:
-	 * {{1}} = Nombre del aspirante
-	 * {{2}} = Código de solicitud
-	 * {{3}} = Estado actual
+	 * The same variable names are used for Twilio ContentVariables.
 	 */
 	private function buildTwilioVariables(NodeInterface $node, string $phase_key, array $context): array
 	{
+		return $this->buildNotificationVariables($node, $phase_key, $context);
+	}
+
+	/**
+	 * Builds the unified variables dictionary for Mandrill and Twilio.
+	 *
+	 * These keys must match the institutional dictionary exactly.
+	 */
+	private function buildNotificationVariables(NodeInterface $node, string $phase_key, array $context): array
+	{
+		$current_status = $this->resolveCurrentStateName($node);
+
+		$previous_status = trim((string) ($context['request_previous_status'] ?? $context['previous_status'] ?? ''));
+		$new_status = trim((string) ($context['request_new_status'] ?? $context['new_status'] ?? $current_status));
+
+		$status_changed_date = trim((string) ($context['request_status_changed_date'] ?? $context['status_changed_date'] ?? ''));
+		if ($status_changed_date === '' && !empty($context['status_changed_timestamp'])) {
+			$status_changed_date = $this->formatTimestamp((int) $context['status_changed_timestamp']);
+		}
+
+		$status_changed_by = trim((string) ($context['request_status_changed_by'] ?? $context['status_changed_by'] ?? ''));
+		if ($status_changed_by === '' && !empty($context['changed_by'])) {
+			$status_changed_by = (string) $context['changed_by'];
+		}
+
 		return [
-			'1' => $this->resolveRecipientName($node),
-			'2' => $this->getSolicitudCode($node),
-			'3' => $this->resolveCurrentStateName($node),
+			'user_full_name' => $this->resolveRecipientName($node),
+			'user_first_name' => $this->resolveFirstName($node),
+			'user_last_name' => $this->resolveLastName($node),
+			'user_email' => $this->resolveRecipientEmail($node),
+			'user_mobile' => $this->resolveRecipientPhone($node),
+			'user_document_number' => $this->resolveDocumentNumber($node),
+			'user_activation_url' => $this->resolveActivationUrl($node, $context),
+
+			'request_code' => $this->getSolicitudCode($node),
+			'request_url' => $this->resolveRequestUrl($node),
+			'request_created_date' => $this->resolveRequestCreatedDate($node),
+			'request_current_status' => $current_status,
+			'request_previous_status' => $previous_status,
+			'request_new_status' => $new_status,
+			'request_status_changed_date' => $status_changed_date,
+			'request_status_changed_by' => $status_changed_by,
+			'request_status_change_comment' => trim((string) ($context['request_status_change_comment'] ?? $context['status_change_comment'] ?? $context['comment'] ?? '')),
+			'request_rejection_reason' => trim((string) ($context['request_rejection_reason'] ?? $context['rejection_reason'] ?? '')),
+			'request_clarification_comment' => trim((string) ($context['request_clarification_comment'] ?? $context['clarification_comment'] ?? '')),
 		];
 	}
 
@@ -368,5 +399,94 @@ final class SolicitudNotificationManager
 		}
 
 		return '';
+	}
+
+	/**
+	 * Resolves applicant first name.
+	 */
+	private function resolveFirstName(NodeInterface $node): string
+	{
+		if ($node->hasField('field_nombre1') && !$node->get('field_nombre1')->isEmpty()) {
+			return trim((string) $node->get('field_nombre1')->value);
+		}
+
+		return '';
+	}
+
+	/**
+	 * Resolves applicant first last name.
+	 */
+	private function resolveLastName(NodeInterface $node): string
+	{
+		if ($node->hasField('field_apellido1') && !$node->get('field_apellido1')->isEmpty()) {
+			return trim((string) $node->get('field_apellido1')->value);
+		}
+
+		return '';
+	}
+
+	/**
+	 * Resolves applicant document number.
+	 */
+	private function resolveDocumentNumber(NodeInterface $node): string
+	{
+		if ($node->hasField('field_numero_documento') && !$node->get('field_numero_documento')->isEmpty()) {
+			return trim((string) $node->get('field_numero_documento')->value);
+		}
+
+		return '';
+	}
+
+	/**
+	 * Resolves account activation URL.
+	 *
+	 * Important:
+	 * The solicitud creation flow normally happens after the aspirante account
+	 * has already been activated. Therefore this value must be passed in context
+	 * when the caller really has an activation URL available.
+	 */
+	private function resolveActivationUrl(NodeInterface $node, array $context): string
+	{
+		return trim((string) ($context['user_activation_url'] ?? $context['activation_url'] ?? ''));
+	}
+
+	/**
+	 * Resolves absolute public URL for the solicitud.
+	 */
+	private function resolveRequestUrl(NodeInterface $node): string
+	{
+		try {
+			if (!$node->id()) {
+				return '';
+			}
+
+			return Url::fromRoute('entity.node.canonical', ['node' => $node->id()], ['absolute' => TRUE])->toString();
+		} catch (\Throwable) {
+			return '';
+		}
+	}
+
+	/**
+	 * Resolves solicitud created date.
+	 */
+	private function resolveRequestCreatedDate(NodeInterface $node): string
+	{
+		try {
+			return $this->formatTimestamp((int) $node->getCreatedTime());
+		} catch (\Throwable) {
+			return '';
+		}
+	}
+
+	/**
+	 * Formats timestamps consistently for notification variables.
+	 */
+	private function formatTimestamp(int $timestamp): string
+	{
+		if ($timestamp <= 0) {
+			return '';
+		}
+
+		return \Drupal::service('date.formatter')->format($timestamp, 'custom', 'd/m/Y H:i');
 	}
 }
