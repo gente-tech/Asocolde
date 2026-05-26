@@ -1,47 +1,54 @@
-body.asocolderma-role-aspirante header.main-header,
-body.asocolderma-role-aspirante header.main-header .top-menu,
-body.asocolderma-role-aspirante header.main-header .top-searcher,
-body.asocolderma-role-aspirante .wrapper-menus,
-body.asocolderma-role-aspirante nav.main-menu.navbar,
-body.asocolderma-role-aspirante nav.navbar,
-body.asocolderma-role-aspirante .navbar,
-body.asocolderma-role-aspirante .navbar-expand-lg {
-  background: #7a1f3d !important;
+/*
+ * Ajuste visual exclusivo para usuarios con rol aspirante.
+ * No modifica el fondo general del header.
+ * Solo cambia elementos que originalmente usan el color #008b8f.
+ */
+
+body.asocolderma-role-aspirante .user-logged-menu,
+body.asocolderma-role-aspirante .user-logged-menu > a,
+body.asocolderma-role-aspirante .user-logged-menu .dropdown-toggle,
+body.asocolderma-role-aspirante .user-logged-menu .dropdown-menu .menu-item--active-trail,
+body.asocolderma-role-aspirante .user-logged-menu .dropdown-menu .is-active,
+body.asocolderma-role-aspirante .user-logged-menu .dropdown-menu .active,
+body.asocolderma-role-aspirante .dropdown-menu .dropdown-header,
+body.asocolderma-role-aspirante .dropdown-menu .dropdown-title {
   background-color: #7a1f3d !important;
 }
 
-body.asocolderma-role-aspirante header.main-header a,
-body.asocolderma-role-aspirante nav.main-menu.navbar a,
-body.asocolderma-role-aspirante nav.navbar a,
-body.asocolderma-role-aspirante .navbar-nav .nav-link,
-body.asocolderma-role-aspirante .navbar a {
+body.asocolderma-role-aspirante .user-logged-menu > a,
+body.asocolderma-role-aspirante .user-logged-menu .dropdown-toggle,
+body.asocolderma-role-aspirante .user-logged-menu .dropdown-header,
+body.asocolderma-role-aspirante .user-logged-menu .dropdown-title {
   color: #ffffff !important;
 }
 
-body.asocolderma-role-aspirante header.main-header a:hover,
-body.asocolderma-role-aspirante nav.main-menu.navbar a:hover,
-body.asocolderma-role-aspirante nav.navbar a:hover,
-body.asocolderma-role-aspirante .navbar-nav .nav-link:hover {
-  color: #ffffff !important;
-  opacity: 0.85;
+body.asocolderma-role-aspirante .user-logged-menu svg,
+body.asocolderma-role-aspirante .user-logged-menu i,
+body.asocolderma-role-aspirante .user-logged-menu .icon,
+body.asocolderma-role-aspirante .top-menu svg,
+body.asocolderma-role-aspirante .top-menu i,
+body.asocolderma-role-aspirante .top-menu .icon {
+  color: #7a1f3d !important;
+  fill: #7a1f3d !important;
 }
 
-body.asocolderma-role-aspirante .dropdown-menu,
-body.asocolderma-role-aspirante .dropdown-menu.show {
-  background: #ffffff !important;
+body.asocolderma-role-aspirante .user-logged-menu .dropdown-menu {
   background-color: #ffffff !important;
 }
 
-body.asocolderma-role-aspirante .dropdown-menu a,
-body.asocolderma-role-aspirante .dropdown-menu .dropdown-item {
-  color: #202020 !important;
+body.asocolderma-role-aspirante .user-logged-menu .dropdown-menu a {
+  background-color: #ffffff !important;
+  color: #222222 !important;
 }
 
-body.asocolderma-role-aspirante .dropdown-menu a:hover,
-body.asocolderma-role-aspirante .dropdown-menu .dropdown-item:hover,
-body.asocolderma-role-aspirante .dropdown-menu .is-active,
-body.asocolderma-role-aspirante .dropdown-menu .active {
-  background: #7a1f3d !important;
+body.asocolderma-role-aspirante .user-logged-menu .dropdown-menu a:hover {
+  background-color: #f5f5f5 !important;
+  color: #222222 !important;
+}
+
+body.asocolderma-role-aspirante .user-logged-menu .dropdown-menu .dropdown-header,
+body.asocolderma-role-aspirante .user-logged-menu .dropdown-menu .dropdown-title,
+body.asocolderma-role-aspirante .user-logged-menu .dropdown-menu .menu-section-title {
   background-color: #7a1f3d !important;
   color: #ffffff !important;
 }
