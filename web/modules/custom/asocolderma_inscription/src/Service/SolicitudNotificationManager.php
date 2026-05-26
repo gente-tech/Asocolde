@@ -238,11 +238,31 @@ final class SolicitudNotificationManager
 	/**
 	 * Builds Twilio WhatsApp template variables.
 	 *
-	 * The same variable names are used for Twilio ContentVariables.
+	 * Temporalmente se usa el formato numérico requerido por la plantilla
+	 * actual de Twilio:
+	 *
+	 * {{1}} = Nombre completo del aspirante
+	 * {{2}} = Código público de la solicitud
+	 * {{3}} = Estado de la solicitud
+	 *
+	 * Más adelante este método podrá volver a usar el diccionario institucional
+	 * completo cuando las plantillas de WhatsApp se estandaricen con esas variables.
 	 */
 	private function buildTwilioVariables(NodeInterface $node, string $phase_key, array $context): array
 	{
-		return $this->buildNotificationVariables($node, $phase_key, $context);
+		$variables = $this->buildNotificationVariables($node, $phase_key, $context);
+
+		$status = trim((string) ($variables['request_new_status'] ?? ''));
+
+		if ($status === '') {
+			$status = trim((string) ($variables['request_current_status'] ?? ''));
+		}
+
+		return [
+			'1' => trim((string) ($variables['user_full_name'] ?? '')),
+			'2' => trim((string) ($variables['request_code'] ?? '')),
+			'3' => $status,
+		];
 	}
 
 	/**
