@@ -238,7 +238,7 @@ final class SolicitudNotificationManager
 	/**
 	 * Builds Twilio WhatsApp template variables.
 	 *
-	 * Soporta temporalmente dos tipos de plantillas:
+	 * Soporta temporalmente tres tipos de plantillas:
 	 *
 	 * 1. Plantilla general de creación/cambio de estado:
 	 *    {{1}} = Nombre completo del aspirante
@@ -248,6 +248,11 @@ final class SolicitudNotificationManager
 	 * 2. Plantilla de rechazo:
 	 *    {{name_user}} = Nombre completo del aspirante
 	 *    {{id_solicitud}} = Código público de la solicitud
+	 *
+	 * 3. Plantilla de pendiente aclaración:
+	 *    {{name_user}} = Nombre completo del aspirante
+	 *    {{id_solicitud}} = Código público de la solicitud
+	 *    {{motivo_aclaracion}} = Motivo/comentario de aclaración
 	 *
 	 * Más adelante este método podrá normalizarse usando el diccionario
 	 * institucional completo de variables.
@@ -265,10 +270,38 @@ final class SolicitudNotificationManager
 			$status = trim((string) ($variables['request_current_status'] ?? ''));
 		}
 
-		$is_rejected_phase = str_contains($phase_key, 'rechazada')
-			|| str_contains($phase_key, 'rechazado')
-			|| mb_strtolower($status) === 'rechazada'
-			|| mb_strtolower($status) === 'rechazado';
+		$phase_key_normalized = mb_strtolower($phase_key);
+		$status_normalized = mb_strtolower($status);
+
+		$is_clarification_phase = str_contains($phase_key_normalized, 'pendiente_aclaracion')
+			|| str_contains($phase_key_normalized, 'aclaracion')
+			|| str_contains($status_normalized, 'pendiente aclaración')
+			|| str_contains($status_normalized, 'pendiente aclaracion')
+			|| str_contains($status_normalized, 'aclaración')
+			|| str_contains($status_normalized, 'aclaracion');
+
+		if ($is_clarification_phase) {
+			$motivo_aclaracion = trim((string) ($variables['request_status_change_comment'] ?? ''));
+
+			if ($motivo_aclaracion === '') {
+				$motivo_aclaracion = trim((string) ($context['request_status_change_comment'] ?? ''));
+			}
+
+			if ($motivo_aclaracion === '') {
+				$motivo_aclaracion = 'Por favor ingresa a la plataforma para consultar el detalle de la aclaración solicitada.';
+			}
+
+			return [
+				'name_user' => $user_full_name,
+				'id_solicitud' => $request_code,
+				'motivo_aclaracion' => $motivo_aclaracion,
+			];
+		}
+
+		$is_rejected_phase = str_contains($phase_key_normalized, 'rechazada')
+			|| str_contains($phase_key_normalized, 'rechazado')
+			|| $status_normalized === 'rechazada'
+			|| $status_normalized === 'rechazado';
 
 		if ($is_rejected_phase) {
 			return [
