@@ -69,3 +69,12 @@ asocolderma_data_core.empleados_export_excel:
     _title: 'Exportar empleados EXCEL'
   requirements:
     _permission: 'administer asocolderma data core+audit asocolderma data core'
+
+asocolderma_data_core.import_template_download:
+  path: '/gestion-data/importacion/plantilla/{table}'
+  defaults:
+    _controller: '\Drupal\asocolderma_data_core\Controller\ImportTemplateController::download'
+    _title: 'Descargar plantilla de importación'
+  requirements:
+    _permission: 'administer asocolderma data core'
+    table: 'patrocinadores|proveedores|asociados|residentes|empleados'
