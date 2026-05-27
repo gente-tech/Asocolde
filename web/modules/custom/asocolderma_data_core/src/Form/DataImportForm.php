@@ -551,35 +551,21 @@ class DataImportForm extends FormBase
 	{
 		$form['#attributes']['enctype'] = 'multipart/form-data';
 
-		$form['header'] = [
+		$form['intro'] = [
 			'#type' => 'container',
 			'#attributes' => [
 				'class' => [
-					'data-core-page-header',
+					'data-core-page-intro',
 				],
 			],
 		];
 
-		$form['header']['title'] = [
+		$form['intro']['title'] = [
 			'#markup' => '<h1 class="data-core-page-title">Importación de data</h1>',
 		];
 
-		$form['header']['description'] = [
+		$form['intro']['description'] = [
 			'#markup' => '<p class="data-core-page-description">Carga archivos Excel institucionales para actualizar la información de patrocinadores, asociados, residentes, proveedores y empleados.</p>',
-		];
-
-		$form['header']['nav'] = [
-			'#markup' => '
-			<nav class="data-core-nav" aria-label="Navegación de Gestión de la data">
-				<a href="/gestion-data" class="data-core-nav__link">Inicio</a>
-				<a href="/gestion-data/importacion" class="data-core-nav__link is-active">Importación</a>
-				<a href="/proveedores" class="data-core-nav__link">Proveedores</a>
-				<a href="/patrocinadores" class="data-core-nav__link">Patrocinadores</a>
-				<a href="/asociados" class="data-core-nav__link">Asociados</a>
-				<a href="/residentes" class="data-core-nav__link">Residentes</a>
-				<a href="/empleados" class="data-core-nav__link">Empleados</a>
-			</nav>
-		',
 		];
 
 		$form['content'] = [
