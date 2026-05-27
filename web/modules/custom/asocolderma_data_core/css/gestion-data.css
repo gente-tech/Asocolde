@@ -414,3 +414,84 @@
 	position: relative;
 	margin-bottom: 56px;
 }
+
+/* Quitar espacio/header blanco superior heredado del theme público */
+body:has(.gestion-data-layout) {
+	margin-top: 0 !important;
+	padding-top: 0 !important;
+	background: #f5f7fa !important;
+}
+
+body:has(.gestion-data-layout) .dialog-off-canvas-main-canvas {
+	margin-top: 0 !important;
+	padding-top: 0 !important;
+}
+
+body:has(.gestion-data-layout) .layout-container,
+body:has(.gestion-data-layout) .page,
+body:has(.gestion-data-layout) .main-content,
+body:has(.gestion-data-layout) .region-content {
+	margin-top: 0 !important;
+	padding-top: 0 !important;
+}
+
+/* Ajuste general de la página */
+.gestion-data-layout {
+	background: #f5f7fa;
+	min-height: 100vh;
+	padding: 24px 42px 90px;
+	box-sizing: border-box;
+}
+
+/* Barra superior compacta */
+.gestion-data-userbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 16px;
+	background: #ffffff;
+	border: 1px solid #d9e1e8;
+	border-radius: 10px;
+	padding: 12px 18px;
+	margin-bottom: 18px;
+	box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.gestion-data-userbar__brand {
+	color: #008c8c;
+	font-size: 17px;
+	font-weight: 800;
+}
+
+.gestion-data-userbar__user {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	color: #111827;
+	font-size: 14px;
+}
+
+.gestion-data-userbar__label {
+	color: #64748b;
+	font-weight: 700;
+}
+
+/* Reducir separación entre barra usuario, menú, filtros y tabla */
+.gestion-data-container [id*="gestion-data-asocolderma"],
+.gestion-data-container [class*="menu--gestion-data"],
+.gestion-data-container .block-menu {
+	margin-bottom: 18px !important;
+}
+
+.gestion-data-container .views-exposed-form {
+	margin-bottom: 22px !important;
+}
+
+.gestion-data-container .view-content {
+	margin-bottom: 70px !important;
+}
+
+/* Espacio real al final de la tabla */
+.gestion-data-container {
+	padding-bottom: 100px;
+}
