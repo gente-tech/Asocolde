@@ -568,7 +568,16 @@ class DataImportForm extends FormBase
 			'#markup' => '<p class="data-core-page-description">Carga archivos Excel institucionales para actualizar la información de patrocinadores, asociados, residentes, proveedores y empleados.</p>',
 		];
 
-		$form['templates'] = [
+		$form['import_layout'] = [
+			'#type' => 'container',
+			'#attributes' => [
+				'class' => [
+					'data-core-import-layout',
+				],
+			],
+		];
+
+		$form['import_layout']['templates'] = [
 			'#type' => 'container',
 			'#attributes' => [
 				'class' => [
@@ -577,15 +586,15 @@ class DataImportForm extends FormBase
 			],
 		];
 
-		$form['templates']['title'] = [
+		$form['import_layout']['templates']['title'] = [
 			'#markup' => '<h2 class="data-core-import-templates__title">Plantillas de importación</h2>',
 		];
 
-		$form['templates']['description'] = [
+		$form['import_layout']['templates']['description'] = [
 			'#markup' => '<p class="data-core-import-templates__description">Descargue la plantilla correspondiente antes de cargar información. El archivo debe conservar los nombres de columnas definidos por el sistema.</p>',
 		];
 
-		$form['templates']['links'] = [
+		$form['import_layout']['templates']['links'] = [
 			'#markup' => '
 				<div class="data-core-template-links">
 				<a class="data-core-template-link" href="/gestion-data/importacion/plantilla/patrocinadores">Patrocinadores</a>
@@ -597,7 +606,7 @@ class DataImportForm extends FormBase
 			',
 		];
 
-		$form['content'] = [
+		$form['import_layout']['content'] = [
 			'#type' => 'container',
 			'#attributes' => [
 				'class' => [
@@ -606,7 +615,7 @@ class DataImportForm extends FormBase
 			],
 		];
 
-		$form['content']['import_type'] = [
+		$form['import_layout']['content']['import_type'] = [
 			'#type' => 'select',
 			'#title' => $this->t('Tabla a importar'),
 			'#description' => $this->t('Seleccione el tipo de información que desea importar desde el Excel.'),
@@ -621,18 +630,18 @@ class DataImportForm extends FormBase
 			],
 		];
 
-		$form['content']['excel_file'] = [
+		$form['import_layout']['content']['excel_file'] = [
 			'#type' => 'file',
 			'#title' => $this->t('Archivo Excel'),
 			'#description' => $this->t('Cargue un archivo .xlsx con la información a importar.'),
 			'#required' => TRUE,
 		];
 
-		$form['content']['actions'] = [
+		$form['import_layout']['content']['actions'] = [
 			'#type' => 'actions',
 		];
 
-		$form['content']['actions']['submit'] = [
+		$form['import_layout']['content']['actions']['submit'] = [
 			'#type' => 'submit',
 			'#value' => $this->t('Importar'),
 			'#button_type' => 'primary',
