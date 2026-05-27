@@ -296,3 +296,17 @@ function _asocolderma_b5_filter_menu_items_for_aspirante(array &$items, array $h
     }
   }
 }
+
+/**
+ * Implements hook_theme_suggestions_page_alter().
+ */
+function asocolderma_b5_theme_suggestions_page_alter(array &$suggestions, array $variables): void
+{
+  $route_match = \Drupal::routeMatch();
+  $request = \Drupal::request();
+  $path = $request->getPathInfo();
+
+  if ($path === '/gestion-data' || str_starts_with($path, '/gestion-data/')) {
+    $suggestions[] = 'page__gestion_data';
+  }
+}
