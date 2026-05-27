@@ -38,23 +38,16 @@ class ProveedorRecordForm extends FormBase
 	protected RouteMatchInterface $currentRouteMatch;
 
 	/**
-	 * Messenger.
-	 */
-	protected MessengerInterface $messenger;
-
-	/**
 	 * Constructor.
 	 */
 	public function __construct(
 		Connection $database,
 		AccountProxyInterface $current_user,
 		RouteMatchInterface $route_match,
-		MessengerInterface $messenger,
 	) {
 		$this->database = $database;
 		$this->currentUser = $current_user;
 		$this->currentRouteMatch = $route_match;
-		$this->messenger = $messenger;
 	}
 
 	/**
@@ -66,7 +59,6 @@ class ProveedorRecordForm extends FormBase
 			$container->get('database'),
 			$container->get('current_user'),
 			$container->get('current_route_match'),
-			$container->get('messenger'),
 		);
 	}
 
@@ -496,7 +488,7 @@ class ProveedorRecordForm extends FormBase
 				->condition('id', $record_id)
 				->execute();
 
-			$this->messenger->addStatus($this->t('El proveedor fue actualizado correctamente.'));
+			$this->messenger()->addStatus($this->t('El proveedor fue actualizado correctamente.'));
 		} else {
 			$values['batch_id'] = 0;
 			$values['row_number'] = 0;
@@ -514,7 +506,7 @@ class ProveedorRecordForm extends FormBase
 				->fields($values)
 				->execute();
 
-			$this->messenger->addStatus($this->t('El proveedor fue creado correctamente.'));
+			$this->messenger()->addStatus($this->t('El proveedor fue creado correctamente.'));
 		}
 
 		$form_state->setRedirectUrl(Url::fromUserInput('/gestion-data/proveedores'));
