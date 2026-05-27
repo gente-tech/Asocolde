@@ -7,7 +7,7 @@ asocolderma_data_core.gestion_data:
     _permission: 'administer asocolderma data core+view asocolderma data core+audit asocolderma data core'
 
 asocolderma_data_core.importacion:
-  path: '/admin/asocolderma/data-core/importacion'
+  path: '/gestion-data/importacion'
   defaults:
     _form: '\Drupal\asocolderma_data_core\Form\DataImportForm'
     _title: 'Importación de data'
