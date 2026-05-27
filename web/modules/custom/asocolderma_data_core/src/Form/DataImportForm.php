@@ -568,11 +568,40 @@ class DataImportForm extends FormBase
 			'#markup' => '<p class="data-core-page-description">Carga archivos Excel institucionales para actualizar la información de patrocinadores, asociados, residentes, proveedores y empleados.</p>',
 		];
 
+		$form['templates'] = [
+			'#type' => 'container',
+			'#attributes' => [
+				'class' => [
+					'data-core-import-templates',
+				],
+			],
+		];
+
+		$form['templates']['title'] = [
+			'#markup' => '<h2 class="data-core-import-templates__title">Plantillas de importación</h2>',
+		];
+
+		$form['templates']['description'] = [
+			'#markup' => '<p class="data-core-import-templates__description">Descargue la plantilla correspondiente antes de cargar información. El archivo debe conservar los nombres de columnas definidos por el sistema.</p>',
+		];
+
+		$form['templates']['links'] = [
+			'#markup' => '
+				<div class="data-core-template-links">
+				<a class="data-core-template-link" href="/gestion-data/importacion/plantilla/patrocinadores">Patrocinadores</a>
+				<a class="data-core-template-link" href="/gestion-data/importacion/plantilla/proveedores">Proveedores</a>
+				<a class="data-core-template-link" href="/gestion-data/importacion/plantilla/asociados">Asociados</a>
+				<a class="data-core-template-link" href="/gestion-data/importacion/plantilla/residentes">Residentes</a>
+				<a class="data-core-template-link" href="/gestion-data/importacion/plantilla/empleados">Empleados</a>
+				</div>
+			',
+		];
+
 		$form['content'] = [
 			'#type' => 'container',
 			'#attributes' => [
 				'class' => [
-					'data-core-import-card',
+					'data-core-import-form-card',
 				],
 			],
 		];

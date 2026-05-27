@@ -495,3 +495,128 @@ body:has(.gestion-data-layout) .region-content {
 .gestion-data-container {
 	padding-bottom: 100px;
 }
+
+/* Página de importación */
+.data-core-page-intro {
+	margin: 8px 0 18px;
+}
+
+.data-core-page-title {
+	margin: 0 0 8px;
+	color: #111827;
+	font-size: 28px;
+	font-weight: 800;
+}
+
+.data-core-page-description {
+	margin: 0;
+	color: #334155;
+	font-size: 16px;
+}
+
+.data-core-import-templates {
+	max-width: 980px;
+	background: #ffffff;
+	border: 1px solid #d9e1e8;
+	border-radius: 10px;
+	padding: 18px 20px;
+	margin-bottom: 22px;
+	box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.data-core-import-templates__title {
+	margin: 0 0 6px;
+	color: #111827;
+	font-size: 20px;
+	font-weight: 800;
+}
+
+.data-core-import-templates__description {
+	margin: 0 0 14px;
+	color: #475569;
+	font-size: 14px;
+}
+
+.data-core-template-links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.data-core-template-link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 38px;
+	padding: 8px 16px;
+	border: 1px solid #008c8c;
+	border-radius: 8px;
+	background: #f0fdfa;
+	color: #006d6d;
+	font-size: 14px;
+	font-weight: 800;
+	text-decoration: none !important;
+}
+
+.data-core-template-link:hover {
+	background: #008c8c;
+	color: #ffffff;
+}
+
+.data-core-import-form-card {
+	max-width: 720px;
+	background: #ffffff;
+	border: 1px solid #d9e1e8;
+	border-radius: 10px;
+	padding: 22px 24px;
+	margin-bottom: 80px;
+	box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.data-core-import-form-card .form-item {
+	margin-bottom: 18px;
+}
+
+.data-core-import-form-card label {
+	display: block;
+	margin-bottom: 6px;
+	color: #111827;
+	font-size: 15px;
+	font-weight: 800;
+}
+
+.data-core-import-form-card select,
+.data-core-import-form-card input[type="file"] {
+	width: 100%;
+	max-width: 100%;
+}
+
+.data-core-import-form-card select {
+	min-height: 42px;
+	border: 1px solid #cfd8e3;
+	border-radius: 7px;
+	padding: 7px 12px;
+	background-color: #ffffff;
+}
+
+.data-core-import-form-card .description {
+	margin-top: 6px;
+	color: #64748b;
+	font-size: 13px;
+}
+
+.data-core-import-form-card .form-actions {
+	margin-top: 22px;
+}
+
+.data-core-import-form-card input[type="submit"],
+.data-core-import-form-card .button {
+	min-height: 42px;
+	padding: 8px 24px;
+	border: 1px solid #008c8c;
+	border-radius: 7px;
+	background: #008c8c;
+	color: #ffffff;
+	font-weight: 800;
+	cursor: pointer;
+}
