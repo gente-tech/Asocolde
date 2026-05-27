@@ -78,3 +78,20 @@ asocolderma_data_core.import_template_download:
   requirements:
     _permission: 'administer asocolderma data core'
     table: 'patrocinadores|proveedores|asociados|residentes|empleados'
+
+asocolderma_data_core.proveedores_create:
+  path: '/gestion-data/proveedores/crear'
+  defaults:
+    _form: '\Drupal\asocolderma_data_core\Form\ProveedorRecordForm'
+    _title: 'Crear proveedor'
+  requirements:
+    _permission: 'administer asocolderma data core'
+
+asocolderma_data_core.proveedores_edit:
+  path: '/gestion-data/proveedores/{record_id}/editar'
+  defaults:
+    _form: '\Drupal\asocolderma_data_core\Form\ProveedorRecordForm'
+    _title: 'Editar proveedor'
+  requirements:
+    _permission: 'administer asocolderma data core'
+    record_id: '\d+'
