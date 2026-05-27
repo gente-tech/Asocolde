@@ -585,8 +585,7 @@ body:has(.gestion-data-layout) .region-content {
 	font-weight: 800;
 }
 
-.data-core-import-form-card select,
-.data-core-import-form-card input[type="file"] {
+.data-core-import-form-card select {
 	width: 100%;
 	max-width: 100%;
 }
@@ -654,27 +653,41 @@ body:has(.gestion-data-layout) .region-content {
 	}
 }
 
-/* Mejorar campo Archivo Excel sin cambiar estructura del formulario */
-.data-core-import-form-card input[type="file"] {
-	display: block;
+/* Campo de carga Excel personalizado */
+.data-core-file-upload {
+	position: relative;
+	display: flex;
+	align-items: center;
 	width: 100%;
-	max-width: 100%;
-	padding: 14px;
+	min-height: 48px;
 	border: 1px dashed #94a3b8;
 	border-radius: 10px;
 	background: #f8fafc;
-	color: #334155;
-	font-size: 15px;
-	line-height: 1.4;
-	cursor: pointer;
+	overflow: hidden;
 	box-sizing: border-box;
 }
 
-.data-core-import-form-card input[type="file"]::file-selector-button {
-	margin-right: 14px;
-	padding: 10px 16px;
-	border: 1px solid #008c8c;
-	border-radius: 8px;
+.data-core-file-upload:hover {
+	border-color: #008c8c;
+	background: #f0fdfa;
+}
+
+.data-core-file-upload input[type="file"] {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.data-core-file-upload__button {
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 48px;
+	padding: 0 18px;
 	background: #008c8c;
 	color: #ffffff;
 	font-size: 14px;
@@ -682,12 +695,14 @@ body:has(.gestion-data-layout) .region-content {
 	cursor: pointer;
 }
 
-.data-core-import-form-card input[type="file"]::file-selector-button:hover {
-	background: #006d6d;
-	border-color: #006d6d;
-}
-
-.data-core-import-form-card input[type="file"]:hover {
-	border-color: #008c8c;
-	background: #f0fdfa;
+.data-core-file-upload__text {
+	flex: 1 1 auto;
+	padding: 0 16px;
+	color: #334155;
+	font-size: 14px;
+	font-weight: 600;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	cursor: pointer;
 }

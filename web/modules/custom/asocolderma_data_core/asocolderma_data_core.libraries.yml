@@ -10,8 +10,11 @@ export_actions:
     - core/drupalSettings
 
 gestion_data_ui:
+  js:
+    js/import-file-ui.js: {}
   css:
     theme:
       css/gestion-data.css: {}
   dependencies:
     - core/drupal
+    - core/once

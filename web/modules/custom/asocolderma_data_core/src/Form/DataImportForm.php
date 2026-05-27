@@ -635,6 +635,11 @@ class DataImportForm extends FormBase
 			'#title' => $this->t('Archivo Excel'),
 			'#description' => $this->t('Cargue un archivo .xlsx con la información a importar.'),
 			'#required' => TRUE,
+			'#attributes' => [
+				'class' => [
+					'data-core-file-input',
+				],
+			],
 		];
 
 		$form['import_layout']['content']['actions'] = [
