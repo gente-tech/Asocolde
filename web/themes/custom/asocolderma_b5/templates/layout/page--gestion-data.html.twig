@@ -12,9 +12,22 @@
 <div class="gestion-data-layout">
 	<main class="gestion-data-main" role="main">
 		<div class="gestion-data-container">
+
+			<div class="gestion-data-userbar">
+				<div class="gestion-data-userbar__brand">
+					Gestión de la data AsoColDerma
+				</div>
+
+				<div class="gestion-data-userbar__user">
+					<span class="gestion-data-userbar__label">Usuario:</span>
+					<strong>{{ user.displayname }}</strong>
+				</div>
+			</div>
+
 			{{ page.highlighted }}
 			{{ page.help }}
 			{{ page.content }}
+
 		</div>
 	</main>
 </div>
