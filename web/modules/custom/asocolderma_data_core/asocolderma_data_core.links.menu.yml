@@ -49,3 +49,38 @@ asocolderma_data_core.menu_logout:
   options:
     query:
       destination: '/'
+
+asocolderma_data_core.menu_auditoria_acciones:
+  title: 'Auditoría acciones'
+  description: 'Registro de activaciones, desactivaciones y eliminaciones.'
+  route_name: view.auditoria_acciones_registros.page_1
+  menu_name: gestion-data-asocolderma
+  weight: 70
+
+asocolderma_data_core.menu_auditoria_exportaciones:
+  title: 'Auditoría exportaciones'
+  description: 'Registro de exportaciones realizadas.'
+  route_name: view.auditoria_exportaciones.page_1
+  menu_name: gestion-data-asocolderma
+  weight: 80
+
+asocolderma_data_core.menu_auditoria_importaciones:
+  title: 'Auditoría importaciones'
+  description: 'Registro de procesos de importación.'
+  route_name: view.auditoria_importaciones.page_1
+  menu_name: gestion-data-asocolderma
+  weight: 90
+
+asocolderma_data_core.menu_auditoria_importaciones_detalle:
+  title: 'Detalle importación'
+  description: 'Detalle de registros procesados por importación.'
+  route_name: view.auditoria_importaciones_detalle.page_1
+  menu_name: gestion-data-asocolderma
+  weight: 100
+
+asocolderma_data_core.menu_auditoria_importaciones_cambios:
+  title: 'Cambios importación'
+  description: 'Cambios detectados durante procesos de importación.'
+  route_name: view.auditoria_importaciones_cambios.page_1
+  menu_name: gestion-data-asocolderma
+  weight: 110
