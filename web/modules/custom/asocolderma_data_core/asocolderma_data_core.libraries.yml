@@ -1,7 +1,17 @@
 export_actions:
   js:
     js/export-actions.js: {}
+  css:
+    theme:
+      css/gestion-data.css: {}
   dependencies:
     - core/drupal
     - core/once
     - core/drupalSettings
+
+gestion_data_ui:
+  css:
+    theme:
+      css/gestion-data.css: {}
+  dependencies:
+    - core/drupal
