@@ -1,13 +1,41 @@
-asocolderma_data_core.gestion_data:
-  title: 'Gestión de la data'
-  description: 'Gestión centralizada de la data institucional de AsoColDerma.'
-  route_name: asocolderma_data_core.gestion_data
-  parent: enterprise_integrations.asocolderma
-  weight: 20
-
-asocolderma_data_core.importacion:
+asocolderma_data_core.menu_importacion:
   title: 'Importación'
   description: 'Importación de datos institucionales.'
   route_name: asocolderma_data_core.importacion
-  parent: asocolderma_data_core.gestion_data
+  menu_name: gestion-data-asocolderma
   weight: 10
+
+asocolderma_data_core.menu_patrocinadores:
+  title: 'Patrocinadores'
+  description: 'Listado de patrocinadores.'
+  route_name: view.patrocinadores.page_1
+  menu_name: gestion-data-asocolderma
+  weight: 20
+
+asocolderma_data_core.menu_proveedores:
+  title: 'Proveedores'
+  description: 'Listado de proveedores.'
+  route_name: view.proveedores.page_1
+  menu_name: gestion-data-asocolderma
+  weight: 30
+
+asocolderma_data_core.menu_asociados:
+  title: 'Asociados'
+  description: 'Listado de asociados.'
+  route_name: view.asociados.page_1
+  menu_name: gestion-data-asocolderma
+  weight: 40
+
+asocolderma_data_core.menu_residentes:
+  title: 'Residentes'
+  description: 'Listado de residentes.'
+  route_name: view.residentes.page_1
+  menu_name: gestion-data-asocolderma
+  weight: 50
+
+asocolderma_data_core.menu_empleados:
+  title: 'Empleados'
+  description: 'Listado de empleados.'
+  route_name: view.empleados.page_1
+  menu_name: gestion-data-asocolderma
+  weight: 60
