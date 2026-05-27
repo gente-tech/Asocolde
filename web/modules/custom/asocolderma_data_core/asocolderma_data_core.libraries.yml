@@ -4,3 +4,4 @@ export_actions:
   dependencies:
     - core/drupal
     - core/once
+    - core/drupalSettings

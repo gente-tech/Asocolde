@@ -551,7 +551,47 @@ class DataImportForm extends FormBase
 	{
 		$form['#attributes']['enctype'] = 'multipart/form-data';
 
-		$form['import_type'] = [
+		$form['header'] = [
+			'#type' => 'container',
+			'#attributes' => [
+				'class' => [
+					'data-core-page-header',
+				],
+			],
+		];
+
+		$form['header']['title'] = [
+			'#markup' => '<h1 class="data-core-page-title">Importación de data</h1>',
+		];
+
+		$form['header']['description'] = [
+			'#markup' => '<p class="data-core-page-description">Carga archivos Excel institucionales para actualizar la información de patrocinadores, asociados, residentes, proveedores y empleados.</p>',
+		];
+
+		$form['header']['nav'] = [
+			'#markup' => '
+			<nav class="data-core-nav" aria-label="Navegación de Gestión de la data">
+				<a href="/gestion-data" class="data-core-nav__link">Inicio</a>
+				<a href="/gestion-data/importacion" class="data-core-nav__link is-active">Importación</a>
+				<a href="/proveedores" class="data-core-nav__link">Proveedores</a>
+				<a href="/patrocinadores" class="data-core-nav__link">Patrocinadores</a>
+				<a href="/asociados" class="data-core-nav__link">Asociados</a>
+				<a href="/residentes" class="data-core-nav__link">Residentes</a>
+				<a href="/empleados" class="data-core-nav__link">Empleados</a>
+			</nav>
+		',
+		];
+
+		$form['content'] = [
+			'#type' => 'container',
+			'#attributes' => [
+				'class' => [
+					'data-core-import-card',
+				],
+			],
+		];
+
+		$form['content']['import_type'] = [
 			'#type' => 'select',
 			'#title' => $this->t('Tabla a importar'),
 			'#description' => $this->t('Seleccione el tipo de información que desea importar desde el Excel.'),
@@ -566,21 +606,27 @@ class DataImportForm extends FormBase
 			],
 		];
 
-		$form['excel_file'] = [
+		$form['content']['excel_file'] = [
 			'#type' => 'file',
 			'#title' => $this->t('Archivo Excel'),
 			'#description' => $this->t('Cargue un archivo .xlsx con la información a importar.'),
 			'#required' => TRUE,
 		];
 
-		$form['actions'] = [
+		$form['content']['actions'] = [
 			'#type' => 'actions',
 		];
 
-		$form['actions']['submit'] = [
+		$form['content']['actions']['submit'] = [
 			'#type' => 'submit',
 			'#value' => $this->t('Importar'),
 			'#button_type' => 'primary',
+			'#attributes' => [
+				'class' => [
+					'data-core-btn',
+					'data-core-btn--primary',
+				],
+			],
 		];
 
 		return $form;

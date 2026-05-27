@@ -1,9 +1,21 @@
-(function (Drupal, once) {
+(function (Drupal, once, drupalSettings) {
 	Drupal.behaviors.asocoldermaExportActions = {
 		attach(context) {
-			const currentPath = window.location.pathname;
+			const settings = drupalSettings.asocoldermaDataCore || {};
+			const permissions = settings.permissions || {};
+			const routes = settings.routes || {};
 
-			const pageConfig = resolvePageConfig(currentPath);
+			const canAdmin = permissions.canAdmin === true;
+			const canAudit = permissions.canAudit === true;
+			const canView = permissions.canView === true;
+
+			// El operador solo puede ver la tabla. No debe ver checks ni acciones.
+			if (!canAdmin && !canAudit) {
+				return;
+			}
+
+			const currentPath = window.location.pathname;
+			const pageConfig = resolvePageConfig(currentPath, routes);
 
 			if (!pageConfig) {
 				return;
@@ -23,45 +35,61 @@
 				}
 
 				addSelectionColumn(table);
-				addBulkActions(view, table, pageConfig);
+				addBulkActions(view, table, pageConfig, {
+					canAdmin,
+					canAudit,
+					canView,
+				});
 				updateSelectedLabel(view, table);
 			});
 		}
 	};
 
-	function resolvePageConfig(pathname) {
+	function resolvePageConfig(pathname, routes) {
+		const exports = routes.exports || {};
+
 		if (pathname.includes('/patrocinadores')) {
 			return {
 				tableKey: 'patrocinadores',
-				exportUrl: '/admin/asocolderma/patrocinadores/export/excel'
+				exportUrl: exports.patrocinadores || '/gestion-data/patrocinadores/exportar',
+				bulkStatusUrl: routes.bulkStatusUrl || '/gestion-data/registros/estado-masivo',
+				bulkDeleteUrl: routes.bulkDeleteUrl || '/gestion-data/registros/eliminar-masivo'
 			};
 		}
 
 		if (pathname.includes('/proveedores')) {
 			return {
 				tableKey: 'proveedores',
-				exportUrl: '/admin/asocolderma/proveedores/export/excel'
+				exportUrl: exports.proveedores || '/gestion-data/proveedores/exportar',
+				bulkStatusUrl: routes.bulkStatusUrl || '/gestion-data/registros/estado-masivo',
+				bulkDeleteUrl: routes.bulkDeleteUrl || '/gestion-data/registros/eliminar-masivo'
 			};
 		}
 
 		if (pathname.includes('/asociados')) {
 			return {
 				tableKey: 'asociados',
-				exportUrl: '/admin/asocolderma/asociados/export/excel'
+				exportUrl: exports.asociados || '/gestion-data/asociados/exportar',
+				bulkStatusUrl: routes.bulkStatusUrl || '/gestion-data/registros/estado-masivo',
+				bulkDeleteUrl: routes.bulkDeleteUrl || '/gestion-data/registros/eliminar-masivo'
 			};
 		}
 
 		if (pathname.includes('/residentes')) {
 			return {
 				tableKey: 'residentes',
-				exportUrl: '/admin/asocolderma/residentes/export/excel'
+				exportUrl: exports.residentes || '/gestion-data/residentes/exportar',
+				bulkStatusUrl: routes.bulkStatusUrl || '/gestion-data/registros/estado-masivo',
+				bulkDeleteUrl: routes.bulkDeleteUrl || '/gestion-data/registros/eliminar-masivo'
 			};
 		}
 
 		if (pathname.includes('/empleados')) {
 			return {
 				tableKey: 'empleados',
-				exportUrl: '/admin/asocolderma/empleados/export/excel'
+				exportUrl: exports.empleados || '/gestion-data/empleados/exportar',
+				bulkStatusUrl: routes.bulkStatusUrl || '/gestion-data/registros/estado-masivo',
+				bulkDeleteUrl: routes.bulkDeleteUrl || '/gestion-data/registros/eliminar-masivo'
 			};
 		}
 
@@ -139,17 +167,28 @@
 		});
 	}
 
-	function addBulkActions(view, table, pageConfig) {
+	function addBulkActions(view, table, pageConfig, access) {
 		if (view.querySelector('.asocolderma-export-actions')) {
 			return;
 		}
 
-		const wrapper = document.createElement('div');
-		let exportOption = '';
+		const options = [];
 
-		if (pageConfig.exportUrl) {
-			exportOption = '<option value="excel">Exportar Excel</option>';
+		if (pageConfig.exportUrl && (access.canAdmin || access.canAudit)) {
+			options.push('<option value="excel">Exportar Excel</option>');
 		}
+
+		if (access.canAdmin) {
+			options.push('<option value="activate">Activar</option>');
+			options.push('<option value="deactivate">Desactivar</option>');
+			options.push('<option value="delete">Eliminar definitivamente</option>');
+		}
+
+		if (!options.length) {
+			return;
+		}
+
+		const wrapper = document.createElement('div');
 
 		wrapper.className = 'asocolderma-export-actions';
 		wrapper.innerHTML = `
@@ -157,13 +196,10 @@
 				<span class="asocolderma-export-actions__label">0 items selected</span>
 
 				<label class="asocolderma-export-actions__control">
-					<span>Action:</span>
+					<span>Acción:</span>
 					<select class="asocolderma-export-action">
 						<option value="">- Seleccionar -</option>
-						${exportOption}
-						<option value="activate">Activar</option>
-						<option value="deactivate">Desactivar</option>
-						<option value="delete">Eliminar definitivamente</option>
+						${options.join('')}
 					</select>
 				</label>
 
@@ -201,6 +237,11 @@
 				}
 
 				window.location.href = pageConfig.exportUrl + '?' + query.toString();
+				return;
+			}
+
+			if (!access.canAdmin) {
+				window.alert('No tiene permisos para ejecutar esta acción.');
 				return;
 			}
 
@@ -244,8 +285,8 @@
 		const selectedCount = getSelectedIds(table).length;
 
 		selectedLabel.textContent = selectedCount === 1
-			? '1 item selected'
-			: selectedCount + ' items selected';
+			? '1 item seleccionado'
+			: selectedCount + ' items seleccionados';
 	}
 
 	async function postJson(url, data) {
@@ -281,7 +322,7 @@
 		actionButton.textContent = 'Procesando...';
 
 		try {
-			const result = await postJson('/admin/asocolderma/data-core/bulk-status', {
+			const result = await postJson(pageConfig.bulkStatusUrl, {
 				table: pageConfig.tableKey,
 				operation: operation,
 				ids: selectedIds
@@ -321,7 +362,7 @@
 		actionButton.textContent = 'Eliminando...';
 
 		try {
-			const result = await postJson('/admin/asocolderma/data-core/bulk-delete', {
+			const result = await postJson(pageConfig.bulkDeleteUrl, {
 				table: pageConfig.tableKey,
 				ids: selectedIds
 			});
@@ -339,4 +380,4 @@
 		}
 	}
 
-})(Drupal, once);
+})(Drupal, once, drupalSettings);
