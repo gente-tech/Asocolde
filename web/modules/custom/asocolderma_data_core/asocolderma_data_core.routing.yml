@@ -4,7 +4,7 @@ asocolderma_data_core.gestion_data:
     _controller: '\Drupal\asocolderma_data_core\Controller\DataCoreAdminController::overview'
     _title: 'Gestión de la data'
   requirements:
-    _permission: 'import data in asocolderma data core'
+    _permission: 'administer asocolderma data core+view asocolderma data core+audit asocolderma data core'
 
 asocolderma_data_core.importacion:
   path: '/admin/asocolderma/data-core/importacion'
@@ -12,7 +12,7 @@ asocolderma_data_core.importacion:
     _form: '\Drupal\asocolderma_data_core\Form\DataImportForm'
     _title: 'Importación de data'
   requirements:
-    _permission: 'import data in asocolderma data core'
+    _permission: 'administer asocolderma data core'
 
 asocolderma_data_core.export_patrocinadores_excel:
   path: '/admin/asocolderma/patrocinadores/export/excel'
@@ -20,7 +20,7 @@ asocolderma_data_core.export_patrocinadores_excel:
     _controller: '\Drupal\asocolderma_data_core\Controller\PatrocinadoresExportController::exportExcel'
     _title: 'Exportar patrocinadores EXCEL'
   requirements:
-    _permission: 'access administration pages'
+    _permission: 'administer asocolderma data core+audit asocolderma data core'
 
 asocolderma_data_core.bulk_status:
   path: '/admin/asocolderma/data-core/bulk-status'
@@ -28,7 +28,7 @@ asocolderma_data_core.bulk_status:
     _controller: '\Drupal\asocolderma_data_core\Controller\DataBulkActionController::bulkStatus'
   methods: [POST]
   requirements:
-    _permission: 'import data in asocolderma data core'
+    _permission: 'administer asocolderma data core'
 
 asocolderma_data_core.bulk_delete:
   path: '/admin/asocolderma/data-core/bulk-delete'
@@ -36,32 +36,36 @@ asocolderma_data_core.bulk_delete:
     _controller: '\Drupal\asocolderma_data_core\Controller\DataBulkActionController::bulkDelete'
   methods: [POST]
   requirements:
-    _permission: 'import data in asocolderma data core'
+    _permission: 'administer asocolderma data core'
 
 asocolderma_data_core.proveedores_export_excel:
   path: '/admin/asocolderma/proveedores/export/excel'
   defaults:
     _controller: '\Drupal\asocolderma_data_core\Controller\ProveedoresExportController::exportExcel'
+    _title: 'Exportar proveedores EXCEL'
   requirements:
-    _permission: 'import data in asocolderma data core'
+    _permission: 'administer asocolderma data core+audit asocolderma data core'
 
 asocolderma_data_core.asociados_export_excel:
   path: '/admin/asocolderma/asociados/export/excel'
   defaults:
     _controller: '\Drupal\asocolderma_data_core\Controller\AsociadosExportController::exportExcel'
+    _title: 'Exportar asociados EXCEL'
   requirements:
-    _permission: 'import data in asocolderma data core'
+    _permission: 'administer asocolderma data core+audit asocolderma data core'
 
 asocolderma_data_core.residentes_export_excel:
   path: '/admin/asocolderma/residentes/export/excel'
   defaults:
     _controller: '\Drupal\asocolderma_data_core\Controller\ResidentesExportController::exportExcel'
+    _title: 'Exportar residentes EXCEL'
   requirements:
-    _permission: 'import data in asocolderma data core'
+    _permission: 'administer asocolderma data core+audit asocolderma data core'
 
 asocolderma_data_core.empleados_export_excel:
   path: '/admin/asocolderma/empleados/export/excel'
   defaults:
     _controller: '\Drupal\asocolderma_data_core\Controller\EmpleadosExportController::exportExcel'
+    _title: 'Exportar empleados EXCEL'
   requirements:
-    _permission: 'import data in asocolderma data core'
+    _permission: 'administer asocolderma data core+audit asocolderma data core'
