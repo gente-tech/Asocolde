@@ -39,3 +39,13 @@ asocolderma_data_core.menu_empleados:
   route_name: view.empleados.page_1
   menu_name: gestion-data-asocolderma
   weight: 60
+
+asocolderma_data_core.menu_logout:
+  title: 'Cerrar sesión'
+  description: 'Cerrar sesión y volver al inicio del sitio.'
+  route_name: user.logout
+  menu_name: gestion-data-asocolderma
+  weight: 100
+  options:
+    query:
+      destination: '/'
