@@ -154,6 +154,26 @@ final class CustomLogin2faSettingsForm extends ConfigFormBase
       '#required' => TRUE,
     ];
 
+    $form['code_settings']['resend_cooldown'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Resend cooldown in seconds'),
+      '#default_value' => (int) ($config->get('resend_cooldown') ?: 20),
+      '#min' => 5,
+      '#max' => 300,
+      '#required' => TRUE,
+      '#description' => $this->t('Minimum time the user must wait before requesting another code.'),
+    ];
+
+    $form['code_settings']['max_resends'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Maximum resend attempts'),
+      '#default_value' => (int) ($config->get('max_resends') ?: 3),
+      '#min' => 0,
+      '#max' => 10,
+      '#required' => TRUE,
+      '#description' => $this->t('Maximum number of code resends allowed during a pending login attempt.'),
+    ];
+
     $form['mail_settings'] = [
       '#type' => 'details',
       '#title' => $this->t('Mandrill email settings'),
@@ -257,6 +277,16 @@ final class CustomLogin2faSettingsForm extends ConfigFormBase
       $form_state->setErrorByName('max_attempts', $this->t('Maximum attempts must be between 1 and 10.'));
     }
 
+    $resend_cooldown = (int) $form_state->getValue('resend_cooldown');
+    if ($resend_cooldown < 5 || $resend_cooldown > 300) {
+      $form_state->setErrorByName('resend_cooldown', $this->t('Resend cooldown must be between 5 and 300 seconds.'));
+    }
+
+    $max_resends = (int) $form_state->getValue('max_resends');
+    if ($max_resends < 0 || $max_resends > 10) {
+      $form_state->setErrorByName('max_resends', $this->t('Maximum resend attempts must be between 0 and 10.'));
+    }
+
     $default_redirect_path = trim((string) $form_state->getValue('default_redirect_path'));
     if ($default_redirect_path === '' || !str_starts_with($default_redirect_path, '/')) {
       $form_state->setErrorByName('default_redirect_path', $this->t('The default redirect path must start with /.'));
@@ -295,6 +325,8 @@ final class CustomLogin2faSettingsForm extends ConfigFormBase
       ->set('mandrill_message_key', trim((string) $form_state->getValue('mandrill_message_key')))
       ->set('default_redirect_path', trim((string) $form_state->getValue('default_redirect_path')))
       ->set('role_redirect_paths', $role_redirect_paths)
+      ->set('resend_cooldown', (int) $form_state->getValue('resend_cooldown'))
+      ->set('max_resends', (int) $form_state->getValue('max_resends'))
       ->save();
 
     parent::submitForm($form, $form_state);

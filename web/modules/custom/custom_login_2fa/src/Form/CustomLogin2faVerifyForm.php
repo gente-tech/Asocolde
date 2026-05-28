@@ -234,9 +234,49 @@ final class CustomLogin2faVerifyForm extends FormBase
 			$tempstore->delete('pending_uid');
 			$tempstore->delete('pending_challenge_id');
 			$tempstore->delete('pending_created');
+			$tempstore->delete('last_resend_time');
+			$tempstore->delete('resend_count');
 
 			$this->messenger()->addError($this->t('La cuenta no está disponible. Inicia sesión nuevamente.'));
 			$form_state->setRedirect('user.login');
+			return;
+		}
+
+		$now = \Drupal::time()->getRequestTime();
+		$cooldown = $this->manager->getResendCooldown();
+		$max_resends = $this->manager->getMaxResends();
+
+		$last_resend_time = (int) ($tempstore->get('last_resend_time') ?: 0);
+		$resend_count = (int) ($tempstore->get('resend_count') ?: 0);
+
+		if ($max_resends === 0) {
+			$this->messenger()->addError($this->t('El reenvío de códigos no está habilitado. Inicia sesión nuevamente.'));
+			$form_state->setRedirect('custom_login_2fa.verify');
+			return;
+		}
+
+		if ($resend_count >= $max_resends) {
+			$this->manager->invalidatePendingCodes((int) $account->id());
+
+			$tempstore->delete('pending_uid');
+			$tempstore->delete('pending_challenge_id');
+			$tempstore->delete('pending_created');
+			$tempstore->delete('last_resend_time');
+			$tempstore->delete('resend_count');
+
+			$this->messenger()->addError($this->t('Superaste el máximo de reenvíos permitidos. Inicia sesión nuevamente.'));
+			$form_state->setRedirect('user.login');
+			return;
+		}
+
+		if ($last_resend_time > 0 && ($now - $last_resend_time) < $cooldown) {
+			$remaining = $cooldown - ($now - $last_resend_time);
+
+			$this->messenger()->addWarning($this->t('Debes esperar @seconds segundos antes de reenviar otro código.', [
+				'@seconds' => $remaining,
+			]));
+
+			$form_state->setRedirect('custom_login_2fa.verify');
 			return;
 		}
 
@@ -245,7 +285,9 @@ final class CustomLogin2faVerifyForm extends FormBase
 
 			$tempstore->set('pending_uid', (int) $account->id());
 			$tempstore->set('pending_challenge_id', (int) $challenge_id);
-			$tempstore->set('pending_created', \Drupal::time()->getRequestTime());
+			$tempstore->set('pending_created', $now);
+			$tempstore->set('last_resend_time', $now);
+			$tempstore->set('resend_count', $resend_count + 1);
 
 			$this->messenger()->addStatus($this->t('Se envió un nuevo código de verificación a tu correo electrónico.'));
 

@@ -33,3 +33,9 @@ custom_login_2fa.settings:
         '*':
           type: string
           label: 'Redirect path'
+    resend_cooldown:
+      type: integer
+      label: 'Resend cooldown in seconds'
+    max_resends:
+      type: integer
+      label: 'Maximum resend attempts'

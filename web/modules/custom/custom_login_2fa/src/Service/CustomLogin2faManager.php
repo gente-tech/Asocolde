@@ -386,4 +386,29 @@ final class CustomLogin2faManager
 
 		return str_starts_with($default_path, '/') ? $default_path : '/';
 	}
+
+	/**
+	 * Gets resend cooldown in seconds.
+	 */
+	public function getResendCooldown(): int
+	{
+		$value = (int) ($this->configFactory
+			->get('custom_login_2fa.settings')
+			->get('resend_cooldown') ?: 20);
+
+		return max(5, min(300, $value));
+	}
+
+	/**
+	 * Gets maximum resend attempts per pending login.
+	 */
+	public function getMaxResends(): int
+	{
+		$value = (int) ($this->configFactory
+			->get('custom_login_2fa.settings')
+			->get('max_resends') ?? 3);
+
+		return max(0, min(10, $value));
+	}
+
 }

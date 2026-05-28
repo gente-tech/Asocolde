@@ -103,9 +103,13 @@ function custom_login_2fa_user_login_submit(array &$form, FormStateInterface $fo
 			$challenge_id = $manager->createAndSendChallenge($account);
 
 			$tempstore = \Drupal::service('tempstore.private')->get('custom_login_2fa');
+			$now = \Drupal::time()->getRequestTime();
+
 			$tempstore->set('pending_uid', (int) $account->id());
 			$tempstore->set('pending_challenge_id', (int) $challenge_id);
-			$tempstore->set('pending_created', \Drupal::time()->getRequestTime());
+			$tempstore->set('pending_created', $now);
+			$tempstore->set('last_resend_time', $now);
+			$tempstore->set('resend_count', 0);
 
 			\Drupal::messenger()->addStatus(t('We sent a verification code to your email address. Enter it to complete login.'));
 
