@@ -23,3 +23,13 @@ custom_login_2fa.settings:
     mandrill_message_key:
       type: string
       label: 'Mandrill message group key'
+    default_redirect_path:
+      type: string
+      label: 'Default redirect path after successful 2FA'
+    role_redirect_paths:
+      type: mapping
+      label: 'Role redirect paths'
+      mapping:
+        '*':
+          type: string
+          label: 'Redirect path'

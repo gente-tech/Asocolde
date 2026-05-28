@@ -363,4 +363,27 @@ final class CustomLogin2faManager
 			throw new \RuntimeException('Mandrill no confirmó el envío del código 2FA.');
 		}
 	}
+
+	/**
+	 * Gets redirect path after successful 2FA validation.
+	 */
+	public function getRedirectPathForUser(UserInterface $user): string
+	{
+		$config = $this->configFactory->get('custom_login_2fa.settings');
+
+		$role_redirect_paths = $config->get('role_redirect_paths') ?: [];
+		if (!is_array($role_redirect_paths)) {
+			$role_redirect_paths = [];
+		}
+
+		foreach ($user->getRoles() as $role_id) {
+			if (!empty($role_redirect_paths[$role_id]) && is_string($role_redirect_paths[$role_id])) {
+				return $role_redirect_paths[$role_id];
+			}
+		}
+
+		$default_path = trim((string) ($config->get('default_redirect_path') ?: '/'));
+
+		return str_starts_with($default_path, '/') ? $default_path : '/';
+	}
 }

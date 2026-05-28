@@ -11,7 +11,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides settings form for Custom Login 2FA.
  */
-final class CustomLogin2faSettingsForm extends ConfigFormBase {
+final class CustomLogin2faSettingsForm extends ConfigFormBase
+{
 
   /**
    * The role storage.
@@ -34,7 +35,8 @@ final class CustomLogin2faSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container): self {
+  public static function create(ContainerInterface $container): self
+  {
     return new self(
       $container->get('config.factory'),
       $container->get('entity_type.manager'),
@@ -44,14 +46,16 @@ final class CustomLogin2faSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId(): string {
+  public function getFormId(): string
+  {
     return 'custom_login_2fa_settings_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames(): array {
+  protected function getEditableConfigNames(): array
+  {
     return [
       'custom_login_2fa.settings',
     ];
@@ -60,7 +64,8 @@ final class CustomLogin2faSettingsForm extends ConfigFormBase {
   /**
    * Builds role options excluding anonymous.
    */
-  private function getRoleOptions(): array {
+  private function getRoleOptions(): array
+  {
     $options = [];
     $roles = $this->roleStorage->loadMultiple();
 
@@ -80,7 +85,8 @@ final class CustomLogin2faSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state): array {
+  public function buildForm(array $form, FormStateInterface $form_state): array
+  {
     $config = $this->config('custom_login_2fa.settings');
 
     $form['intro'] = [
@@ -186,13 +192,46 @@ final class CustomLogin2faSettingsForm extends ConfigFormBase {
       ],
     ];
 
+    $form['redirect_settings'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Redirect settings'),
+      '#open' => TRUE,
+    ];
+
+    $form['redirect_settings']['default_redirect_path'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Default redirect path after successful 2FA'),
+      '#default_value' => (string) ($config->get('default_redirect_path') ?: '/'),
+      '#required' => TRUE,
+      '#description' => $this->t('Example: /gestion-data/proveedores'),
+    ];
+
+    $role_redirect_paths = $config->get('role_redirect_paths') ?: [];
+
+    $form['redirect_settings']['role_redirect_paths'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Redirect paths by role'),
+      '#open' => FALSE,
+      '#description' => $this->t('Optional. If a user has one of these roles, the first matching path will be used.'),
+    ];
+
+    foreach ($this->getRoleOptions() as $role_id => $role_label) {
+      $form['redirect_settings']['role_redirect_paths'][$role_id] = [
+        '#type' => 'textfield',
+        '#title' => $role_label,
+        '#default_value' => (string) ($role_redirect_paths[$role_id] ?? ''),
+        '#description' => $this->t('Leave empty to use the default redirect path.'),
+      ];
+    }
+
     return parent::buildForm($form, $form_state);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state): void {
+  public function validateForm(array &$form, FormStateInterface $form_state): void
+  {
     parent::validateForm($form, $form_state);
 
     $enabled = (bool) $form_state->getValue('enabled');
@@ -216,13 +255,34 @@ final class CustomLogin2faSettingsForm extends ConfigFormBase {
     if ($max_attempts < 1 || $max_attempts > 10) {
       $form_state->setErrorByName('max_attempts', $this->t('Maximum attempts must be between 1 and 10.'));
     }
+
+    $default_redirect_path = trim((string) $form_state->getValue('default_redirect_path'));
+    if ($default_redirect_path === '' || !str_starts_with($default_redirect_path, '/')) {
+      $form_state->setErrorByName('default_redirect_path', $this->t('The default redirect path must start with /.'));
+    }
+
+    $role_redirect_paths = $form_state->getValue('role_redirect_paths') ?: [];
+    foreach ($role_redirect_paths as $role_id => $path) {
+      $path = trim((string) $path);
+      if ($path !== '' && !str_starts_with($path, '/')) {
+        $form_state->setErrorByName('role_redirect_paths][' . $role_id, $this->t('Redirect paths must start with /.'));
+      }
+    }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state): void {
+  public function submitForm(array &$form, FormStateInterface $form_state): void
+  {
     $protected_roles = array_filter($form_state->getValue('protected_roles') ?: []);
+    $role_redirect_paths = [];
+    foreach (($form_state->getValue('role_redirect_paths') ?: []) as $role_id => $path) {
+      $path = trim((string) $path);
+      if ($path !== '') {
+        $role_redirect_paths[$role_id] = $path;
+      }
+    }
 
     $this->configFactory()
       ->getEditable('custom_login_2fa.settings')
@@ -232,9 +292,10 @@ final class CustomLogin2faSettingsForm extends ConfigFormBase {
       ->set('code_length', (int) $form_state->getValue('code_length'))
       ->set('max_attempts', (int) $form_state->getValue('max_attempts'))
       ->set('mandrill_message_key', trim((string) $form_state->getValue('mandrill_message_key')))
+      ->set('default_redirect_path', trim((string) $form_state->getValue('default_redirect_path')))
+      ->set('role_redirect_paths', $role_redirect_paths)
       ->save();
 
     parent::submitForm($form, $form_state);
   }
-
 }

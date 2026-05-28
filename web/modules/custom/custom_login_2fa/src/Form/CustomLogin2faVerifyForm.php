@@ -199,6 +199,7 @@ final class CustomLogin2faVerifyForm extends FormBase
 
 		$this->messenger()->addStatus($this->t('Inicio de sesión verificado correctamente.'));
 
-		$form_state->setRedirectUrl(Url::fromUri('internal:/gestion-data/proveedores'));
+		$redirect_path = $this->manager->getRedirectPathForUser($account);
+		$form_state->setRedirectUrl(Url::fromUri('internal:' . $redirect_path));
 	}
 }
