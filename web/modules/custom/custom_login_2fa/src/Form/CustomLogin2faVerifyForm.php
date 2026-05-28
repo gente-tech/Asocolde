@@ -133,9 +133,10 @@ final class CustomLogin2faVerifyForm extends FormBase
 		];
 
 		$form['actions']['cancel'] = [
-			'#type' => 'link',
-			'#title' => $this->t('Cancelar'),
-			'#url' => Url::fromRoute('user.login'),
+			'#type' => 'submit',
+			'#value' => $this->t('Cancelar'),
+			'#submit' => ['::cancelSubmit'],
+			'#limit_validation_errors' => [],
 			'#attributes' => [
 				'class' => ['button'],
 			],
@@ -261,5 +262,27 @@ final class CustomLogin2faVerifyForm extends FormBase
 			$this->messenger()->addError($this->t('No fue posible reenviar el código de verificación. Intenta nuevamente o contacta al administrador.'));
 			$form_state->setRedirect('custom_login_2fa.verify');
 		}
+	}
+
+	/**
+	 * Cancels the pending 2FA verification.
+	 */
+	public function cancelSubmit(array &$form, FormStateInterface $form_state): void
+	{
+		$tempstore = $this->tempStoreFactory->get('custom_login_2fa');
+
+		$pending_uid = (int) ($tempstore->get('pending_uid') ?: 0);
+
+		if ($pending_uid > 0) {
+			$this->manager->invalidatePendingCodes($pending_uid);
+		}
+
+		$tempstore->delete('pending_uid');
+		$tempstore->delete('pending_challenge_id');
+		$tempstore->delete('pending_created');
+
+		$this->messenger()->addStatus($this->t('La verificación fue cancelada. Inicia sesión nuevamente.'));
+
+		$form_state->setRedirect('user.login');
 	}
 }
