@@ -94,6 +94,30 @@ function asocolderma_data_core_views_data()
 		}
 	}
 
+	if (isset($data['asocolderma_audit_event'])) {
+		$data['asocolderma_audit_event']['target_table_label'] = [
+			'title' => t('Tabla afectada legible'),
+			'help' => t('Muestra el nombre legible de la tabla afectada.'),
+			'field' => [
+				'id' => 'asocolderma_audit_table_label',
+			],
+		];
+	}
+
+	if (isset($data['asocolderma_audit_change'])) {
+		$data['asocolderma_audit_change']['audit_event'] = [
+			'title' => t('Evento de auditoría'),
+			'help' => t('Relaciona el cambio por campo con el evento principal de auditoría.'),
+			'relationship' => [
+				'base' => 'asocolderma_audit_event',
+				'base field' => 'id',
+				'field' => 'audit_event_id',
+				'id' => 'standard',
+				'label' => t('Evento de auditoría'),
+			],
+		];
+	}
+
 	return $data;
 }
 
