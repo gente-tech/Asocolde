@@ -18,3 +18,15 @@ gestion_data_ui:
   dependencies:
     - core/drupal
     - core/once
+
+record_context_menu:
+  js:
+    js/record-context-menu.js: {}
+  css:
+    theme:
+      css/gestion-data.css: {}
+  dependencies:
+    - core/drupal
+    - core/once
+    - core/drupalSettings
+    - asocolderma_data_core/export_actions

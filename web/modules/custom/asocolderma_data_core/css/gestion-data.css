@@ -706,3 +706,54 @@ body:has(.gestion-data-layout) .region-content {
 	white-space: nowrap;
 	cursor: pointer;
 }
+
+.data-core-view-actions {
+	display: flex;
+	justify-content: flex-end;
+	margin: 0 0 16px;
+}
+
+.data-core-create-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 40px;
+	padding: 8px 18px;
+	border-radius: 8px;
+	font-weight: 700;
+	text-decoration: none;
+}
+
+.asocolderma-context-row {
+	cursor: context-menu;
+}
+
+.asocolderma-record-context-menu {
+	position: absolute;
+	z-index: 99999;
+	min-width: 180px;
+	background: #ffffff;
+	border: 1px solid #cfd8e3;
+	border-radius: 8px;
+	box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18);
+	padding: 6px;
+}
+
+.asocolderma-record-context-menu__item {
+	display: block;
+	width: 100%;
+	padding: 10px 14px;
+	border: 0;
+	border-radius: 6px;
+	background: transparent;
+	color: #111827;
+	font-size: 14px;
+	font-weight: 700;
+	text-align: left;
+	cursor: pointer;
+}
+
+.asocolderma-record-context-menu__item:hover {
+	background: #f0fdfa;
+	color: #006d6d;
+}

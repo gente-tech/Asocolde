@@ -34,6 +34,7 @@ function asocolderma_data_core_page_attachments(array &$attachments)
 	}
 
 	$attachments['#attached']['library'][] = 'asocolderma_data_core/export_actions';
+	$attachments['#attached']['library'][] = 'asocolderma_data_core/record_context_menu';
 
 	$attachments['#attached']['drupalSettings']['asocoldermaDataCore'] = [
 		'permissions' => [
@@ -50,6 +51,9 @@ function asocolderma_data_core_page_attachments(array &$attachments)
 				'asociados' => Url::fromRoute('asocolderma_data_core.asociados_export_excel')->toString(),
 				'residentes' => Url::fromRoute('asocolderma_data_core.residentes_export_excel')->toString(),
 				'empleados' => Url::fromRoute('asocolderma_data_core.empleados_export_excel')->toString(),
+			],
+			'edit' => [
+				'proveedores' => '/gestion-data/proveedores',
 			],
 		],
 	];
