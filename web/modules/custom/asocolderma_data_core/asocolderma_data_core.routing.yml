@@ -95,3 +95,20 @@ asocolderma_data_core.proveedores_edit:
   requirements:
     _permission: 'administer asocolderma data core'
     record_id: '\d+'
+
+asocolderma_data_core.patrocinadores_create:
+  path: '/gestion-data/patrocinadores/crear'
+  defaults:
+    _form: '\Drupal\asocolderma_data_core\Form\PatrocinadorRecordForm'
+    _title: 'Crear patrocinador'
+  requirements:
+    _permission: 'administer asocolderma data core'
+
+asocolderma_data_core.patrocinadores_edit:
+  path: '/gestion-data/patrocinadores/{record_id}/editar'
+  defaults:
+    _form: '\Drupal\asocolderma_data_core\Form\PatrocinadorRecordForm'
+    _title: 'Editar patrocinador'
+  requirements:
+    _permission: 'administer asocolderma data core'
+    record_id: '\d+'
