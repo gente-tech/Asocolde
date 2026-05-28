@@ -40,15 +40,19 @@ asocolderma_data_core.menu_empleados:
   menu_name: gestion-data-asocolderma
   weight: 60
 
-asocolderma_data_core.menu_logout:
-  title: 'Cerrar sesión'
-  description: 'Cerrar sesión y volver al inicio del sitio.'
-  route_name: user.logout
+asocolderma_data_core.menu_auditoria_eventos:
+  title: 'Auditoría eventos'
+  description: 'Registro general de eventos de auditoría.'
+  url: 'internal:/gestion-data/auditoria/eventos'
   menu_name: gestion-data-asocolderma
-  weight: 100
-  options:
-    query:
-      destination: '/'
+  weight: 65
+
+asocolderma_data_core.menu_auditoria_cambios:
+  title: 'Auditoría cambios'
+  description: 'Historial de cambios por campo en registros.'
+  url: 'internal:/gestion-data/auditoria/cambios-registros'
+  menu_name: gestion-data-asocolderma
+  weight: 66
 
 asocolderma_data_core.menu_auditoria_acciones:
   title: 'Auditoría acciones'
@@ -84,3 +88,13 @@ asocolderma_data_core.menu_auditoria_importaciones_cambios:
   route_name: view.auditoria_importacion_cambios.page_1
   menu_name: gestion-data-asocolderma
   weight: 110
+
+asocolderma_data_core.menu_logout:
+  title: 'Cerrar sesión'
+  description: 'Cerrar sesión y volver al inicio del sitio.'
+  route_name: user.logout
+  menu_name: gestion-data-asocolderma
+  weight: 200
+  options:
+    query:
+      destination: '/'
