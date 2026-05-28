@@ -77,6 +77,9 @@ function asocolderma_data_core_page_top(array &$page_top)
 
 	$username = Html::escape($current_user->getDisplayName());
 
+	$module_path = \Drupal::service('extension.list.module')->getPath('asocolderma_data_core');
+	$logo_url = base_path() . $module_path . '/images/logo-horizontal-pequeno.jpg';
+
 	$current_path = \Drupal::service('path.current')->getPath();
 
 	$main_links = [];
@@ -187,8 +190,13 @@ function asocolderma_data_core_page_top(array &$page_top)
 		<header class="data-core-header" role="banner">
 			<div class="data-core-header__inner">
 				<div class="data-core-header__brand">
-				<div class="data-core-header__title">Gestión Data AsoColDerma</div>
-				<div class="data-core-header__subtitle">Base de datos institucional</div>
+					<a class="data-core-header__logo-link" href="/gestion-data/proveedores" aria-label="Ir a Gestión Data AsoColDerma">
+						<img class="data-core-header__logo" src="' . Html::escape($logo_url) . '" alt="AsoColDerma">
+					</a>
+					<div class="data-core-header__brand-text">
+						<div class="data-core-header__title">Gestión Data AsoColDerma</div>
+						<div class="data-core-header__subtitle">Base de datos institucional</div>
+					</div>
 				</div>
 
 				<nav class="data-core-header__nav" aria-label="Menú principal Gestión Data">
@@ -226,6 +234,7 @@ function asocolderma_data_core_page_top(array &$page_top)
 			'button',
 			'span',
 			'a',
+			'img',
 		],
 		'#attached' => [
 			'library' => [
