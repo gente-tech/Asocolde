@@ -209,13 +209,28 @@ class ProveedorRecordForm extends FormBase
 			'#maxlength' => 255,
 		];
 
-		$form['main']['identificacion']['nit'] = [
-			'#type' => 'textfield',
-			'#title' => $this->t('NIT'),
-			'#default_value' => $record['nit'] ?? '',
-			'#maxlength' => 50,
-			'#required' => TRUE,
-		];
+		if ($this->isEditMode()) {
+			$form['main']['identificacion']['nit_display'] = [
+				'#type' => 'textfield',
+				'#title' => $this->t('NIT'),
+				'#default_value' => $record['nit'] ?? '',
+				'#disabled' => TRUE,
+				'#description' => $this->t('Este campo es la referencia única del proveedor y no puede modificarse.'),
+			];
+
+			$form['main']['identificacion']['nit'] = [
+				'#type' => 'hidden',
+				'#value' => $record['nit'] ?? '',
+			];
+		} else {
+			$form['main']['identificacion']['nit'] = [
+				'#type' => 'textfield',
+				'#title' => $this->t('NIT'),
+				'#default_value' => $record['nit'] ?? '',
+				'#maxlength' => 50,
+				'#required' => TRUE,
+			];
+		}
 
 		$form['main']['ubicacion'] = [
 			'#type' => 'details',
@@ -454,17 +469,13 @@ class ProveedorRecordForm extends FormBase
 			$form_state->setErrorByName('main][identificacion][nit', $this->t('El NIT es obligatorio.'));
 		}
 
-		if (!empty($values['nit'])) {
-			$query = $this->database
+		if (!$this->isEditMode() && !empty($values['nit'])) {
+			$existing_id = $this->database
 				->select(static::TABLE_NAME, 'p')
 				->fields('p', ['id'])
-				->condition('nit', $values['nit']);
-
-			if ($this->isEditMode()) {
-				$query->condition('id', $this->getRecordId(), '<>');
-			}
-
-			$existing_id = $query->execute()->fetchField();
+				->condition('nit', $values['nit'])
+				->execute()
+				->fetchField();
 
 			if ($existing_id) {
 				$form_state->setErrorByName('main][identificacion][nit', $this->t('Ya existe un proveedor registrado con este NIT.'));
