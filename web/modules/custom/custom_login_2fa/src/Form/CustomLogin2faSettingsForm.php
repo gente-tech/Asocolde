@@ -170,8 +170,8 @@ final class CustomLogin2faSettingsForm extends ConfigFormBase
       '#title' => $this->t('Mandrill message group key'),
       '#default_value' => (string) ($config->get('mandrill_message_key') ?: ''),
       '#maxlength' => 128,
-      '#description' => $this->t('Example: mail_text_7. This key must exist in the Mandrill settings of enterprise_integrations.'),
-      '#required' => FALSE,
+      '#description' => $this->t('Example: mail_text_N. This key must exist in the Mandrill settings of enterprise_integrations.'),
+      '#required' => TRUE,
     ];
 
     $form['mail_settings']['tokens'] = [
@@ -212,7 +212,8 @@ final class CustomLogin2faSettingsForm extends ConfigFormBase
       '#type' => 'details',
       '#title' => $this->t('Redirect paths by role'),
       '#open' => FALSE,
-      '#description' => $this->t('Optional. If a user has one of these roles, the first matching path will be used.'),
+      '#tree' => TRUE,
+      '#description' => $this->t('Optional. If a user has one of these roles, this path will be used. Leave empty to use the default redirect path.'),
     ];
 
     foreach ($this->getRoleOptions() as $role_id => $role_label) {
