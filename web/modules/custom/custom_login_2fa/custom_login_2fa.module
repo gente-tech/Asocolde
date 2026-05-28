@@ -4,3 +4,163 @@
  * @file
  * Provides reusable email-based two-factor authentication for Drupal login.
  */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Drupal\user\Entity\User;
+
+/**
+ * Implements hook_form_FORM_ID_alter() for user_login_form.
+ */
+function custom_login_2fa_form_user_login_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void
+{
+	$form['#validate'] = [
+		'custom_login_2fa_user_login_validate',
+	];
+
+	$form['#submit'] = [
+		'custom_login_2fa_user_login_submit',
+	];
+
+	if (isset($form['name'])) {
+		$form['name']['#title'] = t('Username or email address');
+		$form['name']['#description'] = t('You can enter your username or your email address. If your email is used by more than one account, use your username.');
+	}
+}
+
+/**
+ * Custom login validation supporting username or email.
+ */
+function custom_login_2fa_user_login_validate(array &$form, FormStateInterface $form_state): void
+{
+	$identifier = trim((string) $form_state->getValue('name'));
+	$password = (string) $form_state->getValue('pass');
+
+	if ($identifier === '' || $password === '') {
+		$form_state->setErrorByName('name', t('Enter your username or email address and password.'));
+		return;
+	}
+
+	$account = custom_login_2fa_load_user_by_identifier($identifier);
+
+	if (!$account) {
+		$form_state->setErrorByName('name', t('Unrecognized username, email address, or password.'));
+		return;
+	}
+
+	if (!$account->isActive()) {
+		$form_state->setErrorByName('name', t('The account is blocked or has not been activated.'));
+		return;
+	}
+
+	$uid = \Drupal::service('user.auth')->authenticate($account->getAccountName(), $password);
+
+	if (!$uid) {
+		$form_state->setErrorByName('pass', t('Unrecognized username, email address, or password.'));
+		return;
+	}
+
+	$form_state->set('uid', (int) $uid);
+}
+
+/**
+ * Custom login submit handler.
+ */
+function custom_login_2fa_user_login_submit(array &$form, FormStateInterface $form_state): void
+{
+	$uid = (int) $form_state->get('uid');
+
+	if ($uid <= 0) {
+		$form_state->setRedirect('user.login');
+		return;
+	}
+
+	$account = User::load($uid);
+
+	if (!$account) {
+		$form_state->setRedirect('user.login');
+		return;
+	}
+
+	/** @var \Drupal\custom_login_2fa\Service\CustomLogin2faManager $manager */
+	$manager = \Drupal::service('custom_login_2fa.manager');
+
+	if ($manager->userRequires2fa($account)) {
+		try {
+			$challenge_id = $manager->createAndSendChallenge($account);
+
+			$tempstore = \Drupal::service('tempstore.private')->get('custom_login_2fa');
+			$tempstore->set('pending_uid', (int) $account->id());
+			$tempstore->set('pending_challenge_id', (int) $challenge_id);
+			$tempstore->set('pending_created', \Drupal::time()->getRequestTime());
+
+			\Drupal::messenger()->addStatus(t('We sent a verification code to your email address. Enter it to complete login.'));
+
+			$form_state->setRedirect('custom_login_2fa.verify');
+			return;
+		} catch (\Throwable $exception) {
+			\Drupal::logger('custom_login_2fa')->error(
+				'Could not create 2FA challenge during login for user @uid. Error: @error',
+				[
+					'@uid' => $account->id(),
+					'@error' => $exception->getMessage(),
+				]
+			);
+
+			\Drupal::messenger()->addError(t('It was not possible to send the verification code. Please contact the site administrator.'));
+			$form_state->setRedirect('user.login');
+			return;
+		}
+	}
+
+	user_login_finalize($account);
+
+	$form_state->setRedirectUrl(Url::fromRoute('<front>'));
+}
+
+/**
+ * Loads a user by username or email.
+ */
+function custom_login_2fa_load_user_by_identifier(string $identifier): ?\Drupal\user\UserInterface
+{
+	$identifier = trim($identifier);
+
+	if ($identifier === '') {
+		return NULL;
+	}
+
+	$storage = \Drupal::entityTypeManager()->getStorage('user');
+
+	if (str_contains($identifier, '@')) {
+		$uids = \Drupal::entityQuery('user')
+			->accessCheck(FALSE)
+			->condition('mail', $identifier)
+			->range(0, 2)
+			->execute();
+
+		if (count($uids) > 1) {
+			\Drupal::messenger()->addError(t('This email address is assigned to more than one account. Please log in with your username.'));
+			return NULL;
+		}
+
+		if (count($uids) === 1) {
+			$uid = reset($uids);
+			$account = $storage->load($uid);
+			return $account instanceof \Drupal\user\UserInterface ? $account : NULL;
+		}
+
+		return NULL;
+	}
+
+	$accounts = $storage->loadByProperties([
+		'name' => $identifier,
+	]);
+
+	if (!$accounts) {
+		return NULL;
+	}
+
+	$account = reset($accounts);
+
+	return $account instanceof \Drupal\user\UserInterface ? $account : NULL;
+}
