@@ -208,8 +208,6 @@ final class CustomLogin2faVerifyForm extends FormBase
 		$tempstore->delete('pending_challenge_id');
 		$tempstore->delete('pending_created');
 
-		$this->messenger()->addStatus($this->t('Inicio de sesión verificado correctamente.'));
-
 		$redirect_path = $this->manager->getRedirectPathForUser($account);
 		$form_state->setRedirectUrl(Url::fromUri('internal:' . $redirect_path));
 	}
