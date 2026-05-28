@@ -892,6 +892,9 @@ class DataImportForm extends FormBase
 						$operation = 'insert';
 						$row_status = 'success';
 						$row_message = 'Registro nuevo importado correctamente.';
+
+						\Drupal::service('asocolderma_data_core.hubspot_sync')
+							->syncCreatedRecord($table, $values);
 					}
 				}
 
