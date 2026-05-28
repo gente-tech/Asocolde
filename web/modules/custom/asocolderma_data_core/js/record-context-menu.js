@@ -48,6 +48,30 @@
 			};
 		}
 
+		if (pathname.includes('/gestion-data/asociados')) {
+			return {
+				tableKey: 'asociados',
+				label: 'asociado',
+				editBaseUrl: editRoutes.asociados || '/gestion-data/asociados'
+			};
+		}
+
+		if (pathname.includes('/gestion-data/residentes')) {
+			return {
+				tableKey: 'residentes',
+				label: 'residente',
+				editBaseUrl: editRoutes.residentes || '/gestion-data/residentes'
+			};
+		}
+
+		if (pathname.includes('/gestion-data/empleados')) {
+			return {
+				tableKey: 'empleados',
+				label: 'empleado',
+				editBaseUrl: editRoutes.empleados || '/gestion-data/empleados'
+			};
+		}
+
 		return null;
 	}
 

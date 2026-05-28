@@ -112,3 +112,54 @@ asocolderma_data_core.patrocinadores_edit:
   requirements:
     _permission: 'administer asocolderma data core'
     record_id: '\d+'
+
+asocolderma_data_core.asociados_create:
+  path: '/gestion-data/asociados/crear'
+  defaults:
+    _form: '\Drupal\asocolderma_data_core\Form\AsociadoRecordForm'
+    _title: 'Crear asociado'
+  requirements:
+    _permission: 'administer asocolderma data core'
+
+asocolderma_data_core.asociados_edit:
+  path: '/gestion-data/asociados/{record_id}/editar'
+  defaults:
+    _form: '\Drupal\asocolderma_data_core\Form\AsociadoRecordForm'
+    _title: 'Editar asociado'
+  requirements:
+    _permission: 'administer asocolderma data core'
+    record_id: '\d+'
+
+asocolderma_data_core.residentes_create:
+  path: '/gestion-data/residentes/crear'
+  defaults:
+    _form: '\Drupal\asocolderma_data_core\Form\ResidenteRecordForm'
+    _title: 'Crear residente'
+  requirements:
+    _permission: 'administer asocolderma data core'
+
+asocolderma_data_core.residentes_edit:
+  path: '/gestion-data/residentes/{record_id}/editar'
+  defaults:
+    _form: '\Drupal\asocolderma_data_core\Form\ResidenteRecordForm'
+    _title: 'Editar residente'
+  requirements:
+    _permission: 'administer asocolderma data core'
+    record_id: '\d+'
+
+asocolderma_data_core.empleados_create:
+  path: '/gestion-data/empleados/crear'
+  defaults:
+    _form: '\Drupal\asocolderma_data_core\Form\EmpleadoRecordForm'
+    _title: 'Crear empleado'
+  requirements:
+    _permission: 'administer asocolderma data core'
+
+asocolderma_data_core.empleados_edit:
+  path: '/gestion-data/empleados/{record_id}/editar'
+  defaults:
+    _form: '\Drupal\asocolderma_data_core\Form\EmpleadoRecordForm'
+    _title: 'Editar empleado'
+  requirements:
+    _permission: 'administer asocolderma data core'
+    record_id: '\d+'
