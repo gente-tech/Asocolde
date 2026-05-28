@@ -1,0 +1,4 @@
+administer custom login 2fa:
+  title: 'Administer Custom Login 2FA'
+  description: 'Configure reusable email-based two-factor authentication.'
+  restrict access: true

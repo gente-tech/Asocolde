@@ -1,0 +1,6 @@
+custom_login_2fa.settings:
+  title: 'Custom Login 2FA'
+  description: 'Configure email-based two-factor authentication for selected roles.'
+  route_name: custom_login_2fa.settings
+  parent: user.admin_index
+  weight: 50

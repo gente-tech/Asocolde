@@ -1,0 +1,6 @@
+<?php
+
+/**
+ * @file
+ * Provides reusable email-based two-factor authentication for Drupal login.
+ */

@@ -1,0 +1,15 @@
+custom_login_2fa.settings:
+  path: '/admin/config/people/custom-login-2fa'
+  defaults:
+    _form: '\Drupal\custom_login_2fa\Form\CustomLogin2faSettingsForm'
+    _title: 'Custom Login 2FA'
+  requirements:
+    _permission: 'administer custom login 2fa'
+
+custom_login_2fa.verify:
+  path: '/login/2fa'
+  defaults:
+    _form: '\Drupal\custom_login_2fa\Form\CustomLogin2faVerifyForm'
+    _title: 'Verificación de acceso'
+  requirements:
+    _access: 'TRUE'

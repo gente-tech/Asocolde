@@ -1,0 +1,28 @@
+custom_login_2fa.settings:
+  type: config_object
+  label: 'Custom Login 2FA settings'
+  mapping:
+    enabled:
+      type: boolean
+      label: 'Enabled'
+    protected_roles:
+      type: sequence
+      label: 'Protected roles'
+      sequence:
+        type: string
+        label: 'Role ID'
+    code_ttl:
+      type: integer
+      label: 'Code TTL in seconds'
+    code_length:
+      type: integer
+      label: 'Code length'
+    max_attempts:
+      type: integer
+      label: 'Maximum attempts'
+    mandrill_message_key:
+      type: string
+      label: 'Mandrill message group key'
+    fallback_subject:
+      type: string
+      label: 'Fallback email subject'

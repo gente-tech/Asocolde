@@ -1,0 +1,14 @@
+services:
+  logger.channel.custom_login_2fa:
+    parent: logger.channel_base
+    arguments: ['custom_login_2fa']
+
+  custom_login_2fa.manager:
+    class: Drupal\custom_login_2fa\Service\CustomLogin2faManager
+    arguments:
+      - '@database'
+      - '@config.factory'
+      - '@datetime.time'
+      - '@request_stack'
+      - '@enterprise_integrations.mandrill'
+      - '@logger.channel.custom_login_2fa'
