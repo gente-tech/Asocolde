@@ -83,12 +83,14 @@ function asocolderma_data_core_page_top(array &$page_top)
 	$audit_links = [];
 
 	/*
-   * Tablas principales:
-   * - Admin Data: puede verlas.
-   * - Operador Data: puede verlas.
-   * - Auditor Data: no se le muestran desde el menú principal.
-   */
-	if ($can_admin || ($can_view && !$can_audit)) {
+	* Tablas principales:
+	* - Admin Data: puede verlas.
+	* - Operador Data: puede verlas.
+	* - Auditor Data: puede verlas.
+	*
+	* El auditor debe tener el mismo menú visual que el operador.
+	*/
+	if ($can_admin || $can_view || $can_audit) {
 		$main_links = [
 			'Patrocinadores' => '/gestion-data/patrocinadores',
 			'Proveedores' => '/gestion-data/proveedores',
@@ -99,12 +101,13 @@ function asocolderma_data_core_page_top(array &$page_top)
 	}
 
 	/*
-   * Auditoría:
-   * - Admin Data: puede verla.
-   * - Auditor Data: puede verla.
-   * - Operador Data: no se le muestra.
-   */
-	if ($can_admin || $can_audit) {
+	* Auditoría:
+	* - Solo Admin Data.
+	*
+	* Aunque exista el permiso de auditoría, el menú visual no debe mostrar
+	* las tablas de auditoría al rol auditor_data_asocolderma.
+	*/
+	if ($can_admin) {
 		$audit_links = [
 			'Auditoría eventos' => '/gestion-data/auditoria/eventos',
 			'Auditoría cambios' => '/gestion-data/auditoria/cambios-registros',
@@ -119,9 +122,9 @@ function asocolderma_data_core_page_top(array &$page_top)
 	$import_url = NULL;
 
 	/*
-   * Importación:
-   * - Solo Admin Data.
-   */
+	* Importación:
+	* - Solo Admin Data.
+	*/
 	if ($can_admin) {
 		$import_url = Url::fromRoute('asocolderma_data_core.importacion')->toString();
 	}
