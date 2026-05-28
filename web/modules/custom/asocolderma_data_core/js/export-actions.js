@@ -9,6 +9,17 @@
 			const canAudit = permissions.canAudit === true;
 			const canView = permissions.canView === true;
 
+			/*
+			 * Los botones de crear están colocados manualmente en los encabezados
+			 * de las Views. No deben mostrarse a usuarios sin permiso administrativo.
+			 *
+			 * Actualmente las rutas /crear requieren:
+			 * administer asocolderma data core
+			 */
+			if (!canAdmin) {
+				removeCreateButtons(context);
+			}
+
 			// El operador solo puede ver la tabla. No debe ver checks ni acciones.
 			if (!canAdmin && !canAudit) {
 				return;
@@ -44,6 +55,26 @@
 			});
 		}
 	};
+
+	function removeCreateButtons(context) {
+		const selectors = [
+			'.data-core-create-button',
+			'a[href$="/crear"]',
+			'a[href*="/gestion-data/patrocinadores/crear"]',
+			'a[href*="/gestion-data/proveedores/crear"]',
+			'a[href*="/gestion-data/asociados/crear"]',
+			'a[href*="/gestion-data/residentes/crear"]',
+			'a[href*="/gestion-data/empleados/crear"]'
+		];
+
+		once(
+			'asocolderma-remove-create-buttons',
+			selectors.join(','),
+			context
+		).forEach(function (element) {
+			element.remove();
+		});
+	}
 
 	function resolvePageConfig(pathname, routes) {
 		const exports = routes.exports || {};

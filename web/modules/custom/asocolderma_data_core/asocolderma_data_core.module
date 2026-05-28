@@ -79,25 +79,53 @@ function asocolderma_data_core_page_top(array &$page_top)
 
 	$current_path = \Drupal::service('path.current')->getPath();
 
-	$main_links = [
-		'Patrocinadores' => '/gestion-data/patrocinadores',
-		'Proveedores' => '/gestion-data/proveedores',
-		'Asociados' => '/gestion-data/asociados',
-		'Residentes' => '/gestion-data/residentes',
-		'Empleados' => '/gestion-data/empleados',
-	];
+	$main_links = [];
+	$audit_links = [];
 
-	$audit_links = [
-		'Auditoría eventos' => '/gestion-data/auditoria/eventos',
-		'Auditoría cambios' => '/gestion-data/auditoria/cambios-registros',
-		'Auditoría acciones' => '/gestion-data/auditoria/acciones-registros',
-		'Auditoría exportaciones' => '/gestion-data/auditoria/exportaciones',
-		'Auditoría importaciones' => '/gestion-data/auditoria/importaciones',
-		'Detalle importación' => '/gestion-data/auditoria/importaciones/detalle',
-		'Cambios importación' => '/gestion-data/auditoria/importaciones/cambios',
-	];
+	/*
+   * Tablas principales:
+   * - Admin Data: puede verlas.
+   * - Operador Data: puede verlas.
+   * - Auditor Data: no se le muestran desde el menú principal.
+   */
+	if ($can_admin || ($can_view && !$can_audit)) {
+		$main_links = [
+			'Patrocinadores' => '/gestion-data/patrocinadores',
+			'Proveedores' => '/gestion-data/proveedores',
+			'Asociados' => '/gestion-data/asociados',
+			'Residentes' => '/gestion-data/residentes',
+			'Empleados' => '/gestion-data/empleados',
+		];
+	}
 
-	$import_url = Url::fromRoute('asocolderma_data_core.importacion')->toString();
+	/*
+   * Auditoría:
+   * - Admin Data: puede verla.
+   * - Auditor Data: puede verla.
+   * - Operador Data: no se le muestra.
+   */
+	if ($can_admin || $can_audit) {
+		$audit_links = [
+			'Auditoría eventos' => '/gestion-data/auditoria/eventos',
+			'Auditoría cambios' => '/gestion-data/auditoria/cambios-registros',
+			'Auditoría acciones' => '/gestion-data/auditoria/acciones-registros',
+			'Auditoría exportaciones' => '/gestion-data/auditoria/exportaciones',
+			'Auditoría importaciones' => '/gestion-data/auditoria/importaciones',
+			'Detalle importación' => '/gestion-data/auditoria/importaciones/detalle',
+			'Cambios importación' => '/gestion-data/auditoria/importaciones/cambios',
+		];
+	}
+
+	$import_url = NULL;
+
+	/*
+   * Importación:
+   * - Solo Admin Data.
+   */
+	if ($can_admin) {
+		$import_url = Url::fromRoute('asocolderma_data_core.importacion')->toString();
+	}
+
 	$logout_url = Url::fromRoute('user.logout', [], [
 		'query' => [
 			'destination' => '/',
@@ -118,58 +146,72 @@ function asocolderma_data_core_page_top(array &$page_top)
 
 	$import_active_class = $current_path === '/gestion-data/importacion' ? ' is-active' : '';
 
+	$nav_markup = '';
+
+	if (!empty($main_links)) {
+		$nav_markup .= '
+			<div class="data-core-header__dropdown">
+				<button class="data-core-header__dropdown-button" type="button">
+				Tablas principales
+				<span class="data-core-header__chevron">▾</span>
+				</button>
+				<div class="data-core-header__dropdown-panel">
+				' . $main_markup . '
+				</div>
+			</div>
+		';
+	}
+
+	if (!empty($audit_links)) {
+		$nav_markup .= '
+			<div class="data-core-header__dropdown">
+				<button class="data-core-header__dropdown-button" type="button">
+				Auditoría
+				<span class="data-core-header__chevron">▾</span>
+				</button>
+				<div class="data-core-header__dropdown-panel data-core-header__dropdown-panel--wide">
+				' . $audit_markup . '
+				</div>
+			</div>
+		';
+	}
+
+	if (!empty($import_url)) {
+		$nav_markup .= '<a class="data-core-header__direct-link' . $import_active_class . '" href="' . Html::escape($import_url) . '">Importación</a>';
+	}
+
 	$markup = '
-    <header class="data-core-header" role="banner">
-      <div class="data-core-header__inner">
-        <div class="data-core-header__brand">
-          <div class="data-core-header__title">Gestión Data AsoColDerma</div>
-          <div class="data-core-header__subtitle">Base de datos institucional</div>
-        </div>
+		<header class="data-core-header" role="banner">
+			<div class="data-core-header__inner">
+				<div class="data-core-header__brand">
+				<div class="data-core-header__title">Gestión Data AsoColDerma</div>
+				<div class="data-core-header__subtitle">Base de datos institucional</div>
+				</div>
 
-        <nav class="data-core-header__nav" aria-label="Menú principal Gestión Data">
-          <div class="data-core-header__dropdown">
-            <button class="data-core-header__dropdown-button" type="button">
-              Tablas principales
-              <span class="data-core-header__chevron">▾</span>
-            </button>
-            <div class="data-core-header__dropdown-panel">
-              ' . $main_markup . '
-            </div>
-          </div>
+				<nav class="data-core-header__nav" aria-label="Menú principal Gestión Data">
+				' . $nav_markup . '
+				</nav>
 
-          <div class="data-core-header__dropdown">
-            <button class="data-core-header__dropdown-button" type="button">
-              Auditoría
-              <span class="data-core-header__chevron">▾</span>
-            </button>
-            <div class="data-core-header__dropdown-panel data-core-header__dropdown-panel--wide">
-              ' . $audit_markup . '
-            </div>
-          </div>
+				<div class="data-core-header__user">
+				<div class="data-core-header__user-info">
+					<span class="data-core-header__user-label">Usuario</span>
+					<span class="data-core-header__user-name">' . $username . '</span>
+				</div>
 
-          <a class="data-core-header__direct-link' . $import_active_class . '" href="' . Html::escape($import_url) . '">Importación</a>
-        </nav>
-
-        <div class="data-core-header__user">
-          <div class="data-core-header__user-info">
-            <span class="data-core-header__user-label">Usuario</span>
-            <span class="data-core-header__user-name">' . $username . '</span>
-          </div>
-
-          <div class="data-core-header__user-menu">
-            <button class="data-core-header__user-button" type="button">
-              Cuenta
-              <span class="data-core-header__chevron">▾</span>
-            </button>
-            <div class="data-core-header__user-panel">
-              <span class="data-core-header__user-panel-name">' . $username . '</span>
-              <a class="data-core-header__logout" href="' . Html::escape($logout_url) . '">Cerrar sesión</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
-  ';
+				<div class="data-core-header__user-menu">
+					<button class="data-core-header__user-button" type="button">
+					Cuenta
+					<span class="data-core-header__chevron">▾</span>
+					</button>
+					<div class="data-core-header__user-panel">
+					<span class="data-core-header__user-panel-name">' . $username . '</span>
+					<a class="data-core-header__logout" href="' . Html::escape($logout_url) . '">Cerrar sesión</a>
+					</div>
+				</div>
+				</div>
+			</div>
+		</header>
+	';
 
 	$page_top['asocolderma_data_core_header'] = [
 		'#type' => 'markup',
