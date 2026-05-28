@@ -14,6 +14,19 @@ use Drupal\user\Entity\User;
  */
 function custom_login_2fa_form_user_login_form_alter(array &$form, FormStateInterface $form_state, string $form_id): void
 {
+	/** @var \Drupal\custom_login_2fa\Service\CustomLogin2faManager $manager */
+	$manager = \Drupal::service('custom_login_2fa.manager');
+
+	// If 2FA is disabled, do not alter Drupal login at all.
+	if (!$manager->isEnabled()) {
+		return;
+	}
+
+	// If no protected roles are configured, do not alter Drupal login.
+	if ($manager->getProtectedRoles() === []) {
+		return;
+	}
+
 	$form['#validate'] = [
 		'custom_login_2fa_user_login_validate',
 	];
@@ -114,8 +127,6 @@ function custom_login_2fa_user_login_submit(array &$form, FormStateInterface $fo
 	}
 
 	user_login_finalize($account);
-
-	$form_state->setRedirectUrl(Url::fromRoute('<front>'));
 }
 
 /**
