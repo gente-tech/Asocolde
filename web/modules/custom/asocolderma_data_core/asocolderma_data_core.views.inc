@@ -26,6 +26,10 @@ function asocolderma_data_core_views_data()
 		'asocolderma_import_proveedores' => 'Proveedores',
 		'asocolderma_import_empleados' => 'Empleados',
 
+		'asocolderma_audit_event' => 'Auditoría general de eventos',
+		'asocolderma_audit_record_link' => 'Auditoría registros afectados',
+		'asocolderma_audit_change' => 'Auditoría cambios por campo',
+
 		'asocolderma_record_action_log' => 'Auditoría acciones de registros',
 		'asocolderma_export_log' => 'Auditoría exportaciones',
 
@@ -205,6 +209,22 @@ function asocolderma_data_core_views_human_label($field_name)
 		'ip_address' => 'IP',
 		'request_uri' => 'Ruta',
 		'notes' => 'Detalle',
+
+		'event_type' => 'Tipo de evento',
+		'source' => 'Origen',
+		'target_table' => 'Tabla afectada',
+		'target_record_id' => 'ID registro afectado',
+		'target_record_label' => 'Registro afectado',
+		'user_id' => 'ID usuario',
+		'user_name' => 'Usuario',
+		'user_email' => 'Correo usuario',
+		'user_roles' => 'Roles usuario',
+		'user_permissions_snapshot' => 'Permisos usuario',
+		'context' => 'Contexto',
+		'audit_event_id' => 'ID evento auditoría',
+		'relation_type' => 'Tipo de relación',
+		'field_label' => 'Etiqueta del campo',
+		'change_type' => 'Tipo de cambio',
 	];
 
 	return $labels[$field_name] ?? ucwords(str_replace('_', ' ', $field_name));
