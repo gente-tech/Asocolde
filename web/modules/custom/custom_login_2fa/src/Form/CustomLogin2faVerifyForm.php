@@ -122,6 +122,16 @@ final class CustomLogin2faVerifyForm extends FormBase
 			'#button_type' => 'primary',
 		];
 
+		$form['actions']['resend'] = [
+			'#type' => 'submit',
+			'#value' => $this->t('Reenviar código'),
+			'#submit' => ['::resendCodeSubmit'],
+			'#limit_validation_errors' => [],
+			'#attributes' => [
+				'class' => ['button'],
+			],
+		];
+
 		$form['actions']['cancel'] = [
 			'#type' => 'link',
 			'#title' => $this->t('Cancelar'),
@@ -201,5 +211,55 @@ final class CustomLogin2faVerifyForm extends FormBase
 
 		$redirect_path = $this->manager->getRedirectPathForUser($account);
 		$form_state->setRedirectUrl(Url::fromUri('internal:' . $redirect_path));
+	}
+
+	/**
+	 * Resends the 2FA verification code.
+	 */
+	public function resendCodeSubmit(array &$form, FormStateInterface $form_state): void
+	{
+		$tempstore = $this->tempStoreFactory->get('custom_login_2fa');
+		$pending_uid = (int) ($tempstore->get('pending_uid') ?: 0);
+
+		if ($pending_uid <= 0) {
+			$this->messenger()->addError($this->t('No existe una verificación pendiente. Inicia sesión nuevamente.'));
+			$form_state->setRedirect('user.login');
+			return;
+		}
+
+		$account = User::load($pending_uid);
+
+		if (!$account || !$account->isActive()) {
+			$tempstore->delete('pending_uid');
+			$tempstore->delete('pending_challenge_id');
+			$tempstore->delete('pending_created');
+
+			$this->messenger()->addError($this->t('La cuenta no está disponible. Inicia sesión nuevamente.'));
+			$form_state->setRedirect('user.login');
+			return;
+		}
+
+		try {
+			$challenge_id = $this->manager->createAndSendChallenge($account);
+
+			$tempstore->set('pending_uid', (int) $account->id());
+			$tempstore->set('pending_challenge_id', (int) $challenge_id);
+			$tempstore->set('pending_created', \Drupal::time()->getRequestTime());
+
+			$this->messenger()->addStatus($this->t('Se envió un nuevo código de verificación a tu correo electrónico.'));
+
+			$form_state->setRedirect('custom_login_2fa.verify');
+		} catch (\Throwable $exception) {
+			\Drupal::logger('custom_login_2fa')->error(
+				'Could not resend 2FA challenge for user @uid. Error: @error',
+				[
+					'@uid' => $account->id(),
+					'@error' => $exception->getMessage(),
+				]
+			);
+
+			$this->messenger()->addError($this->t('No fue posible reenviar el código de verificación. Intenta nuevamente o contacta al administrador.'));
+			$form_state->setRedirect('custom_login_2fa.verify');
+		}
 	}
 }
