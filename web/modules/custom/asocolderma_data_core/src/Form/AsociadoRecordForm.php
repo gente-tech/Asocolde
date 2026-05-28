@@ -371,6 +371,9 @@ class AsociadoRecordForm extends FormBase
 				->fields($values)
 				->execute();
 
+			\Drupal::service('asocolderma_data_core.hubspot_sync')
+				->syncCreatedRecord(static::TABLE_NAME, $values);
+
 			$this->messenger()->addStatus($this->t('El asociado fue creado correctamente.'));
 		}
 
