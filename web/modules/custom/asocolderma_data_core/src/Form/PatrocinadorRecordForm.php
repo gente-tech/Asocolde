@@ -2,6 +2,7 @@
 
 namespace Drupal\asocolderma_data_core\Form;
 
+use Drupal\asocolderma_data_core\Service\RecordCrudLogger;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -37,16 +38,23 @@ class PatrocinadorRecordForm extends FormBase
 	protected RouteMatchInterface $currentRouteMatch;
 
 	/**
+	 * CRUD audit logger.
+	 */
+	protected RecordCrudLogger $recordCrudLogger;
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct(
 		Connection $database,
 		AccountProxyInterface $current_user,
 		RouteMatchInterface $route_match,
+		RecordCrudLogger $record_crud_logger,
 	) {
 		$this->database = $database;
 		$this->currentUser = $current_user;
 		$this->currentRouteMatch = $route_match;
+		$this->recordCrudLogger = $record_crud_logger;
 	}
 
 	/**
@@ -58,6 +66,7 @@ class PatrocinadorRecordForm extends FormBase
 			$container->get('database'),
 			$container->get('current_user'),
 			$container->get('current_route_match'),
+			$container->get('asocolderma_data_core.record_crud_logger'),
 		);
 	}
 
@@ -575,11 +584,20 @@ class PatrocinadorRecordForm extends FormBase
 		$now = time();
 
 		if ($record_id) {
+			$old_record = $this->loadRecord($record_id);
+
 			$this->database
 				->update(static::TABLE_NAME)
 				->fields($values)
 				->condition('id', $record_id)
 				->execute();
+
+			$this->recordCrudLogger->logUpdate(
+				static::TABLE_NAME,
+				(int) $record_id,
+				$old_record,
+				$values,
+			);
 
 			$this->messenger()->addStatus($this->t('El patrocinador fue actualizado correctamente.'));
 		} else {
@@ -598,6 +616,12 @@ class PatrocinadorRecordForm extends FormBase
 				->insert(static::TABLE_NAME)
 				->fields($values)
 				->execute();
+
+			$this->recordCrudLogger->logCreate(
+				static::TABLE_NAME,
+				(int) $record_id,
+				$values,
+			);
 
 			\Drupal::service('asocolderma_data_core.hubspot_sync')
 				->syncCreatedRecord(static::TABLE_NAME, $values);
