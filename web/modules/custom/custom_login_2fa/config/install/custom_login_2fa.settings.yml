@@ -4,4 +4,3 @@ code_ttl: 20
 code_length: 5
 max_attempts: 3
 mandrill_message_key: ''
-fallback_subject: 'Código de verificación de acceso'

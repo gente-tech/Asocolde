@@ -168,15 +168,6 @@ final class CustomLogin2faSettingsForm extends ConfigFormBase {
       '#required' => FALSE,
     ];
 
-    $form['mail_settings']['fallback_subject'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Fallback subject'),
-      '#default_value' => (string) ($config->get('fallback_subject') ?: 'Código de verificación de acceso'),
-      '#maxlength' => 180,
-      '#required' => TRUE,
-      '#description' => $this->t('Used if the Mandrill template configuration does not define a specific subject.'),
-    ];
-
     $form['mail_settings']['tokens'] = [
       '#type' => 'details',
       '#title' => $this->t('Available Mandrill variables'),
@@ -241,7 +232,6 @@ final class CustomLogin2faSettingsForm extends ConfigFormBase {
       ->set('code_length', (int) $form_state->getValue('code_length'))
       ->set('max_attempts', (int) $form_state->getValue('max_attempts'))
       ->set('mandrill_message_key', trim((string) $form_state->getValue('mandrill_message_key')))
-      ->set('fallback_subject', trim((string) $form_state->getValue('fallback_subject')))
       ->save();
 
     parent::submitForm($form, $form_state);

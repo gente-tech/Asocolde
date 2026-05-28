@@ -23,6 +23,3 @@ custom_login_2fa.settings:
     mandrill_message_key:
       type: string
       label: 'Mandrill message group key'
-    fallback_subject:
-      type: string
-      label: 'Fallback email subject'
