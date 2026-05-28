@@ -6,3 +6,5 @@ max_attempts: 3
 mandrill_message_key: ''
 default_redirect_path: '/'
 role_redirect_paths: {  }
+resend_cooldown: 20
+max_resends: 3
