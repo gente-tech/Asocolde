@@ -10,3 +10,4 @@ dependencies:
   - drupal:taxonomy
   - drupal:datetime
   - drupal:options
+  - enterprise_integrations:enterprise_integrations

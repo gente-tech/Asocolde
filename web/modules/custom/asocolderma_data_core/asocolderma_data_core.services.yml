@@ -1,4 +1,8 @@
 services:
+  logger.channel.asocolderma_data_core:
+    parent: logger.channel_base
+    arguments: ['asocolderma_data_core']
+
   asocolderma_data_core.record_action_logger:
     class: Drupal\asocolderma_data_core\Service\RecordActionLogger
     arguments:
@@ -19,3 +23,9 @@ services:
       - '@database'
       - '@current_user'
       - '@request_stack'
+
+  asocolderma_data_core.hubspot_sync:
+    class: Drupal\asocolderma_data_core\Service\DataCoreHubspotSyncService
+    arguments:
+      - '@enterprise_integrations.hubspot'
+      - '@logger.channel.asocolderma_data_core'
