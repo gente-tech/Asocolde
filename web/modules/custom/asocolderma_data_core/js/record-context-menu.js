@@ -40,6 +40,14 @@
 			};
 		}
 
+		if (pathname.includes('/gestion-data/patrocinadores')) {
+			return {
+				tableKey: 'patrocinadores',
+				label: 'patrocinador',
+				editBaseUrl: editRoutes.patrocinadores || '/gestion-data/patrocinadores'
+			};
+		}
+
 		return null;
 	}
 

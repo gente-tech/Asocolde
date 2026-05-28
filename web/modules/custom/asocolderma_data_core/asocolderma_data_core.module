@@ -54,6 +54,7 @@ function asocolderma_data_core_page_attachments(array &$attachments)
 			],
 			'edit' => [
 				'proveedores' => '/gestion-data/proveedores',
+				'patrocinadores' => '/gestion-data/patrocinadores',
 			],
 		],
 	];
