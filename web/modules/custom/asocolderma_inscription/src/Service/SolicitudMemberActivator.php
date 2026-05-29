@@ -2,6 +2,7 @@
 
 namespace Drupal\asocolderma_inscription\Service;
 
+use Drupal\asocolderma_data_core\Service\AsociadoFromSolicitudRegistrar;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\node\NodeInterface;
@@ -24,6 +25,7 @@ final class SolicitudMemberActivator
 		private readonly EntityTypeManagerInterface $entityTypeManager,
 		private readonly LoggerChannelInterface $logger,
 		private readonly UserDataInterface $userData,
+		private readonly AsociadoFromSolicitudRegistrar $asociadoFromSolicitudRegistrar,
 	) {}
 
 	/**
@@ -51,6 +53,8 @@ final class SolicitudMemberActivator
 
 		$user->activate();
 		$user->save();
+
+		$this->asociadoFromSolicitudRegistrar->registerFromSolicitud($solicitud);
 
 		$this->markPostActivationRedirectPending($user);
 

@@ -8,3 +8,4 @@ dependencies:
   - profile:profile
   - drupal:file
   - enterprise_integrations:enterprise_integrations
+  - asocolderma_data_core:asocolderma_data_core

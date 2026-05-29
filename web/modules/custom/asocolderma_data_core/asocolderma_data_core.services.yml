@@ -29,3 +29,11 @@ services:
     arguments:
       - '@enterprise_integrations.hubspot'
       - '@logger.channel.asocolderma_data_core'
+
+  asocolderma_data_core.asociado_from_solicitud_registrar:
+    class: Drupal\asocolderma_data_core\Service\AsociadoFromSolicitudRegistrar
+    arguments:
+      - '@database'
+      - '@date.formatter'
+      - '@asocolderma_data_core.hubspot_sync'
+      - '@logger.channel.asocolderma_data_core'

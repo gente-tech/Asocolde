@@ -53,3 +53,4 @@ services:
       - "@entity_type.manager"
       - "@logger.channel.asocolderma_inscription"
       - "@user.data"
+      - "@asocolderma_data_core.asociado_from_solicitud_registrar"
