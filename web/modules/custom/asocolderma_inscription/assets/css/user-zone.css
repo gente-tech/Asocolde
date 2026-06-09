@@ -523,10 +523,6 @@ body:has(.user-zone-page) #block-asocolderma-b5-page-title {
   z-index: 1000;
 }
 
-.asocolderma-inscription-zone-page .user-zone-page {
-  margin-top: 36px;
-}
-
 /* =========================
    HEADER PROPIO ASPIRANTE
    ========================= */
@@ -858,4 +854,51 @@ body:has(.user-zone-page) #block-asocolderma-b5-page-title {
     right: 12px;
     left: 12px;
   }
+}
+
+/* =========================
+   HEADER PEGADO ARRIBA
+   ========================= */
+
+html:has(.user-zone-app-header),
+body.asocolderma-inscription-zone-page {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+body.asocolderma-inscription-zone-page {
+  background: #f5f7fa !important;
+}
+
+.asocolderma-inscription-zone-page .dialog-off-canvas-main-canvas {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.asocolderma-inscription-zone-page .user-zone-app-header {
+  position: sticky !important;
+  top: 0 !important;
+  left: 0;
+  right: 0;
+  z-index: 1100;
+  margin: 0 !important;
+}
+
+.asocolderma-inscription-zone-page .user-zone-app-header__inner {
+  min-height: 84px;
+}
+
+.asocolderma-inscription-zone-page .user-zone-page {
+  margin-top: 42px !important;
+}
+
+/* Elimina espacios heredados del layout público */
+.asocolderma-inscription-zone-page .layout-container,
+.asocolderma-inscription-zone-page .page,
+.asocolderma-inscription-zone-page .main-wrapper,
+.asocolderma-inscription-zone-page .main-content,
+.asocolderma-inscription-zone-page .container,
+.asocolderma-inscription-zone-page .container-fluid {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
 }
