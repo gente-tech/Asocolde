@@ -592,3 +592,44 @@ body:has(.user-zone-page) #block-asocolderma-b5-page-title {
 .asocolderma-inscription-zone-page .user-zone-header {
   display: block !important;
 }
+
+/* =========================
+   LIMPIEZA DEL LAYOUT PÚBLICO EN ZONA ASPIRANTE
+   ========================= */
+
+.asocolderma-inscription-zone-page .main-header,
+.asocolderma-inscription-zone-page .top-menu,
+.asocolderma-inscription-zone-page .top-searcher,
+.asocolderma-inscription-zone-page .main-menu,
+.asocolderma-inscription-zone-page .menu-lateral,
+.asocolderma-inscription-zone-page .breadcrumb-content,
+.asocolderma-inscription-zone-page .main-footer {
+  display: none !important;
+}
+
+.asocolderma-inscription-zone-page main[role="main"]>.main-container-page,
+.asocolderma-inscription-zone-page .main-container-page,
+.asocolderma-inscription-zone-page .main-container-page>.main-content,
+.asocolderma-inscription-zone-page .wrapper-body,
+.asocolderma-inscription-zone-page .wrapper-body--main,
+.asocolderma-inscription-zone-page .row.main-content,
+.asocolderma-inscription-zone-page .body-content {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+}
+
+.asocolderma-inscription-zone-page .user-zone-app-header {
+  display: block !important;
+  width: 100%;
+  margin: 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.asocolderma-inscription-zone-page .user-zone-page {
+  margin-top: 36px;
+}

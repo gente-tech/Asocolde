@@ -90,6 +90,7 @@ final class UserZoneController extends ControllerBase
       '#user_name' => $account->getDisplayName(),
       '#profile' => $view_builder->view($profile, 'default'),
       '#edit_link' => $edit_link,
+      '#header_menu_items' => $this->buildAspiranteMenuItems(),
       '#attached' => [
         'library' => [
           'asocolderma_inscription/user_zone',
@@ -205,6 +206,7 @@ final class UserZoneController extends ControllerBase
       '#primary_action' => $primary_action,
       '#has_active' => $has_active,
       '#has_draft' => $has_draft,
+      '#header_menu_items' => $this->buildAspiranteMenuItems(),
       '#attached' => [
         'library' => [
           'asocolderma_inscription/user_zone',
@@ -254,5 +256,43 @@ final class UserZoneController extends ControllerBase
     ];
 
     return $build;
+  }
+
+  private function buildAspiranteMenuItems(): array
+  {
+    $menu_name = 'account-aspirante';
+    $menu_tree = \Drupal::menuTree();
+
+    $parameters = $menu_tree->getCurrentRouteMenuTreeParameters($menu_name);
+    $parameters->onlyEnabledLinks();
+    $parameters->setMinDepth(1);
+    $parameters->setMaxDepth(1);
+
+    $tree = $menu_tree->load($menu_name, $parameters);
+
+    $tree = $menu_tree->transform($tree, [
+      ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+      ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+    ]);
+
+    $items = [];
+
+    foreach ($tree as $element) {
+      if (!$element->access->isAllowed()) {
+        continue;
+      }
+
+      $url = $element->link->getUrlObject();
+      $url_string = $url->toString();
+
+      $items[] = [
+        'title' => $element->link->getTitle(),
+        'url' => $url_string,
+        'active' => (bool) $element->inActiveTrail,
+        'is_logout' => $element->link->getRouteName() === 'user.logout' || str_contains($url_string, '/user/logout'),
+      ];
+    }
+
+    return $items;
   }
 }

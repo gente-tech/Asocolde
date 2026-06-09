@@ -9,14 +9,14 @@ use Drupal\Core\Session\AccountInterface;
 /**
  * Implements hook_theme().
  */
-function asocolderma_inscription_theme($existing, $type, $theme, $path): array
-{
+function asocolderma_inscription_theme($existing, $type, $theme, $path): array {
   return [
     'asocolderma_inscription_user_zone_profile' => [
       'variables' => [
         'user_name' => NULL,
         'profile' => NULL,
         'edit_link' => NULL,
+        'header_menu_items' => [],
       ],
       'template' => 'asocolderma-inscription-user-zone-profile',
     ],
@@ -27,6 +27,7 @@ function asocolderma_inscription_theme($existing, $type, $theme, $path): array
         'primary_action' => NULL,
         'has_active' => FALSE,
         'has_draft' => FALSE,
+        'header_menu_items' => [],
       ],
       'template' => 'asocolderma-inscription-user-zone-requests',
     ],
