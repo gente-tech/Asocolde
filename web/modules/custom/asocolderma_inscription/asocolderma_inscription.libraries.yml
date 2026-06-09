@@ -48,3 +48,9 @@ aspirante_header:
   css:
     theme:
       assets/css/aspirante-header.css: { weight: 200 }
+
+aspirante_login_modal:
+  version: 1.x
+  css:
+    theme:
+      assets/css/aspirante-login-modal.css: { weight: 250 }

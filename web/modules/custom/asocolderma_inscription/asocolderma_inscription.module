@@ -41,6 +41,12 @@ function asocolderma_inscription_theme($existing, $type, $theme, $path): array
       ],
       'template' => 'asocolderma-inscription-user-zone-header',
     ],
+    'asocolderma_inscription_aspirante_modal_login' => [
+      'variables' => [
+        'form' => NULL,
+      ],
+      'template' => 'asocolderma-inscription-aspirante-modal-login',
+    ],
   ];
 }
 
@@ -643,4 +649,57 @@ function asocolderma_inscription_build_aspirante_menu_items(): array
   }
 
   return $items;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for user_login_form.
+ */
+function asocolderma_inscription_form_user_login_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state, string $form_id): void
+{
+  $route_name = \Drupal::routeMatch()->getRouteName();
+
+  $form['#validate'][] = 'asocolderma_inscription_user_login_role_validate';
+
+  if ($route_name === 'asocolderma_inscription.aspirante_login') {
+    $form['#submit'][] = 'asocolderma_inscription_aspirante_login_submit';
+  }
+}
+
+/**
+ * Valida que cada tipo de usuario ingrese por su formulario correcto.
+ */
+function asocolderma_inscription_user_login_role_validate(array &$form, \Drupal\Core\Form\FormStateInterface $form_state): void
+{
+  $uid = (int) $form_state->get('uid');
+
+  if (!$uid) {
+    return;
+  }
+
+  $account = \Drupal\user\Entity\User::load($uid);
+
+  if (!$account) {
+    return;
+  }
+
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  $is_aspirante_login = $route_name === 'asocolderma_inscription.aspirante_login';
+  $is_aspirante = $account->hasRole('aspirante');
+
+  if ($is_aspirante_login && !$is_aspirante) {
+    $form_state->setErrorByName('name', t('Este formulario es exclusivo para aspirantes. Por favor ingrese por el formulario de miembros de AsoColDerma.'));
+    return;
+  }
+
+  if (!$is_aspirante_login && $is_aspirante) {
+    $form_state->setErrorByName('name', t('Los aspirantes deben iniciar sesión desde el formulario exclusivo para aspirantes.'));
+  }
+}
+
+/**
+ * Redirecciona al aspirante a su zona privada.
+ */
+function asocolderma_inscription_aspirante_login_submit(array &$form, \Drupal\Core\Form\FormStateInterface $form_state): void
+{
+  $form_state->setRedirect('asocolderma_inscription.user_zone');
 }

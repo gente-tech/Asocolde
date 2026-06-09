@@ -1,0 +1,45 @@
+.login-dialog.aspirante-login-dialog .modal-login-top .btn-link {
+  border-color: #0067b1;
+  color: #0067b1;
+}
+
+.login-dialog.aspirante-login-dialog .modal-login-top .btn-link:hover,
+.login-dialog.aspirante-login-dialog .modal-login-top .btn-link:focus {
+  background: #0067b1;
+  color: #ffffff;
+}
+
+.login-dialog.aspirante-login-dialog .form-actions {
+  border-color: #0067b1;
+}
+
+.login-dialog.aspirante-login-dialog .form-actions:hover,
+.login-dialog.aspirante-login-dialog .form-actions:focus {
+  background: #0067b1;
+}
+
+.login-dialog.aspirante-login-dialog .form-actions:after {
+  color: #0067b1;
+}
+
+.login-dialog.aspirante-login-dialog .form-actions:hover:after,
+.login-dialog.aspirante-login-dialog .form-actions:focus:after {
+  color: #ffffff;
+}
+
+.login-dialog.aspirante-login-dialog .form-actions .button {
+  color: #0067b1;
+}
+
+.login-dialog.aspirante-login-dialog .form-actions .button:hover {
+  color: #ffffff;
+}
+
+.login-dialog.aspirante-login-dialog .modal-login-left .content-user-form h2 {
+  background: #0067b1;
+}
+
+.login-dialog.aspirante-login-dialog .modal-login-left .content-user-form .top-elements a,
+.login-dialog.aspirante-login-dialog .modal-login-left .content-user-form .login-links a {
+  color: #0067b1;
+}

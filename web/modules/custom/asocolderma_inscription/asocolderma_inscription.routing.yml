@@ -173,3 +173,11 @@ asocolderma_inscription.solicitud_form_settings:
     _title: 'Configuración formulario de solicitud'
   requirements:
     _permission: 'administer site configuration'
+
+asocolderma_inscription.aspirante_login:
+  path: '/aspirante/login'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\AspiranteLoginController::login'
+    _title: 'Ingreso aspirantes'
+  requirements:
+    _access: 'TRUE'
