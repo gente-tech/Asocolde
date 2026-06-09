@@ -81,11 +81,11 @@
 			{{ node.field_solicitud_id.value ?: '-' }}
 		</p>
 
-		<p class="solicitud-ingreso__status-card"{% if estado_color_solicitud %} style="--estado-color: {{ estado_color_solicitud }};"{% endif %}>
+		<p class="solicitud-ingreso__status-card{% if estado_color_solicitud %} solicitud-ingreso__status-card--has-color{% endif %}" {% if estado_color_solicitud %} style="--estado-color: {{ estado_color_solicitud }};" {% endif %}>
 			<strong>Estado:</strong>
 
 			{% if estado_color_solicitud %}
-				<span class="solicitud-ingreso__status-badge">
+				<span class="solicitud-ingreso__status-badge estado-solicitud-color" data-estado-color="{{ estado_color_solicitud }}">
 					{{ estado ?: '-' }}
 				</span>
 			{% else %}
