@@ -227,6 +227,11 @@ final class SolicitudIngresoWizardForm extends FormBase
     $form_state->set('step', $step);
 
     $wizard_values = (array) ($form_state->get('wizard_values') ?? $stored_values);
+
+    $aspirante_email = trim((string) $account->getEmail());
+
+    $wizard_values['contacto']['email'] = $aspirante_email;
+
     $form_state->set('wizard_values', $wizard_values);
 
     $form['#tree'] = TRUE;
@@ -396,9 +401,13 @@ final class SolicitudIngresoWizardForm extends FormBase
       $form['contacto']['email'] = [
         '#type' => 'email',
         '#title' => $this->t('Correo electrónico principal'),
-        '#description' => $this->t('Ingrese el correo electrónico principal donde recibirá comunicaciones oficiales del proceso. Ejemplo: nombre@dominio.com.'),
-        '#required' => TRUE,
-        '#default_value' => $wizard_values['contacto']['email'] ?? '',
+        '#description' => $this->t('Este correo corresponde al usado para registrar tu cuenta de aspirante y no puede modificarse desde la solicitud.'),
+        '#required' => FALSE,
+        '#disabled' => TRUE,
+        '#default_value' => $aspirante_email,
+        '#attributes' => [
+          'class' => ['user-zone-readonly-field'],
+        ],
       ];
 
       $form['contacto']['celular_indicativo'] = [
@@ -878,10 +887,12 @@ final class SolicitudIngresoWizardForm extends FormBase
         $celular_full = $celular_indicativo . $celular_nacional;
       }
 
+      $aspirante_email = trim((string) $this->currentUser()->getEmail());
+
       $wizard_values['contacto'] = [
         'direccion' => $input['contacto']['direccion'] ?? '',
         'correspondencia_fisica' => $input['contacto']['correspondencia_fisica'] ?? '',
-        'email' => $input['contacto']['email'] ?? '',
+        'email' => $aspirante_email,
         'celular_indicativo' => $celular_indicativo,
         'celular_nacional' => $celular_nacional,
         'celular_full' => $celular_full,
@@ -943,6 +954,10 @@ final class SolicitudIngresoWizardForm extends FormBase
     $account = $this->currentUser();
     $wizard_values = (array) $form_state->get('wizard_values');
 
+    $aspirante_email = trim((string) $account->getEmail());
+    $wizard_values['contacto']['email'] = $aspirante_email;
+    $form_state->set('wizard_values', $wizard_values);
+
     if ($this->getSolicitudManager()->hasActiveSolicitud((int) $account->id())) {
       $this->messenger()->addError($this->t('Ya tienes una solicitud activa. No puedes crear otra.'));
       $form_state->setRedirect('asocolderma_inscription.user_zone_requests');
@@ -992,7 +1007,7 @@ final class SolicitudIngresoWizardForm extends FormBase
 
       'field_correspondencia_fisica' => $wizard_values['contacto']['direccion'] ?? '',
       'field_direccion_institucional' => $wizard_values['contacto']['correspondencia_fisica'] ?? '',
-      'field_email_principal' => $wizard_values['contacto']['email'] ?? '',
+      'field_email_principal' => $aspirante_email,
       'field_celular' => $wizard_values['contacto']['celular_full'] ?? $wizard_values['contacto']['celular'] ?? '',
       'field_lugar_correspondencia' => !empty($wizard_values['contacto']['lugar_correspondencia'])
         ? ['target_id' => (int) $wizard_values['contacto']['lugar_correspondencia']]

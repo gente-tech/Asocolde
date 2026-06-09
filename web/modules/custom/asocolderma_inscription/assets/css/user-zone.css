@@ -1059,3 +1059,17 @@ body.user-zone-logout-modal-open {
     width: 100%;
   }
 }
+
+/* Campo visible pero no editable dentro del flujo del aspirante. */
+.user-zone-readonly-field,
+.user-zone-readonly-field:disabled {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+  cursor: not-allowed !important;
+  opacity: 1 !important;
+}
+
+.user-zone-readonly-field:disabled {
+  -webkit-text-fill-color: #334155;
+}

@@ -26,6 +26,7 @@ final class SolicitudIngresoEditWizardForm extends FormBase
     }
 
     $form_state->set('solicitud_node', $node);
+    $aspirante_email = trim((string) $this->currentUser()->getEmail());
 
     $form['#tree'] = TRUE;
     $form['#attached']['library'][] = 'asocolderma_inscription/intl_phone_field';
@@ -206,8 +207,13 @@ final class SolicitudIngresoEditWizardForm extends FormBase
     $form['contacto']['email'] = [
       '#type' => 'email',
       '#title' => $this->t('Correo electrónico principal'),
-      '#required' => TRUE,
-      '#default_value' => $this->getStringValue($node, 'field_email_principal'),
+      '#description' => $this->t('Este correo corresponde al usado para registrar tu cuenta de aspirante y no puede modificarse desde la solicitud.'),
+      '#required' => FALSE,
+      '#disabled' => TRUE,
+      '#default_value' => $aspirante_email,
+      '#attributes' => [
+        'class' => ['user-zone-readonly-field'],
+      ],
     ];
 
     $form['contacto']['celular_indicativo'] = [
@@ -449,6 +455,7 @@ final class SolicitudIngresoEditWizardForm extends FormBase
 
     $general = (array) ($values['general'] ?? []);
     $contacto = (array) ($values['contacto'] ?? []);
+    $aspirante_email = trim((string) $this->currentUser()->getEmail());
     $profesional = (array) ($values['profesional'] ?? []);
     $adjuntos = (array) ($values['adjuntos'] ?? []);
 
@@ -477,7 +484,7 @@ final class SolicitudIngresoEditWizardForm extends FormBase
 
     $node->set('field_correspondencia_fisica', $contacto['direccion'] ?? '');
     $node->set('field_direccion_institucional', $contacto['correspondencia_fisica'] ?? '');
-    $node->set('field_email_principal', $contacto['email'] ?? '');
+    $node->set('field_email_principal', $aspirante_email);
     $node->set('field_celular', $celular_full);
 
     if (!empty($contacto['lugar_correspondencia'])) {
