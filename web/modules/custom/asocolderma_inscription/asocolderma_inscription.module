@@ -195,9 +195,9 @@ function asocolderma_inscription_get_future_flow_steps(string $last_visible_labe
     'Aprobada',
     'Junta directiva',
     'Asamblea general',
+    'Envío de documentos',
     'Pago de ingreso',
-    'Firma de documentos',
-    'Aprobación documentos firmados',
+    'Activación de miembro',
     'Miembro activo',
   ];
 
@@ -249,9 +249,9 @@ function asocolderma_inscription_get_visible_flow(string $current_name): array
   $later_flow = [
     'Junta directiva',
     'Asamblea general',
+    'Envío de documentos',
     'Pago de ingreso',
-    'Firma de documentos',
-    'Aprobación documentos firmados',
+    'Activación de miembro',
     'Miembro activo',
   ];
 
@@ -291,9 +291,9 @@ function asocolderma_inscription_map_current_state_to_flow_label(string $current
     'Aprobado Asamblea G.',
     'Rechazado Asamblea G.' => 'Asamblea general',
 
+    'Documentos enviados' => 'Envío de documentos',
     'Pendiente pago de ingreso' => 'Pago de ingreso',
-    'Pendiente firma de documentos' => 'Firma de documentos',
-    'Documentos firmados' => 'Aprobación documentos firmados',
+    'Activar miembro nuevo' => 'Activación de miembro',
     'Miembro activo' => 'Miembro activo',
 
     default => 'En trámite',
@@ -430,10 +430,10 @@ function asocolderma_inscription_get_date_for_step(NodeInterface $node, string $
     'Aprobada' => ['Aprobada'],
     'Junta directiva' => ['Aprobado Junta D.', 'Rechazado Junta D.'],
     'Asamblea general' => ['Aprobado Asamblea G.', 'Rechazado Asamblea G.'],
+    'Envío de documentos' => ['Documentos enviados'],
     'Pago de ingreso' => ['Pendiente pago de ingreso'],
-    'Firma de documentos' => ['Pendiente firma de documentos'],
-    'Aprobación documentos firmados' => ['Documentos firmados'],
-    'Miembro activo' => ['Miembro activo'],
+    'Activación de miembro' => ['Activar miembro nuevo'],
+    'Miembro activo' => ['Miembro activo', 'Activar miembro nuevo'],
     default => [],
   };
 

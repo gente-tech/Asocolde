@@ -30,6 +30,10 @@ asocolderma_inscription.notification_settings:
         rechazada_asamblea_general:
           type: asocolderma_inscription.notification_phase
           label: 'Rechazada por Asamblea General'
+        documentos_enviados:
+          type: asocolderma_inscription.notification_phase
+          label: 'Documentos enviados'
+        pendiente_pago_ingreso:
         pendiente_pago_ingreso:
           type: asocolderma_inscription.notification_phase
           label: 'Pendiente pago de ingreso'

@@ -1509,3 +1509,42 @@ function asocolderma_inscription_update_9014(): void
 
   \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
 }
+
+/**
+ * Crea estados administrativos para el nuevo flujo de coordinación.
+ */
+function asocolderma_inscription_update_9015(): void
+{
+  $vid = 'estado_solicitud_ingreso';
+
+  $states = [
+    'Documentos enviados' => '#0d6efd',
+    'Activar miembro nuevo' => '#009688',
+  ];
+
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+
+  foreach ($states as $name => $color) {
+    $existing = $storage->loadByProperties([
+      'vid' => $vid,
+      'name' => $name,
+    ]);
+
+    if ($existing) {
+      continue;
+    }
+
+    $term = $storage->create([
+      'vid' => $vid,
+      'name' => $name,
+    ]);
+
+    if ($term->hasField('field_color_estado_solicitud')) {
+      $term->set('field_color_estado_solicitud', $color);
+    }
+
+    $term->save();
+  }
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}

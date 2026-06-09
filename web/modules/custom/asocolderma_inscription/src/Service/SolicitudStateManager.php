@@ -74,7 +74,7 @@ final class SolicitudStateManager
     ?string $from_name,
     ?string $to_name,
   ): void {
-    if ($this->normalizeStateName($to_name) === 'miembro activo') {
+    if (in_array($this->normalizeStateName($to_name), ['miembro activo', 'activar miembro nuevo'], TRUE)) {
       $this->memberActivator->activateFromSolicitud($node);
       return;
     }
@@ -283,6 +283,8 @@ final class SolicitudStateManager
       'rechazada asamblea g',
       'rechazado asamblea general',
       'rechazada asamblea general' => 'rechazada_asamblea_general',
+      
+      'documentos enviados' => 'documentos_enviados',
 
       'pendiente pago de ingreso',
       'pago de ingreso pendiente' => 'pendiente_pago_ingreso',
@@ -292,6 +294,7 @@ final class SolicitudStateManager
       'documentos firmados' => 'documentos_firmados',
 
       'miembro activo',
+      'activar miembro nuevo',
       'documentos firmados miembro activo' => 'miembro_activo',
 
       default => NULL,

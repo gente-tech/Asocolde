@@ -33,7 +33,7 @@ class LoginRedirectSubscriber implements EventSubscriberInterface
 		if ($this->currentRouteMatch->getRouteName() === 'user.login') {
 
 			if ($this->currentUser->hasRole('coordinacion_administrativa')) {
-				$event->setResponse(new RedirectResponse('/pendientes-pago-ingreso'));
+				$event->setResponse(new RedirectResponse('/coord-admin/enviar-documentos'));
 				return;
 			}
 

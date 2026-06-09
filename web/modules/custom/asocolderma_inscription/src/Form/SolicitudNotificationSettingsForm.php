@@ -175,6 +175,10 @@ final class SolicitudNotificationSettingsForm extends ConfigFormBase
 				'label' => $this->t('Rechazada por Asamblea General'),
 				'description' => $this->t('Se ejecuta cuando se registra rechazo en sesión de Asamblea General.'),
 			],
+			'documentos_enviados' => [
+				'label' => $this->t('Documentos enviados'),
+				'description' => $this->t('Se ejecuta cuando Coordinación Administrativa envía la carta de bienvenida y documentos a firmar.'),
+			],
 			'pendiente_pago_ingreso' => [
 				'label' => $this->t('Pendiente pago de ingreso'),
 				'description' => $this->t('Se ejecuta cuando la solicitud pasa a la fase administrativa de pago.'),

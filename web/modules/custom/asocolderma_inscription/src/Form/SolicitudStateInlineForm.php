@@ -332,10 +332,9 @@ final class SolicitudStateInlineForm extends FormBase
 
     if ($this->currentUser()->hasRole('coordinacion_administrativa')) {
       return match ($current_name) {
-        'Aprobado Asamblea G.' => ['Pendiente pago de ingreso'],
-        'Pendiente pago de ingreso' => ['Pendiente firma de documentos'],
-        'Pendiente firma de documentos' => [],
-        'Documentos firmados' => ['Miembro activo'],
+        'Aprobado Asamblea G.' => ['Documentos enviados'],
+        'Documentos enviados' => ['Pendiente pago de ingreso'],
+        'Pendiente pago de ingreso' => ['Activar miembro nuevo'],
         default => [],
       };
     }
