@@ -43,3 +43,66 @@
 .login-dialog.aspirante-login-dialog .modal-login-left .content-user-form .login-links a {
   color: #0067b1;
 }
+
+.login-dialog.aspirante-login-dialog .content-user-form h2,
+.login-dialog.aspirante-login-dialog .modal-login-left .content-user-form h2,
+.modal-login-content--aspirante .content-user-form h2 {
+  background: #0b5ed7 !important;
+}
+
+.login-dialog.aspirante-login-dialog .form-actions,
+.modal-login-content--aspirante .form-actions {
+  border-color: #0b5ed7 !important;
+}
+
+.login-dialog.aspirante-login-dialog .form-actions .button,
+.modal-login-content--aspirante .form-actions .button {
+  color: #0b5ed7 !important;
+}
+
+.login-dialog.aspirante-login-dialog .form-actions:after,
+.modal-login-content--aspirante .form-actions:after {
+  color: #0b5ed7 !important;
+}
+
+.login-dialog.aspirante-login-dialog .form-actions:hover,
+.login-dialog.aspirante-login-dialog .form-actions:focus,
+.modal-login-content--aspirante .form-actions:hover,
+.modal-login-content--aspirante .form-actions:focus {
+  background: #0b5ed7 !important;
+}
+
+.login-dialog.aspirante-login-dialog .form-actions:hover .button,
+.login-dialog.aspirante-login-dialog .form-actions:focus .button,
+.modal-login-content--aspirante .form-actions:hover .button,
+.modal-login-content--aspirante .form-actions:focus .button {
+  color: #ffffff !important;
+}
+
+.login-dialog.aspirante-login-dialog .form-actions:hover:after,
+.login-dialog.aspirante-login-dialog .form-actions:focus:after,
+.modal-login-content--aspirante .form-actions:hover:after,
+.modal-login-content--aspirante .form-actions:focus:after {
+  color: #ffffff !important;
+}
+
+.login-dialog.aspirante-login-dialog .top-elements a,
+.login-dialog.aspirante-login-dialog .login-links a,
+.modal-login-content--aspirante .top-elements a,
+.modal-login-content--aspirante .login-links a {
+  color: #0b5ed7 !important;
+}
+
+.login-dialog.aspirante-login-dialog .modal-login-top .btn-link,
+.modal-login-top--aspirante .btn-link {
+  border-color: #0b5ed7 !important;
+  color: #0b5ed7 !important;
+}
+
+.login-dialog.aspirante-login-dialog .modal-login-top .btn-link:hover,
+.login-dialog.aspirante-login-dialog .modal-login-top .btn-link:focus,
+.modal-login-top--aspirante .btn-link:hover,
+.modal-login-top--aspirante .btn-link:focus {
+  background: #0b5ed7 !important;
+  color: #ffffff !important;
+}
