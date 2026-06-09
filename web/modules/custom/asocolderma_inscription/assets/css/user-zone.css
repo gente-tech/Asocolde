@@ -90,59 +90,6 @@ body:has(.user-zone-page) #block-asocolderma-b5-page-title {
 }
 
 /* =========================
-   MENÚ ASPIRANTE
-   ========================= */
-
-.user-zone-menu {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 0 0 22px;
-  padding: 14px;
-  border: 1px solid #d9e1e8;
-  border-radius: 14px;
-  background: #ffffff;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
-}
-
-.user-zone-menu__link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 42px;
-  padding: 9px 18px;
-  border: 1px solid #cfd8e3;
-  border-radius: 10px;
-  background: #f8fafc;
-  color: #0f766e;
-  font-size: 15px;
-  font-weight: 800;
-  line-height: 1.2;
-  text-decoration: none !important;
-  transition: all 0.15s ease-in-out;
-}
-
-.user-zone-menu__link:hover,
-.user-zone-menu__link.is-active {
-  border-color: #008c8c;
-  background: #008c8c;
-  color: #ffffff;
-}
-
-.user-zone-menu__link--logout {
-  margin-left: auto;
-  border-color: #fed7aa;
-  background: #fff7ed;
-  color: #9a3412;
-}
-
-.user-zone-menu__link--logout:hover {
-  border-color: #ea580c;
-  background: #ea580c;
-  color: #ffffff;
-}
-
-/* =========================
    TARJETAS BASE
    ========================= */
 
@@ -255,87 +202,6 @@ body:has(.user-zone-page) #block-asocolderma-b5-page-title {
 }
 
 /* =========================
-   LISTADO DE SOLICITUDES
-   ========================= */
-
-.user-zone-requests-list {
-  display: grid;
-  gap: 14px;
-  padding: 22px 26px 26px;
-}
-
-.user-zone-request-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  padding: 18px 20px;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  background: #ffffff;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
-}
-
-.user-zone-request-card:hover {
-  border-color: #99d5d5;
-  background: #fbffff;
-}
-
-.user-zone-request-card__main {
-  display: grid;
-  gap: 8px;
-}
-
-.user-zone-request-card__code {
-  display: grid;
-  gap: 2px;
-}
-
-.user-zone-request-card__link {
-  color: #006d6d;
-  font-size: 20px;
-  font-weight: 900;
-  text-decoration: none !important;
-}
-
-.user-zone-request-card__link:hover {
-  color: #004f4f;
-  text-decoration: underline !important;
-}
-
-.user-zone-request-card__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-}
-
-.user-zone-request-card__state {
-  display: inline-flex;
-  align-items: center;
-  min-height: 28px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: #ecfdf5;
-  color: #047857;
-  font-size: 13px;
-  font-weight: 900;
-}
-
-.user-zone-request-card__date {
-  color: #475569;
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.user-zone-request-card__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: flex-end;
-}
-
-/* =========================
    PERFIL RENDERIZADO
    ========================= */
 
@@ -399,4 +265,326 @@ body:has(.user-zone-page) #block-asocolderma-b5-page-title {
 .asocolderma-inscription-zone-page footer,
 .asocolderma-inscription-zone-page .footer {
   display: none !important;
+}
+
+/* =========================
+   HEADER PROPIO ASPIRANTE
+   ========================= */
+
+.user-zone-app-header {
+  width: 100%;
+  margin: 0 0 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #d9e1e8;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+}
+
+.user-zone-app-header__inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 14px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.user-zone-app-header__brand {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.user-zone-app-header__logo {
+  display: block;
+  width: auto;
+  max-width: 245px;
+  height: auto;
+  max-height: 72px;
+}
+
+.user-zone-app-header__toggle {
+  display: none;
+  min-height: 42px;
+  padding: 8px 16px;
+  border: 1px solid #008c8c;
+  border-radius: 10px;
+  background: #008c8c;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.user-zone-app-menu {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-zone-app-menu__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 9px 18px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #0f766e;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-decoration: none !important;
+  white-space: nowrap;
+  transition: all 0.15s ease-in-out;
+}
+
+.user-zone-app-menu__link:hover,
+.user-zone-app-menu__link.is-active {
+  border-color: #008c8c;
+  background: #008c8c;
+  color: #ffffff;
+}
+
+.user-zone-app-menu__link--logout {
+  border-color: #fed7aa;
+  background: #fff7ed;
+  color: #9a3412;
+}
+
+.user-zone-app-menu__link--logout:hover {
+  border-color: #ea580c;
+  background: #ea580c;
+  color: #ffffff;
+}
+
+/* =========================
+   TABLA SOLICITUDES
+   ========================= */
+
+.user-zone-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  padding: 0;
+}
+
+.user-zone-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #ffffff;
+}
+
+.user-zone-table thead th {
+  padding: 16px 18px;
+  border-bottom: 1px solid #d9e1e8;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 900;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.user-zone-table tbody td {
+  padding: 16px 18px;
+  border-bottom: 1px solid #edf2f7;
+  color: #111827;
+  font-size: 15px;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.user-zone-table tbody tr:hover {
+  background: #fbffff;
+}
+
+.user-zone-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.user-zone-table__code {
+  color: #006d6d;
+  font-size: 15px;
+  font-weight: 900;
+  text-decoration: none !important;
+  white-space: nowrap;
+}
+
+.user-zone-table__code:hover {
+  color: #004f4f;
+  text-decoration: underline !important;
+}
+
+.user-zone-table__actions,
+.user-zone-table__actions-head {
+  text-align: right;
+}
+
+.user-zone-table__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.user-zone-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #047857;
+  font-size: 13px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.user-zone-status--rechazada,
+.user-zone-status--rechazado-junta-d,
+.user-zone-status--rechazado-asamblea-g {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.user-zone-status--pendiente-aclaracion,
+.user-zone-status--pendiente-pago-de-ingreso,
+.user-zone-status--pendiente-firma-de-documentos {
+  background: #fffbeb;
+  color: #92400e;
+}
+
+.user-zone-status--aprobada,
+.user-zone-status--aprobado-junta-d,
+.user-zone-status--aprobado-asamblea-g,
+.user-zone-status--miembro-activo {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+/* =========================
+   RESPONSIVE ASPIRANTE
+   ========================= */
+
+@media (max-width: 1180px) {
+
+  .user-zone-app-header__inner,
+  .user-zone-page {
+    max-width: calc(100% - 32px);
+  }
+}
+
+@media (max-width: 768px) {
+  .user-zone-app-header {
+    margin-bottom: 16px;
+  }
+
+  .user-zone-app-header__inner {
+    padding: 12px 0;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .user-zone-app-header__logo {
+    max-width: 190px;
+    max-height: 58px;
+  }
+
+  .user-zone-app-header__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+  }
+
+  .user-zone-app-menu {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid #e5edf5;
+  }
+
+  .user-zone-app-menu.is-open {
+    display: flex;
+  }
+
+  .user-zone-app-menu__link {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .user-zone-header__content {
+    padding: 20px;
+  }
+
+  .user-zone-header__title {
+    font-size: 28px;
+  }
+
+  .user-zone-card__header {
+    align-items: stretch;
+  }
+
+  .user-zone-card__header .user-zone-button {
+    width: 100%;
+  }
+
+  .user-zone-table {
+    min-width: 720px;
+  }
+}
+
+@media (max-width: 560px) {
+  .user-zone-table {
+    min-width: 0;
+  }
+
+  .user-zone-table thead {
+    display: none;
+  }
+
+  .user-zone-table,
+  .user-zone-table tbody,
+  .user-zone-table tr,
+  .user-zone-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .user-zone-table tbody tr {
+    padding: 14px;
+    border-bottom: 1px solid #edf2f7;
+  }
+
+  .user-zone-table tbody td {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 0;
+    text-align: left;
+  }
+
+  .user-zone-table tbody td::before {
+    content: attr(data-label);
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .user-zone-table__actions {
+    justify-content: flex-start;
+  }
+
+  .user-zone-table__actions .user-zone-button {
+    width: 100%;
+  }
 }

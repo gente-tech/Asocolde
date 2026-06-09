@@ -1,0 +1,33 @@
+{#
+/**
+ * Header propio del flujo de aspirantes.
+ */
+#}
+
+<header class="user-zone-app-header">
+	<div class="user-zone-app-header__inner">
+
+		<a href="/zona/solicitudes" class="user-zone-app-header__brand" aria-label="Ir a mis solicitudes">
+			<img src="/sites/default/files/imageblock/logo-horizontal-pequeno.jpg" alt="AsoColDerma" class="user-zone-app-header__logo">
+		</a>
+
+		<button class="user-zone-app-header__toggle" type="button" aria-expanded="false" aria-controls="user-zone-app-menu" data-user-zone-menu-toggle>
+			Menú
+		</button>
+
+		<nav id="user-zone-app-menu" class="user-zone-app-menu" aria-label="Menú del aspirante">
+			<a href="/zona/perfil" class="user-zone-app-menu__link {{ active == 'profile' ? 'is-active' : '' }}">
+				Mi perfil
+			</a>
+
+			<a href="/zona/solicitudes" class="user-zone-app-menu__link {{ active == 'requests' ? 'is-active' : '' }}">
+				Mis solicitudes
+			</a>
+
+			<a href="/user/logout" class="user-zone-app-menu__link user-zone-app-menu__link--logout">
+				Cerrar sesión
+			</a>
+		</nav>
+
+	</div>
+</header>

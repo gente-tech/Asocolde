@@ -7,6 +7,11 @@
  */
 #}
 
+{% include '@asocolderma_inscription/asocolderma-inscription-user-zone-header.html.twig' with {
+  active: 'profile',
+  user_name: user_name
+} only %}
+
 <section class="user-zone-page user-zone-page--profile">
 	<header class="user-zone-header">
 		<div class="user-zone-header__content">

@@ -7,6 +7,11 @@
  */
 #}
 
+{% include '@asocolderma_inscription/asocolderma-inscription-user-zone-header.html.twig' with {
+  active: 'requests',
+  user_name: user_name
+} only %}
+
 <section class="user-zone-page user-zone-page--requests">
 	<header class="user-zone-header">
 		<div class="user-zone-header__content">
@@ -45,56 +50,70 @@
 			</div>
 		{% endif %}
 
-		{% if requests %}
-			<div class="user-zone-requests-list">
-				{% for item in requests %}
-					<article class="user-zone-request-card">
-						<div class="user-zone-request-card__main">
-							<div class="user-zone-request-card__code">
-								<span class="user-zone-request-card__label">Solicitud</span>
-								<a href="{{ item.detail_url }}" class="user-zone-request-card__link">
-									{{ item.code }}
-								</a>
-							</div>
+		<div class="user-zone-table-wrapper">
+			<table class="user-zone-table">
+				<thead>
+					<tr>
+						<th>Solicitud</th>
+						<th>Estado</th>
+						<th>Fecha de creación</th>
+						<th class="user-zone-table__actions-head">Acciones</th>
+					</tr>
+				</thead>
 
-							<div class="user-zone-request-card__meta">
-								<span class="user-zone-request-card__state">
-									{{ item.state }}
-								</span>
-								<span class="user-zone-request-card__date">
-									Creada:
+				<tbody>
+					{% if requests %}
+						{% for item in requests %}
+							<tr>
+								<td data-label="Solicitud">
+									<a href="{{ item.detail_url }}" class="user-zone-table__code">
+										{{ item.code }}
+									</a>
+								</td>
+
+								<td data-label="Estado">
+									<span class="user-zone-status user-zone-status--{{ item.state|clean_class }}">
+										{{ item.state }}
+									</span>
+								</td>
+
+								<td data-label="Fecha de creación">
 									{{ item.created }}
-								</span>
-							</div>
-						</div>
+								</td>
 
-						<div class="user-zone-request-card__actions">
-							<a href="{{ item.detail_url }}" class="user-zone-button user-zone-button--secondary">
-								Ver detalle
-							</a>
+								<td data-label="Acciones" class="user-zone-table__actions">
+									<a href="{{ item.detail_url }}" class="user-zone-button user-zone-button--secondary">
+										Ver detalle
+									</a>
 
-							{% for action in item.actions %}
-								<a href="{{ action.url }}" class="user-zone-button user-zone-button--{{ action.modifier }}">
-									{{ action.label }}
-								</a>
-							{% endfor %}
-						</div>
-					</article>
-				{% endfor %}
-			</div>
-		{% else %}
-			<div class="user-zone-empty">
-				<h3 class="user-zone-empty__title">Aún no has creado solicitudes</h3>
-				<p class="user-zone-empty__text">
-					Cuando inicies tu proceso de ingreso, aquí podrás consultar el estado de tu solicitud.
-				</p>
+									{% for action in item.actions %}
+										<a href="{{ action.url }}" class="user-zone-button user-zone-button--{{ action.modifier }}">
+											{{ action.label }}
+										</a>
+									{% endfor %}
+								</td>
+							</tr>
+						{% endfor %}
+					{% else %}
+						<tr>
+							<td colspan="4">
+								<div class="user-zone-empty">
+									<h3 class="user-zone-empty__title">Aún no has creado solicitudes</h3>
+									<p class="user-zone-empty__text">
+										Cuando inicies tu proceso de ingreso, aquí podrás consultar el estado de tu solicitud.
+									</p>
 
-				{% if primary_action %}
-					<a href="{{ primary_action.url }}" class="user-zone-button user-zone-button--primary">
-						{{ primary_action.label }}
-					</a>
-				{% endif %}
-			</div>
-		{% endif %}
+									{% if primary_action %}
+										<a href="{{ primary_action.url }}" class="user-zone-button user-zone-button--primary">
+											{{ primary_action.label }}
+										</a>
+									{% endif %}
+								</div>
+							</td>
+						</tr>
+					{% endif %}
+				</tbody>
+			</table>
+		</div>
 	</div>
 </section>
