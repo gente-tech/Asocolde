@@ -34,6 +34,13 @@ function asocolderma_inscription_theme($existing, $type, $theme, $path): array
       ],
       'template' => 'asocolderma-inscription-user-zone-requests',
     ],
+    'asocolderma_inscription_user_zone_header' => [
+      'variables' => [
+        'menu_items' => [],
+        'logout_url' => NULL,
+      ],
+      'template' => 'asocolderma-inscription-user-zone-header',
+    ],
   ];
 }
 
@@ -554,4 +561,86 @@ function asocolderma_inscription_block_access(BlockInterface $block, $operation,
 
   return AccessResult::neutral()
     ->addCacheContexts(['url.path']);
+}
+
+/**
+ * Implements hook_page_top().
+ *
+ * Renderiza el header propio del flujo de aspirantes en todas las rutas /zona.
+ */
+function asocolderma_inscription_page_top(array &$page_top): void
+{
+  $path = \Drupal::service('path.current')->getPath();
+  $current_user = \Drupal::currentUser();
+
+  if (!$current_user->isAuthenticated()) {
+    return;
+  }
+
+  if (!in_array('aspirante', $current_user->getRoles(), TRUE)) {
+    return;
+  }
+
+  if ($path !== '/zona' && !str_starts_with($path, '/zona/')) {
+    return;
+  }
+
+  $page_top['asocolderma_inscription_user_zone_header'] = [
+    '#theme' => 'asocolderma_inscription_user_zone_header',
+    '#menu_items' => asocolderma_inscription_build_aspirante_menu_items(),
+    '#logout_url' => \Drupal\Core\Url::fromRoute('user.logout')->toString(),
+    '#attached' => [
+      'library' => [
+        'asocolderma_inscription/user_zone',
+      ],
+    ],
+    '#cache' => [
+      'contexts' => [
+        'user.roles',
+        'url.path',
+        'route',
+      ],
+    ],
+  ];
+}
+
+/**
+ * Construye los ítems del menú Drupal account-aspirante.
+ */
+function asocolderma_inscription_build_aspirante_menu_items(): array
+{
+  $menu_name = 'account-aspirante';
+  $menu_tree = \Drupal::menuTree();
+
+  $parameters = $menu_tree->getCurrentRouteMenuTreeParameters($menu_name);
+  $parameters->onlyEnabledLinks();
+  $parameters->setMinDepth(1);
+  $parameters->setMaxDepth(1);
+
+  $tree = $menu_tree->load($menu_name, $parameters);
+
+  $tree = $menu_tree->transform($tree, [
+    ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+    ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+  ]);
+
+  $items = [];
+
+  foreach ($tree as $element) {
+    if (!$element->access->isAllowed()) {
+      continue;
+    }
+
+    $url = $element->link->getUrlObject();
+    $url_string = $url->toString();
+
+    $items[] = [
+      'title' => $element->link->getTitle(),
+      'url' => $url_string,
+      'active' => (bool) $element->inActiveTrail,
+      'is_logout' => $element->link->getRouteName() === 'user.logout' || str_contains($url_string, '/user/logout'),
+    ];
+  }
+
+  return $items;
 }
