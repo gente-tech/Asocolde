@@ -1,3 +1,27 @@
+{#
+/**
+ * Header profesional del flujo de aspirantes.
+ */
+#}
+
+{% set profile_items = [] %}
+{% set request_items = [] %}
+{% set extra_items = [] %}
+
+{% for item in menu_items %}
+	{% set title_lower = item.title|lower %}
+	{% set url_lower = item.url|lower %}
+
+	{% if item.is_logout %}
+		{% elseif 'perfil' in title_lower or '/zona/perfil' in url_lower %}
+			{% set profile_items = profile_items|merge([item]) %}
+		{% elseif 'solicitud' in title_lower or '/zona/solicitud' in url_lower %}
+			{% set request_items = request_items|merge([item]) %}
+		{% else %}
+			{% set extra_items = extra_items|merge([item]) %}
+	{% endif %}
+{% endfor %}
+
 <header class="user-zone-app-header">
 	<div class="user-zone-app-header__inner">
 
@@ -5,16 +29,64 @@
 			<img src="/sites/default/files/imageblock/logo-horizontal-pequeno.jpg" alt="AsoColDerma" class="user-zone-app-header__logo">
 		</a>
 
-		<button class="user-zone-app-header__toggle" type="button" aria-expanded="false" aria-controls="user-zone-app-menu" data-user-zone-menu-toggle>
-			Menú
+		<button class="user-zone-app-header__hamburger" type="button" aria-expanded="false" aria-controls="user-zone-app-menu" data-user-zone-menu-toggle>
+			<span class="user-zone-app-header__hamburger-line"></span>
+			<span class="user-zone-app-header__hamburger-line"></span>
+			<span class="user-zone-app-header__hamburger-line"></span>
+			<span class="visually-hidden">Abrir menú</span>
 		</button>
 
 		<nav id="user-zone-app-menu" class="user-zone-app-menu" aria-label="Menú del aspirante">
-			{% for item in menu_items %}
-				<a href="{{ item.url }}" class="user-zone-app-menu__link{{ item.active ? ' is-active' : '' }}{{ item.is_logout ? ' user-zone-app-menu__link--logout' : '' }}">
-					{{ item.title }}
-				</a>
-			{% endfor %}
+			<div class="user-zone-app-menu__group">
+				<button class="user-zone-app-menu__trigger" type="button" data-user-zone-dropdown>
+					Perfil
+					<span class="user-zone-app-menu__chevron">⌄</span>
+				</button>
+
+				<div class="user-zone-app-menu__dropdown">
+					{% for item in profile_items %}
+						<a href="{{ item.url }}" class="user-zone-app-menu__dropdown-link{{ item.active ? ' is-active' : '' }}">
+							{{ item.title }}
+						</a>
+					{% endfor %}
+				</div>
+			</div>
+
+			<div class="user-zone-app-menu__group">
+				<button class="user-zone-app-menu__trigger" type="button" data-user-zone-dropdown>
+					Solicitudes
+					<span class="user-zone-app-menu__chevron">⌄</span>
+				</button>
+
+				<div class="user-zone-app-menu__dropdown">
+					{% for item in request_items %}
+						<a href="{{ item.url }}" class="user-zone-app-menu__dropdown-link{{ item.active ? ' is-active' : '' }}">
+							{{ item.title }}
+						</a>
+					{% endfor %}
+				</div>
+			</div>
+
+			{% if extra_items %}
+				<div class="user-zone-app-menu__group">
+					<button class="user-zone-app-menu__trigger" type="button" data-user-zone-dropdown>
+						Más opciones
+						<span class="user-zone-app-menu__chevron">⌄</span>
+					</button>
+
+					<div class="user-zone-app-menu__dropdown">
+						{% for item in extra_items %}
+							<a href="{{ item.url }}" class="user-zone-app-menu__dropdown-link{{ item.active ? ' is-active' : '' }}">
+								{{ item.title }}
+							</a>
+						{% endfor %}
+					</div>
+				</div>
+			{% endif %}
+
+			<a href="{{ logout_url }}" class="user-zone-app-menu__logout">
+				Cerrar sesión
+			</a>
 		</nav>
 
 	</div>

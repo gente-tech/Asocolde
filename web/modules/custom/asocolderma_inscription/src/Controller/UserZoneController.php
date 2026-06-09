@@ -91,6 +91,7 @@ final class UserZoneController extends ControllerBase
       '#profile' => $view_builder->view($profile, 'default'),
       '#edit_link' => $edit_link,
       '#header_menu_items' => $this->buildAspiranteMenuItems(),
+      '#logout_url' => Url::fromRoute('user.logout')->toString(),
       '#attached' => [
         'library' => [
           'asocolderma_inscription/user_zone',
@@ -207,6 +208,7 @@ final class UserZoneController extends ControllerBase
       '#has_active' => $has_active,
       '#has_draft' => $has_draft,
       '#header_menu_items' => $this->buildAspiranteMenuItems(),
+      '#logout_url' => Url::fromRoute('user.logout')->toString(),
       '#attached' => [
         'library' => [
           'asocolderma_inscription/user_zone',
