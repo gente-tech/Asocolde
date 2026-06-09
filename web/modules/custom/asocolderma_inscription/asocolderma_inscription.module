@@ -2,6 +2,9 @@
 
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\block\BlockInterface;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Implements hook_theme().
@@ -510,6 +513,7 @@ function asocolderma_inscription_page_attachments(array &$attachments): void
 function asocolderma_inscription_preprocess_html(array &$variables): void
 {
   $current_user = \Drupal::currentUser();
+  $path = \Drupal::service('path.current')->getPath();
 
   if ($current_user->isAuthenticated() && in_array('aspirante', $current_user->getRoles(), TRUE)) {
     $variables['attributes']['class'][] = 'asocolderma-role-aspirante';
@@ -517,4 +521,33 @@ function asocolderma_inscription_preprocess_html(array &$variables): void
     $variables['#attached']['library'][] = 'asocolderma_inscription/aspirante_header';
     $variables['#cache']['contexts'][] = 'user.roles';
   }
+
+  if ($path === '/zona' || str_starts_with($path, '/zona/')) {
+    $variables['attributes']['class'][] = 'asocolderma-inscription-zone-page';
+
+    $variables['#attached']['library'][] = 'asocolderma_inscription/user_zone';
+    $variables['#cache']['contexts'][] = 'url.path';
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_access() for block entities.
+ *
+ * Bloquea todos los bloques del sitio público dentro del flujo del aspirante.
+ */
+function asocolderma_inscription_block_access(BlockInterface $block, $operation, AccountInterface $account): AccessResult
+{
+  if ($operation !== 'view') {
+    return AccessResult::neutral();
+  }
+
+  $path = \Drupal::service('path.current')->getPath();
+
+  if ($path === '/zona' || str_starts_with($path, '/zona/')) {
+    return AccessResult::forbidden()
+      ->addCacheContexts(['url.path']);
+  }
+
+  return AccessResult::neutral()
+    ->addCacheContexts(['url.path']);
 }

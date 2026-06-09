@@ -390,3 +390,13 @@ body:has(.user-zone-page) #block-asocolderma-b5-page-title {
     justify-content: flex-start;
   }
 }
+
+/* Oculta estructura pública del theme dentro del flujo del aspirante. */
+.asocolderma-inscription-zone-page .top-searcher,
+.asocolderma-inscription-zone-page header,
+.asocolderma-inscription-zone-page .site-header,
+.asocolderma-inscription-zone-page .navbar,
+.asocolderma-inscription-zone-page footer,
+.asocolderma-inscription-zone-page .footer {
+  display: none !important;
+}
