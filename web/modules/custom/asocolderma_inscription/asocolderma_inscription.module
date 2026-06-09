@@ -196,12 +196,27 @@ function asocolderma_inscription_get_future_flow_steps(string $last_visible_labe
 
   $future_labels = array_slice($base_flow, $last_index + 1);
 
+  $current_flow_label = asocolderma_inscription_map_current_state_to_flow_label($current_name);
+
+  $completed_states_that_move_to_next = [
+    'Aprobada',
+    'Aprobado Junta D.',
+    'Aprobado Asamblea G.',
+    'Documentos firmados',
+  ];
+
+  $next_current_label = NULL;
+
+  if (in_array($current_name, $completed_states_that_move_to_next, TRUE) && !empty($future_labels)) {
+    $next_current_label = $future_labels[0];
+  }
+
   $steps = [];
 
   foreach ($future_labels as $label) {
     $steps[] = [
       'label' => $label,
-      'status' => 'pending',
+      'status' => $label === $next_current_label ? 'current' : 'pending',
       'date' => '',
       'note' => '',
       'state_name' => '',
