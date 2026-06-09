@@ -107,11 +107,18 @@ final class SolicitudIngresoEditWizardForm extends FormBase
       '#default_value' => $this->getStringValue($node, 'field_apellido2'),
     ];
 
+    $max_birth_date = (new \DateTimeImmutable('today'))->modify('-18 years')->format('Y-m-d');
+
     $form['general']['fecha_nacimiento'] = [
       '#type' => 'date',
       '#title' => $this->t('Fecha de nacimiento'),
+      '#description' => $this->t('Debes ser mayor de edad para continuar con el proceso.'),
       '#required' => TRUE,
       '#default_value' => $this->getStringValue($node, 'field_fecha_nacimiento'),
+      '#attributes' => [
+        'max' => $max_birth_date,
+        'data-user-zone-birthdate-field' => '1',
+      ],
     ];
 
     $form['general']['estado_civil'] = [
@@ -389,12 +396,33 @@ final class SolicitudIngresoEditWizardForm extends FormBase
       ],
     ];
 
+    if ($form_state->get('show_underage_modal')) {
+      $form['#attached']['drupalSettings']['asocoldermaInscription']['underageModal'] = [
+        'show' => TRUE,
+        'title' => $this->t('No puedes continuar'),
+        'message' => $this->t('Para realizar la solicitud de ingreso debes ser mayor de edad. Verifica la fecha de nacimiento registrada.'),
+      ];
+    }
+
     return $form;
   }
 
   public function validateForm(array &$form, FormStateInterface $form_state): void
   {
     $values = (array) $form_state->getValues();
+
+    $general = (array) ($values['general'] ?? []);
+    $fecha_nacimiento = trim((string) ($general['fecha_nacimiento'] ?? ''));
+
+    if (!$this->isAdultBirthDate($fecha_nacimiento)) {
+      $form_state->setErrorByName(
+        'general][fecha_nacimiento',
+        $this->t('No puedes reenviar la solicitud porque la fecha de nacimiento corresponde a una persona menor de edad.')
+      );
+
+      $form_state->set('show_underage_modal', TRUE);
+      return;
+    }
 
     $contacto = (array) ($values['contacto'] ?? []);
     $indicativo = trim((string) ($contacto['celular_indicativo'] ?? ''));
@@ -727,5 +755,26 @@ final class SolicitudIngresoEditWizardForm extends FormBase
     }
 
     return trim((string) $record['comment']);
+  }
+
+  private function isAdultBirthDate(?string $birth_date): bool
+  {
+    $birth_date = trim((string) $birth_date);
+
+    if ($birth_date === '') {
+      return FALSE;
+    }
+
+    $date = \DateTimeImmutable::createFromFormat('Y-m-d', $birth_date);
+    $errors = \DateTimeImmutable::getLastErrors();
+
+    if ($date === FALSE || ($errors !== FALSE && ($errors['warning_count'] > 0 || $errors['error_count'] > 0))) {
+      return FALSE;
+    }
+
+    $today = new \DateTimeImmutable('today');
+    $minimum_birth_date = $today->modify('-18 years');
+
+    return $date <= $minimum_birth_date;
   }
 }

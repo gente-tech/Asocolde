@@ -1,4 +1,4 @@
-(function (Drupal, once) {
+(function (Drupal, once, drupalSettings) {
   Drupal.behaviors.asocoldermaUserZoneMenu = {
     attach(context) {
       once('asocolderma-user-zone-menu', '[data-user-zone-menu-toggle]', context).forEach((button) => {
@@ -91,6 +91,56 @@
           }
         });
       });
+
+      once('asocolderma-underage-modal', 'body', context).forEach(() => {
+        const settings = drupalSettings.asocoldermaInscription || {};
+        const modalSettings = settings.underageModal || {};
+
+        if (!modalSettings.show) {
+          return;
+        }
+
+        const existingModal = document.querySelector('[data-user-zone-underage-modal]');
+        if (existingModal) {
+          existingModal.remove();
+        }
+
+        const modal = document.createElement('div');
+        modal.className = 'user-zone-underage-modal is-open';
+        modal.setAttribute('data-user-zone-underage-modal', '1');
+        modal.setAttribute('aria-hidden', 'false');
+
+        modal.innerHTML = `
+          <div class="user-zone-underage-modal__backdrop"></div>
+          <div class="user-zone-underage-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="user-zone-underage-title">
+            <div class="user-zone-underage-modal__icon">!</div>
+            <h2 id="user-zone-underage-title" class="user-zone-underage-modal__title">${modalSettings.title || 'No puedes continuar'}</h2>
+            <p class="user-zone-underage-modal__text">${modalSettings.message || 'Debes ser mayor de edad para continuar con el proceso.'}</p>
+            <button type="button" class="user-zone-underage-modal__button" data-user-zone-underage-close>
+              Entendido
+            </button>
+          </div>
+        `;
+
+        document.body.appendChild(modal);
+        document.body.classList.add('user-zone-underage-modal-open');
+
+        const closeModal = () => {
+          modal.classList.remove('is-open');
+          modal.setAttribute('aria-hidden', 'true');
+          document.body.classList.remove('user-zone-underage-modal-open');
+          modal.remove();
+        };
+
+        modal.querySelector('[data-user-zone-underage-close]').addEventListener('click', closeModal);
+        modal.querySelector('.user-zone-underage-modal__backdrop').addEventListener('click', closeModal);
+
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') {
+            closeModal();
+          }
+        });
+      });
     },
   };
-})(Drupal, once);
+})(Drupal, once, drupalSettings);

@@ -290,12 +290,18 @@ final class SolicitudIngresoWizardForm extends FormBase
         '#default_value' => $wizard_values['general']['apellido2'] ?? '',
       ];
 
+      $max_birth_date = (new \DateTimeImmutable('today'))->modify('-18 years')->format('Y-m-d');
+
       $form['general']['fecha_nacimiento'] = [
         '#type' => 'date',
         '#title' => $this->t('Fecha de nacimiento'),
-        '#description' => $this->t('Seleccione su fecha de nacimiento conforme a su documento oficial.'),
+        '#description' => $this->t('Seleccione su fecha de nacimiento conforme a su documento oficial. Debes ser mayor de edad para continuar con el proceso.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['general']['fecha_nacimiento'] ?? '',
+        '#attributes' => [
+          'max' => $max_birth_date,
+          'data-user-zone-birthdate-field' => '1',
+        ],
       ];
 
       $form['general']['estado_civil'] = [
@@ -747,6 +753,14 @@ final class SolicitudIngresoWizardForm extends FormBase
         '#submit' => ['::submitSolicitud'],
       ];
     }
+
+    if ($form_state->get('show_underage_modal')) {
+      $form['#attached']['drupalSettings']['asocoldermaInscription']['underageModal'] = [
+        'show' => TRUE,
+        'title' => $this->t('No puedes continuar'),
+        'message' => $this->t('Para realizar la solicitud de ingreso debes ser mayor de edad. Verifica la fecha de nacimiento registrada.'),
+      ];
+    }
     $this->applyConfiguredFieldTexts($form);
     return $form;
   }
@@ -780,6 +794,22 @@ final class SolicitudIngresoWizardForm extends FormBase
     $step = (int) $form_state->get('step');
     $trigger = $form_state->getTriggeringElement();
     $trigger_name = $trigger['#name'] ?? '';
+
+    if ($step === 1 && $trigger_name !== 'back') {
+      $values = (array) $form_state->getValues();
+      $general = (array) ($values['general'] ?? []);
+      $fecha_nacimiento = trim((string) ($general['fecha_nacimiento'] ?? ''));
+
+      if (!$this->isAdultBirthDate($fecha_nacimiento)) {
+        $form_state->setErrorByName(
+          'general][fecha_nacimiento',
+          $this->t('No puedes continuar con el registro porque eres menor de edad.')
+        );
+
+        $form_state->set('show_underage_modal', TRUE);
+        return;
+      }
+    }
 
     // No validar el celular cuando el usuario va hacia atrás o guarda y sale.
     if (in_array($trigger_name, ['back', 'save_exit'], TRUE)) {
@@ -1144,5 +1174,26 @@ final class SolicitudIngresoWizardForm extends FormBase
     }
 
     return $options;
+  }
+
+  private function isAdultBirthDate(?string $birth_date): bool
+  {
+    $birth_date = trim((string) $birth_date);
+
+    if ($birth_date === '') {
+      return FALSE;
+    }
+
+    $date = \DateTimeImmutable::createFromFormat('Y-m-d', $birth_date);
+    $errors = \DateTimeImmutable::getLastErrors();
+
+    if ($date === FALSE || ($errors !== FALSE && ($errors['warning_count'] > 0 || $errors['error_count'] > 0))) {
+      return FALSE;
+    }
+
+    $today = new \DateTimeImmutable('today');
+    $minimum_birth_date = $today->modify('-18 years');
+
+    return $date <= $minimum_birth_date;
   }
 }
