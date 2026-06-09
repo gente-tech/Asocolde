@@ -52,6 +52,45 @@
           });
         });
       });
+      once('asocolderma-user-zone-logout-modal', '[data-user-zone-logout-trigger]', context).forEach((trigger) => {
+        const modal = document.querySelector('[data-user-zone-logout-modal]');
+        const confirm = modal ? modal.querySelector('[data-user-zone-logout-confirm]') : null;
+        const cancelButtons = modal ? modal.querySelectorAll('[data-user-zone-logout-cancel]') : [];
+
+        if (!modal || !confirm) {
+          return;
+        }
+
+        const openModal = (event) => {
+          event.preventDefault();
+
+          modal.classList.add('is-open');
+          modal.setAttribute('aria-hidden', 'false');
+          document.body.classList.add('user-zone-logout-modal-open');
+
+          confirm.focus();
+        };
+
+        const closeModal = () => {
+          modal.classList.remove('is-open');
+          modal.setAttribute('aria-hidden', 'true');
+          document.body.classList.remove('user-zone-logout-modal-open');
+
+          trigger.focus();
+        };
+
+        trigger.addEventListener('click', openModal);
+
+        cancelButtons.forEach((button) => {
+          button.addEventListener('click', closeModal);
+        });
+
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape' && modal.classList.contains('is-open')) {
+            closeModal();
+          }
+        });
+      });
     },
   };
 })(Drupal, once);

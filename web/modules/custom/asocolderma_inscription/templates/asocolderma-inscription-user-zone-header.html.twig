@@ -37,7 +37,7 @@
 				</div>
 			</div>
 
-			<a href="{{ logout_url }}" class="user-zone-app-menu__logout">
+			<a href="{{ logout_url }}" class="user-zone-app-menu__logout" data-user-zone-logout-trigger>
 				Cerrar sesión
 			</a>
 
@@ -45,3 +45,31 @@
 
 	</div>
 </header>
+
+<div class="user-zone-logout-modal" data-user-zone-logout-modal aria-hidden="true">
+	<div class="user-zone-logout-modal__backdrop" data-user-zone-logout-cancel></div>
+
+	<div class="user-zone-logout-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="user-zone-logout-title" aria-describedby="user-zone-logout-description">
+		<div class="user-zone-logout-modal__icon">
+			?
+		</div>
+
+		<h2 id="user-zone-logout-title" class="user-zone-logout-modal__title">
+			¿Cerrar sesión?
+		</h2>
+
+		<p id="user-zone-logout-description" class="user-zone-logout-modal__text">
+			Vas a salir de la zona del aspirante. Para continuar con tu proceso deberás iniciar sesión nuevamente.
+		</p>
+
+		<div class="user-zone-logout-modal__actions">
+			<button type="button" class="user-zone-logout-modal__button user-zone-logout-modal__button--secondary" data-user-zone-logout-cancel>
+				Cancelar
+			</button>
+
+			<a href="{{ logout_url }}" class="user-zone-logout-modal__button user-zone-logout-modal__button--primary" data-user-zone-logout-confirm>
+				Sí, cerrar sesión
+			</a>
+		</div>
+	</div>
+</div>
