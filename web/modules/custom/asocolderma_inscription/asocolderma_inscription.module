@@ -703,3 +703,62 @@ function asocolderma_inscription_aspirante_login_submit(array &$form, \Drupal\Co
 {
   $form_state->setRedirect('asocolderma_inscription.user_zone');
 }
+
+/**
+ * Convierte el ID de solicitud en enlace al detalle público de la solicitud.
+ */
+function asocolderma_inscription_preprocess_views_view_field(array &$variables): void
+{
+  if (
+    empty($variables['view']) ||
+    $variables['view']->id() !== 'solicitudes_aspirantes' ||
+    $variables['view']->current_display !== 'page_9'
+  ) {
+    return;
+  }
+
+  if (
+    empty($variables['field']) ||
+    $variables['field']->field !== 'nothing_1'
+  ) {
+    return;
+  }
+
+  $row = $variables['row'] ?? NULL;
+
+  if (
+    !$row ||
+    empty($row->_entity) ||
+    !$row->_entity instanceof \Drupal\node\NodeInterface
+  ) {
+    return;
+  }
+
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $row->_entity;
+
+  if ($node->bundle() !== 'solicitud_ingreso') {
+    return;
+  }
+
+  if (!$node->hasField('field_solicitud_id') || $node->get('field_solicitud_id')->isEmpty()) {
+    return;
+  }
+
+  $codigo_solicitud = trim((string) $node->get('field_solicitud_id')->value);
+
+  if ($codigo_solicitud === '') {
+    return;
+  }
+
+  $url = \Drupal\Core\Url::fromUri('internal:/solicitud/' . $codigo_solicitud);
+
+  $variables['output'] = \Drupal\Core\Link::fromTextAndUrl($codigo_solicitud, $url)->toRenderable();
+
+  $variables['output']['#attributes'] = [
+    'class' => [
+      'solicitud-id-link',
+    ],
+    'title' => 'Ver detalle de la solicitud ' . $codigo_solicitud,
+  ];
+}
