@@ -808,7 +808,7 @@ function asocolderma_inscription_preprocess_views_view_table(array &$variables):
       continue;
     }
 
-    $row['columns']['nothing_1']['content'] = [
+    $link = [
       '#type' => 'link',
       '#title' => $codigo_solicitud,
       '#url' => \Drupal\Core\Url::fromUri('internal:/solicitud/' . $codigo_solicitud),
@@ -817,6 +817,13 @@ function asocolderma_inscription_preprocess_views_view_table(array &$variables):
           'solicitud-id-link',
         ],
         'title' => 'Ver detalle de la solicitud ' . $codigo_solicitud,
+      ],
+    ];
+
+    $row['columns']['nothing_1']['content'] = [
+      [
+        'separator' => '',
+        'field_output' => $link,
       ],
     ];
   }
