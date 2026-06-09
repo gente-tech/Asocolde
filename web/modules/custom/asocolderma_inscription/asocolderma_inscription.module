@@ -762,3 +762,62 @@ function asocolderma_inscription_preprocess_views_view_field(array &$variables):
     'title' => 'Ver detalle de la solicitud ' . $codigo_solicitud,
   ];
 }
+
+/**
+ * Convierte el ID de solicitud en enlace dentro de la tabla de /solicitudes.
+ */
+function asocolderma_inscription_preprocess_views_view_table(array &$variables): void
+{
+  if (
+    empty($variables['view']) ||
+    $variables['view']->id() !== 'solicitudes_aspirantes' ||
+    $variables['view']->current_display !== 'page_9'
+  ) {
+    return;
+  }
+
+  foreach ($variables['rows'] as $row_index => &$row) {
+    $result_row = $variables['view']->result[$row_index] ?? NULL;
+
+    if (
+      !$result_row ||
+      empty($result_row->_entity) ||
+      !$result_row->_entity instanceof \Drupal\node\NodeInterface
+    ) {
+      continue;
+    }
+
+    /** @var \Drupal\node\NodeInterface $node */
+    $node = $result_row->_entity;
+
+    if ($node->bundle() !== 'solicitud_ingreso') {
+      continue;
+    }
+
+    if (!$node->hasField('field_solicitud_id') || $node->get('field_solicitud_id')->isEmpty()) {
+      continue;
+    }
+
+    $codigo_solicitud = trim((string) $node->get('field_solicitud_id')->value);
+
+    if ($codigo_solicitud === '') {
+      continue;
+    }
+
+    if (!isset($row['columns']['nothing_1'])) {
+      continue;
+    }
+
+    $row['columns']['nothing_1']['content'] = [
+      '#type' => 'link',
+      '#title' => $codigo_solicitud,
+      '#url' => \Drupal\Core\Url::fromUri('internal:/solicitud/' . $codigo_solicitud),
+      '#attributes' => [
+        'class' => [
+          'solicitud-id-link',
+        ],
+        'title' => 'Ver detalle de la solicitud ' . $codigo_solicitud,
+      ],
+    ];
+  }
+}
