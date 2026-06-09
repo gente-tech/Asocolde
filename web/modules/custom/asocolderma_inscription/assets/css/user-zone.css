@@ -259,9 +259,8 @@ body:has(.user-zone-page) #block-asocolderma-b5-page-title {
 
 /* Oculta estructura pública del theme dentro del flujo del aspirante. */
 .asocolderma-inscription-zone-page .top-searcher,
-.asocolderma-inscription-zone-page header,
 .asocolderma-inscription-zone-page .site-header,
-.asocolderma-inscription-zone-page .navbar,
+.asocolderma-inscription-zone-page .navbar:not(.user-zone-app-menu),
 .asocolderma-inscription-zone-page footer,
 .asocolderma-inscription-zone-page .footer {
   display: none !important;
@@ -587,4 +586,9 @@ body:has(.user-zone-page) #block-asocolderma-b5-page-title {
   .user-zone-table__actions .user-zone-button {
     width: 100%;
   }
+}
+
+.asocolderma-inscription-zone-page .user-zone-app-header,
+.asocolderma-inscription-zone-page .user-zone-header {
+  display: block !important;
 }
