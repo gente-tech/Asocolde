@@ -1,64 +1,392 @@
+/* =========================
+   ZONA ASPIRANTE ASOCOLDERMA
+   ========================= */
+
+body:has(.user-zone-page) {
+  background: #f5f7fa !important;
+}
+
+body:has(.user-zone-page) .page-title,
+body:has(.user-zone-page) h1.page-title,
+body:has(.user-zone-page) #block-asocolderma-b5-page-title {
+  display: none !important;
+}
+
+.user-zone-page {
+  max-width: 1180px;
+  margin: 0 auto 80px;
+  padding: 28px 0 40px;
+  color: #111827;
+  font-family: inherit;
+}
+
+.user-zone-header {
+  margin-bottom: 20px;
+}
+
+.user-zone-header__content {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 24px 28px;
+  border: 1px solid #d9e1e8;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #ffffff 0%, #f0fdfa 100%);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.user-zone-header__eyebrow,
+.user-zone-card__eyebrow,
+.user-zone-request-card__label {
+  display: block;
+  margin-bottom: 6px;
+  color: #008c8c;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.user-zone-header__title {
+  margin: 0 0 8px;
+  color: #111827;
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.user-zone-header__description {
+  max-width: 720px;
+  margin: 0;
+  color: #475569;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.user-zone-header__user {
+  min-width: 260px;
+  padding: 18px;
+  border: 1px solid #cce7e7;
+  border-radius: 14px;
+  background: #ffffff;
+  align-self: center;
+}
+
+.user-zone-header__label {
+  display: block;
+  margin-bottom: 5px;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.user-zone-header__name {
+  display: block;
+  color: #111827;
+  font-size: 15px;
+  font-weight: 900;
+  word-break: break-word;
+}
+
+/* =========================
+   MENÚ ASPIRANTE
+   ========================= */
+
 .user-zone-menu {
-  position: sticky;
-  top: 16px;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 22px;
+  padding: 14px;
+  border: 1px solid #d9e1e8;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
 }
 
 .user-zone-menu__link {
-  display: block;
-  padding: 10px 12px;
-  border-radius: 6px;
-  text-decoration: none;
-}
-
-.user-zone-menu__link.is-active {
-  font-weight: 700;
-  background: #f3f3f3;
-}
-
-.solicitud-user-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-}
-
-.solicitud-user-actions .button {
-  margin: 0;
-  white-space: nowrap;
-}
-
-.solicitud-user-actions .button--primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-height: 42px;
+  padding: 9px 18px;
+  border: 1px solid #cfd8e3;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #0f766e;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-decoration: none !important;
+  transition: all 0.15s ease-in-out;
 }
 
-.solicitud-aclaracion-motivo {
-  margin: 16px 0 24px;
-  padding: 16px;
-  border: 1px solid #d8d8d8;
-  border-left: 4px solid #b7791f;
-  border-radius: 6px;
-  background: #fffaf0;
+.user-zone-menu__link:hover,
+.user-zone-menu__link.is-active {
+  border-color: #008c8c;
+  background: #008c8c;
+  color: #ffffff;
 }
 
-.solicitud-aclaracion-motivo h3 {
-  margin: 0 0 8px;
-  font-size: 18px;
+.user-zone-menu__link--logout {
+  margin-left: auto;
+  border-color: #fed7aa;
+  background: #fff7ed;
+  color: #9a3412;
+}
+
+.user-zone-menu__link--logout:hover {
+  border-color: #ea580c;
+  background: #ea580c;
+  color: #ffffff;
+}
+
+/* =========================
+   TARJETAS BASE
+   ========================= */
+
+.user-zone-card {
+  overflow: hidden;
+  border: 1px solid #d9e1e8;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.user-zone-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 22px 26px;
+  border-bottom: 1px solid #e5edf5;
+  background: #ffffff;
+}
+
+.user-zone-card__title {
+  margin: 0;
+  color: #111827;
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.user-zone-card__body {
+  padding: 24px 26px;
+}
+
+/* =========================
+   BOTONES
+   ========================= */
+
+.user-zone-button,
+.user-zone-card__actions .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 9px 20px;
+  border: 1px solid #008c8c;
+  border-radius: 10px;
+  background: #008c8c;
+  color: #ffffff !important;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-decoration: none !important;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.user-zone-button:hover,
+.user-zone-card__actions .button:hover {
+  border-color: #006d6d;
+  background: #006d6d;
+  color: #ffffff !important;
+}
+
+.user-zone-button--secondary {
+  border-color: #cfd8e3;
+  background: #f8fafc;
+  color: #0f172a !important;
+}
+
+.user-zone-button--secondary:hover {
+  border-color: #008c8c;
+  background: #f0fdfa;
+  color: #006d6d !important;
+}
+
+/* =========================
+   ALERTAS Y VACÍOS
+   ========================= */
+
+.user-zone-alert {
+  margin: 18px 26px 0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-size: 15px;
   font-weight: 700;
 }
 
-.solicitud-aclaracion-motivo__content {
-  font-size: 15px;
-  line-height: 1.5;
-  color: #333;
+.user-zone-alert--info {
+  border: 1px solid #bae6fd;
+  background: #f0f9ff;
+  color: #075985;
 }
 
-.solicitud-aclaracion-motivo__content--empty {
-  color: #777;
-  font-style: italic;
+.user-zone-empty {
+  padding: 38px 26px;
+  text-align: center;
+}
+
+.user-zone-empty__title {
+  margin: 0 0 8px;
+  color: #111827;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.user-zone-empty__text {
+  margin: 0 0 18px;
+  color: #475569;
+  font-size: 15px;
+}
+
+/* =========================
+   LISTADO DE SOLICITUDES
+   ========================= */
+
+.user-zone-requests-list {
+  display: grid;
+  gap: 14px;
+  padding: 22px 26px 26px;
+}
+
+.user-zone-request-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+}
+
+.user-zone-request-card:hover {
+  border-color: #99d5d5;
+  background: #fbffff;
+}
+
+.user-zone-request-card__main {
+  display: grid;
+  gap: 8px;
+}
+
+.user-zone-request-card__code {
+  display: grid;
+  gap: 2px;
+}
+
+.user-zone-request-card__link {
+  color: #006d6d;
+  font-size: 20px;
+  font-weight: 900;
+  text-decoration: none !important;
+}
+
+.user-zone-request-card__link:hover {
+  color: #004f4f;
+  text-decoration: underline !important;
+}
+
+.user-zone-request-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.user-zone-request-card__state {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #047857;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.user-zone-request-card__date {
+  color: #475569;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.user-zone-request-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* =========================
+   PERFIL RENDERIZADO
+   ========================= */
+
+.user-zone-card--profile .field {
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.user-zone-card--profile .field__label {
+  margin-bottom: 4px;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.user-zone-card--profile .field__item,
+.user-zone-card--profile .field__items {
+  color: #111827;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 900px) {
+  .user-zone-page {
+    padding: 18px 0 40px;
+  }
+
+  .user-zone-header__content,
+  .user-zone-card__header,
+  .user-zone-request-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .user-zone-header__user {
+    width: 100%;
+    min-width: 100%;
+  }
+
+  .user-zone-menu__link--logout {
+    margin-left: 0;
+  }
+
+  .user-zone-request-card__actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
 }
