@@ -103,7 +103,6 @@ final class SolicitudMemberActivator
 		$this->copyScalar($solicitud, $user, 'field_direccion_institucional', 'field_address_office');
 
 		$this->copyBoolean($solicitud, $user, 'field_terms_accepted', 'field_legal_terms');
-		$this->copyBoolean($solicitud, $user, 'field_recertificacion_camec', 'field_recertificate');
 
 		$this->copyEntityReference($solicitud, $user, 'field_pais', 'field_country');
 		$this->copyEntityReference($solicitud, $user, 'field_ciudad_ejercicio', 'field_city');

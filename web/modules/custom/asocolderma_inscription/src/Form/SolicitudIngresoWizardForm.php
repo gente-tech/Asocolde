@@ -149,7 +149,6 @@ final class SolicitudIngresoWizardForm extends FormBase
         'titulo_universitario',
         'universidad_residencia',
         'pais_residencia',
-        'recertificacion_camec',
         'tiene_subespecialidad',
         'subespecialidad_cual',
       ],
@@ -508,12 +507,6 @@ final class SolicitudIngresoWizardForm extends FormBase
         '#empty_option' => $this->t('- Seleccione -'),
         '#options' => $this->getTaxonomyOptions('country'),
         '#default_value' => $wizard_values['profesional']['pais_residencia'] ?? NULL,
-      ];
-
-      $form['profesional']['recertificacion_camec'] = [
-        '#type' => 'checkbox',
-        '#title' => $this->t('Si es ratificado ¿le gustaría participar en el programa voluntario de Re-certificación médica en dermatología CAMEC?'),
-        '#default_value' => !empty($wizard_values['profesional']['recertificacion_camec']) ? 1 : 0,
       ];
 
       $form['profesional']['tiene_subespecialidad'] = [
@@ -938,7 +931,6 @@ final class SolicitudIngresoWizardForm extends FormBase
         'titulo_universitario' => $input['profesional']['titulo_universitario'] ?? NULL,
         'universidad_residencia' => $input['profesional']['universidad_residencia'] ?? NULL,
         'pais_residencia' => $input['profesional']['pais_residencia'] ?? NULL,
-        'recertificacion_camec' => !empty($input['profesional']['recertificacion_camec']) ? 1 : 0,
         'tiene_subespecialidad' => isset($input['profesional']['tiene_subespecialidad'])
           ? (int) $input['profesional']['tiene_subespecialidad']
           : 0,
@@ -1062,8 +1054,6 @@ final class SolicitudIngresoWizardForm extends FormBase
       'field_pais_residencia' => !empty($wizard_values['profesional']['pais_residencia'])
         ? ['target_id' => (int) $wizard_values['profesional']['pais_residencia']]
         : NULL,
-
-      'field_recertificacion_camec' => !empty($wizard_values['profesional']['recertificacion_camec']) ? 1 : 0,
 
       'field_tiene_subespecialidad' => !empty($wizard_values['profesional']['tiene_subespecialidad']) ? 1 : 0,
 

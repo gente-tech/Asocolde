@@ -312,12 +312,6 @@ final class SolicitudIngresoEditWizardForm extends FormBase
       '#default_value' => $this->getTargetId($node, 'field_pais_residencia'),
     ];
 
-    $form['profesional']['recertificacion_camec'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Si es ratificado ¿le gustaría participar en el programa voluntario de Re-certificación médica en dermatología CAMEC?'),
-      '#default_value' => $this->getBooleanValue($node, 'field_recertificacion_camec'),
-    ];
-
     $form['profesional']['tiene_subespecialidad'] = [
       '#type' => 'radios',
       '#title' => $this->t('Tiene una Subespecialidad?'),
@@ -526,7 +520,6 @@ final class SolicitudIngresoEditWizardForm extends FormBase
     $node->set('field_titulo_universitario', ['target_id' => (int) $profesional['titulo_universitario']]);
     $node->set('field_universidad_residencia', ['target_id' => (int) $profesional['universidad_residencia']]);
     $node->set('field_pais_residencia', ['target_id' => (int) $profesional['pais_residencia']]);
-    $node->set('field_recertificacion_camec', !empty($profesional['recertificacion_camec']) ? 1 : 0);
     $node->set('field_tiene_subespecialidad', !empty($profesional['tiene_subespecialidad']) ? 1 : 0);
 
     if (!empty($profesional['tiene_subespecialidad']) && !empty($profesional['subespecialidad_cual'])) {

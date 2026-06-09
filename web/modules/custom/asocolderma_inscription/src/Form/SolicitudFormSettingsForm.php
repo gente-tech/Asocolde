@@ -260,11 +260,6 @@ final class SolicitudFormSettingsForm extends ConfigFormBase
 						'placeholder' => '- Seleccione -',
 						'description' => '',
 					],
-					'recertificacion_camec' => [
-						'label' => 'Si es ratificado ¿le gustaría participar en el programa voluntario de Re-certificación médica en dermatología CAMEC?',
-						'placeholder' => '',
-						'description' => '',
-					],
 					'tiene_subespecialidad' => [
 						'label' => 'Tiene una Subespecialidad?',
 						'placeholder' => '',

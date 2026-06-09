@@ -371,14 +371,6 @@ function asocolderma_inscription_update_9001(): void
     TRUE
   );
 
-  $ensure_storage('field_recertificacion_camec', 'boolean');
-  $ensure_field(
-    'field_recertificacion_camec',
-    'Si es ratificado ¿le gustaría participar en el programa voluntario de Re-certificación médica en dermatología CAMEC?',
-    [],
-    FALSE
-  );
-
   $ensure_storage('field_tiene_subespecialidad', 'boolean');
   $ensure_field(
     'field_tiene_subespecialidad',
@@ -1254,12 +1246,6 @@ function asocolderma_inscription_update_9010(): void
 
   // Campos booleanos.
   $ensure_boolean_field(
-    'field_recertificacion_camec',
-    'Si es ratificado ¿le gustaría participar en el programa voluntario de Re-certificación médica en dermatología CAMEC?',
-    FALSE
-  );
-
-  $ensure_boolean_field(
     'field_tiene_subespecialidad',
     'Tiene una Subespecialidad?',
     TRUE
@@ -1330,16 +1316,6 @@ function asocolderma_inscription_update_9011(): void
       'third_party_settings' => [],
     ]);
   }
-
-  $form_display->setComponent('field_recertificacion_camec', [
-    'type' => 'boolean_checkbox',
-    'weight' => 35,
-    'region' => 'content',
-    'settings' => [
-      'display_label' => TRUE,
-    ],
-    'third_party_settings' => [],
-  ]);
 
   $form_display->setComponent('field_tiene_subespecialidad', [
     'type' => 'options_buttons',

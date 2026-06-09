@@ -207,11 +207,6 @@ final class SolicitudIngreso extends ContentEntityBase
       ->setRequired(TRUE)
       ->setSetting('max_length', 100);
 
-    $fields['recertificacion_camec'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Desea participar en CAMEC'))
-      ->setRequired(TRUE)
-      ->setDefaultValue(FALSE);
-
     $fields['tiene_subespecialidad'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Tiene subespecialidad'))
       ->setRequired(TRUE)
