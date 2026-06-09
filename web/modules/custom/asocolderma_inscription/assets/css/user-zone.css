@@ -633,7 +633,7 @@ body:has(.user-zone-page) #block-asocolderma-b5-page-title {
   position: absolute;
   top: calc(100% + 12px);
   right: 0;
-  min-width: 230px;
+  min-width: 280px;
   padding: 8px;
   border: 1px solid #d9e6ec;
   border-radius: 16px;
@@ -646,6 +646,25 @@ body:has(.user-zone-page) #block-asocolderma-b5-page-title {
     opacity 0.16s ease,
     visibility 0.16s ease,
     transform 0.16s ease;
+}
+
+.user-zone-app-menu__group--single .user-zone-app-menu__trigger {
+  border-color: #b7e1df;
+  background: #eefcfb;
+  color: #005f61;
+  box-shadow: 0 8px 18px rgba(0, 140, 140, 0.10);
+}
+
+.user-zone-app-menu__group--single .user-zone-app-menu__trigger:hover,
+.user-zone-app-menu__group--single.is-open .user-zone-app-menu__trigger {
+  border-color: #008c8c;
+  background: #008c8c;
+  color: #ffffff;
+}
+
+.user-zone-app-menu__group--single.is-open .user-zone-app-menu__chevron,
+.user-zone-app-menu__group--single .user-zone-app-menu__trigger:hover .user-zone-app-menu__chevron {
+  color: #ffffff;
 }
 
 .user-zone-app-menu__group.is-open .user-zone-app-menu__dropdown {
@@ -809,19 +828,6 @@ body:has(.user-zone-page) #block-asocolderma-b5-page-title {
     border-color: #d9e6ec;
     background: #f8fafc;
     border-radius: 14px;
-  }
-
-  .user-zone-app-menu__dropdown {
-    position: static;
-    min-width: 100%;
-    margin-top: 8px;
-    padding: 6px;
-    border-radius: 14px;
-    box-shadow: none;
-    opacity: 1;
-    visibility: visible;
-    transform: none;
-    display: none;
   }
 
   .user-zone-app-menu__group.is-open .user-zone-app-menu__dropdown {
