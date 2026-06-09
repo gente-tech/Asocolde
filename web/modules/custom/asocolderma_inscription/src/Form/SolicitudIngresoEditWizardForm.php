@@ -356,6 +356,11 @@ final class SolicitudIngresoEditWizardForm extends FormBase
     $this->buildFileField($form, $node, 'adj_rethus', 'field_adj_rethus', 'RETHUS', 'private://solicitud_ingreso/rethus/', 'pdf', TRUE);
     $this->buildFileField($form, $node, 'adj_aut_verificacion', 'field_adj_aut_verificacion', 'Autorización de verificación', 'private://solicitud_ingreso/aut_verificacion/', 'pdf', TRUE);
     $this->buildFileField($form, $node, 'adj_cert_publicacion', 'field_adj_cert_publicacion', 'Certificación de publicaciones', 'private://solicitud_ingreso/cert_publicacion/', 'pdf', FALSE);
+    $this->buildFileField($form, $node, 'adj_acta_grado_medico', 'field_adj_acta_grado_medico', 'Acta de grado como médico general', 'private://solicitud_ingreso/acta_grado_medico/', 'pdf', TRUE);
+    $this->buildFileField($form, $node, 'adj_acta_grado_dermatologo', 'field_adj_acta_grado_dermatologo', 'Acta de grado como dermatólogo', 'private://solicitud_ingreso/acta_grado_dermatologo/', 'pdf', TRUE);
+    $this->buildFileField($form, $node, 'adj_convalidacion', 'field_adj_convalidacion', 'Copia de la resolución de la convalidación', 'private://solicitud_ingreso/convalidacion/', 'pdf', FALSE);
+    $this->buildFileField($form, $node, 'adj_pensum_academico', 'field_adj_pensum_academico', 'Copia del pénsum académico', 'private://solicitud_ingreso/pensum_academico/', 'pdf', TRUE);
+    $this->buildFileField($form, $node, 'adj_notas_dermatologia', 'field_adj_notas_dermatologia', 'Notas obtenidas en la especialización en dermatología', 'private://solicitud_ingreso/notas_dermatologia/', 'pdf', TRUE);
 
     $form['confirmacion'] = [
       '#type' => 'details',
@@ -540,6 +545,11 @@ final class SolicitudIngresoEditWizardForm extends FormBase
       'adj_rethus' => 'field_adj_rethus',
       'adj_aut_verificacion' => 'field_adj_aut_verificacion',
       'adj_cert_publicacion' => 'field_adj_cert_publicacion',
+      'adj_acta_grado_medico' => 'field_adj_acta_grado_medico',
+      'adj_acta_grado_dermatologo' => 'field_adj_acta_grado_dermatologo',
+      'adj_convalidacion' => 'field_adj_convalidacion',
+      'adj_pensum_academico' => 'field_adj_pensum_academico',
+      'adj_notas_dermatologia' => 'field_adj_notas_dermatologia',
     ];
 
     $file_storage = \Drupal::entityTypeManager()->getStorage('file');

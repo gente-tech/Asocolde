@@ -164,6 +164,11 @@ final class SolicitudIngresoWizardForm extends FormBase
         'adj_rethus',
         'adj_aut_verificacion',
         'adj_cert_publicacion',
+        'adj_acta_grado_medico',
+        'adj_acta_grado_dermatologo',
+        'adj_convalidacion',
+        'adj_pensum_academico',
+        'adj_notas_dermatologia',
       ],
       'confirm' => [
         'terms',
@@ -688,6 +693,70 @@ final class SolicitudIngresoWizardForm extends FormBase
           'file_validate_size' => [10 * 1024 * 1024],
         ],
       ];
+
+      $form['adjuntos']['adj_acta_grado_medico'] = [
+        '#type' => 'managed_file',
+        '#title' => $this->t('Acta de grado como médico general'),
+        '#description' => $this->t('Adjunte el acta de grado como médico general en formato PDF. Tamaño máximo: 10 MB.'),
+        '#required' => TRUE,
+        '#upload_location' => 'private://solicitud_ingreso/acta_grado_medico/',
+        '#default_value' => $wizard_values['adjuntos']['adj_acta_grado_medico'] ?? NULL,
+        '#upload_validators' => [
+          'file_validate_extensions' => ['pdf'],
+          'file_validate_size' => [10 * 1024 * 1024],
+        ],
+      ];
+
+      $form['adjuntos']['adj_acta_grado_dermatologo'] = [
+        '#type' => 'managed_file',
+        '#title' => $this->t('Acta de grado como dermatólogo'),
+        '#description' => $this->t('Adjunte el acta de grado como dermatólogo en formato PDF. Tamaño máximo: 10 MB.'),
+        '#required' => TRUE,
+        '#upload_location' => 'private://solicitud_ingreso/acta_grado_dermatologo/',
+        '#default_value' => $wizard_values['adjuntos']['adj_acta_grado_dermatologo'] ?? NULL,
+        '#upload_validators' => [
+          'file_validate_extensions' => ['pdf'],
+          'file_validate_size' => [10 * 1024 * 1024],
+        ],
+      ];
+
+      $form['adjuntos']['adj_convalidacion'] = [
+        '#type' => 'managed_file',
+        '#title' => $this->t('Copia de la resolución de la convalidación'),
+        '#description' => $this->t('Si realizó la especialización fuera de Colombia, adjunte la resolución de convalidación en formato PDF. Este campo es opcional. Tamaño máximo: 10 MB.'),
+        '#upload_location' => 'private://solicitud_ingreso/convalidacion/',
+        '#default_value' => $wizard_values['adjuntos']['adj_convalidacion'] ?? NULL,
+        '#upload_validators' => [
+          'file_validate_extensions' => ['pdf'],
+          'file_validate_size' => [10 * 1024 * 1024],
+        ],
+      ];
+
+      $form['adjuntos']['adj_pensum_academico'] = [
+        '#type' => 'managed_file',
+        '#title' => $this->t('Copia del pénsum académico'),
+        '#description' => $this->t('Adjunte copia del pénsum académico de la especialización en dermatología en formato PDF. Tamaño máximo: 10 MB.'),
+        '#required' => TRUE,
+        '#upload_location' => 'private://solicitud_ingreso/pensum_academico/',
+        '#default_value' => $wizard_values['adjuntos']['adj_pensum_academico'] ?? NULL,
+        '#upload_validators' => [
+          'file_validate_extensions' => ['pdf'],
+          'file_validate_size' => [10 * 1024 * 1024],
+        ],
+      ];
+
+      $form['adjuntos']['adj_notas_dermatologia'] = [
+        '#type' => 'managed_file',
+        '#title' => $this->t('Notas obtenidas en la especialización en dermatología'),
+        '#description' => $this->t('Adjunte las notas obtenidas durante la especialización en dermatología en formato PDF. Tamaño máximo: 10 MB.'),
+        '#required' => TRUE,
+        '#upload_location' => 'private://solicitud_ingreso/notas_dermatologia/',
+        '#default_value' => $wizard_values['adjuntos']['adj_notas_dermatologia'] ?? NULL,
+        '#upload_validators' => [
+          'file_validate_extensions' => ['pdf'],
+          'file_validate_size' => [10 * 1024 * 1024],
+        ],
+      ];
     }
 
     if ($step === 5) {
@@ -947,6 +1016,11 @@ final class SolicitudIngresoWizardForm extends FormBase
         'adj_diploma_medico' => $input['adjuntos']['adj_diploma_medico'] ?? NULL,
         'adj_diploma_dermatologo' => $input['adjuntos']['adj_diploma_dermatologo'] ?? NULL,
         'adj_cert_publicacion' => $input['adjuntos']['adj_cert_publicacion'] ?? NULL,
+        'adj_acta_grado_medico' => $input['adjuntos']['adj_acta_grado_medico'] ?? NULL,
+        'adj_acta_grado_dermatologo' => $input['adjuntos']['adj_acta_grado_dermatologo'] ?? NULL,
+        'adj_convalidacion' => $input['adjuntos']['adj_convalidacion'] ?? NULL,
+        'adj_pensum_academico' => $input['adjuntos']['adj_pensum_academico'] ?? NULL,
+        'adj_notas_dermatologia' => $input['adjuntos']['adj_notas_dermatologia'] ?? NULL,
         'adj_aut_verificacion' => $input['adjuntos']['adj_aut_verificacion'] ?? NULL,
         'adj_carta_1' => $input['adjuntos']['adj_carta_1'] ?? NULL,
         'adj_carta_2' => $input['adjuntos']['adj_carta_2'] ?? NULL,
@@ -1075,6 +1149,11 @@ final class SolicitudIngresoWizardForm extends FormBase
       'adj_diploma_medico' => 'field_adj_diploma_medico',
       'adj_diploma_dermatologo' => 'field_adj_diploma_dermatologo',
       'adj_cert_publicacion' => 'field_adj_cert_publicacion',
+      'adj_acta_grado_medico' => 'field_adj_acta_grado_medico',
+      'adj_acta_grado_dermatologo' => 'field_adj_acta_grado_dermatologo',
+      'adj_convalidacion' => 'field_adj_convalidacion',
+      'adj_pensum_academico' => 'field_adj_pensum_academico',
+      'adj_notas_dermatologia' => 'field_adj_notas_dermatologia',
       'adj_aut_verificacion' => 'field_adj_aut_verificacion',
       'adj_carta_1' => 'field_adj_carta_1',
       'adj_carta_2' => 'field_adj_carta_2',
