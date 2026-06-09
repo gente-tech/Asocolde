@@ -137,9 +137,22 @@ function asocolderma_inscription_build_semaforo_steps(NodeInterface $node): arra
 
   $last_index = count($history_steps) - 1;
 
+  $completed_states_that_move_to_next = [
+    'Aprobada',
+    'Aprobado Junta D.',
+    'Aprobado Asamblea G.',
+    'Documentos firmados',
+  ];
+
   foreach ($history_steps as $index => &$step) {
     if ($index === $last_index) {
-      $step['status'] = $has_rejected ? 'cancelled' : 'current';
+      if ($has_rejected) {
+        $step['status'] = 'cancelled';
+      } elseif (in_array($current_name, $completed_states_that_move_to_next, TRUE)) {
+        $step['status'] = 'done';
+      } else {
+        $step['status'] = 'current';
+      }
     } else {
       $step['status'] = 'done';
     }
