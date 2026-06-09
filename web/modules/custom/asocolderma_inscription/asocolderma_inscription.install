@@ -1452,3 +1452,60 @@ function asocolderma_inscription_update_9013(): void
 
   \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
 }
+
+/**
+ * Agrega nuevos adjuntos académicos PDF a la solicitud de ingreso.
+ */
+function asocolderma_inscription_update_9014(): void
+{
+  $entity_type = 'node';
+  $bundle = 'solicitud_ingreso';
+
+  $file_storage_settings = [
+    'uri_scheme' => 'private',
+    'target_type' => 'file',
+    'display_field' => FALSE,
+    'display_default' => FALSE,
+  ];
+
+  $file_field_settings = [
+    'file_directory' => 'solicitud_ingreso/adjuntos_academicos',
+    'file_extensions' => 'pdf',
+    'max_filesize' => '10 MB',
+    'description_field' => FALSE,
+  ];
+
+  $fields = [
+    'field_adj_acta_grado_medico' => 'Acta de grado como médico general',
+    'field_adj_acta_grado_dermatologo' => 'Acta de grado como dermatólogo',
+    'field_adj_convalidacion' => 'Copia de la resolución de la convalidación',
+    'field_adj_pensum_academico' => 'Copia del pénsum académico',
+    'field_adj_notas_dermatologia' => 'Notas obtenidas en la especialización en dermatología',
+  ];
+
+  foreach ($fields as $field_name => $label) {
+    if (!FieldStorageConfig::loadByName($entity_type, $field_name)) {
+      FieldStorageConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => $entity_type,
+        'type' => 'file',
+        'settings' => $file_storage_settings,
+        'cardinality' => 1,
+        'translatable' => FALSE,
+      ])->save();
+    }
+
+    if (!FieldConfig::loadByName($entity_type, $bundle, $field_name)) {
+      FieldConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => $entity_type,
+        'bundle' => $bundle,
+        'label' => $label,
+        'required' => FALSE,
+        'settings' => $file_field_settings,
+      ])->save();
+    }
+  }
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
