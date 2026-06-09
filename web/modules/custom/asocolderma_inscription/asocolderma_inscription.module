@@ -3,6 +3,33 @@
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 
+/**
+ * Implements hook_theme().
+ */
+function asocolderma_inscription_theme($existing, $type, $theme, $path): array
+{
+  return [
+    'asocolderma_inscription_user_zone_profile' => [
+      'variables' => [
+        'user_name' => NULL,
+        'profile' => NULL,
+        'edit_link' => NULL,
+      ],
+      'template' => 'asocolderma-inscription-user-zone-profile',
+    ],
+    'asocolderma_inscription_user_zone_requests' => [
+      'variables' => [
+        'user_name' => NULL,
+        'requests' => [],
+        'primary_action' => NULL,
+        'has_active' => FALSE,
+        'has_draft' => FALSE,
+      ],
+      'template' => 'asocolderma-inscription-user-zone-requests',
+    ],
+  ];
+}
+
 function asocolderma_inscription_preprocess_node(array &$variables)
 {
   if (empty($variables['node']) || !$variables['node'] instanceof NodeInterface) {

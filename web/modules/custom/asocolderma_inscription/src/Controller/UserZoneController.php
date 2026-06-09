@@ -59,18 +59,41 @@ final class UserZoneController extends ControllerBase
     $profile = $profiles ? reset($profiles) : NULL;
 
     if (!$profile) {
-      return ['#markup' => $this->t('No se encontró un perfil asociado a tu cuenta.')];
+      return [
+        '#markup' => $this->t('No se encontró un perfil asociado a tu cuenta.'),
+        '#attached' => [
+          'library' => [
+            'asocolderma_inscription/user_zone',
+          ],
+        ],
+      ];
     }
 
     $view_builder = $this->etm->getViewBuilder('profile');
 
+    $edit_link = [
+      '#type' => 'link',
+      '#title' => $this->t('Editar perfil'),
+      '#url' => Url::fromRoute('asocolderma_inscription.user_zone_profile_edit'),
+      '#attributes' => [
+        'class' => [
+          'button',
+          'button--primary',
+          'user-zone-button',
+          'user-zone-button--primary',
+        ],
+      ],
+    ];
+
     return [
-      'profile' => $view_builder->view($profile, 'default'),
-      'actions' => [
-        '#type' => 'link',
-        '#title' => $this->t('Editar perfil'),
-        '#url' => \Drupal\Core\Url::fromRoute('asocolderma_inscription.user_zone_profile_edit'),
-        '#attributes' => ['class' => ['button']],
+      '#theme' => 'asocolderma_inscription_user_zone_profile',
+      '#user_name' => $account->getDisplayName(),
+      '#profile' => $view_builder->view($profile, 'default'),
+      '#edit_link' => $edit_link,
+      '#attached' => [
+        'library' => [
+          'asocolderma_inscription/user_zone',
+        ],
       ],
       '#cache' => [
         'contexts' => ['user'],
@@ -116,70 +139,47 @@ final class UserZoneController extends ControllerBase
 
     $nodes = $storage->loadMultiple($ids);
 
-    $rows = [];
+    $requests = [];
+
     foreach ($nodes as $n) {
       $term = $n->get('field_state')->entity;
       $estado_label = $term ? (string) $term->label() : '-';
 
-      $action = '';
-
-      $actions = [
-        '#type' => 'container',
-        '#attributes' => [
-          'class' => ['solicitud-user-actions'],
-        ],
-      ];
+      $actions = [];
 
       if ($estado_label === 'Pendiente aclaración') {
-        $actions['edit'] = [
-          '#type' => 'link',
-          '#title' => $this->t('Editar solicitud'),
-          '#url' => \Drupal\Core\Url::fromRoute(
+        $actions[] = [
+          'label' => $this->t('Editar solicitud'),
+          'url' => Url::fromRoute(
             'asocolderma_inscription.solicitud_edit',
             ['node' => $n->id()]
-          ),
-          '#attributes' => [
-            'class' => ['button', 'button--primary'],
-          ],
+          )->toString(),
+          'modifier' => 'primary',
         ];
       }
 
       if ($estado_label === 'Pendiente firma de documentos') {
-        $actions['sign'] = [
-          '#type' => 'link',
-          '#title' => $this->t('Firmar documentos'),
-          '#url' => \Drupal\Core\Url::fromRoute(
+        $actions[] = [
+          'label' => $this->t('Firmar documentos'),
+          'url' => Url::fromRoute(
             'asocolderma_inscription.solicitud_sign_redirect',
             ['node' => $n->id()]
-          ),
-          '#attributes' => [
-            'class' => ['button', 'button--primary'],
-          ],
+          )->toString(),
+          'modifier' => 'primary',
         ];
       }
 
-      $action = !empty($actions['edit']) || !empty($actions['sign'])
-        ? ['data' => $actions]
-        : '-';
-
       $solicitud_id = $n->get('field_solicitud_id')->value ?? ('NID ' . $n->id());
 
-      $rows[] = [
-        'id' => [
-          'data' => [
-            '#type' => 'link',
-            '#title' => $solicitud_id,
-            '#url' => Url::fromRoute('asocolderma_inscription.user_zone_request_detail', [
-              'node' => $n->id(),
-            ]),
-            '#attributes' => [
-              'class' => ['solicitud-id-link'],
-            ],
-          ],
-        ],
+      $requests[] = [
+        'id' => $n->id(),
+        'code' => $solicitud_id,
         'state' => $estado_label,
-        'created' => \Drupal::service('date.formatter')->format((int) $n->getCreatedTime(), 'short'),
-        'actions' => $action,
+        'created' => \Drupal::service('date.formatter')->format((int) $n->getCreatedTime(), 'custom', 'd/m/Y h:i A'),
+        'detail_url' => Url::fromRoute('asocolderma_inscription.user_zone_request_detail', [
+          'node' => $n->id(),
+        ])->toString(),
+        'actions' => $actions,
       ];
     }
 
@@ -189,58 +189,32 @@ final class UserZoneController extends ControllerBase
     $draft = $tempStore->get(self::TEMPSTORE_KEY);
     $has_draft = !empty($draft) && is_array($draft);
 
-    $build = [];
+    $primary_action = NULL;
 
-    if ($has_active) {
-      $build['active_notice'] = [
-        '#type' => 'status_messages',
+    if (!$has_active) {
+      $primary_action = [
+        'label' => $has_draft ? $this->t('Continuar solicitud') : $this->t('Crear solicitud'),
+        'url' => Url::fromRoute('asocolderma_inscription.solicitud_create')->toString(),
       ];
-      $this->messenger()->addStatus($this->t('Tienes una solicitud activa en curso. No puedes crear otra hasta que finalice.'));
-    } else {
-      if ($has_draft) {
-        $build['continue'] = [
-          '#type' => 'link',
-          '#title' => $this->t('Continuar solicitud'),
-          '#url' => \Drupal\Core\Url::fromRoute('asocolderma_inscription.solicitud_create'),
-          '#attributes' => ['class' => ['button', 'button--primary']],
-        ];
-      } else {
-        $build['create'] = [
-          '#type' => 'link',
-          '#title' => $this->t('Crear solicitud'),
-          '#url' => \Drupal\Core\Url::fromRoute('asocolderma_inscription.solicitud_create'),
-          '#attributes' => ['class' => ['button', 'button--primary']],
-        ];
-      }
     }
 
-    $build['table'] = [
-      '#type' => 'table',
-      '#header' => [
-        $this->t('ID'),
-        $this->t('Estado'),
-        $this->t('Creada'),
-        $this->t('Acciones'),
-      ],
-      '#rows' => array_map(
-        static fn($r) => [
-          $r['id'],
-          $r['state'],
-          $r['created'],
-          $r['actions'],
+    return [
+      '#theme' => 'asocolderma_inscription_user_zone_requests',
+      '#user_name' => $account->getDisplayName(),
+      '#requests' => $requests,
+      '#primary_action' => $primary_action,
+      '#has_active' => $has_active,
+      '#has_draft' => $has_draft,
+      '#attached' => [
+        'library' => [
+          'asocolderma_inscription/user_zone',
         ],
-        $rows
-      ),
-      '#empty' => $this->t('Aún no has creado solicitudes.'),
+      ],
+      '#cache' => [
+        'contexts' => ['user'],
+        'max-age' => 0,
+      ],
     ];
-
-    $build['#cache'] = [
-      'max-age' => 0,
-    ];
-
-    $build['#attached']['library'][] = 'asocolderma_inscription/user_zone';
-
-    return $build;
   }
 
   public function requestDetail(NodeInterface $node): array
