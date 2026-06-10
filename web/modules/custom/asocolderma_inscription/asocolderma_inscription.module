@@ -744,6 +744,7 @@ function asocolderma_inscription_page_top(array &$page_top): void
       ],
       '#cache' => [
         'contexts' => [
+          'user',
           'user.roles',
           'url.path',
           'route',
@@ -773,6 +774,7 @@ function asocolderma_inscription_page_top(array &$page_top): void
     ],
     '#cache' => [
       'contexts' => [
+        'user',
         'user.roles',
         'url.path',
         'route',
