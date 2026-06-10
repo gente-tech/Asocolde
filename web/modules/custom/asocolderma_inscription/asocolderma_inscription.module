@@ -823,40 +823,63 @@ function asocolderma_inscription_build_aspirante_menu_items(): array
 }
 
 /**
- * Construye los ítems del menú administrativo admin-solicitudes.
+ * Construye los ítems del menú administrativo según el rol del usuario.
+ *
+ * El menú se administra desde Drupal, pero aquí se filtra y ordena
+ * para evitar que un rol vea enlaces de otro flujo.
  */
 function asocolderma_inscription_build_admin_zone_menu_items(): array
 {
-  $menu_name = 'admin-solicitudes';
-  $menu_tree = \Drupal::menuTree();
+  $current_user = \Drupal::currentUser();
+  $roles = $current_user->getRoles();
+  $current_path = \Drupal::service('path.current')->getPath();
 
-  $parameters = $menu_tree->getCurrentRouteMenuTreeParameters($menu_name);
-  $parameters->onlyEnabledLinks();
-  $parameters->setMinDepth(1);
-  $parameters->setMaxDepth(1);
+  $is_secretaria_general = in_array('secretaria_general', $roles, TRUE);
+  $is_coordinacion_administrativa = in_array('coordinacion_administrativa', $roles, TRUE);
+  $is_admin = in_array('administrator', $roles, TRUE);
 
-  $tree = $menu_tree->load($menu_name, $parameters);
+  /**
+   * Orden y permisos reales por rol.
+   *
+   * La URL /solicitud/{codigo_solicitud} no va en el menú,
+   * porque es una ruta dinámica de detalle.
+   */
+  $secretaria_items = [
+    '/solicitudes' => 'Solicitudes',
+    '/solicitudes-aspirantes' => 'Secretaría General',
+    '/aprobadas-secretaria-general' => 'Junta Directiva',
+    '/aprobadas-junta-directiva' => 'Asamblea General',
+  ];
 
-  $tree = $menu_tree->transform($tree, [
-    ['callable' => 'menu.default_tree_manipulators:checkAccess'],
-    ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
-  ]);
+  $coordinacion_items = [
+    '/coord-admin/enviar-documentos' => 'Enviar documentos',
+    '/coord-admin/pasos-pago' => 'Pasos para pago',
+    '/coord-admin/validar-pago' => 'Validar pago',
+    '/coord-admin/miembros-activos' => 'Miembros activos',
+  ];
+
+  $allowed_items = [];
+
+  if ($is_admin) {
+    $allowed_items = $secretaria_items + $coordinacion_items;
+  } elseif ($is_secretaria_general) {
+    $allowed_items = $secretaria_items;
+  } elseif ($is_coordinacion_administrativa) {
+    $allowed_items = $coordinacion_items;
+  }
+
+  if (empty($allowed_items)) {
+    return [];
+  }
 
   $items = [];
 
-  foreach ($tree as $element) {
-    if (!$element->access->isAllowed()) {
-      continue;
-    }
-
-    $url = $element->link->getUrlObject();
-    $url_string = $url->toString();
-
+  foreach ($allowed_items as $path => $title) {
     $items[] = [
-      'title' => $element->link->getTitle(),
-      'url' => $url_string,
-      'active' => (bool) $element->inActiveTrail,
-      'is_logout' => $element->link->getRouteName() === 'user.logout' || str_contains($url_string, '/user/logout'),
+      'title' => $title,
+      'url' => $path,
+      'active' => $current_path === $path,
+      'is_logout' => FALSE,
     ];
   }
 
