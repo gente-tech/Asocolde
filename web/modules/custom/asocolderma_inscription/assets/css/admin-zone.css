@@ -1,0 +1,223 @@
+/* =========================================================
+   Zona administrativa Asocolderma
+   ========================================================= */
+
+body.asocolderma-admin-zone-page,
+body.asocolderma-admin-zone-clean {
+	margin: 0 !important;
+	padding: 0 !important;
+	background: #f6f8fb;
+}
+
+body.asocolderma-admin-zone-page .dialog-off-canvas-main-canvas,
+body.asocolderma-admin-zone-clean .dialog-off-canvas-main-canvas {
+	margin: 0 !important;
+	padding: 0 !important;
+	background: #f6f8fb;
+}
+
+/* Header */
+.asoc-admin-header {
+	position: sticky;
+	top: 0;
+	z-index: 1000;
+	width: 100%;
+	margin: 0 !important;
+	padding: 0;
+	background: #ffffff;
+	border-bottom: 1px solid rgba(0, 107, 119, 0.16);
+	box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+}
+
+.asoc-admin-header__inner {
+	width: min(100%, 1560px);
+	min-height: 92px;
+	margin: 0 auto;
+	padding: 16px 42px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 28px;
+}
+
+.asoc-admin-header__brand {
+	display: inline-flex;
+	align-items: center;
+	text-decoration: none;
+}
+
+.asoc-admin-header__logo {
+	display: block;
+	width: auto;
+	max-width: 290px;
+	max-height: 72px;
+	object-fit: contain;
+}
+
+/* Menú */
+.asoc-admin-menu {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 14px;
+}
+
+.asoc-admin-menu__group {
+	position: relative;
+}
+
+.asoc-admin-menu__trigger {
+	min-height: 52px;
+	padding: 0 22px;
+	border: 1px solid rgba(0, 137, 147, 0.22);
+	border-radius: 999px;
+	background: #effcff;
+	color: #005e67;
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 1;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	box-shadow: 0 8px 18px rgba(0, 137, 147, 0.08);
+}
+
+.asoc-admin-menu__trigger:hover,
+.asoc-admin-menu__trigger:focus {
+	background: #e3f8fb;
+	border-color: rgba(0, 137, 147, 0.42);
+	outline: none;
+}
+
+.asoc-admin-menu__dropdown {
+	position: absolute;
+	right: 0;
+	top: calc(100% + 12px);
+	min-width: 280px;
+	padding: 10px;
+	border-radius: 18px;
+	background: #ffffff;
+	border: 1px solid rgba(15, 23, 42, 0.08);
+	box-shadow: 0 22px 48px rgba(15, 23, 42, 0.16);
+	display: none;
+}
+
+.asoc-admin-menu__group.is-open .asoc-admin-menu__dropdown {
+	display: grid;
+	gap: 6px;
+}
+
+.asoc-admin-menu__link {
+	display: block;
+	padding: 13px 14px;
+	border-radius: 12px;
+	color: #0f172a;
+	text-decoration: none;
+	font-size: 15px;
+	font-weight: 600;
+}
+
+.asoc-admin-menu__link:hover,
+.asoc-admin-menu__link:focus {
+	background: #eef9fb;
+	color: #006f78;
+	outline: none;
+}
+
+.asoc-admin-menu__link.is-active {
+	background: #008b95;
+	color: #ffffff;
+}
+
+/* Logout */
+.asoc-admin-menu__logout {
+	min-height: 52px;
+	padding: 0 22px;
+	border: 1px solid rgba(236, 84, 13, 0.24);
+	border-radius: 999px;
+	background: #fff7ed;
+	color: #9a3412;
+	font-size: 16px;
+	font-weight: 800;
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.asoc-admin-menu__logout:hover,
+.asoc-admin-menu__logout:focus {
+	background: #ffedd5;
+	border-color: rgba(236, 84, 13, 0.42);
+	color: #7c2d12;
+	outline: none;
+}
+
+/* Contenido limpio */
+body.asocolderma-admin-zone-page main,
+body.asocolderma-admin-zone-clean main {
+	background: #f6f8fb;
+}
+
+body.asocolderma-admin-zone-page .region-content,
+body.asocolderma-admin-zone-clean .region-content {
+	width: min(100%, 1500px);
+	margin: 0 auto;
+	padding: 34px 42px 64px;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+	.asoc-admin-header__inner {
+		min-height: 78px;
+		padding: 14px 20px;
+	}
+
+	.asoc-admin-header__logo {
+		max-width: 220px;
+		max-height: 56px;
+	}
+
+	.asoc-admin-header__hamburger {
+		display: inline-flex;
+	}
+
+	.asoc-admin-menu {
+		position: absolute;
+		left: 16px;
+		right: 16px;
+		top: calc(100% + 10px);
+		padding: 14px;
+		border-radius: 18px;
+		background: #ffffff;
+		border: 1px solid rgba(15, 23, 42, 0.08);
+		box-shadow: 0 22px 48px rgba(15, 23, 42, 0.18);
+		display: none;
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.user-zone-app-header.is-menu-open .asoc-admin-menu {
+		display: flex;
+	}
+
+	.asoc-admin-menu__trigger,
+	.asoc-admin-menu__logout {
+		width: 100%;
+		justify-content: center;
+	}
+
+	.asoc-admin-menu__dropdown {
+		position: static;
+		min-width: 100%;
+		margin-top: 10px;
+		box-shadow: none;
+		border-radius: 14px;
+	}
+
+	body.asocolderma-admin-zone-page .region-content,
+	body.asocolderma-admin-zone-clean .region-content {
+		padding: 24px 16px 48px;
+	}
+}

@@ -570,15 +570,32 @@ function asocolderma_inscription_is_admin_zone_path(?string $path = NULL): bool
     '/coord-admin/pasos-pago',
     '/coord-admin/validar-pago',
     '/coord-admin/miembros-activos',
+
+    // Reportes.
+    '/reportes/solicitudes',
   ];
 
   if (in_array($path, $admin_paths, TRUE)) {
     return TRUE;
   }
 
-  // Detalle reutilizado:
-  // /solicitud/04032026-345-001
+  // Alias público/controlado del detalle administrativo:
   if (preg_match('#^/solicitud/[0-9]{8}-[0-9]{3}-[0-9]{3}$#', $path)) {
+    return TRUE;
+  }
+
+  // Fallback robusto:
+  // Si Drupal resolvió la URL como entity.node.canonical o /node/NID,
+  // detectamos que sea un nodo solicitud_ingreso.
+  $route_match = \Drupal::routeMatch();
+  $node = $route_match->getParameter('node');
+
+  if ($node instanceof \Drupal\node\NodeInterface && $node->bundle() === 'solicitud_ingreso') {
+    // Evitar interferir con la zona del aspirante.
+    if ($path === '/zona' || str_starts_with($path, '/zona/')) {
+      return FALSE;
+    }
+
     return TRUE;
   }
 
@@ -606,7 +623,6 @@ function asocolderma_inscription_is_clean_zone_path(?string $path = NULL): bool
 
   return FALSE;
 }
-
 /**
  * Indica si el usuario actual tiene rol administrativo del flujo de solicitudes.
  */
@@ -740,6 +756,7 @@ function asocolderma_inscription_page_top(array &$page_top): void
       '#attached' => [
         'library' => [
           'asocolderma_inscription/user_zone',
+          'asocolderma_inscription/admin_zone',
         ],
       ],
       '#cache' => [
