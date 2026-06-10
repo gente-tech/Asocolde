@@ -95,6 +95,18 @@ function asocolderma_inscription_preprocess_node(array &$variables)
   }
 
   $variables['semaforo_steps'] = asocolderma_inscription_build_semaforo_steps($node);
+  $estado_visual_solicitud = '';
+
+  if ($node->hasField('field_state') && !$node->get('field_state')->isEmpty()) {
+    $estado_entity = $node->get('field_state')->entity;
+
+    if ($estado_entity) {
+      $estado_real = (string) $estado_entity->label();
+      $estado_visual_solicitud = asocolderma_inscription_get_contextual_state_label($estado_real, 'secretaria_general');
+    }
+  }
+
+  $variables['estado_visual_solicitud'] = $estado_visual_solicitud;
 }
 
 /**
@@ -118,6 +130,7 @@ function asocolderma_inscription_build_semaforo_steps(NodeInterface $node): arra
     }
 
     $label = asocolderma_inscription_map_current_state_to_flow_label($state_name);
+    $label = asocolderma_inscription_get_contextual_state_label($label, 'secretaria_general');
 
     $history_steps[] = [
       'label' => $label,
@@ -131,8 +144,11 @@ function asocolderma_inscription_build_semaforo_steps(NodeInterface $node): arra
   }
 
   if (empty($history_steps)) {
+    $current_label = asocolderma_inscription_map_current_state_to_flow_label($current_name);
+    $current_label = asocolderma_inscription_get_contextual_state_label($current_label, 'secretaria_general');
+
     $history_steps[] = [
-      'label' => asocolderma_inscription_map_current_state_to_flow_label($current_name),
+      'label' => $current_label,
       'status' => asocolderma_inscription_is_cancelled_state($current_name) ? 'cancelled' : 'current',
       'date' => \Drupal::service('date.formatter')->format($node->getCreatedTime(), 'custom', 'd/m/Y h:i A'),
       'note' => '',
@@ -166,8 +182,8 @@ function asocolderma_inscription_build_semaforo_steps(NodeInterface $node): arra
   }
   unset($step);
 
-  $last_visible_label = $history_steps[$last_index]['label'] ?? asocolderma_inscription_map_current_state_to_flow_label($current_name);
-  $future_steps = asocolderma_inscription_get_future_flow_steps($last_visible_label, $current_name);
+  $last_real_label = asocolderma_inscription_map_current_state_to_flow_label($current_name);
+  $future_steps = asocolderma_inscription_get_future_flow_steps($last_real_label, $current_name);
 
   return array_merge($history_steps, $future_steps);
 }
@@ -388,6 +404,30 @@ function asocolderma_inscription_get_term_name_by_tid(int $tid): ?string
 
   $term = Term::load($tid);
   return $term ? (string) $term->getName() : NULL;
+}
+
+/**
+ * Devuelve la etiqueta visual de un estado según el contexto institucional.
+ *
+ * No modifica la taxonomía ni el estado real de la solicitud.
+ * Solo cambia el texto mostrado en la interfaz.
+ */
+function asocolderma_inscription_get_contextual_state_label(string $state_label, string $context = ''): string
+{
+  $state_label = trim($state_label);
+
+  if ($context === 'secretaria_general') {
+    $map = [
+      'En trámite' => 'En trámite Secretaría General',
+      'Aprobada' => 'Aprobado Secretaría General',
+      'Rechazada' => 'Rechazado Secretaría General',
+      'Pendiente aclaración' => 'Pendiente aclaración Secretaría General',
+    ];
+
+    return $map[$state_label] ?? $state_label;
+  }
+
+  return $state_label;
 }
 
 /**
@@ -963,6 +1003,51 @@ function asocolderma_inscription_aspirante_login_submit(array &$form, \Drupal\Co
  */
 function asocolderma_inscription_preprocess_views_view_field(array &$variables): void
 {
+  /**
+   * Etiqueta contextual del estado en el listado de Secretaría General.
+   *
+   * Vista:
+   * - ID: solicitudes_aspirantes
+   * - Display: page_1
+   * - URL: /solicitudes-aspirantes
+   */
+  if (
+    !empty($variables['view']) &&
+    $variables['view']->id() === 'solicitudes_aspirantes' &&
+    $variables['view']->current_display === 'page_1' &&
+    !empty($variables['field']) &&
+    $variables['field']->field === 'field_state'
+  ) {
+    $row = $variables['row'] ?? NULL;
+
+    if (
+      $row &&
+      !empty($row->_entity) &&
+      $row->_entity instanceof \Drupal\node\NodeInterface
+    ) {
+      /** @var \Drupal\node\NodeInterface $node */
+      $node = $row->_entity;
+
+      if (
+        $node->bundle() === 'solicitud_ingreso' &&
+        $node->hasField('field_state') &&
+        !$node->get('field_state')->isEmpty()
+      ) {
+        $estado_entity = $node->get('field_state')->entity;
+
+        if ($estado_entity) {
+          $estado_real = (string) $estado_entity->label();
+          $estado_visual = asocolderma_inscription_get_contextual_state_label($estado_real, 'secretaria_general');
+
+          $variables['output'] = [
+            '#markup' => $estado_visual,
+          ];
+        }
+      }
+    }
+
+    return;
+  }
   if (
     empty($variables['view']) ||
     $variables['view']->id() !== 'solicitudes_aspirantes' ||

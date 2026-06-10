@@ -217,13 +217,21 @@ final class SolicitudStateInlineForm extends FormBase
       }
     }
 
+    $to_label = (string) ($allowed_options[$to_tid] ?? '');
+
+    if ($to_label === '') {
+      $to_label = $this->resolveTermNameByTid($to_tid) ?? '';
+    }
+
     $dialog_content = [
       '#type' => 'container',
       '#attributes' => [
         'class' => ['asocolderma-confirm-dialog'],
       ],
       'message' => [
-        '#markup' => '<p>' . $this->t('¿Está seguro de cambiar el estado de esta solicitud?') . '</p>',
+        '#markup' => '<p>' . $this->t('¿Está seguro de cambiar el estado de esta solicitud a <strong>@estado</strong>?', [
+          '@estado' => $to_label,
+        ]) . '</p>',
       ],
       'actions' => [
         '#type' => 'container',
@@ -315,7 +323,16 @@ final class SolicitudStateInlineForm extends FormBase
       ]
     );
 
-    $this->messenger()->addStatus($this->t('Estado actualizado.'));
+    $to_label = (string) ($allowed_options[$to_tid] ?? '');
+
+    if ($to_label === '') {
+      $to_label = $this->resolveTermNameByTid($to_tid) ?? '';
+    }
+
+    $this->messenger()->addStatus($this->t('Estado actualizado a @estado.', [
+      '@estado' => $to_label,
+    ]));
+
     $form_state->setRedirectUrl(Url::fromUserInput($destination ?: '/'));
   }
 
@@ -355,7 +372,17 @@ final class SolicitudStateInlineForm extends FormBase
 
       if ($terms) {
         $term = reset($terms);
-        $options[(int) $term->id()] = $term->getName();
+        $label = (string) $term->getName();
+
+        if (
+          $vid === 'estado_solicitud_ingreso' &&
+          $this->currentUser()->hasRole('secretaria_general') &&
+          function_exists('asocolderma_inscription_get_contextual_state_label')
+        ) {
+          $label = \asocolderma_inscription_get_contextual_state_label($label, 'secretaria_general');
+        }
+
+        $options[(int) $term->id()] = $label;
       }
     }
 

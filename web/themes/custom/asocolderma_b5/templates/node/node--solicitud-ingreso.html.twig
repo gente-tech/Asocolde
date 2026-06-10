@@ -57,7 +57,7 @@
 <br>
 
 {% set estado_entity = node.field_state.entity %}
-{% set estado = estado_entity ? estado_entity.label : '' %}
+{% set estado = estado_visual_solicitud ?: (estado_entity ? estado_entity.label : '') %}
 
 {% if estado == 'Documentos firmados' %}
 
