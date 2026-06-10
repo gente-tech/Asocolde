@@ -47,6 +47,13 @@ function asocolderma_inscription_theme($existing, $type, $theme, $path): array
       ],
       'template' => 'asocolderma-inscription-aspirante-modal-login',
     ],
+    'asocolderma_inscription_admin_zone_header' => [
+      'variables' => [
+        'menu_items' => [],
+        'logout_url' => NULL,
+      ],
+      'template' => 'asocolderma-inscription-admin-zone-header',
+    ],
   ];
 }
 
@@ -700,7 +707,9 @@ function asocolderma_inscription_block_access(BlockInterface $block, $operation,
 /**
  * Implements hook_page_top().
  *
- * Renderiza el header propio del flujo de aspirantes en todas las rutas /zona.
+ * Renderiza headers propios para:
+ * - Zona del aspirante.
+ * - Zona administrativa de solicitudes.
  */
 function asocolderma_inscription_page_top(array &$page_top): void
 {
@@ -708,6 +717,31 @@ function asocolderma_inscription_page_top(array &$page_top): void
   $current_user = \Drupal::currentUser();
 
   if (!$current_user->isAuthenticated()) {
+    return;
+  }
+
+  if (
+    asocolderma_inscription_is_admin_zone_path($path)
+    && asocolderma_inscription_current_user_is_admin_zone_user()
+  ) {
+    $page_top['asocolderma_inscription_admin_zone_header'] = [
+      '#theme' => 'asocolderma_inscription_admin_zone_header',
+      '#menu_items' => asocolderma_inscription_build_admin_zone_menu_items(),
+      '#logout_url' => \Drupal\Core\Url::fromRoute('user.logout')->toString(),
+      '#attached' => [
+        'library' => [
+          'asocolderma_inscription/user_zone',
+        ],
+      ],
+      '#cache' => [
+        'contexts' => [
+          'user.roles',
+          'url.path',
+          'route',
+        ],
+      ],
+    ];
+
     return;
   }
 
@@ -744,6 +778,47 @@ function asocolderma_inscription_page_top(array &$page_top): void
 function asocolderma_inscription_build_aspirante_menu_items(): array
 {
   $menu_name = 'account-aspirante';
+  $menu_tree = \Drupal::menuTree();
+
+  $parameters = $menu_tree->getCurrentRouteMenuTreeParameters($menu_name);
+  $parameters->onlyEnabledLinks();
+  $parameters->setMinDepth(1);
+  $parameters->setMaxDepth(1);
+
+  $tree = $menu_tree->load($menu_name, $parameters);
+
+  $tree = $menu_tree->transform($tree, [
+    ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+    ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+  ]);
+
+  $items = [];
+
+  foreach ($tree as $element) {
+    if (!$element->access->isAllowed()) {
+      continue;
+    }
+
+    $url = $element->link->getUrlObject();
+    $url_string = $url->toString();
+
+    $items[] = [
+      'title' => $element->link->getTitle(),
+      'url' => $url_string,
+      'active' => (bool) $element->inActiveTrail,
+      'is_logout' => $element->link->getRouteName() === 'user.logout' || str_contains($url_string, '/user/logout'),
+    ];
+  }
+
+  return $items;
+}
+
+/**
+ * Construye los ítems del menú administrativo admin-solicitudes.
+ */
+function asocolderma_inscription_build_admin_zone_menu_items(): array
+{
+  $menu_name = 'admin-solicitudes';
   $menu_tree = \Drupal::menuTree();
 
   $parameters = $menu_tree->getCurrentRouteMenuTreeParameters($menu_name);

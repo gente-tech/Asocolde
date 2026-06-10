@@ -1,0 +1,75 @@
+{#
+/**
+ * Header administrativo del flujo de solicitudes.
+ */
+#}
+
+<header class="user-zone-app-header asoc-admin-header">
+	<div class="user-zone-app-header__inner asoc-admin-header__inner">
+
+		<a href="/solicitudes" class="user-zone-app-header__brand asoc-admin-header__brand" aria-label="Ir al panel administrativo">
+			<img src="/sites/default/files/imageblock/logo-horizontal-pequeno.jpg" alt="AsoColDerma" class="user-zone-app-header__logo asoc-admin-header__logo">
+		</a>
+
+		<button class="user-zone-app-header__hamburger asoc-admin-header__hamburger" type="button" aria-expanded="false" aria-controls="asoc-admin-menu" data-user-zone-menu-toggle>
+			<span class="user-zone-app-header__hamburger-line"></span>
+			<span class="user-zone-app-header__hamburger-line"></span>
+			<span class="user-zone-app-header__hamburger-line"></span>
+			<span class="visually-hidden">Abrir menú administrativo</span>
+		</button>
+
+		<nav id="asoc-admin-menu" class="user-zone-app-menu asoc-admin-menu" aria-label="Menú administrativo">
+
+			<div class="user-zone-app-menu__group user-zone-app-menu__group--single asoc-admin-menu__group">
+				<button class="user-zone-app-menu__trigger asoc-admin-menu__trigger" type="button" data-user-zone-dropdown>
+					Administración de solicitudes
+					<span class="user-zone-app-menu__chevron">⌄</span>
+				</button>
+
+				<div class="user-zone-app-menu__dropdown asoc-admin-menu__dropdown">
+					{% for item in menu_items %}
+						{% if not item.is_logout %}
+							<a href="{{ item.url }}" class="user-zone-app-menu__dropdown-link asoc-admin-menu__link{{ item.active ? ' is-active' : '' }}">
+								{{ item.title }}
+							</a>
+						{% endif %}
+					{% endfor %}
+				</div>
+			</div>
+
+			<a href="{{ logout_url }}" class="user-zone-app-menu__logout asoc-admin-menu__logout" data-user-zone-logout-trigger>
+				Cerrar sesión
+			</a>
+
+		</nav>
+
+	</div>
+</header>
+
+<div class="user-zone-logout-modal" data-user-zone-logout-modal aria-hidden="true">
+	<div class="user-zone-logout-modal__backdrop" data-user-zone-logout-cancel></div>
+
+	<div class="user-zone-logout-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="admin-zone-logout-title" aria-describedby="admin-zone-logout-description">
+		<div class="user-zone-logout-modal__icon">
+			?
+		</div>
+
+		<h2 id="admin-zone-logout-title" class="user-zone-logout-modal__title">
+			¿Cerrar sesión?
+		</h2>
+
+		<p id="admin-zone-logout-description" class="user-zone-logout-modal__text">
+			Vas a salir de la zona administrativa de solicitudes.
+		</p>
+
+		<div class="user-zone-logout-modal__actions">
+			<button type="button" class="user-zone-logout-modal__button user-zone-logout-modal__button--secondary" data-user-zone-logout-cancel>
+				Cancelar
+			</button>
+
+			<a href="{{ logout_url }}" class="user-zone-logout-modal__button user-zone-logout-modal__button--primary" data-user-zone-logout-confirm>
+				Sí, cerrar sesión
+			</a>
+		</div>
+	</div>
+</div>
