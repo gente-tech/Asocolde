@@ -736,7 +736,7 @@ function asocolderma_inscription_page_top(array &$page_top): void
     $page_top['asocolderma_inscription_admin_zone_header'] = [
       '#theme' => 'asocolderma_inscription_admin_zone_header',
       '#menu_items' => asocolderma_inscription_build_admin_zone_menu_items(),
-      '#logout_url' => \Drupal\Core\Url::fromRoute('user.logout')->toString(),
+      '#logout_url' => asocolderma_inscription_logout_url_with_token(),
       '#attached' => [
         'library' => [
           'asocolderma_inscription/user_zone',
@@ -766,7 +766,7 @@ function asocolderma_inscription_page_top(array &$page_top): void
   $page_top['asocolderma_inscription_user_zone_header'] = [
     '#theme' => 'asocolderma_inscription_user_zone_header',
     '#menu_items' => asocolderma_inscription_build_aspirante_menu_items(),
-    '#logout_url' => \Drupal\Core\Url::fromRoute('user.logout')->toString(),
+    '#logout_url' => asocolderma_inscription_logout_url_with_token(),
     '#attached' => [
       'library' => [
         'asocolderma_inscription/user_zone',
@@ -1064,4 +1064,18 @@ function asocolderma_inscription_preprocess_views_view_table(array &$variables):
       ],
     ];
   }
+}
+
+/**
+ * Genera la URL segura de cierre de sesión con token CSRF.
+ */
+function asocolderma_inscription_logout_url_with_token(): string
+{
+  $token = \Drupal::service('csrf_token')->get('user/logout');
+
+  return \Drupal\Core\Url::fromRoute('user.logout', [], [
+    'query' => [
+      'token' => $token,
+    ],
+  ])->toString();
 }
