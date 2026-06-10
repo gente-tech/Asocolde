@@ -1190,3 +1190,24 @@ body.user-zone-underage-modal-open {
     width: 100%;
   }
 }
+
+/* Zona administrativa limpia: header pegado al top */
+body.asocolderma-admin-zone-page,
+body.asocolderma-admin-zone-clean {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+body.asocolderma-admin-zone-page .dialog-off-canvas-main-canvas,
+body.asocolderma-admin-zone-clean .dialog-off-canvas-main-canvas {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+body.asocolderma-admin-zone-page .user-zone-app-header,
+body.asocolderma-admin-zone-clean .user-zone-app-header,
+body.asocolderma-admin-zone-page .asoc-admin-header,
+body.asocolderma-admin-zone-clean .asoc-admin-header {
+  margin-top: 0 !important;
+  top: 0 !important;
+}

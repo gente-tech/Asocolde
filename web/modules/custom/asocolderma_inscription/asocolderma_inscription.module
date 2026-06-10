@@ -630,7 +630,16 @@ function asocolderma_inscription_current_user_is_admin_zone_user(): bool
  */
 function asocolderma_inscription_page_attachments(array &$attachments): void
 {
+  $path = \Drupal::service('path.current')->getPath();
+
+  // En zonas limpias no aplicamos margen superior del sitio viejo.
+  if (function_exists('asocolderma_inscription_is_clean_zone_path') && asocolderma_inscription_is_clean_zone_path($path)) {
+    $attachments['#cache']['contexts'][] = 'url.path';
+    return;
+  }
+
   $attachments['#attached']['library'][] = 'asocolderma_inscription/navbar_margin_top';
+  $attachments['#cache']['contexts'][] = 'url.path';
 }
 
 /**
