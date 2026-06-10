@@ -1109,9 +1109,78 @@ function asocolderma_inscription_preprocess_views_view_table(array &$variables):
 {
   if (
     empty($variables['view']) ||
-    $variables['view']->id() !== 'solicitudes_aspirantes' ||
-    $variables['view']->current_display !== 'page_9'
+    $variables['view']->id() !== 'solicitudes_aspirantes'
   ) {
+    return;
+  }
+
+  $current_display = $variables['view']->current_display;
+
+  /**
+   * Ajuste visual del estado en el listado de Secretaría General.
+   *
+   * URL:
+   * /solicitudes-aspirantes
+   *
+   * Display esperado:
+   * page_1
+   */
+  if ($current_display === 'page_1') {
+    foreach ($variables['rows'] as $row_index => &$row) {
+      $result_row = $variables['view']->result[$row_index] ?? NULL;
+
+      if (
+        !$result_row ||
+        empty($result_row->_entity) ||
+        !$result_row->_entity instanceof \Drupal\node\NodeInterface
+      ) {
+        continue;
+      }
+
+      /** @var \Drupal\node\NodeInterface $node */
+      $node = $result_row->_entity;
+
+      if ($node->bundle() !== 'solicitud_ingreso') {
+        continue;
+      }
+
+      if (!$node->hasField('field_state') || $node->get('field_state')->isEmpty()) {
+        continue;
+      }
+
+      $estado_entity = $node->get('field_state')->entity;
+
+      if (!$estado_entity) {
+        continue;
+      }
+
+      $estado_real = (string) $estado_entity->label();
+      $estado_visual = asocolderma_inscription_get_contextual_state_label($estado_real, 'secretaria_general');
+
+      foreach ($row['columns'] as $column_key => &$column) {
+        if ($column_key === 'field_state' || str_contains((string) $column_key, 'field_state')) {
+          $column['content'] = [
+            [
+              'separator' => '',
+              'field_output' => [
+                '#markup' => $estado_visual,
+              ],
+            ],
+          ];
+
+          break;
+        }
+      }
+    }
+  }
+
+  /**
+   * Convierte el ID de solicitud en enlace dentro de la tabla administrativa.
+   *
+   * Display:
+   * page_9
+   */
+  if ($current_display !== 'page_9') {
     return;
   }
 
