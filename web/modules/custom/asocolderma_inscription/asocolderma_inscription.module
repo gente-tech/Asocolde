@@ -545,6 +545,80 @@ function asocolderma_inscription_entity_delete(\Drupal\Core\Entity\EntityInterfa
 }
 
 /**
+ * Indica si la ruta actual pertenece a la zona administrativa del flujo de solicitudes.
+ */
+function asocolderma_inscription_is_admin_zone_path(?string $path = NULL): bool
+{
+  $path = $path ?? \Drupal::service('path.current')->getPath();
+
+  $admin_paths = [
+    // Secretaría General.
+    '/solicitudes',
+    '/solicitudes-aspirantes',
+    '/aprobadas-secretaria-general',
+    '/aprobadas-junta-directiva',
+
+    // Coordinación Administrativa.
+    '/coord-admin/enviar-documentos',
+    '/coord-admin/pasos-pago',
+    '/coord-admin/validar-pago',
+    '/coord-admin/miembros-activos',
+  ];
+
+  if (in_array($path, $admin_paths, TRUE)) {
+    return TRUE;
+  }
+
+  // Detalle reutilizado:
+  // /solicitud/04032026-345-001
+  if (preg_match('#^/solicitud/[0-9]{8}-[0-9]{3}-[0-9]{3}$#', $path)) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**
+ * Indica si la ruta actual pertenece a una zona limpia del sistema.
+ *
+ * Incluye:
+ * - Zona aspirante.
+ * - Zona administrativa de solicitudes.
+ */
+function asocolderma_inscription_is_clean_zone_path(?string $path = NULL): bool
+{
+  $path = $path ?? \Drupal::service('path.current')->getPath();
+
+  if ($path === '/zona' || str_starts_with($path, '/zona/')) {
+    return TRUE;
+  }
+
+  if (asocolderma_inscription_is_admin_zone_path($path)) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**
+ * Indica si el usuario actual tiene rol administrativo del flujo de solicitudes.
+ */
+function asocolderma_inscription_current_user_is_admin_zone_user(): bool
+{
+  $current_user = \Drupal::currentUser();
+
+  if (!$current_user->isAuthenticated()) {
+    return FALSE;
+  }
+
+  $roles = $current_user->getRoles();
+
+  return in_array('secretaria_general', $roles, TRUE)
+    || in_array('coordinacion_administrativa', $roles, TRUE)
+    || in_array('administrator', $roles, TRUE);
+}
+
+/**
  * Implements hook_page_attachments().
  */
 function asocolderma_inscription_page_attachments(array &$attachments): void
@@ -573,12 +647,27 @@ function asocolderma_inscription_preprocess_html(array &$variables): void
     $variables['#attached']['library'][] = 'asocolderma_inscription/user_zone';
     $variables['#cache']['contexts'][] = 'url.path';
   }
+
+  if (
+    asocolderma_inscription_is_admin_zone_path($path)
+    && asocolderma_inscription_current_user_is_admin_zone_user()
+  ) {
+    $variables['attributes']['class'][] = 'asocolderma-admin-zone-page';
+    $variables['attributes']['class'][] = 'asocolderma-admin-zone-clean';
+
+    $variables['#cache']['contexts'][] = 'url.path';
+    $variables['#cache']['contexts'][] = 'user.roles';
+  }
 }
 
 /**
  * Implements hook_ENTITY_TYPE_access() for block entities.
  *
- * Bloquea todos los bloques del sitio público dentro del flujo del aspirante.
+ * Bloquea los bloques del sitio público dentro de las zonas limpias:
+ * - Zona del aspirante.
+ * - Zona administrativa de solicitudes.
+ *
+ * Se permite únicamente el contenido principal y mensajes del sistema.
  */
 function asocolderma_inscription_block_access(BlockInterface $block, $operation, AccountInterface $account): AccessResult
 {
@@ -588,13 +677,24 @@ function asocolderma_inscription_block_access(BlockInterface $block, $operation,
 
   $path = \Drupal::service('path.current')->getPath();
 
-  if ($path === '/zona' || str_starts_with($path, '/zona/')) {
-    return AccessResult::forbidden()
+  if (!asocolderma_inscription_is_clean_zone_path($path)) {
+    return AccessResult::neutral()
       ->addCacheContexts(['url.path']);
   }
 
-  return AccessResult::neutral()
-    ->addCacheContexts(['url.path']);
+  $allowed_plugin_ids = [
+    'system_main_block',
+    'system_messages_block',
+    'local_tasks_block',
+  ];
+
+  if (in_array($block->getPluginId(), $allowed_plugin_ids, TRUE)) {
+    return AccessResult::neutral()
+      ->addCacheContexts(['url.path', 'user.roles']);
+  }
+
+  return AccessResult::forbidden()
+    ->addCacheContexts(['url.path', 'user.roles']);
 }
 
 /**
