@@ -21,7 +21,6 @@ final class SolicitudStateInlineForm extends FormBase
   protected EntityTypeManagerInterface $etm;
   protected SolicitudStateManager $stateManager;
   protected SolicitudClarificationManager $clarificationManager;
-  protected RequestStack $requestStack;
 
   public function __construct(
     EntityTypeManagerInterface $etm,
