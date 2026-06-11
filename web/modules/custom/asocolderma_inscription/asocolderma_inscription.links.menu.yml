@@ -41,6 +41,6 @@ asocolderma_inscription.solicitud_form_settings:
 asocolderma_inscription.state_visual_labels_settings:
   title: 'Etiquetas visuales de estados'
   description: 'Configurar las etiquetas visuales de los estados de solicitud.'
-  parent: system.admin_config
+  parent: asocolderma_inscription.usuarios_nuevos
   route_name: asocolderma_inscription.state_visual_labels_settings
-  weight: 100
+  weight: 40
