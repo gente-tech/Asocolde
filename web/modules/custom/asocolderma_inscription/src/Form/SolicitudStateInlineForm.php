@@ -376,10 +376,9 @@ final class SolicitudStateInlineForm extends FormBase
 
         if (
           $vid === 'estado_solicitud_ingreso' &&
-          $this->currentUser()->hasRole('secretaria_general') &&
-          function_exists('asocolderma_inscription_get_contextual_state_label')
+          function_exists('asocolderma_inscription_get_state_visual_label_from_term')
         ) {
-          $label = \asocolderma_inscription_get_contextual_state_label($label, 'secretaria_general');
+          $label = \asocolderma_inscription_get_state_visual_label_from_term($term);
         }
 
         $options[(int) $term->id()] = $label;
