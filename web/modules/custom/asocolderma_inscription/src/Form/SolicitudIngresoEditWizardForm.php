@@ -447,6 +447,10 @@ final class SolicitudIngresoEditWizardForm extends FormBase
 
   public function validateForm(array &$form, FormStateInterface $form_state): void
   {
+
+    if ($this->isManagedFileInternalSubmit($form_state)) {
+      return;
+    }
     /** @var \Drupal\node\NodeInterface|null $node */
     $node = $form_state->get('solicitud_node');
 
@@ -764,7 +768,7 @@ final class SolicitudIngresoEditWizardForm extends FormBase
     $form['adjuntos'][$form_key] = [
       '#type' => 'managed_file',
       '#title' => $this->t($title),
-      '#required' => $required,
+      '#required' => FALSE,
       '#description' => $description,
       '#upload_location' => $upload_location,
       '#default_value' => $this->getFileDefaultValue($node, $field_name),
@@ -942,7 +946,7 @@ final class SolicitudIngresoEditWizardForm extends FormBase
       if (!$allowed) {
         $form[$section][$key]['#required'] = FALSE;
       } elseif ($this->isFileFieldName($field_name)) {
-        $form[$section][$key]['#required'] = TRUE;
+        $form[$section][$key]['#required'] = FALSE;
       }
     }
 
@@ -1167,5 +1171,28 @@ final class SolicitudIngresoEditWizardForm extends FormBase
     }
 
     return trim((string) $value);
+  }
+
+  private function isManagedFileInternalSubmit(FormStateInterface $form_state): bool
+  {
+    $trigger = $form_state->getTriggeringElement();
+
+    if (empty($trigger) || !is_array($trigger)) {
+      return FALSE;
+    }
+
+    $array_parents = $trigger['#array_parents'] ?? [];
+    $parents = $trigger['#parents'] ?? [];
+    $name = (string) ($trigger['#name'] ?? '');
+    $value = (string) ($trigger['#value'] ?? '');
+
+    $haystack = mb_strtolower(implode(' ', array_merge($array_parents, $parents)) . ' ' . $name . ' ' . $value);
+
+    return str_contains($haystack, 'upload_button')
+      || str_contains($haystack, 'remove_button')
+      || str_contains($haystack, 'subir')
+      || str_contains($haystack, 'upload')
+      || str_contains($haystack, 'remover')
+      || str_contains($haystack, 'remove');
   }
 }
