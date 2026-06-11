@@ -100,9 +100,8 @@ function asocolderma_inscription_preprocess_node(array &$variables)
   if ($node->hasField('field_state') && !$node->get('field_state')->isEmpty()) {
     $estado_entity = $node->get('field_state')->entity;
 
-    if ($estado_entity) {
-      $estado_real = (string) $estado_entity->label();
-      $estado_visual_solicitud = asocolderma_inscription_get_contextual_state_label($estado_real, 'secretaria_general');
+    if ($estado_entity instanceof \Drupal\taxonomy\TermInterface) {
+      $estado_visual_solicitud = asocolderma_inscription_get_state_visual_label_from_term($estado_entity);
     }
   }
 
@@ -404,6 +403,55 @@ function asocolderma_inscription_get_term_name_by_tid(int $tid): ?string
 
   $term = Term::load($tid);
   return $term ? (string) $term->getName() : NULL;
+}
+
+/**
+ * Devuelve la etiqueta visual administrable de un término de estado.
+ *
+ * El mapeo se guarda por UUID del término para no depender de TID ni nombre.
+ */
+function asocolderma_inscription_get_state_visual_label_from_term($term): string
+{
+  if (!$term instanceof \Drupal\taxonomy\TermInterface) {
+    return '';
+  }
+
+  $real_label = (string) $term->label();
+  $uuid = (string) $term->uuid();
+
+  if ($uuid === '') {
+    return $real_label;
+  }
+
+  $labels = \Drupal::config('asocolderma_inscription.state_visual_labels')->get('labels') ?? [];
+
+  if (!empty($labels[$uuid]) && is_string($labels[$uuid])) {
+    $visual_label = trim($labels[$uuid]);
+
+    if ($visual_label !== '') {
+      return $visual_label;
+    }
+  }
+
+  return $real_label;
+}
+
+/**
+ * Devuelve la etiqueta visual administrable de un estado por TID.
+ */
+function asocolderma_inscription_get_state_visual_label_by_tid(int $tid): string
+{
+  if ($tid <= 0) {
+    return '';
+  }
+
+  $term = Term::load($tid);
+
+  if (!$term) {
+    return '';
+  }
+
+  return asocolderma_inscription_get_state_visual_label_from_term($term);
 }
 
 /**

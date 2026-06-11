@@ -181,3 +181,11 @@ asocolderma_inscription.aspirante_login:
     _title: 'Ingreso aspirantes'
   requirements:
     _access: 'TRUE'
+
+asocolderma_inscription.state_visual_labels_settings:
+  path: '/admin/config/asocolderma/usuarios-nuevos/etiquetas-visuales-estados'
+  defaults:
+    _form: '\Drupal\asocolderma_inscription\Form\SolicitudStateVisualLabelsSettingsForm'
+    _title: 'Etiquetas visuales de estados'
+  requirements:
+    _permission: 'administer site configuration'
