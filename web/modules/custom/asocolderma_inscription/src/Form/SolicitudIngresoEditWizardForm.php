@@ -2,15 +2,31 @@
 
 namespace Drupal\asocolderma_inscription\Form;
 
+use Drupal\asocolderma_inscription\Service\SolicitudClarificationManager;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\NodeInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Formulario de edición de solicitud por aclaración para aspirantes.
  */
 final class SolicitudIngresoEditWizardForm extends FormBase
 {
+
+  protected SolicitudClarificationManager $clarificationManager;
+
+  public function __construct(SolicitudClarificationManager $clarification_manager)
+  {
+    $this->clarificationManager = $clarification_manager;
+  }
+
+  public static function create(ContainerInterface $container): self
+  {
+    return new self(
+      $container->get('asocolderma_inscription.solicitud_clarification_manager')
+    );
+  }
 
   public function getFormId(): string
   {
@@ -25,7 +41,29 @@ final class SolicitudIngresoEditWizardForm extends FormBase
       ];
     }
 
+    $active_clarification = $this->clarificationManager->getActiveClarification((int) $node->id());
+
+    if (!$active_clarification) {
+      return [
+        '#markup' => '<div class="messages messages--warning">' . $this->t('No existe una aclaración activa para esta solicitud.') . '</div>',
+      ];
+    }
+
+    $requested_fields = $this->filterRequestedFieldsForNode(
+      $node,
+      (array) ($active_clarification['requested_fields'] ?? [])
+    );
+
+    if (empty($requested_fields)) {
+      return [
+        '#markup' => '<div class="messages messages--warning">' . $this->t('La aclaración activa no tiene campos válidos configurados para edición.') . '</div>',
+      ];
+    }
+
     $form_state->set('solicitud_node', $node);
+    $form_state->set('active_clarification', $active_clarification);
+    $form_state->set('clarification_requested_fields', $requested_fields);
+
     $aspirante_email = trim((string) $this->currentUser()->getEmail());
 
     $form['#tree'] = TRUE;
@@ -47,7 +85,7 @@ final class SolicitudIngresoEditWizardForm extends FormBase
       '#markup' => '<p>' . $this->t('Actualice únicamente la información requerida por la Asociación. Al guardar los cambios deberá marcar la opción “Ajustes realizados” para que la solicitud vuelva al flujo de revisión institucional.') . '</p>',
     ];
 
-    $clarification = $this->getLatestClarificationComment($node);
+    $clarification = trim((string) ($active_clarification['message'] ?? ''));
 
     $form['intro']['clarification_reason'] = [
       '#type' => 'container',
@@ -361,6 +399,7 @@ final class SolicitudIngresoEditWizardForm extends FormBase
     $this->buildFileField($form, $node, 'adj_convalidacion', 'field_adj_convalidacion', 'Copia de la resolución de la convalidación', 'private://solicitud_ingreso/convalidacion/', 'pdf', FALSE);
     $this->buildFileField($form, $node, 'adj_pensum_academico', 'field_adj_pensum_academico', 'Copia del pénsum académico', 'private://solicitud_ingreso/pensum_academico/', 'pdf', TRUE);
     $this->buildFileField($form, $node, 'adj_notas_dermatologia', 'field_adj_notas_dermatologia', 'Notas obtenidas en la especialización en dermatología', 'private://solicitud_ingreso/notas_dermatologia/', 'pdf', TRUE);
+    $this->applyClarificationRestrictions($form, $requested_fields);
 
     $form['confirmacion'] = [
       '#type' => 'details',
@@ -408,57 +447,113 @@ final class SolicitudIngresoEditWizardForm extends FormBase
 
   public function validateForm(array &$form, FormStateInterface $form_state): void
   {
+    /** @var \Drupal\node\NodeInterface|null $node */
+    $node = $form_state->get('solicitud_node');
+
+    if (!$node || $node->bundle() !== 'solicitud_ingreso') {
+      $form_state->setErrorByName('form', $this->t('No fue posible validar la solicitud.'));
+      return;
+    }
+
+    $active_clarification = $this->clarificationManager->getActiveClarification((int) $node->id());
+
+    if (!$active_clarification) {
+      $form_state->setErrorByName('form', $this->t('No existe una aclaración activa para esta solicitud.'));
+      return;
+    }
+
+    $requested_fields = $this->filterRequestedFieldsForNode(
+      $node,
+      (array) ($active_clarification['requested_fields'] ?? [])
+    );
+
+    if (empty($requested_fields)) {
+      $form_state->setErrorByName('form', $this->t('No hay campos válidos configurados para esta aclaración.'));
+      return;
+    }
+
     $values = (array) $form_state->getValues();
 
-    $general = (array) ($values['general'] ?? []);
-    $fecha_nacimiento = trim((string) ($general['fecha_nacimiento'] ?? ''));
+    if (in_array('field_fecha_nacimiento', $requested_fields, TRUE)) {
+      $general = (array) ($values['general'] ?? []);
+      $fecha_nacimiento = trim((string) ($general['fecha_nacimiento'] ?? ''));
 
-    if (!$this->isAdultBirthDate($fecha_nacimiento)) {
-      $form_state->setErrorByName(
-        'general][fecha_nacimiento',
-        $this->t('No puedes reenviar la solicitud porque la fecha de nacimiento corresponde a una persona menor de edad.')
-      );
+      if (!$this->isAdultBirthDate($fecha_nacimiento)) {
+        $form_state->setErrorByName(
+          'general][fecha_nacimiento',
+          $this->t('No puedes reenviar la solicitud porque la fecha de nacimiento corresponde a una persona menor de edad.')
+        );
 
-      $form_state->set('show_underage_modal', TRUE);
-      return;
+        $form_state->set('show_underage_modal', TRUE);
+        return;
+      }
     }
 
-    $contacto = (array) ($values['contacto'] ?? []);
-    $indicativo = trim((string) ($contacto['celular_indicativo'] ?? ''));
-    $celular_nacional = preg_replace('/\D+/', '', (string) ($contacto['celular'] ?? ''));
-    $celular_full = trim((string) ($contacto['celular_full'] ?? ''));
+    if (in_array('field_celular', $requested_fields, TRUE)) {
+      $contacto = (array) ($values['contacto'] ?? []);
+      $indicativo = trim((string) ($contacto['celular_indicativo'] ?? ''));
+      $celular_nacional = preg_replace('/\D+/', '', (string) ($contacto['celular'] ?? ''));
+      $celular_full = trim((string) ($contacto['celular_full'] ?? ''));
 
-    if ($indicativo === '') {
-      $form_state->setErrorByName('contacto][celular', $this->t('Debe seleccionar el indicativo del país para el teléfono celular.'));
-      return;
-    }
+      if ($indicativo === '') {
+        $form_state->setErrorByName('contacto][celular', $this->t('Debe seleccionar el indicativo del país para el teléfono celular.'));
+        return;
+      }
 
-    if (!preg_match('/^\+\d{1,4}$/', $indicativo)) {
-      $form_state->setErrorByName('contacto][celular', $this->t('El indicativo del teléfono celular no tiene un formato válido.'));
-      return;
-    }
+      if (!preg_match('/^\+\d{1,4}$/', $indicativo)) {
+        $form_state->setErrorByName('contacto][celular', $this->t('El indicativo del teléfono celular no tiene un formato válido.'));
+        return;
+      }
 
-    if ($celular_nacional === '') {
-      $form_state->setErrorByName('contacto][celular', $this->t('Debe ingresar el número celular.'));
-      return;
-    }
+      if ($celular_nacional === '') {
+        $form_state->setErrorByName('contacto][celular', $this->t('Debe ingresar el número celular.'));
+        return;
+      }
 
-    if (strlen($celular_nacional) < 6 || strlen($celular_nacional) > 15) {
-      $form_state->setErrorByName('contacto][celular', $this->t('El número celular debe tener entre 6 y 15 dígitos.'));
-      return;
-    }
+      if (strlen($celular_nacional) < 6 || strlen($celular_nacional) > 15) {
+        $form_state->setErrorByName('contacto][celular', $this->t('El número celular debe tener entre 6 y 15 dígitos.'));
+        return;
+      }
 
-    if ($celular_full === '') {
-      $celular_full = $indicativo . $celular_nacional;
-    }
+      if ($celular_full === '') {
+        $celular_full = $indicativo . $celular_nacional;
+      }
 
-    if (!preg_match('/^\+\d{7,18}$/', $celular_full)) {
-      $form_state->setErrorByName('contacto][celular', $this->t('El teléfono celular completo no tiene un formato internacional válido.'));
+      if (!preg_match('/^\+\d{7,18}$/', $celular_full)) {
+        $form_state->setErrorByName('contacto][celular', $this->t('El teléfono celular completo no tiene un formato internacional válido.'));
+        return;
+      }
     }
 
     $profesional = (array) ($values['profesional'] ?? []);
-    if ((int) ($profesional['tiene_subespecialidad'] ?? 0) === 1 && empty($profesional['subespecialidad_cual'])) {
+    $tiene_subespecialidad = in_array('field_tiene_subespecialidad', $requested_fields, TRUE)
+      ? (int) ($profesional['tiene_subespecialidad'] ?? 0)
+      : $this->getBooleanValue($node, 'field_tiene_subespecialidad');
+
+    if (
+      $tiene_subespecialidad === 1
+      && in_array('field_subespecialidad_cual', $requested_fields, TRUE)
+      && empty($profesional['subespecialidad_cual'])
+    ) {
       $form_state->setErrorByName('profesional][subespecialidad_cual', $this->t('Debe seleccionar la subespecialidad.'));
+      return;
+    }
+
+    $unchanged_fields = $this->getUnchangedRequestedFields($node, $values, $requested_fields);
+
+    if (!empty($unchanged_fields)) {
+      foreach ($unchanged_fields as $field_name) {
+        $form_path = $this->getFormPathByFieldName($field_name);
+        $error_name = $form_path ? implode('][', $form_path) : 'form';
+
+        $message = $this->isFileFieldName($field_name)
+          ? $this->t('Debe cargar un archivo diferente al que ya estaba registrado.')
+          : $this->t('Debe modificar este campo para responder la aclaración.');
+
+        $form_state->setErrorByName($error_name, $message);
+      }
+
+      return;
     }
 
     $confirmacion = (array) ($values['confirmacion'] ?? []);
@@ -478,7 +573,27 @@ final class SolicitudIngresoEditWizardForm extends FormBase
       return;
     }
 
+    $active_clarification = $this->clarificationManager->getActiveClarification((int) $node->id());
+
+    if (!$active_clarification) {
+      $this->messenger()->addError($this->t('No existe una aclaración activa para esta solicitud.'));
+      $form_state->setRedirect('asocolderma_inscription.user_zone_requests');
+      return;
+    }
+
+    $requested_fields = $this->filterRequestedFieldsForNode(
+      $node,
+      (array) ($active_clarification['requested_fields'] ?? [])
+    );
+
+    if (empty($requested_fields)) {
+      $this->messenger()->addError($this->t('No hay campos válidos configurados para esta aclaración.'));
+      $form_state->setRedirect('asocolderma_inscription.user_zone_requests');
+      return;
+    }
+
     $values = (array) $form_state->getValues();
+    $changed_fields = $this->getChangedRequestedFields($node, $values, $requested_fields);
 
     $general = (array) ($values['general'] ?? []);
     $contacto = (array) ($values['contacto'] ?? []);
@@ -494,43 +609,46 @@ final class SolicitudIngresoEditWizardForm extends FormBase
       $celular_full = $celular_indicativo . $celular_nacional;
     }
 
-    $node->set('field_tipo_asociado', ['target_id' => (int) $general['tipo_asociado']]);
-    $node->set('field_nombre1', $general['nombre1']);
-    $node->set('field_nombre2', $general['nombre2'] ?? '');
-    $node->set('field_apellido1', $general['apellido1']);
-    $node->set('field_apellido2', $general['apellido2'] ?? '');
-    $node->set('field_fecha_nacimiento', $general['fecha_nacimiento']);
-    $node->set('field_estado_civil', ['target_id' => (int) $general['estado_civil']]);
-    $node->set('field_sexo', ['target_id' => (int) $general['sexo']]);
-    $node->set('field_tipo_documento', ['target_id' => (int) $general['tipo_documento']]);
-    $node->set('field_numero_documento', $general['numero_documento']);
-    $node->set('field_registro_medico', $general['registro_medico']);
-    $node->set('field_pais', ['target_id' => (int) $general['pais']]);
-    $node->set('field_departamento', ['target_id' => (int) $general['departamento']]);
-    $node->set('field_ciudad_ejercicio', ['target_id' => (int) $general['ciudad_ejercicio']]);
+    $this->setFieldIfRequested($node, $requested_fields, 'field_tipo_asociado', ['target_id' => (int) ($general['tipo_asociado'] ?? 0)]);
+    $this->setFieldIfRequested($node, $requested_fields, 'field_nombre1', $general['nombre1'] ?? '');
+    $this->setFieldIfRequested($node, $requested_fields, 'field_nombre2', $general['nombre2'] ?? '');
+    $this->setFieldIfRequested($node, $requested_fields, 'field_apellido1', $general['apellido1'] ?? '');
+    $this->setFieldIfRequested($node, $requested_fields, 'field_apellido2', $general['apellido2'] ?? '');
+    $this->setFieldIfRequested($node, $requested_fields, 'field_fecha_nacimiento', $general['fecha_nacimiento'] ?? '');
+    $this->setFieldIfRequested($node, $requested_fields, 'field_estado_civil', ['target_id' => (int) ($general['estado_civil'] ?? 0)]);
+    $this->setFieldIfRequested($node, $requested_fields, 'field_sexo', ['target_id' => (int) ($general['sexo'] ?? 0)]);
+    $this->setFieldIfRequested($node, $requested_fields, 'field_tipo_documento', ['target_id' => (int) ($general['tipo_documento'] ?? 0)]);
+    $this->setFieldIfRequested($node, $requested_fields, 'field_numero_documento', $general['numero_documento'] ?? '');
+    $this->setFieldIfRequested($node, $requested_fields, 'field_registro_medico', $general['registro_medico'] ?? '');
+    $this->setFieldIfRequested($node, $requested_fields, 'field_pais', ['target_id' => (int) ($general['pais'] ?? 0)]);
+    $this->setFieldIfRequested($node, $requested_fields, 'field_departamento', ['target_id' => (int) ($general['departamento'] ?? 0)]);
+    $this->setFieldIfRequested($node, $requested_fields, 'field_ciudad_ejercicio', ['target_id' => (int) ($general['ciudad_ejercicio'] ?? 0)]);
 
-    $node->set('field_correspondencia_fisica', $contacto['direccion'] ?? '');
-    $node->set('field_direccion_institucional', $contacto['correspondencia_fisica'] ?? '');
-    $node->set('field_email_principal', $aspirante_email);
-    $node->set('field_celular', $celular_full);
+    $this->setFieldIfRequested($node, $requested_fields, 'field_correspondencia_fisica', $contacto['direccion'] ?? '');
+    $this->setFieldIfRequested($node, $requested_fields, 'field_direccion_institucional', $contacto['correspondencia_fisica'] ?? '');
+    $this->setFieldIfRequested($node, $requested_fields, 'field_celular', $celular_full);
 
-    if (!empty($contacto['lugar_correspondencia'])) {
-      $node->set('field_lugar_correspondencia', ['target_id' => (int) $contacto['lugar_correspondencia']]);
-    } else {
-      $node->set('field_lugar_correspondencia', NULL);
+    if (in_array('field_lugar_correspondencia', $requested_fields, TRUE)) {
+      if (!empty($contacto['lugar_correspondencia'])) {
+        $node->set('field_lugar_correspondencia', ['target_id' => (int) $contacto['lugar_correspondencia']]);
+      } else {
+        $node->set('field_lugar_correspondencia', NULL);
+      }
     }
 
-    $node->set('field_facultad_pregrado', ['target_id' => (int) $profesional['facultad_pregrado']]);
-    $node->set('field_pais_pregrado', ['target_id' => (int) $profesional['pais_pregrado']]);
-    $node->set('field_titulo_universitario', ['target_id' => (int) $profesional['titulo_universitario']]);
-    $node->set('field_universidad_residencia', ['target_id' => (int) $profesional['universidad_residencia']]);
-    $node->set('field_pais_residencia', ['target_id' => (int) $profesional['pais_residencia']]);
-    $node->set('field_tiene_subespecialidad', !empty($profesional['tiene_subespecialidad']) ? 1 : 0);
+    $this->setFieldIfRequested($node, $requested_fields, 'field_facultad_pregrado', ['target_id' => (int) ($profesional['facultad_pregrado'] ?? 0)]);
+    $this->setFieldIfRequested($node, $requested_fields, 'field_pais_pregrado', ['target_id' => (int) ($profesional['pais_pregrado'] ?? 0)]);
+    $this->setFieldIfRequested($node, $requested_fields, 'field_titulo_universitario', ['target_id' => (int) ($profesional['titulo_universitario'] ?? 0)]);
+    $this->setFieldIfRequested($node, $requested_fields, 'field_universidad_residencia', ['target_id' => (int) ($profesional['universidad_residencia'] ?? 0)]);
+    $this->setFieldIfRequested($node, $requested_fields, 'field_pais_residencia', ['target_id' => (int) ($profesional['pais_residencia'] ?? 0)]);
+    $this->setFieldIfRequested($node, $requested_fields, 'field_tiene_subespecialidad', !empty($profesional['tiene_subespecialidad']) ? 1 : 0);
 
-    if (!empty($profesional['tiene_subespecialidad']) && !empty($profesional['subespecialidad_cual'])) {
-      $node->set('field_subespecialidad_cual', ['target_id' => (int) $profesional['subespecialidad_cual']]);
-    } else {
-      $node->set('field_subespecialidad_cual', NULL);
+    if (in_array('field_subespecialidad_cual', $requested_fields, TRUE)) {
+      if (!empty($profesional['subespecialidad_cual'])) {
+        $node->set('field_subespecialidad_cual', ['target_id' => (int) $profesional['subespecialidad_cual']]);
+      } else {
+        $node->set('field_subespecialidad_cual', NULL);
+      }
     }
 
     $file_map = [
@@ -556,6 +674,10 @@ final class SolicitudIngresoEditWizardForm extends FormBase
 
     foreach ($file_map as $form_key => $field_name) {
       if (!$node->hasField($field_name)) {
+        continue;
+      }
+
+      if (!in_array($field_name, $requested_fields, TRUE)) {
         continue;
       }
 
@@ -597,10 +719,24 @@ final class SolicitudIngresoEditWizardForm extends FormBase
       $node,
       $estado_en_tramite_tid,
       'aspirante_ajustes_realizados',
-      'El aspirante marcó la opción Ajustes realizados y reenvió la solicitud al flujo institucional.',
+      'El aspirante corrigió los campos solicitados y reenvió la solicitud al flujo institucional.',
       [
         'accion' => 'ajustes_realizados',
         'form_id' => $this->getFormId(),
+        'clarification_id' => (int) $active_clarification['id'],
+        'requested_fields' => $requested_fields,
+        'changed_fields' => $changed_fields,
+      ]
+    );
+
+    $this->clarificationManager->markAnswered(
+      (int) $active_clarification['id'],
+      (int) $this->currentUser()->id(),
+      [
+        'form_id' => $this->getFormId(),
+        'requested_fields' => $requested_fields,
+        'changed_fields' => $changed_fields,
+        'answered_from' => 'aspirante_clarification_form',
       ]
     );
 
@@ -619,10 +755,17 @@ final class SolicitudIngresoEditWizardForm extends FormBase
     string $extensions,
     bool $required
   ): void {
+    $description = '';
+
+    if (!$node->get($field_name)->isEmpty()) {
+      $description = $this->t('Debe cargar un archivo nuevo si este campo fue solicitado en la aclaración.');
+    }
+
     $form['adjuntos'][$form_key] = [
       '#type' => 'managed_file',
       '#title' => $this->t($title),
       '#required' => $required,
+      '#description' => $description,
       '#upload_location' => $upload_location,
       '#default_value' => $this->getFileDefaultValue($node, $field_name),
       '#upload_validators' => [
@@ -779,5 +922,250 @@ final class SolicitudIngresoEditWizardForm extends FormBase
     $minimum_birth_date = $today->modify('-18 years');
 
     return $date <= $minimum_birth_date;
+  }
+
+  private function applyClarificationRestrictions(array &$form, array $requested_fields): void
+  {
+    $field_form_map = $this->getFieldFormMap();
+
+    foreach ($field_form_map as $field_name => $form_path) {
+      [$section, $key] = $form_path;
+
+      if (!isset($form[$section][$key])) {
+        continue;
+      }
+
+      $allowed = in_array($field_name, $requested_fields, TRUE);
+
+      $form[$section][$key]['#access'] = $allowed;
+
+      if (!$allowed) {
+        $form[$section][$key]['#required'] = FALSE;
+      } elseif ($this->isFileFieldName($field_name)) {
+        $form[$section][$key]['#required'] = TRUE;
+      }
+    }
+
+    $show_phone = in_array('field_celular', $requested_fields, TRUE);
+    if (isset($form['contacto']['celular_indicativo'])) {
+      $form['contacto']['celular_indicativo']['#access'] = $show_phone;
+    }
+    if (isset($form['contacto']['celular_full'])) {
+      $form['contacto']['celular_full']['#access'] = $show_phone;
+    }
+    if (isset($form['contacto']['email'])) {
+      $form['contacto']['email']['#access'] = FALSE;
+    }
+
+    foreach (['general', 'contacto', 'profesional', 'adjuntos'] as $section) {
+      $section_has_fields = FALSE;
+
+      foreach ($field_form_map as $field_name => $form_path) {
+        if ($form_path[0] === $section && in_array($field_name, $requested_fields, TRUE)) {
+          $section_has_fields = TRUE;
+          break;
+        }
+      }
+
+      if (isset($form[$section])) {
+        $form[$section]['#access'] = $section_has_fields;
+        $form[$section]['#open'] = $section_has_fields;
+      }
+    }
+  }
+
+  private function filterRequestedFieldsForNode(NodeInterface $node, array $requested_fields): array
+  {
+    $allowed_fields = array_keys($this->getFieldFormMap());
+    $filtered = [];
+
+    foreach ($requested_fields as $field_name) {
+      $field_name = trim((string) $field_name);
+
+      if ($field_name === '') {
+        continue;
+      }
+
+      if (!in_array($field_name, $allowed_fields, TRUE)) {
+        continue;
+      }
+
+      if (!$node->hasField($field_name)) {
+        continue;
+      }
+
+      $filtered[] = $field_name;
+    }
+
+    return array_values(array_unique($filtered));
+  }
+
+  private function getFieldFormMap(): array
+  {
+    return [
+      'field_tipo_asociado' => ['general', 'tipo_asociado'],
+      'field_nombre1' => ['general', 'nombre1'],
+      'field_nombre2' => ['general', 'nombre2'],
+      'field_apellido1' => ['general', 'apellido1'],
+      'field_apellido2' => ['general', 'apellido2'],
+      'field_fecha_nacimiento' => ['general', 'fecha_nacimiento'],
+      'field_estado_civil' => ['general', 'estado_civil'],
+      'field_sexo' => ['general', 'sexo'],
+      'field_tipo_documento' => ['general', 'tipo_documento'],
+      'field_numero_documento' => ['general', 'numero_documento'],
+      'field_registro_medico' => ['general', 'registro_medico'],
+      'field_pais' => ['general', 'pais'],
+      'field_departamento' => ['general', 'departamento'],
+      'field_ciudad_ejercicio' => ['general', 'ciudad_ejercicio'],
+
+      'field_correspondencia_fisica' => ['contacto', 'direccion'],
+      'field_direccion_institucional' => ['contacto', 'correspondencia_fisica'],
+      'field_celular' => ['contacto', 'celular'],
+      'field_lugar_correspondencia' => ['contacto', 'lugar_correspondencia'],
+
+      'field_facultad_pregrado' => ['profesional', 'facultad_pregrado'],
+      'field_pais_pregrado' => ['profesional', 'pais_pregrado'],
+      'field_titulo_universitario' => ['profesional', 'titulo_universitario'],
+      'field_universidad_residencia' => ['profesional', 'universidad_residencia'],
+      'field_pais_residencia' => ['profesional', 'pais_residencia'],
+      'field_tiene_subespecialidad' => ['profesional', 'tiene_subespecialidad'],
+      'field_subespecialidad_cual' => ['profesional', 'subespecialidad_cual'],
+
+      'field_adj_carta_1' => ['adjuntos', 'adj_carta_1'],
+      'field_adj_carta_2' => ['adjuntos', 'adj_carta_2'],
+      'field_adj_rut' => ['adjuntos', 'adj_rut'],
+      'field_adj_id' => ['adjuntos', 'adj_id'],
+      'field_adj_carta_ingreso' => ['adjuntos', 'adj_carta_ingreso'],
+      'field_adj_hv' => ['adjuntos', 'adj_hv'],
+      'field_adj_diploma_medico' => ['adjuntos', 'adj_diploma_medico'],
+      'field_adj_diploma_dermatologo' => ['adjuntos', 'adj_diploma_dermatologo'],
+      'field_adj_rethus' => ['adjuntos', 'adj_rethus'],
+      'field_adj_aut_verificacion' => ['adjuntos', 'adj_aut_verificacion'],
+      'field_adj_cert_publicacion' => ['adjuntos', 'adj_cert_publicacion'],
+      'field_adj_acta_grado_medico' => ['adjuntos', 'adj_acta_grado_medico'],
+      'field_adj_acta_grado_dermatologo' => ['adjuntos', 'adj_acta_grado_dermatologo'],
+      'field_adj_convalidacion' => ['adjuntos', 'adj_convalidacion'],
+      'field_adj_pensum_academico' => ['adjuntos', 'adj_pensum_academico'],
+      'field_adj_notas_dermatologia' => ['adjuntos', 'adj_notas_dermatologia'],
+    ];
+  }
+
+  private function getFormPathByFieldName(string $field_name): ?array
+  {
+    $map = $this->getFieldFormMap();
+
+    return $map[$field_name] ?? NULL;
+  }
+
+  private function isFileFieldName(string $field_name): bool
+  {
+    return str_starts_with($field_name, 'field_adj_');
+  }
+
+  private function setFieldIfRequested(NodeInterface $node, array $requested_fields, string $field_name, mixed $value): void
+  {
+    if (!in_array($field_name, $requested_fields, TRUE)) {
+      return;
+    }
+
+    if (!$node->hasField($field_name)) {
+      return;
+    }
+
+    $node->set($field_name, $value);
+  }
+
+  private function getChangedRequestedFields(NodeInterface $node, array $values, array $requested_fields): array
+  {
+    $changed = [];
+
+    foreach ($requested_fields as $field_name) {
+      $current_value = $this->getComparableCurrentFieldValue($node, $field_name);
+      $submitted_value = $this->getComparableSubmittedFieldValue($field_name, $values);
+
+      if ($current_value !== $submitted_value) {
+        $changed[] = $field_name;
+      }
+    }
+
+    return $changed;
+  }
+
+  private function getUnchangedRequestedFields(NodeInterface $node, array $values, array $requested_fields): array
+  {
+    $changed = $this->getChangedRequestedFields($node, $values, $requested_fields);
+
+    return array_values(array_diff($requested_fields, $changed));
+  }
+
+  private function getComparableCurrentFieldValue(NodeInterface $node, string $field_name): string
+  {
+    if (!$node->hasField($field_name) || $node->get($field_name)->isEmpty()) {
+      return '';
+    }
+
+    $field = $node->get($field_name);
+    $definition = $field->getFieldDefinition();
+    $type = $definition->getType();
+
+    if (in_array($type, ['entity_reference', 'file', 'image'], TRUE)) {
+      return (string) ((int) ($field->target_id ?? 0));
+    }
+
+    if ($type === 'boolean') {
+      return !empty($field->value) ? '1' : '0';
+    }
+
+    return trim((string) ($field->value ?? ''));
+  }
+
+  private function getComparableSubmittedFieldValue(string $field_name, array $values): string
+  {
+    $path = $this->getFormPathByFieldName($field_name);
+
+    if (!$path) {
+      return '';
+    }
+
+    [$section, $key] = $path;
+
+    if ($field_name === 'field_celular') {
+      $contacto = (array) ($values['contacto'] ?? []);
+      $celular_full = trim((string) ($contacto['celular_full'] ?? ''));
+
+      if ($celular_full !== '') {
+        return $celular_full;
+      }
+
+      $indicativo = trim((string) ($contacto['celular_indicativo'] ?? '+57'));
+      $celular_nacional = preg_replace('/\D+/', '', (string) ($contacto['celular'] ?? ''));
+
+      return $celular_nacional !== '' ? $indicativo . $celular_nacional : '';
+    }
+
+    $value = $values[$section][$key] ?? '';
+
+    if ($this->isFileFieldName($field_name)) {
+      if (is_array($value)) {
+        return (string) ((int) ($value[0] ?? 0));
+      }
+
+      return (string) ((int) $value);
+    }
+
+    if (is_array($value)) {
+      if (isset($value['target_id'])) {
+        return (string) ((int) $value['target_id']);
+      }
+
+      $first = reset($value);
+      return is_scalar($first) ? trim((string) $first) : '';
+    }
+
+    if ($field_name === 'field_tiene_subespecialidad') {
+      return !empty($value) ? '1' : '0';
+    }
+
+    return trim((string) $value);
   }
 }
