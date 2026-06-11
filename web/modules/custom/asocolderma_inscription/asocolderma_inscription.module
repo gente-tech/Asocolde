@@ -108,42 +108,56 @@ function asocolderma_inscription_preprocess_node(array &$variables)
   $variables['estado_visual_solicitud'] = $estado_visual_solicitud;
 }
 
-/**
- * Construye el semáforo horizontal de una solicitud.
- */
 function asocolderma_inscription_build_semaforo_steps(NodeInterface $node): array
 {
   $current_tid = (int) ($node->get('field_state')->target_id ?? 0);
   $current_name = asocolderma_inscription_get_term_name_by_tid($current_tid) ?? '';
+  $current_key = asocolderma_inscription_get_state_functional_key_by_tid($current_tid);
 
   $history_rows = asocolderma_inscription_get_state_history_rows((int) $node->id());
 
-  $history_steps = [];
-  $has_rejected = asocolderma_inscription_is_cancelled_state($current_name);
+  $history_steps_by_slot = [];
 
   foreach ($history_rows as $row) {
-    $state_name = asocolderma_inscription_get_term_name_by_tid((int) $row->to_tid);
+    $to_tid = (int) $row->to_tid;
+    $state_name = asocolderma_inscription_get_term_name_by_tid($to_tid);
 
     if (!$state_name) {
       continue;
     }
 
-    $label = asocolderma_inscription_get_state_visual_label_by_tid((int) $row->to_tid);
+    $functional_key = asocolderma_inscription_get_state_functional_key_by_tid($to_tid);
+    $slot = asocolderma_inscription_get_flow_slot_from_functional_key($functional_key, $state_name);
+
+    if ($slot === '') {
+      continue;
+    }
+
+    $label = asocolderma_inscription_get_state_visual_label_by_tid($to_tid);
 
     if ($label === '') {
       $label = asocolderma_inscription_map_current_state_to_flow_label($state_name);
     }
 
-    $history_steps[] = [
+    /*
+     * Si una misma etapa tuvo varios estados, por ejemplo:
+     * En trámite Secretaría General -> Aprobado Secretaría General,
+     * dejamos visible solo el último estado de esa etapa.
+     */
+    $history_steps_by_slot[$slot] = [
       'label' => $label,
       'status' => 'done',
       'date' => \Drupal::service('date.formatter')->format((int) $row->created, 'custom', 'd/m/Y h:i A'),
       'note' => trim((string) ($row->comment ?? '')),
       'state_name' => $state_name,
+      'functional_key' => $functional_key,
+      'slot' => $slot,
       'origin' => (string) ($row->origin ?? ''),
       'history_id' => (int) $row->id,
     ];
   }
+
+  $history_steps = array_values($history_steps_by_slot);
 
   if (empty($history_steps)) {
     $current_label = asocolderma_inscription_get_state_visual_label_by_tid($current_tid);
@@ -154,10 +168,12 @@ function asocolderma_inscription_build_semaforo_steps(NodeInterface $node): arra
 
     $history_steps[] = [
       'label' => $current_label,
-      'status' => asocolderma_inscription_is_cancelled_state($current_name) ? 'cancelled' : 'current',
+      'status' => asocolderma_inscription_is_cancelled_functional_key($current_key, $current_name) ? 'cancelled' : 'current',
       'date' => \Drupal::service('date.formatter')->format($node->getCreatedTime(), 'custom', 'd/m/Y h:i A'),
       'note' => '',
       'state_name' => $current_name,
+      'functional_key' => $current_key,
+      'slot' => asocolderma_inscription_get_flow_slot_from_functional_key($current_key, $current_name),
       'origin' => 'current_node_state',
       'history_id' => 0,
     ];
@@ -165,33 +181,27 @@ function asocolderma_inscription_build_semaforo_steps(NodeInterface $node): arra
 
   $last_index = count($history_steps) - 1;
 
-  $completed_states_that_move_to_next = [
-    'Aprobada',
-    'Aprobado Junta D.',
-    'Aprobado Asamblea G.',
-    'Documentos enviados',
-    'Documentos firmados',
-    'Miembro activo',
-    'Activar miembro nuevo',
-  ];
-
   foreach ($history_steps as $index => &$step) {
-    if ($index === $last_index) {
-      if ($has_rejected) {
-        $step['status'] = 'cancelled';
-      } elseif (in_array($current_name, $completed_states_that_move_to_next, TRUE)) {
-        $step['status'] = 'done';
-      } else {
-        $step['status'] = 'current';
-      }
+    if ($index !== $last_index) {
+      $step['status'] = 'done';
+      continue;
+    }
+
+    $step_key = (string) ($step['functional_key'] ?? '');
+
+    if (asocolderma_inscription_is_cancelled_functional_key($current_key, $current_name)) {
+      $step['status'] = 'cancelled';
+    } elseif (asocolderma_inscription_is_completed_functional_key($current_key, $current_name)) {
+      $step['status'] = 'done';
+    } elseif ($step_key === $current_key || $step_key === '') {
+      $step['status'] = 'current';
     } else {
       $step['status'] = 'done';
     }
   }
   unset($step);
 
-  $last_real_label = asocolderma_inscription_map_current_state_to_flow_label($current_name);
-  $future_steps = asocolderma_inscription_get_future_flow_steps($last_real_label, $current_name);
+  $future_steps = asocolderma_inscription_get_future_flow_steps('', $current_name, $current_key);
 
   return array_merge($history_steps, $future_steps);
 }
@@ -215,18 +225,18 @@ function asocolderma_inscription_get_state_history_rows(int $nid): array
   return $query->execute()->fetchAll();
 }
 
-function asocolderma_inscription_get_future_flow_steps(string $last_visible_label, string $current_name): array
+function asocolderma_inscription_get_future_flow_steps(string $last_visible_label, string $current_name, string $current_key = ''): array
 {
-  if (asocolderma_inscription_is_cancelled_state($current_name)) {
+  if (asocolderma_inscription_is_cancelled_functional_key($current_key, $current_name)) {
     return [];
   }
 
   $future_labels = [];
   $next_current_label = NULL;
 
-  switch ($current_name) {
-    case 'En trámite':
-    case 'Pendiente aclaración':
+  switch ($current_key) {
+    case 'sg_en_tramite':
+    case 'sg_pendiente_aclaracion':
       $future_labels = [
         'Junta directiva',
         'Asamblea general',
@@ -236,7 +246,7 @@ function asocolderma_inscription_get_future_flow_steps(string $last_visible_labe
       ];
       break;
 
-    case 'Aprobada':
+    case 'sg_aprobado':
       $future_labels = [
         'Junta directiva',
         'Asamblea general',
@@ -247,7 +257,7 @@ function asocolderma_inscription_get_future_flow_steps(string $last_visible_labe
       $next_current_label = 'Junta directiva';
       break;
 
-    case 'Aprobado Junta D.':
+    case 'junta_aprobado':
       $future_labels = [
         'Asamblea general',
         'Envío de documentos',
@@ -257,7 +267,7 @@ function asocolderma_inscription_get_future_flow_steps(string $last_visible_labe
       $next_current_label = 'Asamblea general';
       break;
 
-    case 'Aprobado Asamblea G.':
+    case 'asamblea_aprobado':
       $future_labels = [
         'Envío de documentos',
         'Pago de ingreso',
@@ -266,7 +276,7 @@ function asocolderma_inscription_get_future_flow_steps(string $last_visible_labe
       $next_current_label = 'Envío de documentos';
       break;
 
-    case 'Documentos enviados':
+    case 'coord_documentos_enviados':
       $future_labels = [
         'Pago de ingreso',
         'Miembro activo',
@@ -274,18 +284,77 @@ function asocolderma_inscription_get_future_flow_steps(string $last_visible_labe
       $next_current_label = 'Pago de ingreso';
       break;
 
-    case 'Pendiente pago de ingreso':
+    case 'coord_pago_ingreso':
       $future_labels = [
         'Miembro activo',
       ];
       break;
 
-    case 'Miembro activo':
+    case 'coord_miembro_activo':
       $future_labels = [];
       break;
 
     default:
-      $future_labels = [];
+      /*
+       * Fallback temporal por compatibilidad si algún término todavía no tiene
+       * equivalencia funcional configurada.
+       */
+      switch ($current_name) {
+        case 'En trámite':
+        case 'Pendiente aclaración':
+          $future_labels = [
+            'Junta directiva',
+            'Asamblea general',
+            'Envío de documentos',
+            'Pago de ingreso',
+            'Miembro activo',
+          ];
+          break;
+
+        case 'Aprobada':
+          $future_labels = [
+            'Junta directiva',
+            'Asamblea general',
+            'Envío de documentos',
+            'Pago de ingreso',
+            'Miembro activo',
+          ];
+          $next_current_label = 'Junta directiva';
+          break;
+
+        case 'Aprobado Junta D.':
+          $future_labels = [
+            'Asamblea general',
+            'Envío de documentos',
+            'Pago de ingreso',
+            'Miembro activo',
+          ];
+          $next_current_label = 'Asamblea general';
+          break;
+
+        case 'Aprobado Asamblea G.':
+          $future_labels = [
+            'Envío de documentos',
+            'Pago de ingreso',
+            'Miembro activo',
+          ];
+          $next_current_label = 'Envío de documentos';
+          break;
+
+        case 'Documentos enviados':
+          $future_labels = [
+            'Pago de ingreso',
+            'Miembro activo',
+          ];
+          $next_current_label = 'Pago de ingreso';
+          break;
+
+        case 'Pendiente pago de ingreso':
+          $future_labels = [
+            'Miembro activo',
+          ];
+          break;
+      }
       break;
   }
 
@@ -301,6 +370,8 @@ function asocolderma_inscription_get_future_flow_steps(string $last_visible_labe
       'date' => '',
       'note' => '',
       'state_name' => '',
+      'functional_key' => '',
+      'slot' => '',
       'origin' => 'future',
       'history_id' => 0,
     ];
@@ -308,7 +379,6 @@ function asocolderma_inscription_get_future_flow_steps(string $last_visible_labe
 
   return $steps;
 }
-
 /**
  * Devuelve el flujo visible del semáforo según el estado actual.
  */
@@ -490,6 +560,142 @@ function asocolderma_inscription_get_state_visual_label_by_tid(int $tid): string
   }
 
   return asocolderma_inscription_get_state_visual_label_from_term($term);
+}
+
+/**
+ * Devuelve la equivalencia funcional administrable de un término de estado.
+ *
+ * El mapeo se guarda por UUID del término.
+ */
+function asocolderma_inscription_get_state_functional_key_from_term($term): string
+{
+  if (!$term instanceof \Drupal\taxonomy\TermInterface) {
+    return '';
+  }
+
+  $uuid = (string) $term->uuid();
+
+  if ($uuid === '') {
+    return '';
+  }
+
+  $state_keys = \Drupal::config('asocolderma_inscription.state_visual_labels')->get('state_keys') ?? [];
+
+  if (!empty($state_keys[$uuid]) && is_string($state_keys[$uuid])) {
+    return trim($state_keys[$uuid]);
+  }
+
+  return '';
+}
+
+/**
+ * Devuelve la equivalencia funcional administrable de un estado por TID.
+ */
+function asocolderma_inscription_get_state_functional_key_by_tid(int $tid): string
+{
+  if ($tid <= 0) {
+    return '';
+  }
+
+  $term = Term::load($tid);
+
+  if (!$term) {
+    return '';
+  }
+
+  return asocolderma_inscription_get_state_functional_key_from_term($term);
+}
+
+/**
+ * Devuelve la etapa lógica del semáforo a partir de la equivalencia funcional.
+ */
+function asocolderma_inscription_get_flow_slot_from_functional_key(string $functional_key, string $fallback_name = ''): string
+{
+  return match ($functional_key) {
+    'sg_en_tramite',
+    'sg_aprobado',
+    'sg_rechazado',
+    'sg_pendiente_aclaracion' => 'secretaria_general',
+
+    'junta_aprobado',
+    'junta_rechazado' => 'junta_directiva',
+
+    'asamblea_aprobado',
+    'asamblea_rechazado' => 'asamblea_general',
+
+    'coord_documentos_enviados' => 'envio_documentos',
+    'coord_pago_ingreso' => 'pago_ingreso',
+    'coord_miembro_activo' => 'miembro_activo',
+
+    default => asocolderma_inscription_get_flow_slot_from_state_name($fallback_name),
+  };
+}
+
+/**
+ * Fallback por nombre real del término.
+ */
+function asocolderma_inscription_get_flow_slot_from_state_name(string $state_name): string
+{
+  return match ($state_name) {
+    'En trámite',
+    'Aprobada',
+    'Rechazada',
+    'Pendiente aclaración' => 'secretaria_general',
+
+    'Aprobado Junta D.',
+    'Rechazado Junta D.' => 'junta_directiva',
+
+    'Aprobado Asamblea G.',
+    'Rechazado Asamblea G.' => 'asamblea_general',
+
+    'Documentos enviados' => 'envio_documentos',
+    'Pendiente pago de ingreso' => 'pago_ingreso',
+    'Activar miembro nuevo',
+    'Miembro activo' => 'miembro_activo',
+
+    default => '',
+  };
+}
+
+/**
+ * Indica si una equivalencia funcional representa cierre/rechazo.
+ */
+function asocolderma_inscription_is_cancelled_functional_key(string $functional_key, string $fallback_name = ''): bool
+{
+  if (in_array($functional_key, [
+    'sg_rechazado',
+    'junta_rechazado',
+    'asamblea_rechazado',
+  ], TRUE)) {
+    return TRUE;
+  }
+
+  return asocolderma_inscription_is_cancelled_state($fallback_name);
+}
+
+/**
+ * Indica si el estado actual completó su etapa y debe avanzar al siguiente paso.
+ */
+function asocolderma_inscription_is_completed_functional_key(string $functional_key, string $fallback_name = ''): bool
+{
+  if (in_array($functional_key, [
+    'sg_aprobado',
+    'junta_aprobado',
+    'asamblea_aprobado',
+    'coord_documentos_enviados',
+    'coord_miembro_activo',
+  ], TRUE)) {
+    return TRUE;
+  }
+
+  return in_array($fallback_name, [
+    'Aprobada',
+    'Aprobado Junta D.',
+    'Aprobado Asamblea G.',
+    'Documentos enviados',
+    'Miembro activo',
+    'Activar miembro nuevo',
+  ], TRUE);
 }
 
 /**
