@@ -25,6 +25,10 @@ services:
     class: Drupal\asocolderma_inscription\Service\SolicitudHistorialLogger
     arguments: ["@database", "@datetime.time"]
 
+  asocolderma_inscription.solicitud_clarification_manager:
+    class: Drupal\asocolderma_inscription\Service\SolicitudClarificationManager
+    arguments: ["@database", "@datetime.time"]
+
   asocolderma_inscription.solicitud_state_manager:
     class: Drupal\asocolderma_inscription\Service\SolicitudStateManager
     arguments:

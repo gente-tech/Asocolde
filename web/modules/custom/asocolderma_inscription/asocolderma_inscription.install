@@ -561,6 +561,78 @@ function asocolderma_inscription_schema()
     ],
   ];
 
+  $schema['asocolderma_solicitud_aclaracion'] = [
+    'description' => 'Registro auditable de solicitudes de aclaración realizadas por Secretaría General.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'solicitud_nid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'NID de la solicitud de ingreso.',
+      ],
+      'requested_fields' => [
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => TRUE,
+        'description' => 'JSON con los campos solicitados para corrección.',
+      ],
+      'message' => [
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => TRUE,
+        'description' => 'Mensaje u observación enviada al aspirante.',
+      ],
+      'requested_by_uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'UID del usuario de Secretaría General que solicitó la aclaración.',
+      ],
+      'created' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Fecha Unix de creación de la solicitud de aclaración.',
+      ],
+      'resolved_by_uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'description' => 'UID del aspirante que respondió la aclaración.',
+      ],
+      'resolved' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'description' => 'Fecha Unix en que el aspirante respondió la aclaración.',
+      ],
+      'resolution_metadata' => [
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => FALSE,
+        'description' => 'JSON con resumen de campos modificados y valores técnicos comparados.',
+      ],
+      'status' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => 'open',
+        'description' => 'Estado interno de la aclaración: open, answered.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'idx_solicitud_status_created' => ['solicitud_nid', 'status', 'created'],
+      'idx_requested_by_created' => ['requested_by_uid', 'created'],
+      'idx_resolved_by_resolved' => ['resolved_by_uid', 'resolved'],
+    ],
+  ];
+
   return $schema;
 }
 
@@ -1547,4 +1619,19 @@ function asocolderma_inscription_update_9015(): void
   }
 
   \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
+
+/**
+ * Crea tabla para registrar campos solicitados en aclaraciones.
+ */
+function asocolderma_inscription_update_9016(): void
+{
+  $schema = \Drupal::database()->schema();
+
+  if ($schema->tableExists('asocolderma_solicitud_aclaracion')) {
+    return;
+  }
+
+  $table = asocolderma_inscription_schema()['asocolderma_solicitud_aclaracion'];
+  $schema->createTable('asocolderma_solicitud_aclaracion', $table);
 }
