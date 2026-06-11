@@ -128,8 +128,11 @@ function asocolderma_inscription_build_semaforo_steps(NodeInterface $node): arra
       continue;
     }
 
-    $label = asocolderma_inscription_map_current_state_to_flow_label($state_name);
-    $label = asocolderma_inscription_get_contextual_state_label($label, 'secretaria_general');
+    $label = asocolderma_inscription_get_state_visual_label_by_tid((int) $row->to_tid);
+
+    if ($label === '') {
+      $label = asocolderma_inscription_map_current_state_to_flow_label($state_name);
+    }
 
     $history_steps[] = [
       'label' => $label,
@@ -143,8 +146,11 @@ function asocolderma_inscription_build_semaforo_steps(NodeInterface $node): arra
   }
 
   if (empty($history_steps)) {
-    $current_label = asocolderma_inscription_map_current_state_to_flow_label($current_name);
-    $current_label = asocolderma_inscription_get_contextual_state_label($current_label, 'secretaria_general');
+    $current_label = asocolderma_inscription_get_state_visual_label_by_tid($current_tid);
+
+    if ($current_label === '') {
+      $current_label = asocolderma_inscription_map_current_state_to_flow_label($current_name);
+    }
 
     $history_steps[] = [
       'label' => $current_label,
@@ -1291,4 +1297,45 @@ function asocolderma_inscription_logout_url_with_token(): string
       'token' => $token,
     ],
   ])->toString();
+}
+
+/**
+ * Devuelve una etiqueta visual administrable del semáforo.
+ */
+function asocolderma_inscription_get_semaforo_visual_label(string $key, string $fallback): string
+{
+  $labels = \Drupal::config('asocolderma_inscription.state_visual_labels')->get('semaforo_labels') ?? [];
+
+  if (!empty($labels[$key]) && is_string($labels[$key])) {
+    $label = trim($labels[$key]);
+
+    if ($label !== '') {
+      return $label;
+    }
+  }
+
+  return $fallback;
+}
+
+/**
+ * Devuelve la etiqueta visual de un paso futuro del semáforo.
+ */
+function asocolderma_inscription_get_future_semaforo_label(string $internal_label, string $status): string
+{
+  return match ($internal_label) {
+    'Junta directiva' => $status === 'current'
+      ? asocolderma_inscription_get_semaforo_visual_label('pending_junta_directiva', 'Pendiente Junta Directiva')
+      : asocolderma_inscription_get_semaforo_visual_label('junta_directiva', 'Junta Directiva'),
+
+    'Asamblea general' => $status === 'current'
+      ? asocolderma_inscription_get_semaforo_visual_label('pending_asamblea_general', 'Pendiente Asamblea General')
+      : asocolderma_inscription_get_semaforo_visual_label('asamblea_general', 'Asamblea General'),
+
+    'Envío de documentos' => asocolderma_inscription_get_semaforo_visual_label('envio_documentos', 'Documentos enviados'),
+    'Pago de ingreso' => asocolderma_inscription_get_semaforo_visual_label('pago_ingreso', 'Pago de ingreso'),
+    'Activación de miembro' => asocolderma_inscription_get_semaforo_visual_label('activacion_miembro', 'Activación de miembro'),
+    'Miembro activo' => asocolderma_inscription_get_semaforo_visual_label('miembro_activo', 'Miembro activo'),
+
+    default => $internal_label,
+  };
 }

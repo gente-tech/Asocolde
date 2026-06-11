@@ -90,6 +90,25 @@ final class SolicitudStateVisualLabelsSettingsForm extends ConfigFormBase
 			];
 		}
 
+		$semaforo_labels = $config->get('semaforo_labels') ?? [];
+
+		$form['semaforo_labels'] = [
+			'#type' => 'details',
+			'#title' => $this->t('Etiquetas del semáforo'),
+			'#open' => TRUE,
+			'#tree' => TRUE,
+			'#description' => $this->t('Textos visuales para pasos del semáforo que no necesariamente corresponden directamente a un término actual de taxonomía.'),
+		];
+
+		foreach ($this->getSemaforoLabelDefaults() as $key => $default_label) {
+			$form['semaforo_labels'][$key] = [
+				'#type' => 'textfield',
+				'#title' => $default_label,
+				'#default_value' => $semaforo_labels[$key] ?? $default_label,
+				'#maxlength' => 255,
+			];
+		}
+
 		return parent::buildForm($form, $form_state);
 	}
 
@@ -114,9 +133,23 @@ final class SolicitudStateVisualLabelsSettingsForm extends ConfigFormBase
 			$labels[$uuid] = $visual_label;
 		}
 
+		$submitted_semaforo_labels = $form_state->getValue('semaforo_labels') ?? [];
+		$semaforo_labels = [];
+
+		foreach ($this->getSemaforoLabelDefaults() as $key => $default_label) {
+			$value = trim((string) ($submitted_semaforo_labels[$key] ?? ''));
+
+			if ($value === '') {
+				$value = $default_label;
+			}
+
+			$semaforo_labels[$key] = $value;
+		}
+
 		$this->configFactory
 			->getEditable('asocolderma_inscription.state_visual_labels')
 			->set('labels', $labels)
+			->set('semaforo_labels', $semaforo_labels)
 			->save();
 
 		parent::submitForm($form, $form_state);
@@ -144,5 +177,23 @@ final class SolicitudStateVisualLabelsSettingsForm extends ConfigFormBase
 		}
 
 		return $storage->loadMultiple($ids);
+	}
+
+	/**
+	 * Etiquetas configurables para pasos visuales del semáforo.
+	 */
+	private function getSemaforoLabelDefaults(): array
+	{
+		return [
+			'pending_junta_directiva' => 'Pendiente Junta Directiva',
+			'junta_directiva' => 'Junta Directiva',
+			'pending_asamblea_general' => 'Pendiente Asamblea General',
+			'asamblea_general' => 'Asamblea General',
+			'coordinacion_administrativa' => 'Coordinación Administrativa',
+			'envio_documentos' => 'Documentos enviados',
+			'pago_ingreso' => 'Pago de ingreso',
+			'activacion_miembro' => 'Activación de miembro',
+			'miembro_activo' => 'Miembro activo',
+		];
 	}
 }
