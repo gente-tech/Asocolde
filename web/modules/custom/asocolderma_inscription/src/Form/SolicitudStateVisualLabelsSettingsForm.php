@@ -209,13 +209,30 @@ final class SolicitudStateVisualLabelsSettingsForm extends ConfigFormBase
 		return [
 			'pending_junta_directiva' => 'Pendiente Junta Directiva',
 			'junta_directiva' => 'Junta Directiva',
+
 			'pending_asamblea_general' => 'Pendiente Asamblea General',
 			'asamblea_general' => 'Asamblea General',
+
+			'enviar_documentos' => 'Enviar documentos',
+			'pending_enviar_documentos' => 'Pendiente por enviar documentos',
+			'documentos_enviados' => 'Documentos enviados',
+
+			'enviar_pasos_pago' => 'Enviar pasos para pago',
+			'pending_enviar_pasos_pago' => 'Pendiente enviar pasos para pago',
+			'pasos_pago_enviados' => 'Pasos para pago enviados',
+
+			'validar_pago' => 'Validar pago',
+			'pending_validar_pago' => 'Pendiente validar pago',
+			'pago_validado' => 'Pago validado correctamente',
+
+			'activar_miembro' => 'Activar miembro',
+			'miembro_activo' => 'Miembro activo',
+
+			// Compatibilidad con claves anteriores.
 			'coordinacion_administrativa' => 'Coordinación Administrativa',
 			'envio_documentos' => 'Documentos enviados',
 			'pago_ingreso' => 'Pago de ingreso',
 			'activacion_miembro' => 'Activación de miembro',
-			'miembro_activo' => 'Miembro activo',
 		];
 	}
 
@@ -237,8 +254,8 @@ final class SolicitudStateVisualLabelsSettingsForm extends ConfigFormBase
 			'asamblea_rechazado' => 'Asamblea General - Rechazado',
 
 			'coord_documentos_enviados' => 'Coordinación Administrativa - Documentos enviados',
-			'coord_pago_ingreso' => 'Coordinación Administrativa - Pago de ingreso',
-			'coord_miembro_activo' => 'Coordinación Administrativa - Miembro activo',
+			'coord_pago_ingreso' => 'Coordinación Administrativa - Pasos para pago enviados',
+			'coord_miembro_activo' => 'Coordinación Administrativa - Pago validado / Miembro activo',
 		];
 	}
 }
