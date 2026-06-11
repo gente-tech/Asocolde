@@ -114,96 +114,244 @@ function asocolderma_inscription_build_semaforo_steps(NodeInterface $node): arra
   $current_name = asocolderma_inscription_get_term_name_by_tid($current_tid) ?? '';
   $current_key = asocolderma_inscription_get_state_functional_key_by_tid($current_tid);
 
-  $history_rows = asocolderma_inscription_get_state_history_rows((int) $node->id());
+  if ($current_key === '') {
+    $current_key = asocolderma_inscription_get_functional_key_from_state_name($current_name);
+  }
 
-  $history_steps_by_slot = [];
+  $history_rows = asocolderma_inscription_get_state_history_rows((int) $node->id());
+  $steps_by_slot = [];
+
+  $add_state_step = function (
+    int $tid,
+    string $state_name,
+    int $created,
+    string $note,
+    string $origin,
+    int $history_id
+  ) use (&$steps_by_slot): void {
+    $functional_key = asocolderma_inscription_get_state_functional_key_by_tid($tid);
+
+    if ($functional_key === '') {
+      $functional_key = asocolderma_inscription_get_functional_key_from_state_name($state_name);
+    }
+
+    if ($functional_key === '') {
+      return;
+    }
+
+    $date = \Drupal::service('date.formatter')->format($created, 'custom', 'd/m/Y h:i A');
+
+    switch ($functional_key) {
+      case 'sg_en_tramite':
+      case 'sg_aprobado':
+      case 'sg_pendiente_aclaracion':
+      case 'sg_rechazado':
+        $steps_by_slot['secretaria_general'] = [
+          'label' => asocolderma_inscription_get_state_visual_label_by_tid($tid) ?: $state_name,
+          'status' => $functional_key === 'sg_rechazado' ? 'cancelled' : 'done',
+          'date' => $date,
+          'note' => $note,
+          'state_name' => $state_name,
+          'origin' => $origin,
+          'history_id' => $history_id,
+        ];
+        break;
+
+      case 'junta_aprobado':
+      case 'junta_rechazado':
+        $steps_by_slot['junta_directiva'] = [
+          'label' => asocolderma_inscription_get_state_visual_label_by_tid($tid) ?: $state_name,
+          'status' => $functional_key === 'junta_rechazado' ? 'cancelled' : 'done',
+          'date' => $date,
+          'note' => $note,
+          'state_name' => $state_name,
+          'origin' => $origin,
+          'history_id' => $history_id,
+        ];
+        break;
+
+      case 'asamblea_aprobado':
+      case 'asamblea_rechazado':
+        $steps_by_slot['asamblea_general'] = [
+          'label' => asocolderma_inscription_get_state_visual_label_by_tid($tid) ?: $state_name,
+          'status' => $functional_key === 'asamblea_rechazado' ? 'cancelled' : 'done',
+          'date' => $date,
+          'note' => $note,
+          'state_name' => $state_name,
+          'origin' => $origin,
+          'history_id' => $history_id,
+        ];
+        break;
+
+      case 'coord_documentos_enviados':
+        $steps_by_slot['enviar_documentos'] = [
+          'label' => asocolderma_inscription_get_semaforo_node_label('enviar_documentos', 'done'),
+          'status' => 'done',
+          'date' => $date,
+          'note' => $note,
+          'state_name' => $state_name,
+          'origin' => $origin,
+          'history_id' => $history_id,
+        ];
+        break;
+
+      case 'coord_pago_ingreso':
+        $steps_by_slot['enviar_pasos_pago'] = [
+          'label' => asocolderma_inscription_get_semaforo_node_label('enviar_pasos_pago', 'done'),
+          'status' => 'done',
+          'date' => $date,
+          'note' => $note,
+          'state_name' => $state_name,
+          'origin' => $origin,
+          'history_id' => $history_id,
+        ];
+        break;
+
+      case 'coord_miembro_activo':
+        $steps_by_slot['validar_pago'] = [
+          'label' => asocolderma_inscription_get_semaforo_node_label('validar_pago', 'done'),
+          'status' => 'done',
+          'date' => $date,
+          'note' => $note,
+          'state_name' => $state_name,
+          'origin' => $origin,
+          'history_id' => $history_id,
+        ];
+
+        $steps_by_slot['miembro_activo'] = [
+          'label' => asocolderma_inscription_get_semaforo_node_label('miembro_activo', 'done'),
+          'status' => 'done',
+          'date' => $date,
+          'note' => $note,
+          'state_name' => $state_name,
+          'origin' => $origin,
+          'history_id' => $history_id,
+        ];
+        break;
+    }
+  };
 
   foreach ($history_rows as $row) {
-    $to_tid = (int) $row->to_tid;
-    $state_name = asocolderma_inscription_get_term_name_by_tid($to_tid);
+    $state_name = asocolderma_inscription_get_term_name_by_tid((int) $row->to_tid);
 
     if (!$state_name) {
       continue;
     }
 
-    $functional_key = asocolderma_inscription_get_state_functional_key_by_tid($to_tid);
-    $slot = asocolderma_inscription_get_flow_slot_from_functional_key($functional_key, $state_name);
-
-    if ($slot === '') {
-      continue;
-    }
-
-    $label = asocolderma_inscription_get_state_visual_label_by_tid($to_tid);
-
-    if ($label === '') {
-      $label = asocolderma_inscription_map_current_state_to_flow_label($state_name);
-    }
-
-    /*
-     * Si una misma etapa tuvo varios estados, por ejemplo:
-     * En trámite Secretaría General -> Aprobado Secretaría General,
-     * dejamos visible solo el último estado de esa etapa.
-     */
-    $history_steps_by_slot[$slot] = [
-      'label' => $label,
-      'status' => 'done',
-      'date' => \Drupal::service('date.formatter')->format((int) $row->created, 'custom', 'd/m/Y h:i A'),
-      'note' => trim((string) ($row->comment ?? '')),
-      'state_name' => $state_name,
-      'functional_key' => $functional_key,
-      'slot' => $slot,
-      'origin' => (string) ($row->origin ?? ''),
-      'history_id' => (int) $row->id,
-    ];
+    $add_state_step(
+      (int) $row->to_tid,
+      $state_name,
+      (int) $row->created,
+      trim((string) ($row->comment ?? '')),
+      (string) ($row->origin ?? ''),
+      (int) $row->id
+    );
   }
 
-  $history_steps = array_values($history_steps_by_slot);
-
-  if (empty($history_steps)) {
-    $current_label = asocolderma_inscription_get_state_visual_label_by_tid($current_tid);
-
-    if ($current_label === '') {
-      $current_label = asocolderma_inscription_map_current_state_to_flow_label($current_name);
-    }
-
-    $history_steps[] = [
-      'label' => $current_label,
-      'status' => asocolderma_inscription_is_cancelled_functional_key($current_key, $current_name) ? 'cancelled' : 'current',
-      'date' => \Drupal::service('date.formatter')->format($node->getCreatedTime(), 'custom', 'd/m/Y h:i A'),
-      'note' => '',
-      'state_name' => $current_name,
-      'functional_key' => $current_key,
-      'slot' => asocolderma_inscription_get_flow_slot_from_functional_key($current_key, $current_name),
-      'origin' => 'current_node_state',
-      'history_id' => 0,
-    ];
+  if (empty($steps_by_slot) && $current_tid > 0 && $current_name !== '') {
+    $add_state_step(
+      $current_tid,
+      $current_name,
+      (int) $node->getCreatedTime(),
+      '',
+      'current_node_state',
+      0
+    );
   }
 
-  $last_index = count($history_steps) - 1;
+  $has_rejected = in_array($current_key, [
+    'sg_rechazado',
+    'junta_rechazado',
+    'asamblea_rechazado',
+  ], TRUE);
 
-  foreach ($history_steps as $index => &$step) {
-    if ($index !== $last_index) {
-      $step['status'] = 'done';
-      continue;
-    }
+  if (!$has_rejected) {
+    switch ($current_key) {
+      case 'sg_en_tramite':
+      case 'sg_pendiente_aclaracion':
+        if (!isset($steps_by_slot['secretaria_general'])) {
+          $steps_by_slot['secretaria_general'] = [
+            'label' => asocolderma_inscription_get_state_visual_label_by_tid($current_tid) ?: $current_name,
+            'status' => 'current',
+            'date' => \Drupal::service('date.formatter')->format($node->getCreatedTime(), 'custom', 'd/m/Y h:i A'),
+            'note' => '',
+            'state_name' => $current_name,
+            'origin' => 'current_node_state',
+            'history_id' => 0,
+          ];
+        } else {
+          $steps_by_slot['secretaria_general']['status'] = 'current';
+        }
 
-    $step_key = (string) ($step['functional_key'] ?? '');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'junta_directiva', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'asamblea_general', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'enviar_documentos', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'enviar_pasos_pago', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'validar_pago', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'miembro_activo', 'pending');
+        break;
 
-    if (asocolderma_inscription_is_cancelled_functional_key($current_key, $current_name)) {
-      $step['status'] = 'cancelled';
-    } elseif (asocolderma_inscription_is_completed_functional_key($current_key, $current_name)) {
-      $step['status'] = 'done';
-    } elseif ($step_key === $current_key || $step_key === '') {
-      $step['status'] = 'current';
-    } else {
-      $step['status'] = 'done';
+      case 'sg_aprobado':
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'junta_directiva', 'current');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'asamblea_general', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'enviar_documentos', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'enviar_pasos_pago', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'validar_pago', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'miembro_activo', 'pending');
+        break;
+
+      case 'junta_aprobado':
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'asamblea_general', 'current');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'enviar_documentos', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'enviar_pasos_pago', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'validar_pago', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'miembro_activo', 'pending');
+        break;
+
+      case 'asamblea_aprobado':
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'enviar_documentos', 'current');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'enviar_pasos_pago', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'validar_pago', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'miembro_activo', 'pending');
+        break;
+
+      case 'coord_documentos_enviados':
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'enviar_pasos_pago', 'current');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'validar_pago', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'miembro_activo', 'pending');
+        break;
+
+      case 'coord_pago_ingreso':
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'validar_pago', 'current');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'miembro_activo', 'pending');
+        break;
+
+      case 'coord_miembro_activo':
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'validar_pago', 'done');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'miembro_activo', 'done');
+        break;
     }
   }
-  unset($step);
 
-  $future_steps = asocolderma_inscription_get_future_flow_steps('', $current_name, $current_key);
+  $order = [
+    'secretaria_general',
+    'junta_directiva',
+    'asamblea_general',
+    'enviar_documentos',
+    'enviar_pasos_pago',
+    'validar_pago',
+    'miembro_activo',
+  ];
 
-  return array_merge($history_steps, $future_steps);
+  $steps = [];
+
+  foreach ($order as $slot) {
+    if (isset($steps_by_slot[$slot])) {
+      $steps[] = $steps_by_slot[$slot];
+    }
+  }
+
+  return $steps;
 }
 
 function asocolderma_inscription_get_state_history_rows(int $nid): array
@@ -604,6 +752,97 @@ function asocolderma_inscription_get_state_functional_key_by_tid(int $tid): stri
   }
 
   return asocolderma_inscription_get_state_functional_key_from_term($term);
+}
+
+/**
+ * Fallback de equivalencia funcional por nombre real del término.
+ */
+function asocolderma_inscription_get_functional_key_from_state_name(string $state_name): string
+{
+  return match ($state_name) {
+    'En trámite' => 'sg_en_tramite',
+    'Aprobada' => 'sg_aprobado',
+    'Rechazada' => 'sg_rechazado',
+    'Pendiente aclaración' => 'sg_pendiente_aclaracion',
+
+    'Aprobado Junta D.' => 'junta_aprobado',
+    'Rechazado Junta D.' => 'junta_rechazado',
+
+    'Aprobado Asamblea G.' => 'asamblea_aprobado',
+    'Rechazado Asamblea G.' => 'asamblea_rechazado',
+
+    'Documentos enviados' => 'coord_documentos_enviados',
+    'Pendiente pago de ingreso' => 'coord_pago_ingreso',
+    'Activar miembro nuevo',
+    'Miembro activo' => 'coord_miembro_activo',
+
+    default => '',
+  };
+}
+
+/**
+ * Agrega un paso virtual del semáforo si todavía no existe.
+ */
+function asocolderma_inscription_add_semaforo_virtual_step(array &$steps_by_slot, string $slot, string $status): void
+{
+  if (isset($steps_by_slot[$slot])) {
+    if ($status === 'current' && $steps_by_slot[$slot]['status'] !== 'done') {
+      $steps_by_slot[$slot]['status'] = 'current';
+      $steps_by_slot[$slot]['label'] = asocolderma_inscription_get_semaforo_node_label($slot, 'current');
+    }
+
+    return;
+  }
+
+  $steps_by_slot[$slot] = [
+    'label' => asocolderma_inscription_get_semaforo_node_label($slot, $status),
+    'status' => $status,
+    'date' => '',
+    'note' => '',
+    'state_name' => '',
+    'origin' => 'future',
+    'history_id' => 0,
+  ];
+}
+
+/**
+ * Devuelve la etiqueta administrable de un nodo visual del semáforo.
+ */
+function asocolderma_inscription_get_semaforo_node_label(string $slot, string $status): string
+{
+  return match ($slot) {
+    'junta_directiva' => $status === 'current'
+      ? asocolderma_inscription_get_semaforo_visual_label('pending_junta_directiva', 'Pendiente Junta Directiva')
+      : asocolderma_inscription_get_semaforo_visual_label('junta_directiva', 'Junta Directiva'),
+
+    'asamblea_general' => $status === 'current'
+      ? asocolderma_inscription_get_semaforo_visual_label('pending_asamblea_general', 'Pendiente Asamblea General')
+      : asocolderma_inscription_get_semaforo_visual_label('asamblea_general', 'Asamblea General'),
+
+    'enviar_documentos' => match ($status) {
+      'current' => asocolderma_inscription_get_semaforo_visual_label('pending_enviar_documentos', 'Pendiente por enviar documentos'),
+      'done' => asocolderma_inscription_get_semaforo_visual_label('documentos_enviados', 'Documentos enviados'),
+      default => asocolderma_inscription_get_semaforo_visual_label('enviar_documentos', 'Enviar documentos'),
+    },
+
+    'enviar_pasos_pago' => match ($status) {
+      'current' => asocolderma_inscription_get_semaforo_visual_label('pending_enviar_pasos_pago', 'Pendiente enviar pasos para pago'),
+      'done' => asocolderma_inscription_get_semaforo_visual_label('pasos_pago_enviados', 'Pasos para pago enviados'),
+      default => asocolderma_inscription_get_semaforo_visual_label('enviar_pasos_pago', 'Enviar pasos para pago'),
+    },
+
+    'validar_pago' => match ($status) {
+      'current' => asocolderma_inscription_get_semaforo_visual_label('pending_validar_pago', 'Pendiente validar pago'),
+      'done' => asocolderma_inscription_get_semaforo_visual_label('pago_validado', 'Pago validado correctamente'),
+      default => asocolderma_inscription_get_semaforo_visual_label('validar_pago', 'Validar pago'),
+    },
+
+    'miembro_activo' => $status === 'done'
+      ? asocolderma_inscription_get_semaforo_visual_label('miembro_activo', 'Miembro activo')
+      : asocolderma_inscription_get_semaforo_visual_label('activar_miembro', 'Activar miembro'),
+
+    default => $slot,
+  };
 }
 
 /**
