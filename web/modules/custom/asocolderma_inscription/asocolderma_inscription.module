@@ -218,46 +218,82 @@ function asocolderma_inscription_get_future_flow_steps(string $last_visible_labe
     return [];
   }
 
-  $base_flow = [
-    'En trámite',
-    'Aprobada',
-    'Junta directiva',
-    'Asamblea general',
-    'Envío de documentos',
-    'Pago de ingreso',
-    'Activación de miembro',
-    'Miembro activo',
-  ];
-
-  $last_index = array_search($last_visible_label, $base_flow, TRUE);
-
-  if ($last_index === FALSE) {
-    return [];
-  }
-
-  $future_labels = array_slice($base_flow, $last_index + 1);
-
-  $current_flow_label = asocolderma_inscription_map_current_state_to_flow_label($current_name);
-
-  $completed_states_that_move_to_next = [
-    'Aprobada',
-    'Aprobado Junta D.',
-    'Aprobado Asamblea G.',
-    'Documentos firmados',
-  ];
-
+  $future_labels = [];
   $next_current_label = NULL;
 
-  if (in_array($current_name, $completed_states_that_move_to_next, TRUE) && !empty($future_labels)) {
-    $next_current_label = $future_labels[0];
+  switch ($current_name) {
+    case 'En trámite':
+    case 'Pendiente aclaración':
+      $future_labels = [
+        'Junta directiva',
+        'Asamblea general',
+        'Envío de documentos',
+        'Pago de ingreso',
+        'Miembro activo',
+      ];
+      break;
+
+    case 'Aprobada':
+      $future_labels = [
+        'Junta directiva',
+        'Asamblea general',
+        'Envío de documentos',
+        'Pago de ingreso',
+        'Miembro activo',
+      ];
+      $next_current_label = 'Junta directiva';
+      break;
+
+    case 'Aprobado Junta D.':
+      $future_labels = [
+        'Asamblea general',
+        'Envío de documentos',
+        'Pago de ingreso',
+        'Miembro activo',
+      ];
+      $next_current_label = 'Asamblea general';
+      break;
+
+    case 'Aprobado Asamblea G.':
+      $future_labels = [
+        'Envío de documentos',
+        'Pago de ingreso',
+        'Miembro activo',
+      ];
+      $next_current_label = 'Envío de documentos';
+      break;
+
+    case 'Documentos enviados':
+      $future_labels = [
+        'Pago de ingreso',
+        'Miembro activo',
+      ];
+      break;
+
+    case 'Pendiente pago de ingreso':
+      $future_labels = [
+        'Miembro activo',
+      ];
+      break;
+
+    case 'Miembro activo':
+      $future_labels = [];
+      break;
+
+    default:
+      $future_labels = [];
+      break;
   }
 
   $steps = [];
 
   foreach ($future_labels as $label) {
+    $status = $label === $next_current_label ? 'current' : 'pending';
+    $visual_label = asocolderma_inscription_get_future_semaforo_label($label, $status);
+
     $steps[] = [
-      'label' => $label,
-      'status' => $label === $next_current_label ? 'current' : 'pending',
+      'label' => $visual_label,
+      'status' => $status,
       'date' => '',
       'note' => '',
       'state_name' => '',
