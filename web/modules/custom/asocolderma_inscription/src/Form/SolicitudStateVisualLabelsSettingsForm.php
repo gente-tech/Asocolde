@@ -125,9 +125,12 @@ final class SolicitudStateVisualLabelsSettingsForm extends ConfigFormBase
 	/**
 	 * Carga los términos actuales de la taxonomía de estados.
 	 */
+	/**
+	 * Carga los términos actuales de la taxonomía de estados.
+	 */
 	private function loadStateTerms(): array
 	{
-		$storage = $this->entityTypeManager()->getStorage('taxonomy_term');
+		$storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
 
 		$ids = $storage->getQuery()
 			->condition('vid', self::VID)
