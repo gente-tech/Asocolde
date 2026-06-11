@@ -40,6 +40,7 @@ final class SolicitudStateVisualLabelsSettingsForm extends ConfigFormBase
 	{
 		$config = $this->config('asocolderma_inscription.state_visual_labels');
 		$labels = $config->get('labels') ?? [];
+		$state_keys = $config->get('state_keys') ?? [];
 
 		$form['description'] = [
 			'#type' => 'item',
@@ -63,6 +64,7 @@ final class SolicitudStateVisualLabelsSettingsForm extends ConfigFormBase
 				$this->t('Estado real en taxonomía'),
 				$this->t('UUID'),
 				$this->t('Etiqueta visual'),
+				$this->t('Equivalencia funcional'),
 			],
 			'#tree' => TRUE,
 		];
@@ -87,6 +89,17 @@ final class SolicitudStateVisualLabelsSettingsForm extends ConfigFormBase
 				'#title_display' => 'invisible',
 				'#default_value' => $labels[$uuid] ?? $real_label,
 				'#maxlength' => 255,
+			];
+
+			$form['labels'][$uuid]['functional_key'] = [
+				'#type' => 'select',
+				'#title' => $this->t('Equivalencia funcional para @label', [
+					'@label' => $real_label,
+				]),
+				'#title_display' => 'invisible',
+				'#options' => $this->getFunctionalStateOptions(),
+				'#empty_option' => $this->t('- Sin equivalencia -'),
+				'#default_value' => $state_keys[$uuid] ?? '',
 			];
 		}
 
@@ -119,6 +132,7 @@ final class SolicitudStateVisualLabelsSettingsForm extends ConfigFormBase
 	{
 		$submitted_labels = $form_state->getValue('labels') ?? [];
 		$labels = [];
+		$state_keys = [];
 
 		foreach ($this->loadStateTerms() as $term) {
 			$uuid = $term->uuid();
@@ -131,6 +145,13 @@ final class SolicitudStateVisualLabelsSettingsForm extends ConfigFormBase
 			}
 
 			$labels[$uuid] = $visual_label;
+			$functional_key = (string) ($submitted_labels[$uuid]['functional_key'] ?? '');
+
+			if (!array_key_exists($functional_key, $this->getFunctionalStateOptions())) {
+				$functional_key = '';
+			}
+
+			$state_keys[$uuid] = $functional_key;
 		}
 
 		$submitted_semaforo_labels = $form_state->getValue('semaforo_labels') ?? [];
@@ -149,6 +170,7 @@ final class SolicitudStateVisualLabelsSettingsForm extends ConfigFormBase
 		$this->configFactory
 			->getEditable('asocolderma_inscription.state_visual_labels')
 			->set('labels', $labels)
+			->set('state_keys', $state_keys)
 			->set('semaforo_labels', $semaforo_labels)
 			->save();
 
@@ -194,6 +216,29 @@ final class SolicitudStateVisualLabelsSettingsForm extends ConfigFormBase
 			'pago_ingreso' => 'Pago de ingreso',
 			'activacion_miembro' => 'Activación de miembro',
 			'miembro_activo' => 'Miembro activo',
+		];
+	}
+
+	/**
+	 * Equivalencias funcionales del flujo.
+	 */
+	private function getFunctionalStateOptions(): array
+	{
+		return [
+			'sg_en_tramite' => 'Secretaría General - En trámite',
+			'sg_aprobado' => 'Secretaría General - Aprobado',
+			'sg_rechazado' => 'Secretaría General - Rechazado',
+			'sg_pendiente_aclaracion' => 'Secretaría General - Pendiente aclaración',
+
+			'junta_aprobado' => 'Junta Directiva - Aprobado',
+			'junta_rechazado' => 'Junta Directiva - Rechazado',
+
+			'asamblea_aprobado' => 'Asamblea General - Aprobado',
+			'asamblea_rechazado' => 'Asamblea General - Rechazado',
+
+			'coord_documentos_enviados' => 'Coordinación Administrativa - Documentos enviados',
+			'coord_pago_ingreso' => 'Coordinación Administrativa - Pago de ingreso',
+			'coord_miembro_activo' => 'Coordinación Administrativa - Miembro activo',
 		];
 	}
 }

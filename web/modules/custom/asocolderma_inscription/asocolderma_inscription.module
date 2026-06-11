@@ -169,7 +169,10 @@ function asocolderma_inscription_build_semaforo_steps(NodeInterface $node): arra
     'Aprobada',
     'Aprobado Junta D.',
     'Aprobado Asamblea G.',
+    'Documentos enviados',
     'Documentos firmados',
+    'Miembro activo',
+    'Activar miembro nuevo',
   ];
 
   foreach ($history_steps as $index => &$step) {
@@ -268,6 +271,7 @@ function asocolderma_inscription_get_future_flow_steps(string $last_visible_labe
         'Pago de ingreso',
         'Miembro activo',
       ];
+      $next_current_label = 'Pago de ingreso';
       break;
 
     case 'Pendiente pago de ingreso':
@@ -319,23 +323,15 @@ function asocolderma_inscription_get_visible_flow(string $current_name): array
     'Miembro activo',
   ];
 
-  $flow = ['En trámite'];
-
-  switch ($current_name) {
-    case 'Pendiente aclaración':
-      $flow[] = 'Pendiente aclaración';
-      break;
-
-    case 'Rechazada':
-      $flow[] = 'Rechazada';
-      break;
-
-    default:
-      $flow[] = 'Aprobada';
-      break;
+  if ($current_name === 'Pendiente aclaración') {
+    return array_merge(['Pendiente aclaración'], $later_flow);
   }
 
-  return array_merge($flow, $later_flow);
+  if ($current_name === 'Rechazada') {
+    return ['Rechazada'];
+  }
+
+  return array_merge(['En trámite'], $later_flow);
 }
 
 /**
