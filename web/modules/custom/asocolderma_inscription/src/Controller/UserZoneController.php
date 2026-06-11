@@ -43,11 +43,19 @@ final class UserZoneController extends ControllerBase
 
   public function redirectDefault(): RedirectResponse
   {
+    if (!$this->isAspiranteUser()) {
+      return $this->redirectOutOfAspiranteZone();
+    }
+
     return $this->redirect('asocolderma_inscription.user_zone_profile');
   }
 
-  public function profile(): array
+  public function profile(): array|RedirectResponse
   {
+    if (!$this->isAspiranteUser()) {
+      return $this->redirectOutOfAspiranteZone();
+    }
+
     $account = $this->currentUser();
     $storage = $this->etm->getStorage('profile');
 
@@ -106,6 +114,10 @@ final class UserZoneController extends ControllerBase
 
   public function profileEdit(): RedirectResponse
   {
+    if (!$this->isAspiranteUser()) {
+      return $this->redirectOutOfAspiranteZone();
+    }
+
     $account = $this->currentUser();
     $storage = $this->etm->getStorage('profile');
 
@@ -126,8 +138,12 @@ final class UserZoneController extends ControllerBase
     ]);
   }
 
-  public function requests(): array
+  public function requests(): array|RedirectResponse
   {
+    if (!$this->isAspiranteUser()) {
+      return $this->redirectOutOfAspiranteZone();
+    }
+
     $account = $this->currentUser();
 
     $storage = $this->etm->getStorage('node');
@@ -221,7 +237,7 @@ final class UserZoneController extends ControllerBase
     ];
   }
 
-  public function requestDetail(NodeInterface $node): array
+  public function requestDetail(NodeInterface $node): array|RedirectResponse
   {
     $account = $this->currentUser();
 
@@ -229,8 +245,8 @@ final class UserZoneController extends ControllerBase
       throw new NotFoundHttpException();
     }
 
-    if (!in_array('aspirante', $account->getRoles(), TRUE)) {
-      throw new NotFoundHttpException();
+    if (!$this->isAspiranteUser()) {
+      return $this->redirectOutOfAspiranteZone();
     }
 
     if ((int) $node->getOwnerId() !== (int) $account->id()) {
@@ -258,6 +274,20 @@ final class UserZoneController extends ControllerBase
     ];
 
     return $build;
+  }
+
+  private function isAspiranteUser(): bool
+  {
+    return in_array('aspirante', $this->currentUser()->getRoles(), TRUE);
+  }
+
+  private function redirectOutOfAspiranteZone(): RedirectResponse
+  {
+    if ($this->currentUser()->hasRole('dermatologist')) {
+      return new RedirectResponse('/dermatologos');
+    }
+
+    return new RedirectResponse('/user');
   }
 
   private function buildAspiranteMenuItems(): array
