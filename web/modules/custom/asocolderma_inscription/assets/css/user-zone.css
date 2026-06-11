@@ -1211,3 +1211,102 @@ body.asocolderma-admin-zone-clean .asoc-admin-header {
   margin-top: 0 !important;
   top: 0 !important;
 }
+
+/* =========================
+   MODAL MENSAJES DRUPAL - ZONA ASPIRANTE
+   ========================= */
+
+body.asocolderma-inscription-zone-page div[id^="modal-messages"] {
+  z-index: 2200 !important;
+  padding: 110px 16px 24px !important;
+  background: rgba(15, 23, 42, 0.48) !important;
+  backdrop-filter: blur(5px);
+}
+
+body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-dialog {
+  width: min(100%, 540px) !important;
+  max-width: 540px !important;
+  margin: 0 auto !important;
+}
+
+body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-content {
+  overflow: hidden;
+  border: 0 !important;
+  border-radius: 22px !important;
+  background: #ffffff !important;
+  box-shadow: 0 28px 70px rgba(15, 23, 42, 0.28) !important;
+}
+
+body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-header {
+  min-height: auto !important;
+  padding: 18px 58px 18px 24px !important;
+  border: 0 !important;
+  background: #008c8c !important;
+  color: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-title {
+  margin: 0 !important;
+  color: #ffffff !important;
+  font-family: inherit !important;
+  font-size: 20px !important;
+  font-weight: 850 !important;
+  line-height: 1.25 !important;
+  text-align: center !important;
+}
+
+body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-header .btn-close {
+  position: absolute !important;
+  top: 50% !important;
+  right: 18px !important;
+  width: 34px !important;
+  height: 34px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transform: translateY(-50%) !important;
+  border-radius: 999px !important;
+  background-color: #ffffff !important;
+  opacity: 1 !important;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.18) !important;
+}
+
+body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-header .btn-close::before {
+  content: none !important;
+}
+
+body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-body {
+  padding: 28px 30px 30px !important;
+}
+
+body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-body .alert {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: #0f172a !important;
+  font-size: 18px !important;
+  font-weight: 750 !important;
+  line-height: 1.55 !important;
+  text-align: center !important;
+}
+
+body.asocolderma-inscription-zone-page.modal-open {
+  padding-right: 0 !important;
+}
+
+@media (max-width: 520px) {
+  body.asocolderma-inscription-zone-page div[id^="modal-messages"] {
+    padding-top: 96px !important;
+  }
+
+  body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-body {
+    padding: 24px 20px 26px !important;
+  }
+
+  body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-body .alert {
+    font-size: 16px !important;
+  }
+}
