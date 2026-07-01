@@ -327,3 +327,26 @@
 		max-width: 180px !important;
 	}
 }
+
+.data-core-login-page .content-user-form .top-elements {
+	display: none !important;
+}
+
+.data-core-login-page .content-user-form h2 {
+	margin-top: 0 !important;
+}
+
+@media (min-width: 769px) {
+	.data-core-login-page .content-user-form .form-actions {
+		display: flex !important;
+		justify-content: center !important;
+		align-items: center !important;
+		width: 100%;
+		text-align: center !important;
+	}
+
+	.data-core-login-page .content-user-form .form-actions input[type="submit"] {
+		margin-left: auto !important;
+		margin-right: auto !important;
+	}
+}
