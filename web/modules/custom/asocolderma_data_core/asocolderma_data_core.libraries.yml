@@ -30,3 +30,8 @@ record_context_menu:
     - core/once
     - core/drupalSettings
     - asocolderma_data_core/export_actions
+
+database_login:
+  css:
+    theme:
+      css/database-login.css: {}

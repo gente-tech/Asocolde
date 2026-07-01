@@ -1,0 +1,129 @@
+.data-core-login-page {
+	min-height: 100vh;
+	background: #f4f7fb;
+}
+
+.modal-login-top--data-core {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 24px 40px;
+	background: #ffffff;
+	border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.data-core-login-brand {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+.data-core-login-brand__logo {
+	width: 172px;
+	height: auto;
+	display: block;
+}
+
+.data-core-login-brand__title {
+	font-size: 18px;
+	font-weight: 700;
+	color: #0f172a;
+	line-height: 1.2;
+}
+
+.data-core-login-brand__subtitle {
+	margin-top: 3px;
+	font-size: 13px;
+	color: #64748b;
+}
+
+.modal-login-content--data-core {
+	display: grid;
+	grid-template-columns: minmax(320px, 520px) 1fr;
+	min-height: calc(100vh - 91px);
+	background: #ffffff;
+}
+
+.modal-login-content--data-core .modal-login-left {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 48px 40px;
+	background: #ffffff;
+}
+
+.modal-login-right--data-core {
+	background:
+		linear-gradient(135deg, rgba(0, 103, 177, 0.94), rgba(7, 55, 99, 0.96)),
+		radial-gradient(circle at top right, rgba(255, 255, 255, 0.25), transparent 34%);
+}
+
+.user-login-form--data-core {
+	width: 100%;
+	max-width: 420px;
+}
+
+.user-login-form--data-core .form-item {
+	margin-bottom: 18px;
+}
+
+.user-login-form--data-core label {
+	font-weight: 600;
+	color: #0f172a;
+}
+
+.user-login-form--data-core input[type="text"],
+.user-login-form--data-core input[type="password"] {
+	width: 100%;
+	min-height: 48px;
+	border: 1px solid #cbd5e1;
+	border-radius: 10px;
+	padding: 10px 14px;
+	background: #ffffff;
+	color: #0f172a;
+}
+
+.user-login-form--data-core input[type="text"]:focus,
+.user-login-form--data-core input[type="password"]:focus {
+	border-color: #0067b1;
+	box-shadow: 0 0 0 3px rgba(0, 103, 177, 0.12);
+	outline: none;
+}
+
+.user-login-form--data-core .form-actions {
+	margin-top: 24px;
+}
+
+.user-login-form--data-core .button {
+	width: 100%;
+	min-height: 48px;
+	border: 0;
+	border-radius: 10px;
+	background: #0067b1;
+	color: #ffffff;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.user-login-form--data-core .button:hover,
+.user-login-form--data-core .button:focus {
+	background: #004f87;
+	color: #ffffff;
+}
+
+@media (max-width: 900px) {
+	.modal-login-content--data-core {
+		grid-template-columns: 1fr;
+	}
+
+	.modal-login-right--data-core {
+		display: none;
+	}
+
+	.modal-login-top--data-core {
+		padding: 18px 20px;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 14px;
+	}
+}

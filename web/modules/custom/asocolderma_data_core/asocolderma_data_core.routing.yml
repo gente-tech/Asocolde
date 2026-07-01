@@ -163,3 +163,13 @@ asocolderma_data_core.empleados_edit:
   requirements:
     _permission: 'administer asocolderma data core'
     record_id: '\d+'
+
+asocolderma_data_core.database_login:
+  path: '/gestion-data/login'
+  defaults:
+    _controller: '\Drupal\asocolderma_data_core\Controller\DataCoreLoginController::login'
+    _title: 'Ingreso Base de Datos'
+  requirements:
+    _access: 'TRUE'
+  options:
+    no_cache: 'TRUE'

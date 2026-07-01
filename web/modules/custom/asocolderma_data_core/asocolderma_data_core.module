@@ -260,6 +260,40 @@ function asocolderma_data_core_is_gestion_data_route(): bool
 }
 
 /**
+ * Retorna los roles autorizados para usar el login de Base de Datos.
+ */
+function asocolderma_data_core_database_login_allowed_roles(): array
+{
+	return [
+		'admin_data_asocolderma',
+		'operador_data_asocolderma',
+		'auditor_data_asocolderma',
+	];
+}
+
+/**
+ * Valida si una cuenta pertenece a los roles de Base de Datos.
+ */
+function asocolderma_data_core_user_has_database_role(\Drupal\user\UserInterface $account): bool
+{
+	foreach (asocolderma_data_core_database_login_allowed_roles() as $role) {
+		if ($account->hasRole($role)) {
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+/**
+ * Retorna la ruta interna inicial para usuarios de Base de Datos.
+ */
+function asocolderma_data_core_database_default_path(): string
+{
+	return '/gestion-data/proveedores';
+}
+
+/**
  * Implements hook_form_FORM_ID_alter().
  *
  * Redirects data core users after login.
