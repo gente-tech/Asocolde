@@ -296,15 +296,47 @@ function asocolderma_data_core_database_default_path(): string
 /**
  * Implements hook_form_FORM_ID_alter().
  *
- * Redirects data core users after login.
+ * Controla el login independiente de Base de Datos y la redirección posterior.
  */
 function asocolderma_data_core_form_user_login_form_alter(array &$form, FormStateInterface $form_state, $form_id)
 {
+	$form['#validate'][] = 'asocolderma_data_core_user_login_route_validate';
 	$form['#submit'][] = 'asocolderma_data_core_user_login_redirect_submit';
 }
 
 /**
- * Custom submit handler for login redirect.
+ * Valida que los usuarios ingresen únicamente por el login correspondiente.
+ */
+function asocolderma_data_core_user_login_route_validate(array &$form, FormStateInterface $form_state)
+{
+	$uid = $form_state->get('uid');
+
+	if (empty($uid)) {
+		return;
+	}
+
+	$account = User::load($uid);
+
+	if (!$account) {
+		return;
+	}
+
+	$current_path = \Drupal::service('path.current')->getPath();
+	$is_database_login = $current_path === '/gestion-data/login';
+	$has_database_role = asocolderma_data_core_user_has_database_role($account);
+
+	if ($is_database_login && !$has_database_role) {
+		$form_state->setErrorByName('name', t('Este acceso es exclusivo para usuarios autorizados de Base de Datos.'));
+		return;
+	}
+
+	if (!$is_database_login && $has_database_role) {
+		$form_state->setErrorByName('name', t('Los usuarios de Base de Datos deben ingresar únicamente por el acceso autorizado de Gestión Data.'));
+	}
+}
+
+/**
+ * Redirige usuarios de Base de Datos después del login correcto.
  */
 function asocolderma_data_core_user_login_redirect_submit(array &$form, FormStateInterface $form_state)
 {
@@ -320,12 +352,8 @@ function asocolderma_data_core_user_login_redirect_submit(array &$form, FormStat
 		return;
 	}
 
-	if (
-		$account->hasRole('admin_data_asocolderma') ||
-		$account->hasRole('operador_data_asocolderma') ||
-		$account->hasRole('auditor_data_asocolderma')
-	) {
-		$form_state->setRedirectUrl(Url::fromUri('internal:/gestion-data/proveedores'));
+	if (asocolderma_data_core_user_has_database_role($account)) {
+		$form_state->setRedirectUrl(Url::fromUri('internal:' . asocolderma_data_core_database_default_path()));
 	}
 }
 
