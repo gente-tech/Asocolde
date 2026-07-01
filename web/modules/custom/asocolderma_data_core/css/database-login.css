@@ -234,3 +234,96 @@
 		width: 190px;
 	}
 }
+
+.data-core-login-page .data-core-login-dialog {
+	width: 360px;
+}
+
+.data-core-login-page .modal-login-top--data-core {
+	display: flex !important;
+	align-items: center !important;
+	justify-content: space-between !important;
+	width: 100%;
+	gap: 14px;
+}
+
+.data-core-login-page .modal-login-top--data-core img {
+	width: 185px !important;
+	max-width: 185px !important;
+	height: auto !important;
+}
+
+.data-core-login-page .data-core-login-back {
+	display: inline-flex !important;
+	align-items: center;
+	justify-content: center;
+	white-space: nowrap !important;
+	min-width: auto;
+	width: auto;
+	padding: 6px 10px !important;
+	border: 1px solid #d7a768 !important;
+	color: #9b6726 !important;
+	background: #fffaf2 !important;
+	font-size: 14px;
+	font-weight: 700;
+	line-height: 1.2;
+	text-decoration: none !important;
+}
+
+.data-core-login-page .data-core-login-back::before {
+	color: #9b6726 !important;
+}
+
+.data-core-login-page .content-user-form h2 {
+	background: #d7a768 !important;
+	color: #ffffff !important;
+}
+
+.data-core-login-page .content-user-form .form-actions {
+	text-align: center !important;
+}
+
+.data-core-login-page .content-user-form .button,
+.data-core-login-page .content-user-form input[type="submit"] {
+	background: #c9934b !important;
+	border-color: #b87b2f !important;
+	color: #ffffff !important;
+	border-radius: 0 !important;
+}
+
+.data-core-login-page .content-user-form .button:hover,
+.data-core-login-page .content-user-form .button:focus,
+.data-core-login-page .content-user-form input[type="submit"]:hover,
+.data-core-login-page .content-user-form input[type="submit"]:focus {
+	background: #a86f2b !important;
+	border-color: #a86f2b !important;
+	color: #ffffff !important;
+}
+
+.data-core-login-page .content-user-form .login-links a {
+	color: #9b6726 !important;
+}
+
+.data-core-login-page .content-user-form .bottom-text {
+	border-top: 2px solid #d7a768 !important;
+}
+
+.data-core-login-page .content-user-form .bottom-text::before {
+	color: #111827 !important;
+}
+
+@media (max-width: 480px) {
+	.data-core-login-page .data-core-login-dialog {
+		width: 340px;
+	}
+
+	.data-core-login-page .modal-login-top--data-core {
+		flex-direction: column !important;
+		gap: 10px;
+	}
+
+	.data-core-login-page .modal-login-top--data-core img {
+		width: 180px !important;
+		max-width: 180px !important;
+	}
+}
