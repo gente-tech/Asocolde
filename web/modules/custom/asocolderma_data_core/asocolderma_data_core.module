@@ -328,3 +328,18 @@ function asocolderma_data_core_user_login_redirect_submit(array &$form, FormStat
 		$form_state->setRedirectUrl(Url::fromUri('internal:/gestion-data/proveedores'));
 	}
 }
+
+/**
+ * Implements hook_theme().
+ */
+function asocolderma_data_core_theme($existing, $type, $theme, $path): array
+{
+	return [
+		'asocolderma_data_core_database_modal_login' => [
+			'variables' => [
+				'form' => NULL,
+			],
+			'template' => 'asocolderma-data-core-database-modal-login',
+		],
+	];
+}
