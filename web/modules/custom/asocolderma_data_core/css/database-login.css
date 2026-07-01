@@ -6,10 +6,10 @@
 	align-items: flex-start;
 	justify-content: center;
 	width: 100vw;
-	height: 100vh;
+	min-height: 100vh;
 	padding: 42px 16px;
 	overflow-y: auto;
-	background: rgba(255, 255, 255, 0.94);
+	background: #ffffff;
 }
 
 .data-core-login-dialog {
@@ -30,7 +30,7 @@
 }
 
 .modal-login-top--data-core img {
-	width: 220px;
+	width: 210px;
 	height: auto;
 	display: block;
 }
@@ -63,13 +63,13 @@
 	display: none;
 }
 
-.content-user-form--data-core {
+.data-core-login-page .content-user-form {
 	width: 100%;
 	background: #ffffff;
 	box-shadow: 0 2px 12px rgba(15, 23, 42, 0.18);
 }
 
-.content-user-form--data-core .top-elements {
+.data-core-login-page .content-user-form .top-elements {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -78,40 +78,61 @@
 	padding: 0 0 8px;
 }
 
-.content-user-form--data-core .top-elements p,
-.content-user-form--data-core .top-elements span {
+.data-core-login-page .content-user-form .top-elements p,
+.data-core-login-page .content-user-form .top-elements a {
 	margin: 0;
-	font-size: 15px;
+	font-size: 0;
 	font-weight: 700;
+	color: #111827;
+	text-decoration: none;
+}
+
+.data-core-login-page .content-user-form .top-elements a {
+	pointer-events: none;
+}
+
+.data-core-login-page .content-user-form .top-elements p::before {
+	content: "Acceso restringido";
+	font-size: 15px;
+}
+
+.data-core-login-page .content-user-form .top-elements a::before {
+	content: "Usuarios autorizados";
+	font-size: 15px;
 	color: #111827;
 }
 
-.content-user-form--data-core h2 {
+.data-core-login-page .content-user-form h2 {
 	margin: 0;
 	padding: 8px 12px;
 	background: #d7a768;
 	color: #ffffff;
-	font-size: 20px;
+	font-size: 0;
 	font-weight: 700;
 	line-height: 1.25;
 	text-align: center;
 }
 
-.content-user-form--data-core form {
+.data-core-login-page .content-user-form h2::before {
+	content: "Ingreso Base de Datos";
+	font-size: 20px;
+}
+
+.data-core-login-page .content-user-form form {
 	padding: 26px 22px 8px;
 }
 
-.content-user-form--data-core .form-item {
+.data-core-login-page .content-user-form .form-item {
 	margin-bottom: 18px;
 }
 
-.content-user-form--data-core label {
+.data-core-login-page .content-user-form label {
 	font-weight: 700;
 	color: #111827;
 }
 
-.content-user-form--data-core input[type="text"],
-.content-user-form--data-core input[type="password"] {
+.data-core-login-page .content-user-form input[type="text"],
+.data-core-login-page .content-user-form input[type="password"] {
 	width: 100%;
 	min-height: 38px;
 	border: 1px solid #cfcfcf;
@@ -120,26 +141,26 @@
 	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
-.content-user-form--data-core input[type="text"]:focus,
-.content-user-form--data-core input[type="password"]:focus {
+.data-core-login-page .content-user-form input[type="text"]:focus,
+.data-core-login-page .content-user-form input[type="password"]:focus {
 	border-color: #c9934b;
 	box-shadow: 0 0 0 2px rgba(201, 147, 75, 0.25);
 	outline: none;
 }
 
-.content-user-form--data-core .description {
+.data-core-login-page .content-user-form .description {
 	margin-top: 4px;
 	font-size: 13px;
 	color: #333333;
 }
 
-.content-user-form--data-core .form-actions {
+.data-core-login-page .content-user-form .form-actions {
 	margin-top: 18px;
 	text-align: center;
 }
 
-.content-user-form--data-core .button,
-.content-user-form--data-core input[type="submit"] {
+.data-core-login-page .content-user-form .button,
+.data-core-login-page .content-user-form input[type="submit"] {
 	display: inline-block;
 	width: auto;
 	min-width: 170px;
@@ -152,16 +173,16 @@
 	text-align: center;
 }
 
-.content-user-form--data-core .button:hover,
-.content-user-form--data-core .button:focus,
-.content-user-form--data-core input[type="submit"]:hover,
-.content-user-form--data-core input[type="submit"]:focus {
+.data-core-login-page .content-user-form .button:hover,
+.data-core-login-page .content-user-form .button:focus,
+.data-core-login-page .content-user-form input[type="submit"]:hover,
+.data-core-login-page .content-user-form input[type="submit"]:focus {
 	background: #a86f2b;
 	border-color: #a86f2b;
 	color: #ffffff;
 }
 
-.content-user-form--data-core .login-links {
+.data-core-login-page .content-user-form .login-links {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -170,23 +191,32 @@
 	text-align: center;
 }
 
-.content-user-form--data-core .login-links a {
+.data-core-login-page .content-user-form .login-links a {
 	color: #9b6726;
 	text-decoration: underline;
 }
 
-.content-user-form--data-core .bottom-text {
+.data-core-login-page .content-user-form .bottom-text {
 	margin: 0 22px;
 	padding: 16px 0 0;
 	border-top: 2px solid #d7a768;
 	text-align: center;
-	font-size: 12px;
+	font-size: 0;
 	line-height: 1.25;
 	color: #111827;
 }
 
-.content-user-form--data-core .bottom-text p {
-	margin: 0 0 6px;
+.data-core-login-page .content-user-form .bottom-text::before {
+	content: "Este espacio está dirigido únicamente a usuarios autorizados para la gestión de la Base de Datos Institucional de AsoColDerma.\A\AEl ingreso, consulta, edición o exportación de información queda sujeto a permisos por rol, trazabilidad y auditoría.";
+	display: block;
+	white-space: pre-line;
+	font-size: 12px;
+	line-height: 1.25;
+}
+
+.data-core-login-page .content-user-form .bottom-text p {
+	margin: 0;
+	font-size: 0;
 }
 
 @media (max-width: 480px) {

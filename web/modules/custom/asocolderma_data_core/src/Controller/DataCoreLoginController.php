@@ -28,8 +28,6 @@ final class DataCoreLoginController extends ControllerBase
 		}
 
 		$form = $this->formBuilder()->getForm('Drupal\user\Form\UserLoginForm');
-		$form['#theme'] = 'asocolderma_data_core_user_login_form';
-		$form['#attributes']['class'][] = 'user-login-form';
 		$form['#attributes']['class'][] = 'user-login-form--data-core';
 		$form['#action'] = Url::fromRoute('asocolderma_data_core.database_login')->toString();
 
