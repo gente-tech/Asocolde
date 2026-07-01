@@ -341,5 +341,9 @@ function asocolderma_data_core_theme($existing, $type, $theme, $path): array
 			],
 			'template' => 'asocolderma-data-core-database-modal-login',
 		],
+		'asocolderma_data_core_user_login_form' => [
+			'render element' => 'form',
+			'template' => 'asocolderma-data-core-user-login-form',
+		],
 	];
 }

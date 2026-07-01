@@ -6,7 +6,6 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
 use Drupal\user\Entity\User;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Controlador para el login independiente de Base de Datos.
@@ -16,7 +15,7 @@ final class DataCoreLoginController extends ControllerBase
 	/**
 	 * Renderiza el login independiente de Base de Datos.
 	 */
-	public function login(Request $request)
+	public function login()
 	{
 		if ($this->currentUser()->isAuthenticated()) {
 			$account = User::load($this->currentUser()->id());
@@ -29,7 +28,10 @@ final class DataCoreLoginController extends ControllerBase
 		}
 
 		$form = $this->formBuilder()->getForm('Drupal\user\Form\UserLoginForm');
+		$form['#theme'] = 'asocolderma_data_core_user_login_form';
+		$form['#attributes']['class'][] = 'user-login-form';
 		$form['#attributes']['class'][] = 'user-login-form--data-core';
+		$form['#action'] = Url::fromRoute('asocolderma_data_core.database_login')->toString();
 
 		return [
 			'#theme' => 'asocolderma_data_core_database_modal_login',
@@ -37,7 +39,6 @@ final class DataCoreLoginController extends ControllerBase
 			'#attached' => [
 				'library' => [
 					'asocolderma_data_core/database_login',
-					'core/drupal.dialog.ajax',
 				],
 			],
 			'#cache' => [
