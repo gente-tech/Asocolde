@@ -224,11 +224,8 @@ class ZohoSignService
 						'Authorization' => 'Zoho-oauthtoken ' . $access_token,
 						'Accept' => 'application/json',
 					],
-					'multipart' => [
-						[
-							'name' => 'data',
-							'contents' => json_encode($payload, JSON_UNESCAPED_UNICODE),
-						],
+					'form_params' => [
+						'data' => json_encode($payload, JSON_UNESCAPED_UNICODE),
 					],
 				]
 			);
