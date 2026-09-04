@@ -207,9 +207,12 @@ class ZohoSignService
 					'field_text_data' => $data['field_text_data'] ?? [],
 				],
 				'notes' => $data['notes'] ?? '',
-				'redirect_pages' => $data['redirect_pages'] ?? [],
 			],
 		];
+
+		if (!empty($data['redirect_pages'])) {
+			$payload['templates']['redirect_pages'] = $data['redirect_pages'];
+		}
 
 		$this->logger->notice('Zoho Sign redirect_pages payload: @redirect_pages', [
 			'@redirect_pages' => json_encode($data['redirect_pages'] ?? [], JSON_UNESCAPED_UNICODE),
