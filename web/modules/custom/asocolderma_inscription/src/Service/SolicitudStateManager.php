@@ -61,7 +61,7 @@ final class SolicitudStateManager
         $metadata,
       );
 
-      $this->handlePostTransitionActions($node, $from_name, $to_name);
+      $this->handlePostTransitionActions($node, $from_name, $to_name, (int) $to_tid);
       $this->handlePostTransitionNotifications($node, $from_name, $to_name, $origin, $comment, $metadata);
     } catch (\Throwable $e) {
       $tx->rollBack();
@@ -73,13 +73,16 @@ final class SolicitudStateManager
     NodeInterface $node,
     ?string $from_name,
     ?string $to_name,
+    int $to_tid,
   ): void {
     if (in_array($this->normalizeStateName($to_name), ['miembro activo', 'activar miembro nuevo'], TRUE)) {
       $this->memberActivator->activateFromSolicitud($node);
       return;
     }
 
-    if ($to_name !== 'Pendiente firma de documentos') {
+    $to_functional_key = \asocolderma_inscription_get_state_functional_key_by_tid($to_tid);
+
+    if ($to_functional_key !== 'coord_documentos_enviados') {
       return;
     }
 
@@ -283,7 +286,7 @@ final class SolicitudStateManager
       'rechazada asamblea g',
       'rechazado asamblea general',
       'rechazada asamblea general' => 'rechazada_asamblea_general',
-      
+
       'documentos enviados' => 'documentos_enviados',
 
       'pendiente pago de ingreso',
