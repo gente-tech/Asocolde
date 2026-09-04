@@ -176,7 +176,11 @@ final class UserZoneController extends ControllerBase
         ];
       }
 
-      if ($estado_label === 'Pendiente firma de documentos') {
+      $estado_functional_key = $estado_term
+        ? \asocolderma_inscription_get_state_functional_key_from_term($estado_term)
+        : '';
+
+      if ($estado_functional_key === 'coord_documentos_enviados') {
         $actions[] = [
           'label' => $this->t('Firmar documentos'),
           'url' => Url::fromRoute(
