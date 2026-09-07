@@ -185,14 +185,40 @@ final class UserZoneController extends ControllerBase
       }
 
       if ($estado_functional_key === 'coord_documentos_enviados') {
-        $actions[] = [
-          'label' => $this->t('Firmar documentos'),
-          'url' => Url::fromRoute(
-            'asocolderma_inscription.solicitud_sign_redirect',
-            ['node' => $n->id()]
-          )->toString(),
-          'modifier' => 'primary',
-        ];
+        $signature_completed = FALSE;
+
+        try {
+          $signature_completed = $this->stateManager
+            ->isSignatureCompleted($n, TRUE);
+        } catch (\Throwable $e) {
+          $this->getLogger('asocolderma_inscription')->error(
+            'Error consultando la firma de la solicitud @nid: @message',
+            [
+              '@nid' => $n->id(),
+              '@message' => $e->getMessage(),
+            ]
+          );
+        }
+
+        if ($signature_completed) {
+          $actions[] = [
+            'label' => $this->t('Ver documento firmado'),
+            'url' => Url::fromRoute(
+              'asocolderma_inscription.solicitud_signed_document',
+              ['node' => $n->id()]
+            )->toString(),
+            'modifier' => 'secondary',
+          ];
+        } else {
+          $actions[] = [
+            'label' => $this->t('Firmar documentos'),
+            'url' => Url::fromRoute(
+              'asocolderma_inscription.solicitud_sign_redirect',
+              ['node' => $n->id()]
+            )->toString(),
+            'modifier' => 'primary',
+          ];
+        }
       }
 
       $solicitud_id = $n->get('field_solicitud_id')->value ?? ('NID ' . $n->id());
