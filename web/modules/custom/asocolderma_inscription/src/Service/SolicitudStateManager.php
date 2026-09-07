@@ -45,6 +45,29 @@ final class SolicitudStateManager
     $from_name = $from_tid ? $this->resolveTermNameByTid($from_tid) : NULL;
     $to_name = $this->resolveTermNameByTid((int) $to_tid);
 
+    $from_functional_key = $from_tid
+      ? \asocolderma_inscription_get_state_functional_key_by_tid($from_tid)
+      : '';
+
+    $to_functional_key =
+      \asocolderma_inscription_get_state_functional_key_by_tid($to_tid);
+
+    $is_payment_transition =
+      $from_functional_key === 'coord_documentos_enviados' &&
+      $to_functional_key === 'coord_pago_ingreso';
+
+    if (
+      $is_payment_transition &&
+      !$this->zohoSignService->isSignatureCompletedForSolicitud(
+        (int) $node->id(),
+        TRUE
+      )
+    ) {
+      throw new \DomainException(
+        'El aspirante aún no ha firmado los documentos.'
+      );
+    }
+
     $tx = $this->db->startTransaction();
 
     try {
