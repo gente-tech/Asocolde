@@ -24,6 +24,24 @@ final class SolicitudStateManager
     private readonly SolicitudMemberActivator $memberActivator,
   ) {}
 
+  /**
+   * Indica si la firma de la solicitud fue completada en Zoho Sign.
+   */
+  public function isSignatureCompleted(
+    NodeInterface $node,
+    bool $refresh = TRUE,
+  ): bool {
+    if ($node->bundle() !== 'solicitud_ingreso') {
+      return FALSE;
+    }
+
+    return $this->zohoSignService
+      ->isSignatureCompletedForSolicitud(
+        (int) $node->id(),
+        $refresh
+      );
+  }
+
   public function transitionByTid(
     NodeInterface $node,
     int $to_tid,
@@ -58,10 +76,7 @@ final class SolicitudStateManager
 
     if (
       $is_payment_transition &&
-      !$this->zohoSignService->isSignatureCompletedForSolicitud(
-        (int) $node->id(),
-        TRUE
-      )
+      !$this->isSignatureCompleted($node, TRUE)
     ) {
       throw new \DomainException(
         'El aspirante aún no ha firmado los documentos.'
