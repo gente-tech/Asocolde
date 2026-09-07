@@ -102,18 +102,45 @@ class ZohoSignService
 	{
 		$settings = $this->getSettings();
 
+		$cache_id = 'enterprise_integrations.zoho_sign.access_token.'
+			. hash(
+				'sha256',
+				$settings['accounts_domain']
+					. '|'
+					. $settings['client_id']
+					. '|'
+					. $settings['refresh_token']
+			);
+
+		// Reutilizar el token mientras siga vigente.
+		if ($this->cache !== NULL) {
+			$cached = $this->cache->get($cache_id);
+
+			if (
+				$cached !== FALSE &&
+				!empty($cached->data) &&
+				is_string($cached->data)
+			) {
+				return $cached->data;
+			}
+		}
+
 		try {
-			$response = $this->httpClient->request('POST', $settings['accounts_domain'] . '/oauth/v2/token', [
-				'form_params' => [
-					'grant_type' => 'refresh_token',
-					'refresh_token' => $settings['refresh_token'],
-					'client_id' => $settings['client_id'],
-					'client_secret' => $settings['client_secret'],
-				],
-				'headers' => [
-					'Accept' => 'application/json',
-				],
-			]);
+			$response = $this->httpClient->request(
+				'POST',
+				$settings['accounts_domain'] . '/oauth/v2/token',
+				[
+					'form_params' => [
+						'grant_type' => 'refresh_token',
+						'refresh_token' => $settings['refresh_token'],
+						'client_id' => $settings['client_id'],
+						'client_secret' => $settings['client_secret'],
+					],
+					'headers' => [
+						'Accept' => 'application/json',
+					],
+				]
+			);
 
 			$data = json_decode((string) $response->getBody(), TRUE);
 
@@ -121,12 +148,36 @@ class ZohoSignService
 				throw new \Exception('Zoho no retornó access_token.');
 			}
 
-			return $data['access_token'];
+			$access_token = (string) $data['access_token'];
+
+			// Zoho normalmente entrega 3600 segundos.
+			// Restamos 120 segundos para evitar usar un token próximo a expirar.
+			$expires_in = isset($data['expires_in'])
+				? (int) $data['expires_in']
+				: 3600;
+
+			$cache_lifetime = max(60, $expires_in - 120);
+
+			if ($this->cache !== NULL) {
+				$this->cache->set(
+					$cache_id,
+					$access_token,
+					time() + $cache_lifetime
+				);
+			}
+
+			return $access_token;
 		} catch (\Throwable $e) {
-			$this->logger->error('Error obteniendo access token de Zoho Sign: @message', [
-				'@message' => $e->getMessage(),
-			]);
-			throw new \Exception('No fue posible obtener el access token de Zoho Sign.');
+			$this->logger->error(
+				'Error obteniendo access token de Zoho Sign: @message',
+				[
+					'@message' => $e->getMessage(),
+				]
+			);
+
+			throw new \Exception(
+				'No fue posible obtener el access token de Zoho Sign.'
+			);
 		}
 	}
 
