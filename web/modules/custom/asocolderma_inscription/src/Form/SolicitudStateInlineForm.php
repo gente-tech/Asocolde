@@ -429,13 +429,43 @@ final class SolicitudStateInlineForm extends FormBase
       $metadata['clarification_message'] = $clarification_message;
     }
 
-    $this->stateManager->transitionByTid(
-      $node,
-      $to_tid,
-      'node_view_inline_select',
-      $comment,
-      $metadata
-    );
+    try {
+      $this->stateManager->transitionByTid(
+        $node,
+        $to_tid,
+        'node_view_inline_select',
+        $comment,
+        $metadata
+      );
+    } catch (\DomainException $e) {
+      $this->messenger()->addWarning(
+        $this->t('El aspirante aún no ha firmado los documentos.')
+      );
+
+      $form_state->setRedirectUrl(
+        Url::fromUserInput($destination ?: '/')
+      );
+
+      return;
+    } catch (\Throwable $e) {
+      $this->getLogger('asocolderma_inscription')->error(
+        'Error cambiando el estado de la solicitud @nid: @message',
+        [
+          '@nid' => $nid,
+          '@message' => $e->getMessage(),
+        ]
+      );
+
+      $this->messenger()->addError(
+        $this->t('No fue posible actualizar el estado de la solicitud.')
+      );
+
+      $form_state->setRedirectUrl(
+        Url::fromUserInput($destination ?: '/')
+      );
+
+      return;
+    }
 
     if ($is_pending_clarification) {
       $this->clarificationManager->createClarification(
