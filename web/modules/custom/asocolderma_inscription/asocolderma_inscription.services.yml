@@ -3,6 +3,11 @@ services:
     parent: logger.channel_base
     arguments: ['asocolderma_inscription']
 
+  asocolderma_inscription.solicitud_zoho_variable_manager:
+    class: Drupal\asocolderma_inscription\Service\SolicitudZohoVariableManager
+    arguments:
+      - '@entity_field.manager'
+
   asocolderma_inscription.solicitud_id_generator:
     class: Drupal\asocolderma_inscription\Service\SolicitudIdGenerator
     arguments: ["@entity_type.manager", "@lock", "@datetime.time"]
