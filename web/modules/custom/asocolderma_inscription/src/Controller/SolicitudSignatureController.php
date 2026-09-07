@@ -43,8 +43,9 @@ final class SolicitudSignatureController extends ControllerBase
 			throw new AccessDeniedHttpException();
 		}
 
-		$state_name = $this->getStateName($node);
-		if ($state_name !== 'Pendiente firma de documentos') {
+		$state_functional_key = $this->getStateFunctionalKey($node);
+
+		if ($state_functional_key !== 'coord_documentos_enviados') {
 			$this->messenger()->addError('La solicitud no está habilitada para firma.');
 			return $this->redirect('asocolderma_inscription.user_zone_requests');
 		}
@@ -172,14 +173,17 @@ final class SolicitudSignatureController extends ControllerBase
 		return $this->redirect('asocolderma_inscription.user_zone_requests');
 	}
 
-	private function getStateName(NodeInterface $node): string
+	private function getStateFunctionalKey(NodeInterface $node): string
 	{
 		if (!$node->hasField('field_state') || $node->get('field_state')->isEmpty()) {
 			return '';
 		}
 
 		$term = $node->get('field_state')->entity;
-		return $term ? trim((string) $term->label()) : '';
+
+		return $term
+			? \asocolderma_inscription_get_state_functional_key_from_term($term)
+			: '';
 	}
 
 	private function resolveRecipientName(NodeInterface $node): string
