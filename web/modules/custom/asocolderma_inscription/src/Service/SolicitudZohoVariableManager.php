@@ -119,6 +119,30 @@ final class SolicitudZohoVariableManager
 				'type' => 'calculated',
 				'source' => 'calculated',
 			],
+			'ciudad' => [
+				'label' => 'Ciudad de ejercicio principal (clave compatible)',
+				'field' => 'field_ciudad_ejercicio',
+				'type' => 'calculated',
+				'source' => 'calculated',
+			],
+			'correo' => [
+				'label' => 'Correo principal del aspirante (clave compatible)',
+				'field' => 'field_email_principal',
+				'type' => 'calculated',
+				'source' => 'calculated',
+			],
+			'documento' => [
+				'label' => 'Número de documento (clave compatible)',
+				'field' => 'field_numero_documento',
+				'type' => 'calculated',
+				'source' => 'calculated',
+			],
+			'nombre_completo' => [
+				'label' => 'Nombre completo del aspirante (clave compatible)',
+				'field' => 'field_nombre1 + field_nombre2 + field_apellido1 + field_apellido2',
+				'type' => 'calculated',
+				'source' => 'calculated',
+			],
 		];
 	}
 
@@ -196,13 +220,32 @@ final class SolicitudZohoVariableManager
 		NodeInterface $node,
 	): string {
 		return match ($variable_key) {
-			'aspirante_nombre_completo' => $this->resolveFullName($node),
+			'aspirante_nombre_completo',
+			'nombre_completo' => $this->resolveFullName($node),
+
 			'aspirante_correo_cuenta' => $this->resolveAccountEmail($node),
+
+			'correo' => $this->resolvePrimaryEmail($node),
+
+			'documento' => $this->resolveFieldValue(
+				$node,
+				'field_numero_documento',
+				'string',
+			),
+
+			'ciudad' => $this->resolveFieldValue(
+				$node,
+				'field_ciudad_ejercicio',
+				'entity_reference',
+			),
+
 			'solicitud_fecha_creacion' => date(
 				'd/m/Y',
 				(int) $node->getCreatedTime(),
 			),
+
 			'solicitud_nid' => (string) $node->id(),
+
 			default => '',
 		};
 	}
@@ -270,5 +313,57 @@ final class SolicitudZohoVariableManager
 		} catch (\Throwable) {
 			return $value;
 		}
+	}
+
+	/**
+	 * Construye el nombre completo del aspirante.
+	 */
+	private function resolveFullName(NodeInterface $node): string
+	{
+		$parts = [];
+
+		foreach (
+			[
+				'field_nombre1',
+				'field_nombre2',
+				'field_apellido1',
+				'field_apellido2',
+			] as $field_name
+		) {
+			if (
+				$node->hasField($field_name)
+				&& !$node->get($field_name)->isEmpty()
+			) {
+				$parts[] = trim((string) $node->get($field_name)->value);
+			}
+		}
+
+		return trim(implode(' ', array_filter($parts)));
+	}
+
+	/**
+	 * Obtiene el correo principal registrado en la solicitud.
+	 */
+	private function resolvePrimaryEmail(NodeInterface $node): string
+	{
+		$email = $this->resolveFieldValue(
+			$node,
+			'field_email_principal',
+			'email',
+		);
+
+		return $email !== '' ? $email : $this->resolveAccountEmail($node);
+	}
+
+	/**
+	 * Obtiene el correo de la cuenta propietaria.
+	 */
+	private function resolveAccountEmail(NodeInterface $node): string
+	{
+		$owner = $node->getOwner();
+
+		return $owner
+			? trim((string) $owner->getEmail())
+			: '';
 	}
 }

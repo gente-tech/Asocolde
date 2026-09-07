@@ -102,7 +102,7 @@ final class SolicitudVariablesDictionaryController extends ControllerBase
 				'#markup' => '
           <p>
             <strong>Zoho Sign:</strong>
-            el nombre del campo de textose en la plantilla de Zoho Sign debe
+            el nombre del campo de texto en la plantilla de Zoho Sign debe
             coincidir exactamente con la clave indicada en la primera columna.
           </p>
           <p>
