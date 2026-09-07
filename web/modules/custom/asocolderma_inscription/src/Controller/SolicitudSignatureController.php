@@ -129,34 +129,17 @@ final class SolicitudSignatureController extends ControllerBase
 				return $this->redirect('asocolderma_inscription.user_zone_requests');
 			}
 
-			$request_id = (string) $mapping['zoho_request_id'];
-			$details = $this->zohoSignService->getRequestDetails($request_id);
+			$is_completed = $this->zohoSignService
+				->isSignatureCompletedForSolicitud((int) $node->id(), TRUE);
 
-			$request_status = strtolower((string) ($details['requests']['request_status'] ?? ''));
-			$action_status = strtolower((string) ($details['requests']['actions'][0]['action_status'] ?? ''));
-
-			if (in_array($request_status, ['completed', 'signed'], TRUE) || in_array($action_status, ['signed', 'completed'], TRUE)) {
-				$documentos_firmados_tid = $this->getStateTidByName('Documentos firmados');
-
-				if ($documentos_firmados_tid) {
-					$this->stateManager->transitionByTid(
-						$node,
-						$documentos_firmados_tid,
-						'zoho_sign_return',
-						'Firma de documentos confirmada desde Zoho Sign.',
-						[
-							'zoho_request_id' => $request_id,
-							'request_status' => $request_status,
-							'action_status' => $action_status,
-						]
-					);
-
-					$this->messenger()->addStatus('La firma fue completada y la solicitud fue actualizada a Documentos firmados.');
-				} else {
-					$this->messenger()->addWarning('El documento fue firmado, pero no se encontró el estado Documentos firmados.');
-				}
+			if ($is_completed) {
+				$this->messenger()->addStatus(
+					'La firma del documento fue confirmada correctamente.'
+				);
 			} else {
-				$this->messenger()->addStatus('Aún no se evidencia la firma completa del documento.');
+				$this->messenger()->addStatus(
+					'Aún no se evidencia la firma completa del documento.'
+				);
 			}
 		} catch (\Throwable $e) {
 			$this->getLogger('asocolderma_inscription')->error(
