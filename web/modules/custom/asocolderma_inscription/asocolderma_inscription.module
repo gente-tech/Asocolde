@@ -106,6 +106,22 @@ function asocolderma_inscription_preprocess_node(array &$variables)
   }
 
   $variables['estado_visual_solicitud'] = $estado_visual_solicitud;
+
+  $variables['documento_firmado_disponible'] = FALSE;
+
+  try {
+    $variables['documento_firmado_disponible'] = \Drupal::service(
+      'asocolderma_inscription.solicitud_state_manager'
+    )->isSignatureCompleted($node, TRUE);
+  } catch (\Throwable $e) {
+    \Drupal::logger('asocolderma_inscription')->error(
+      'Error validando documento firmado para la solicitud @nid: @message',
+      [
+        '@nid' => $node->id(),
+        '@message' => $e->getMessage(),
+      ]
+    );
+  }
 }
 
 function asocolderma_inscription_build_semaforo_steps(NodeInterface $node): array
