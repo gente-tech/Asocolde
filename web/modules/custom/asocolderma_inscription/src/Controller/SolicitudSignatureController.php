@@ -51,6 +51,37 @@ final class SolicitudSignatureController extends ControllerBase
 		}
 
 		try {
+			if (
+				$this->zohoSignService
+				->isSignatureCompletedForSolicitud((int) $node->id(), TRUE)
+			) {
+				$this->messenger()->addStatus(
+					'Este documento ya fue firmado correctamente.'
+				);
+
+				return $this->redirect(
+					'asocolderma_inscription.user_zone_requests'
+				);
+			}
+		} catch (\Throwable $e) {
+			$this->getLogger('asocolderma_inscription')->error(
+				'Error validando firma existente para solicitud @nid: @message',
+				[
+					'@nid' => $node->id(),
+					'@message' => $e->getMessage(),
+				]
+			);
+
+			$this->messenger()->addError(
+				'No fue posible validar el estado de la firma.'
+			);
+
+			return $this->redirect(
+				'asocolderma_inscription.user_zone_requests'
+			);
+		}
+
+		try {
 			$mapping = $this->zohoSignService->getLatestRequestMappingBySolicitud((int) $node->id());
 
 			if (empty($mapping['zoho_request_id']) || empty($mapping['zoho_action_id'])) {
