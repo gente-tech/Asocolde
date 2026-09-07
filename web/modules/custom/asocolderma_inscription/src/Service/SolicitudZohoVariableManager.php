@@ -316,32 +316,6 @@ final class SolicitudZohoVariableManager
 	}
 
 	/**
-	 * Construye el nombre completo del aspirante.
-	 */
-	private function resolveFullName(NodeInterface $node): string
-	{
-		$parts = [];
-
-		foreach (
-			[
-				'field_nombre1',
-				'field_nombre2',
-				'field_apellido1',
-				'field_apellido2',
-			] as $field_name
-		) {
-			if (
-				$node->hasField($field_name)
-				&& !$node->get($field_name)->isEmpty()
-			) {
-				$parts[] = trim((string) $node->get($field_name)->value);
-			}
-		}
-
-		return trim(implode(' ', array_filter($parts)));
-	}
-
-	/**
 	 * Obtiene el correo principal registrado en la solicitud.
 	 */
 	private function resolvePrimaryEmail(NodeInterface $node): string
@@ -352,18 +326,8 @@ final class SolicitudZohoVariableManager
 			'email',
 		);
 
-		return $email !== '' ? $email : $this->resolveAccountEmail($node);
-	}
-
-	/**
-	 * Obtiene el correo de la cuenta propietaria.
-	 */
-	private function resolveAccountEmail(NodeInterface $node): string
-	{
-		$owner = $node->getOwner();
-
-		return $owner
-			? trim((string) $owner->getEmail())
-			: '';
+		return $email !== ''
+			? $email
+			: $this->resolveAccountEmail($node);
 	}
 }
