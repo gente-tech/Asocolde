@@ -3,6 +3,7 @@
 namespace Drupal\asocolderma_inscription\Controller;
 
 use Drupal\asocolderma_inscription\Service\SolicitudManager;
+use Drupal\asocolderma_inscription\Service\SolicitudStateManager;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
@@ -20,15 +21,18 @@ final class UserZoneController extends ControllerBase
 
   private EntityTypeManagerInterface $etm;
   private SolicitudManager $manager;
+  private SolicitudStateManager $stateManager;
   private PrivateTempStoreFactory $tempStoreFactory;
 
   public function __construct(
     EntityTypeManagerInterface $etm,
     SolicitudManager $manager,
+    SolicitudStateManager $state_manager,
     PrivateTempStoreFactory $temp_store_factory
   ) {
     $this->etm = $etm;
     $this->manager = $manager;
+    $this->stateManager = $state_manager;
     $this->tempStoreFactory = $temp_store_factory;
   }
 
@@ -37,6 +41,7 @@ final class UserZoneController extends ControllerBase
     return new self(
       $container->get('entity_type.manager'),
       $container->get('asocolderma_inscription.solicitud_manager'),
+      $container->get('asocolderma_inscription.solicitud_state_manager'),
       $container->get('tempstore.private'),
     );
   }
