@@ -9,6 +9,7 @@ use Drupal\Core\Database\Connection;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\ResponseInterface;
 use Drupal\Core\Url;
+use Drupal\Core\Cache\CacheBackendInterface;
 
 /**
  * Servicio para integración con Zoho Sign.
@@ -45,18 +46,27 @@ class ZohoSignService
 	protected Connection $database;
 
 	/**
+	 * Caché para reutilizar el access token de Zoho.
+	 *
+	 * @var \Drupal\Core\Cache\CacheBackendInterface|null
+	 */
+	protected ?CacheBackendInterface $cache;
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct(
 		ClientInterface $http_client,
 		ConfigFactoryInterface $config_factory,
 		LoggerChannelFactoryInterface $logger_factory,
-		Connection $database
+		Connection $database,
+		?CacheBackendInterface $cache = NULL
 	) {
 		$this->httpClient = $http_client;
 		$this->configFactory = $config_factory;
 		$this->logger = $logger_factory->get('enterprise_integrations');
 		$this->database = $database;
+		$this->cache = $cache;
 	}
 
 	/**
