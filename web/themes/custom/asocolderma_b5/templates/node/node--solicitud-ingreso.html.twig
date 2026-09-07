@@ -59,7 +59,7 @@
 {% set estado_entity = node.field_state.entity %}
 {% set estado = estado_visual_solicitud ?: (estado_entity ? estado_entity.label : '') %}
 
-{% if estado == 'Documentos firmados' %}
+{% if documento_firmado_disponible %}
 
 	<div class="solicitud-documento-firmado">
 		<h3>Documento firmado</h3>
