@@ -130,19 +130,23 @@ final class SolicitudZohoVariableManager
 		string $field_name,
 		string $field_type,
 	): string {
-		if (
-			!$node->hasField($field_name)
-			|| $node->get($field_name)->isEmpty()
-		) {
+		if (!$node->hasField($field_name)) {
 			return '';
 		}
 
 		$field = $node->get($field_name);
 
+		if ($field_type === 'boolean') {
+			return ((bool) $field->value) ? 'Sí' : 'No';
+		}
+
+		if ($field->isEmpty()) {
+			return '';
+		}
+
 		return match ($field_type) {
 			'entity_reference' => $this->resolveEntityReference($node, $field_name),
 			'file' => $this->resolveFile($node, $field_name),
-			'boolean' => ((bool) $field->value) ? 'Sí' : 'No',
 			'datetime' => $this->formatDate((string) $field->value),
 			default => trim((string) $field->value),
 		};
