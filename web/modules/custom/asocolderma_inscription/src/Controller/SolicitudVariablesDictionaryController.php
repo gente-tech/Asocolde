@@ -4,19 +4,31 @@ declare(strict_types=1);
 
 namespace Drupal\asocolderma_inscription\Controller;
 
+use Drupal\asocolderma_inscription\Service\SolicitudZohoVariableManager;
 use Drupal\Core\Controller\ControllerBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Displays the dynamic variables dictionary for solicitud notifications.
+ * Muestra el diccionario institucional de variables dinámicas.
  */
 final class SolicitudVariablesDictionaryController extends ControllerBase
 {
 
+	public function __construct(
+		private readonly SolicitudZohoVariableManager $zohoVariableManager,
+	) {}
+
+	public static function create(ContainerInterface $container): self
+	{
+		return new self(
+			$container->get(
+				'asocolderma_inscription.solicitud_zoho_variable_manager',
+			),
+		);
+	}
+
 	/**
-	 * Builds the variables dictionary page.
-	 *
-	 * @return array
-	 *   Render array.
+	 * Construye la página del diccionario de variables.
 	 */
 	public function build(): array
 	{
@@ -28,22 +40,29 @@ final class SolicitudVariablesDictionaryController extends ControllerBase
 				'class' => ['messages', 'messages--status'],
 			],
 			'content' => [
-				'#markup' => '<p>Este diccionario muestra las variables dinámicas disponibles para las plantillas de correo y WhatsApp del proceso de registro, postulación y activación de nuevos dermatólogos en AsoColDerma.</p>',
+				'#markup' => '
+          <p>
+            Este diccionario muestra las variables dinámicas disponibles
+            para correo, WhatsApp y documentos de Zoho Sign.
+          </p>
+        ',
 			],
 		];
 
-		$build['help'] = [
+		$build['notification_help'] = [
 			'#type' => 'item',
 			'#markup' => '
-        <p><strong>Uso general:</strong> las variables se usan con la misma clave tanto para correo como para WhatsApp.</p>
-        <p><strong>Ejemplo:</strong> <code>user_full_name</code>, <code>request_code</code>, <code>request_current_status</code>.</p>
+        <p>
+          <strong>Correo y WhatsApp:</strong>
+          utilice las claves indicadas en las plantillas de notificación.
+        </p>
       ',
 		];
 
 		$build['general_data'] = [
 			'#type' => 'details',
 			'#title' => $this->t('Datos generales del usuario'),
-			'#open' => TRUE,
+			'#open' => FALSE,
 		];
 
 		$build['general_data']['table'] = [
@@ -52,14 +71,15 @@ final class SolicitudVariablesDictionaryController extends ControllerBase
 				$this->t('Clave de variable'),
 				$this->t('Descripción'),
 			],
-			'#rows' => $this->buildRows($this->getGeneralVariables()),
-			'#empty' => $this->t('No hay variables generales configuradas.'),
+			'#rows' => $this->buildNotificationRows(
+				$this->getGeneralVariables(),
+			),
 		];
 
 		$build['request_data'] = [
 			'#type' => 'details',
-			'#title' => $this->t('Datos de la solicitud'),
-			'#open' => TRUE,
+			'#title' => $this->t('Datos generales de la solicitud'),
+			'#open' => FALSE,
 		];
 
 		$build['request_data']['table'] = [
@@ -68,23 +88,65 @@ final class SolicitudVariablesDictionaryController extends ControllerBase
 				$this->t('Clave de variable'),
 				$this->t('Descripción'),
 			],
-			'#rows' => $this->buildRows($this->getRequestVariables()),
-			'#empty' => $this->t('No hay variables de solicitud configuradas.'),
+			'#rows' => $this->buildNotificationRows(
+				$this->getRequestVariables(),
+			),
+		];
+
+		$build['zoho_help'] = [
+			'#type' => 'container',
+			'#attributes' => [
+				'class' => ['messages', 'messages--warning'],
+			],
+			'content' => [
+				'#markup' => '
+          <p>
+            <strong>Zoho Sign:</strong>
+            el nombre del campo de textose en la plantilla de Zoho Sign debe
+            coincidir exactamente con la clave indicada en la primera columna.
+          </p>
+          <p>
+            Los campos de archivo envían el nombre original del archivo.
+            Las referencias a taxonomía envían la etiqueta visible.
+            Los valores booleanos se envían como “Sí” o “No”.
+          </p>
+          <p>
+            La fecha de firma no se incluye en esta lista porque debe ser un
+            campo automático de Zoho Sign.
+          </p>
+        ',
+			],
+		];
+
+		$build['zoho_variables'] = [
+			'#type' => 'details',
+			'#title' => $this->t('Variables para documentos de Zoho Sign'),
+			'#open' => TRUE,
+		];
+
+		$build['zoho_variables']['table'] = [
+			'#type' => 'table',
+			'#header' => [
+				$this->t('Clave para Zoho Sign'),
+				$this->t('Descripción'),
+				$this->t('Campo de Drupal'),
+				$this->t('Tipo'),
+			],
+			'#rows' => $this->buildZohoRows(
+				$this->zohoVariableManager->getDefinitions(),
+			),
+			'#empty' => $this->t(
+				'No hay variables de Zoho Sign disponibles.',
+			),
 		];
 
 		return $build;
 	}
 
 	/**
-	 * Builds table rows from variable definitions.
-	 *
-	 * @param array $variables
-	 *   Variable definitions.
-	 *
-	 * @return array
-	 *   Table rows.
+	 * Construye las filas de variables de notificaciones.
 	 */
-	private function buildRows(array $variables): array
+	private function buildNotificationRows(array $variables): array
 	{
 		$rows = [];
 
@@ -92,7 +154,9 @@ final class SolicitudVariablesDictionaryController extends ControllerBase
 			$rows[] = [
 				'key' => [
 					'data' => [
-						'#markup' => '<code>' . $key . '</code>',
+						'#type' => 'html_tag',
+						'#tag' => 'code',
+						'#value' => $key,
 					],
 				],
 				'label' => $label,
@@ -103,10 +167,38 @@ final class SolicitudVariablesDictionaryController extends ControllerBase
 	}
 
 	/**
-	 * Returns general user variables.
-	 *
-	 * @return array
-	 *   Variables keyed by internal variable name.
+	 * Construye las filas del diccionario de Zoho Sign.
+	 */
+	private function buildZohoRows(array $definitions): array
+	{
+		$rows = [];
+
+		foreach ($definitions as $key => $definition) {
+			$rows[] = [
+				'key' => [
+					'data' => [
+						'#type' => 'html_tag',
+						'#tag' => 'code',
+						'#value' => $key,
+					],
+				],
+				'label' => (string) ($definition['label'] ?? ''),
+				'field' => [
+					'data' => [
+						'#type' => 'html_tag',
+						'#tag' => 'code',
+						'#value' => (string) ($definition['field'] ?? ''),
+					],
+				],
+				'type' => (string) ($definition['type'] ?? ''),
+			];
+		}
+
+		return $rows;
+	}
+
+	/**
+	 * Variables generales disponibles para notificaciones.
 	 */
 	private function getGeneralVariables(): array
 	{
@@ -122,10 +214,7 @@ final class SolicitudVariablesDictionaryController extends ControllerBase
 	}
 
 	/**
-	 * Returns solicitud variables.
-	 *
-	 * @return array
-	 *   Variables keyed by internal variable name.
+	 * Variables de solicitud disponibles para notificaciones.
 	 */
 	private function getRequestVariables(): array
 	{
@@ -138,7 +227,7 @@ final class SolicitudVariablesDictionaryController extends ControllerBase
 			'request_new_status' => 'Nuevo estado de la solicitud',
 			'request_status_changed_date' => 'Fecha del cambio de estado',
 			'request_status_changed_by' => 'Usuario que realizó el cambio de estado',
-			'request_status_change_comment' => 'Observación o comentario del cambio de estado',
+			'request_status_change_comment' => 'Observación del cambio de estado',
 		];
 	}
 }
