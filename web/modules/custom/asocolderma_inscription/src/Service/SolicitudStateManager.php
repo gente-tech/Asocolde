@@ -20,6 +20,7 @@ final class SolicitudStateManager
     private readonly SolicitudHistorialLogger $logger,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly ZohoSignService $zohoSignService,
+    private readonly SolicitudZohoVariableManager $zohoVariableManager,
     private readonly SolicitudNotificationManager $notificationManager,
     private readonly SolicitudMemberActivator $memberActivator,
   ) {}
@@ -196,20 +197,7 @@ final class SolicitudStateManager
 
   private function buildFieldTextData(NodeInterface $node): array
   {
-    return [
-      'solicitud_id' => $this->getSolicitudCode($node),
-      'nombre_completo' => $this->resolveRecipientName($node),
-      'correo' => $this->resolveRecipientEmail($node),
-      'documento' => $node->hasField('field_numero_documento') && !$node->get('field_numero_documento')->isEmpty()
-        ? (string) $node->get('field_numero_documento')->value
-        : '',
-      'registro_medico' => $node->hasField('field_registro_medico') && !$node->get('field_registro_medico')->isEmpty()
-        ? (string) $node->get('field_registro_medico')->value
-        : '',
-      'ciudad' => $node->hasField('field_ciudad_ejercicio') && !$node->get('field_ciudad_ejercicio')->isEmpty()
-        ? ($node->get('field_ciudad_ejercicio')->entity?->label() ?? '')
-        : '',
-    ];
+    return $this->zohoVariableManager->resolveAll($node);
   }
 
   private function getSolicitudCode(NodeInterface $node): string

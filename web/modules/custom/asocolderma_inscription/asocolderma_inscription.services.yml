@@ -42,6 +42,7 @@ services:
       - "@asocolderma_inscription.solicitud_historial_logger"
       - "@entity_type.manager"
       - "@enterprise_integrations.zoho_sign"
+      - "@asocolderma_inscription.solicitud_zoho_variable_manager"
       - "@asocolderma_inscription.solicitud_notification_manager"
       - "@asocolderma_inscription.solicitud_member_activator"
   
