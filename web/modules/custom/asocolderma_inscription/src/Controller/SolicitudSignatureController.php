@@ -43,13 +43,6 @@ final class SolicitudSignatureController extends ControllerBase
 			throw new AccessDeniedHttpException();
 		}
 
-		$state_functional_key = $this->getStateFunctionalKey($node);
-
-		if ($state_functional_key !== 'coord_documentos_enviados') {
-			$this->messenger()->addError('La solicitud no está habilitada para firma.');
-			return $this->redirect('asocolderma_inscription.user_zone_requests');
-		}
-
 		try {
 			if (
 				$this->zohoSignService
@@ -79,6 +72,13 @@ final class SolicitudSignatureController extends ControllerBase
 			return $this->redirect(
 				'asocolderma_inscription.user_zone_requests'
 			);
+		}
+
+		$state_functional_key = $this->getStateFunctionalKey($node);
+
+		if ($state_functional_key !== 'coord_documentos_enviados') {
+			$this->messenger()->addError('La solicitud no está habilitada para firma.');
+			return $this->redirect('asocolderma_inscription.user_zone_requests');
 		}
 
 		try {
