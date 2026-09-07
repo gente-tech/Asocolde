@@ -162,10 +162,13 @@ final class UserZoneController extends ControllerBase
     foreach ($nodes as $n) {
       $term = $n->get('field_state')->entity;
       $estado_label = $term ? (string) $term->label() : '-';
+      $estado_functional_key = $term
+        ? \asocolderma_inscription_get_state_functional_key_from_term($term)
+        : '';
 
       $actions = [];
 
-      if ($estado_label === 'Pendiente aclaración') {
+      if ($estado_functional_key === 'sg_pendiente_aclaracion') {
         $actions[] = [
           'label' => $this->t('Editar solicitud'),
           'url' => Url::fromRoute(
@@ -175,10 +178,6 @@ final class UserZoneController extends ControllerBase
           'modifier' => 'primary',
         ];
       }
-
-      $estado_functional_key = $estado_term
-        ? \asocolderma_inscription_get_state_functional_key_from_term($estado_term)
-        : '';
 
       if ($estado_functional_key === 'coord_documentos_enviados') {
         $actions[] = [
