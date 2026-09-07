@@ -589,6 +589,81 @@ class ZohoSignService
 	}
 
 	/**
+	 * Verifica en Zoho Sign si la solicitud ya fue firmada completamente.
+	 */
+	public function isSignatureCompletedForSolicitud(
+		int $solicitud_nid,
+		bool $refresh = TRUE,
+	): bool {
+		if ($solicitud_nid <= 0) {
+			return FALSE;
+		}
+
+		$mapping = $this->getLatestRequestMappingBySolicitud($solicitud_nid);
+
+		if (empty($mapping['zoho_request_id'])) {
+			return FALSE;
+		}
+
+		$current_status = strtolower(trim((string) ($mapping['status'] ?? '')));
+
+		if (in_array($current_status, ['completed', 'signed'], TRUE)) {
+			return TRUE;
+		}
+
+		if (!$refresh) {
+			return FALSE;
+		}
+
+		$request_id = (string) $mapping['zoho_request_id'];
+		$details = $this->getRequestDetails($request_id);
+
+		$request_status = strtolower(trim((string) ($details['requests']['request_status'] ?? '')));
+		$action_status = '';
+
+		$actions = $details['requests']['actions'] ?? [];
+
+		if (is_array($actions)) {
+			foreach ($actions as $action) {
+				$status = strtolower(trim((string) ($action['action_status'] ?? '')));
+
+				if (in_array($status, ['signed', 'completed'], TRUE)) {
+					$action_status = $status;
+					break;
+				}
+			}
+		}
+
+		$is_completed =
+			in_array($request_status, ['completed', 'signed'], TRUE) ||
+			in_array($action_status, ['completed', 'signed'], TRUE);
+
+		$now = \Drupal::time()->getRequestTime();
+
+		$fields = [
+			'status' => $is_completed
+				? 'completed'
+				: ($request_status !== '' ? $request_status : 'pending'),
+			'last_status_check' => $now,
+			'changed' => $now,
+			'error_message' => NULL,
+		];
+
+		if ($is_completed) {
+			$fields['signed_at'] = $now;
+			$fields['completed_at'] = $now;
+		}
+
+		$this->database
+			->update('enterprise_integrations_zoho_sign_requests')
+			->fields($fields)
+			->condition('id', (int) $mapping['id'])
+			->execute();
+
+		return $is_completed;
+	}
+
+	/**
 	 * Extrae un mensaje útil desde la respuesta de Zoho.
 	 */
 	private function extractZohoErrorMessage(?ResponseInterface $response, ?array $decoded_body): string
