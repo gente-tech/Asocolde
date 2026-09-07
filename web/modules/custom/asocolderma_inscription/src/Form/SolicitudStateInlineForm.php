@@ -232,6 +232,57 @@ final class SolicitudStateInlineForm extends FormBase
       return $response;
     }
 
+    $current_functional_key =
+      \asocolderma_inscription_get_state_functional_key_by_tid($current_tid);
+
+    $to_functional_key =
+      \asocolderma_inscription_get_state_functional_key_by_tid($to_tid);
+
+    $is_payment_transition =
+      $current_functional_key === 'coord_documentos_enviados' &&
+      $to_functional_key === 'coord_pago_ingreso';
+
+    if ($is_payment_transition) {
+      try {
+        $signature_completed = $this->stateManager
+          ->isSignatureCompleted($node, TRUE);
+      } catch (\Throwable $e) {
+        $this->getLogger('asocolderma_inscription')->error(
+          'Error validando firma de solicitud @nid antes del pago: @message',
+          [
+            '@nid' => $node->id(),
+            '@message' => $e->getMessage(),
+          ]
+        );
+
+        $dialog_content = [
+          '#markup' => '<div class="asocolderma-confirm-dialog"><p>No fue posible validar la firma en Zoho Sign. Intente nuevamente.</p></div>',
+        ];
+
+        $response->addCommand(new OpenModalDialogCommand(
+          $this->t('No fue posible validar la firma'),
+          $dialog_content,
+          ['width' => '500']
+        ));
+
+        return $response;
+      }
+
+      if (!$signature_completed) {
+        $dialog_content = [
+          '#markup' => '<div class="asocolderma-confirm-dialog"><p>El aspirante aún no ha firmado los documentos.</p></div>',
+        ];
+
+        $response->addCommand(new OpenModalDialogCommand(
+          $this->t('Firma pendiente'),
+          $dialog_content,
+          ['width' => '500']
+        ));
+
+        return $response;
+      }
+    }
+
     $to_state_name = $this->resolveTermNameByTid($to_tid);
     $is_pending_clarification = $this->isPendingClarificationState($to_state_name);
 
