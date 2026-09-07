@@ -3,76 +3,75 @@
 namespace Drupal\asocolderma_inscription\Service;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\taxonomy\TermInterface;
 
 final class SolicitudManager
 {
 
-  private EntityTypeManagerInterface $entityTypeManager;
-
-  public function __construct(EntityTypeManagerInterface $entityTypeManager)
-  {
-    $this->entityTypeManager = $entityTypeManager;
-  }
+  public function __construct(
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+  ) {}
 
   /**
-   * Determina si un usuario tiene una solicitud activa.
+   * Determina si el usuario tiene alguna solicitud no cancelada.
    *
-   * Estados activos según taxonomía actual:
-   * - En trámite
-   * - Pendiente aclaración
+   * Solo se permite crear una nueva solicitud cuando todas las solicitudes
+   * anteriores están en un estado funcional de rechazo o cancelación.
    */
   public function hasActiveSolicitud(int $uid): bool
   {
-    $activeTids = $this->getActiveEstadoTids();
-
-    if (empty($activeTids)) {
+    if ($uid <= 0) {
       return FALSE;
     }
 
-    $query = $this->entityTypeManager
-      ->getStorage('node')
-      ->getQuery()
+    $storage = $this->entityTypeManager->getStorage('node');
+
+    $nids = $storage->getQuery()
       ->condition('type', 'solicitud_ingreso')
       ->condition('uid', $uid)
       ->condition('status', 1)
-      ->condition('field_state', $activeTids, 'IN')
       ->accessCheck(FALSE)
-      ->range(0, 1);
+      ->execute();
 
-    $nids = $query->execute();
-
-    return !empty($nids);
-  }
-
-  /**
-   * Obtiene los TID de los estados considerados activos.
-   */
-  private function getActiveEstadoTids(): array
-  {
-    $activeNames = [
-      'En trámite',
-      'Pendiente aclaración',
-    ];
-
-    $storage = $this->entityTypeManager->getStorage('taxonomy_term');
-
-    $terms = $storage->loadByProperties([
-      'vid' => 'estado_solicitud_ingreso',
-    ]);
-
-    if (empty($terms)) {
-      return [];
+    if (empty($nids)) {
+      return FALSE;
     }
 
-    $tids = [];
+    $nodes = $storage->loadMultiple($nids);
 
-    foreach ($terms as $term) {
-      if (in_array($term->getName(), $activeNames, TRUE)) {
-        $tids[] = (int) $term->id();
+    foreach ($nodes as $node) {
+      if (
+        !$node->hasField('field_state') ||
+        $node->get('field_state')->isEmpty()
+      ) {
+        return TRUE;
+      }
+
+      $term = $node->get('field_state')->entity;
+
+      if (!$term instanceof TermInterface) {
+        return TRUE;
+      }
+
+      $functional_key =
+        \asocolderma_inscription_get_state_functional_key_from_term($term);
+
+      if ($functional_key === '') {
+        $functional_key =
+          \asocolderma_inscription_get_functional_key_from_state_name(
+            (string) $term->label()
+          );
+      }
+
+      if (!in_array($functional_key, [
+        'sg_rechazado',
+        'junta_rechazado',
+        'asamblea_rechazado',
+      ], TRUE)) {
+        return TRUE;
       }
     }
 
-    return $tids;
+    return FALSE;
   }
-
 }
