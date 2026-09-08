@@ -458,24 +458,39 @@ final class SolicitudSignatureManager
 	}
 
 	/**
-	 * Registra el detalle técnico sin exponerlo al aspirante.
+	 * Registra eventos del flujo de firma con la severidad apropiada.
+	 *
+	 * Las condiciones normales de negocio no se registran como errores técnicos.
 	 */
 	private function logFailure(
 		NodeInterface $node,
 		SolicitudSignatureException $exception,
 	): void {
-		$this->logger->error(
-			'[@technical_code] Error de firma | Solicitud NID: @nid | Código: @solicitud_code | Detalle: @detail | Contexto: @context',
-			[
-				'@technical_code' => $exception->getTechnicalCode(),
-				'@nid' => (int) $node->id(),
-				'@solicitud_code' => $this->getSolicitudCode($node),
-				'@detail' => $exception->getMessage(),
-				'@context' => json_encode(
-					$exception->getContext(),
-					JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES,
-				),
-			],
-		);
+		$context = [
+			'@technical_code' => $exception->getTechnicalCode(),
+			'@nid' => (int) $node->id(),
+			'@solicitud_code' => $this->getSolicitudCode($node),
+			'@detail' => $exception->getMessage(),
+			'@context' => json_encode(
+				$exception->getContext(),
+				JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES,
+			),
+		];
+
+		$message = '[@technical_code] Firma | Solicitud NID: @nid | Código: @solicitud_code | Detalle: @detail | Contexto: @context';
+
+		switch ($exception->getTechnicalCode()) {
+			case 'FIRMA_SOLICITUD_YA_COMPLETADA':
+				$this->logger->notice($message, $context);
+				break;
+
+			case 'FIRMA_SOLICITUD_NO_HABILITADA':
+				$this->logger->warning($message, $context);
+				break;
+
+			default:
+				$this->logger->error($message, $context);
+				break;
+		}
 	}
 }
