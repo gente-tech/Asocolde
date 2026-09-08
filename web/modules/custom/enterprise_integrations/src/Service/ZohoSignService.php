@@ -486,6 +486,12 @@ class ZohoSignService
 		$insert_id = $this->database->insert('enterprise_integrations_zoho_sign_requests')
 			->fields([
 				'solicitud_nid' => (int) $data['solicitud_nid'],
+				'template_id' => !empty($data['template_id'])
+					? (string) $data['template_id']
+					: NULL,
+				'template_schema_hash' => !empty($data['template_schema_hash'])
+					? (string) $data['template_schema_hash']
+					: NULL,
 				'zoho_request_id' => (string) $data['zoho_request_id'],
 				'zoho_action_id' => !empty($data['zoho_action_id']) ? (string) $data['zoho_action_id'] : NULL,
 				'zoho_document_id' => !empty($data['zoho_document_id']) ? (string) $data['zoho_document_id'] : NULL,
@@ -572,6 +578,8 @@ class ZohoSignService
 
 		$this->saveRequestMapping([
 			'solicitud_nid' => (int) $data['solicitud_nid'],
+			'template_id' => $data['template_id'] ?? NULL,
+			'template_schema_hash' => $data['template_schema_hash'] ?? NULL,
 			'zoho_request_id' => $request_id,
 			'zoho_action_id' => $request_action_id,
 			'zoho_document_id' => $document_id,

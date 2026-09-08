@@ -132,6 +132,8 @@ final class SolicitudSignatureManager
 			try {
 				$created = $this->zohoSignService->createSignatureRequest([
 					'solicitud_nid' => (int) $node->id(),
+					'template_id' => (string) $payload['template_id'],
+					'template_schema_hash' => (string) $payload['template_schema_hash'],
 					'action_id' => (string) $payload['action_id'],
 					'recipient_name' => $recipient_name,
 					'recipient_email' => $recipient_email,
