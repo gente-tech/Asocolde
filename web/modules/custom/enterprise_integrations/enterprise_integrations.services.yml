@@ -26,6 +26,11 @@ services:
       - '@database'
       - '@cache.default'
   
+  enterprise_integrations.zoho_sign_template_schema:
+    class: Drupal\enterprise_integrations\Service\ZohoSignTemplateSchemaProvider
+    arguments:
+      - '@enterprise_integrations.zoho_sign'
+  
   enterprise_integrations.token_resolver:
     class: Drupal\enterprise_integrations\Service\TokenResolver
 
