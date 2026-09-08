@@ -44,7 +44,7 @@ final class ZohoSignTemplateSchemaProvider
 
 		$sign_action = $this->resolveSignAction($template);
 
-		return [
+		$schema = [
 			'template_id' => $template_id,
 			'template_name' => $template_name,
 			'action_id' => $sign_action['action_id'],
@@ -52,6 +52,10 @@ final class ZohoSignTemplateSchemaProvider
 			'prefill_fields' => $this->resolvePrefillFields($template),
 			'signer_fields' => $this->resolveSignerFields($sign_action),
 		];
+
+		$schema['schema_hash'] = $this->calculateSchemaHash($schema);
+
+		return $schema;
 	}
 
 	/**
@@ -197,5 +201,57 @@ final class ZohoSignTemplateSchemaProvider
 			'type' => trim((string) ($field['field_type_name'] ?? '')),
 			'required' => (bool) ($field['is_mandatory'] ?? FALSE),
 		];
+	}
+
+	/**
+	 * Calcula una huella estable del contrato estructural de la plantilla.
+	 *
+	 * No utilizamos template_name porque cambiar el nombre administrativo de la
+	 * plantilla no debe invalidar documentos pendientes.
+	 */
+	private function calculateSchemaHash(array $schema): string
+	{
+		$contract = [
+			'template_id' => $schema['template_id'] ?? '',
+			'action_id' => $schema['action_id'] ?? '',
+			'role' => $schema['role'] ?? '',
+			'prefill_fields' => $schema['prefill_fields'] ?? [],
+			'signer_fields' => $schema['signer_fields'] ?? [],
+		];
+
+		$contract = $this->canonicalize($contract);
+
+		$json = json_encode(
+			$contract,
+			JSON_UNESCAPED_UNICODE
+				| JSON_UNESCAPED_SLASHES
+				| JSON_PRESERVE_ZERO_FRACTION,
+		);
+
+		if ($json === FALSE) {
+			throw new \RuntimeException(
+				'No fue posible serializar el esquema de Zoho Sign para calcular su huella.',
+			);
+		}
+
+		return hash('sha256', $json);
+	}
+
+	/**
+	 * Ordena recursivamente arrays asociativos para obtener hashes deterministas.
+	 */
+	private function canonicalize(array $value): array
+	{
+		foreach ($value as $key => $item) {
+			if (is_array($item)) {
+				$value[$key] = $this->canonicalize($item);
+			}
+		}
+
+		if (!array_is_list($value)) {
+			ksort($value);
+		}
+
+		return $value;
 	}
 }
