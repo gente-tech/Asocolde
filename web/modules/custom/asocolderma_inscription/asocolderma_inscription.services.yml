@@ -82,3 +82,12 @@ services:
       - '@asocolderma_inscription.solicitud_zoho_variable_manager'
       - '@enterprise_integrations.zoho_sign'
       - '@logger.channel.asocolderma_inscription'
+
+  asocolderma_inscription.account_activation_notification_manager:
+    class: Drupal\asocolderma_inscription\Service\AccountActivationNotificationManager
+    arguments:
+      - '@asocolderma_inscription.notification_catalog'
+      - '@config.factory'
+      - '@enterprise_integrations.mandrill'
+      - '@enterprise_integrations.token_resolver'
+      - '@logger.channel.asocolderma_inscription'
