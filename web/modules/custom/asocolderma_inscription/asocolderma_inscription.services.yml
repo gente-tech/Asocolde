@@ -63,3 +63,9 @@ services:
       - "@logger.channel.asocolderma_inscription"
       - "@user.data"
       - "@asocolderma_data_core.asociado_from_solicitud_registrar"
+
+  asocolderma_inscription.solicitud_signature_payload_builder:
+    class: Drupal\asocolderma_inscription\Service\SolicitudSignaturePayloadBuilder
+    arguments:
+      - '@asocolderma_inscription.solicitud_zoho_variable_manager'
+      - '@enterprise_integrations.zoho_sign_template_schema'
