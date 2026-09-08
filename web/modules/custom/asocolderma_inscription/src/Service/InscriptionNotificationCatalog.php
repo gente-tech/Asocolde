@@ -14,7 +14,7 @@ namespace Drupal\asocolderma_inscription\Service;
  * Mandrill y Twilio no pertenecen a este catálogo. Son canales de entrega
  * configurables independientemente para cada fase.
  */
-final class SolicitudNotificationPhaseCatalog
+final class InscriptionNotificationCatalog
 {
 
 	/**

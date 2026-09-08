@@ -33,9 +33,9 @@ services:
   asocolderma_inscription.solicitud_clarification_manager:
     class: Drupal\asocolderma_inscription\Service\SolicitudClarificationManager
     arguments: ["@database", "@datetime.time"]
-  
-  asocolderma_inscription.solicitud_notification_phase_catalog:
-    class: Drupal\asocolderma_inscription\Service\SolicitudNotificationPhaseCatalog
+
+  asocolderma_inscription.notification_catalog:
+    class: Drupal\asocolderma_inscription\Service\InscriptionNotificationCatalog
 
   asocolderma_inscription.solicitud_state_manager:
     class: Drupal\asocolderma_inscription\Service\SolicitudStateManager
@@ -45,14 +45,14 @@ services:
       - "@asocolderma_inscription.solicitud_historial_logger"
       - "@entity_type.manager"
       - "@enterprise_integrations.zoho_sign"
-      - "@asocolderma_inscription.solicitud_notification_phase_catalog"
+      - "@asocolderma_inscription.notification_catalog"
       - "@asocolderma_inscription.solicitud_notification_manager"
       - "@asocolderma_inscription.solicitud_member_activator"
   
   asocolderma_inscription.solicitud_notification_manager:
     class: Drupal\asocolderma_inscription\Service\SolicitudNotificationManager
     arguments:
-      - '@asocolderma_inscription.solicitud_notification_phase_catalog'
+      - '@asocolderma_inscription.notification_catalog'
       - '@config.factory'
       - '@enterprise_integrations.mandrill'
       - '@enterprise_integrations.twilio_whatsapp'

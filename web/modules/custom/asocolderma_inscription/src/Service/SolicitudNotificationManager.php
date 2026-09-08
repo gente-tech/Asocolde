@@ -18,7 +18,7 @@ final class SolicitudNotificationManager
 {
 
 	public function __construct(
-		private readonly SolicitudNotificationPhaseCatalog $phaseCatalog,
+		private readonly InscriptionNotificationCatalog $notificationCatalog,
 		private readonly ConfigFactoryInterface $configFactory,
 		private readonly MandrillService $mandrillService,
 		private readonly TwilioWhatsAppService $twilioWhatsAppService,
@@ -41,7 +41,7 @@ final class SolicitudNotificationManager
 
 		$phase_key = trim($phase_key);
 
-		if (!$this->phaseCatalog->has($phase_key)) {
+		if (!$this->notificationCatalog->has($phase_key)) {
 			return [
 				'success' => FALSE,
 				'message' => sprintf(
@@ -459,7 +459,7 @@ final class SolicitudNotificationManager
 			);
 		}
 
-		$context_type = $this->phaseCatalog->getContextType($phase_key);
+		$context_type = $this->notificationCatalog->getContextType($phase_key);
 
 		if ($context_type === NULL) {
 			throw new \LogicException(

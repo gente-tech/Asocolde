@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\asocolderma_inscription\Form;
 
-use Drupal\asocolderma_inscription\Service\SolicitudNotificationPhaseCatalog;
+use Drupal\asocolderma_inscription\Service\InscriptionNotificationCatalog;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -22,7 +22,7 @@ final class SolicitudNotificationSettingsForm extends ConfigFormBase
 	/**
 	 * Catálogo único de fases notificables.
 	 */
-	private SolicitudNotificationPhaseCatalog $phaseCatalog;
+	private InscriptionNotificationCatalog $phaseCatalog;
 
 	/**
 	 * {@inheritdoc}
@@ -33,7 +33,7 @@ final class SolicitudNotificationSettingsForm extends ConfigFormBase
 		$instance = parent::create($container);
 
 		$instance->phaseCatalog = $container->get(
-			'asocolderma_inscription.solicitud_notification_phase_catalog'
+			'asocolderma_inscription.notification_catalog'
 		);
 
 		return $instance;

@@ -23,7 +23,7 @@ final class SolicitudStateManager
     private readonly SolicitudHistorialLogger $logger,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly ZohoSignService $zohoSignService,
-    private readonly SolicitudNotificationPhaseCatalog $notificationPhaseCatalog,
+    private readonly InscriptionNotificationCatalog $notificationCatalog,
     private readonly SolicitudNotificationManager $notificationManager,
     private readonly SolicitudMemberActivator $memberActivator,
   ) {}
@@ -173,7 +173,7 @@ final class SolicitudStateManager
     string $comment,
     array $metadata,
   ): void {
-    $phase_key = $this->notificationPhaseCatalog->resolveForTransition(
+    $phase_key = $this->notificationCatalog->resolveForTransition(
       $to_functional_key,
       $origin,
     );
