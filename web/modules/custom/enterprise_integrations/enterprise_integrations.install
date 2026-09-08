@@ -25,6 +25,18 @@ function enterprise_integrations_schema()
 				'unsigned' => TRUE,
 				'not null' => TRUE,
 			],
+			'template_id' => [
+				'description' => 'Template ID de Zoho Sign utilizado para crear el documento.',
+				'type' => 'varchar',
+				'length' => 100,
+				'not null' => FALSE,
+			],
+			'template_schema_hash' => [
+				'description' => 'Huella SHA-256 del esquema de la plantilla utilizado al crear el documento.',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			],
 			'zoho_request_id' => [
 				'description' => 'Request ID de Zoho Sign.',
 				'type' => 'varchar',
@@ -308,5 +320,44 @@ function enterprise_integrations_update_9001()
 		];
 
 		$schema->createTable('enterprise_integrations_zoho_sign_requests', $table);
+	}
+}
+
+/**
+ * Agrega trazabilidad de plantilla Zoho Sign a los requests existentes.
+ */
+function enterprise_integrations_update_9002()
+{
+	$schema = \Drupal::database()->schema();
+	$table = 'enterprise_integrations_zoho_sign_requests';
+
+	if (!$schema->tableExists($table)) {
+		return;
+	}
+
+	if (!$schema->fieldExists($table, 'template_id')) {
+		$schema->addField(
+			$table,
+			'template_id',
+			[
+				'description' => 'Template ID de Zoho Sign utilizado para crear el documento.',
+				'type' => 'varchar',
+				'length' => 100,
+				'not null' => FALSE,
+			]
+		);
+	}
+
+	if (!$schema->fieldExists($table, 'template_schema_hash')) {
+		$schema->addField(
+			$table,
+			'template_schema_hash',
+			[
+				'description' => 'Huella SHA-256 del esquema de la plantilla utilizado al crear el documento.',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			]
+		);
 	}
 }
