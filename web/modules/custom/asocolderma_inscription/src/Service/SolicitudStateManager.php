@@ -20,7 +20,6 @@ final class SolicitudStateManager
     private readonly SolicitudHistorialLogger $logger,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly ZohoSignService $zohoSignService,
-    private readonly SolicitudZohoVariableManager $zohoVariableManager,
     private readonly SolicitudNotificationManager $notificationManager,
     private readonly SolicitudMemberActivator $memberActivator,
   ) {}
@@ -114,99 +113,15 @@ final class SolicitudStateManager
     ?string $to_name,
     int $to_tid,
   ): void {
-    if (in_array($this->normalizeStateName($to_name), ['miembro activo', 'activar miembro nuevo'], TRUE)) {
+    if (
+      in_array(
+        $this->normalizeStateName($to_name),
+        ['miembro activo', 'activar miembro nuevo'],
+        TRUE
+      )
+    ) {
       $this->memberActivator->activateFromSolicitud($node);
-      return;
     }
-
-    $to_functional_key = \asocolderma_inscription_get_state_functional_key_by_tid($to_tid);
-
-    if ($to_functional_key !== 'coord_documentos_enviados') {
-      return;
-    }
-
-    $existing = $this->zohoSignService->getLatestRequestMappingBySolicitud((int) $node->id());
-
-    if (!empty($existing['zoho_request_id'])) {
-      return;
-    }
-
-    $recipient_name = $this->resolveRecipientName($node);
-    $recipient_email = $this->resolveRecipientEmail($node);
-
-    if ($recipient_name === '' || $recipient_email === '') {
-      throw new \RuntimeException('No fue posible preparar la firma porque faltan datos del firmante.');
-    }
-
-    try {
-      $this->zohoSignService->createSignatureRequest([
-        'solicitud_nid' => (int) $node->id(),
-        'recipient_name' => $recipient_name,
-        'recipient_email' => $recipient_email,
-        'field_text_data' => $this->buildFieldTextData($node),
-        'notes' => 'Solicitud de ingreso Asocolderma #' . $this->getSolicitudCode($node),
-      ]);
-    } catch (\Throwable $e) {
-      \Drupal::logger('asocolderma_inscription')->error(
-        'Error creando request de firma para solicitud @nid: @message',
-        [
-          '@nid' => $node->id(),
-          '@message' => $e->getMessage(),
-        ]
-      );
-    }
-  }
-
-  private function resolveRecipientName(NodeInterface $node): string
-  {
-    $parts = [];
-
-    foreach (['field_nombre1', 'field_nombre2', 'field_apellido1', 'field_apellido2'] as $field_name) {
-      if ($node->hasField($field_name) && !$node->get($field_name)->isEmpty()) {
-        $parts[] = trim((string) $node->get($field_name)->value);
-      }
-    }
-
-    $full_name = trim(implode(' ', array_filter($parts)));
-
-    if ($full_name !== '') {
-      return $full_name;
-    }
-
-    $owner = $node->getOwner();
-    if ($owner) {
-      return trim((string) $owner->getDisplayName());
-    }
-
-    return '';
-  }
-
-  private function resolveRecipientEmail(NodeInterface $node): string
-  {
-    if ($node->hasField('field_email') && !$node->get('field_email')->isEmpty()) {
-      return trim((string) $node->get('field_email')->value);
-    }
-
-    $owner = $node->getOwner();
-    if ($owner && $owner->getEmail()) {
-      return trim((string) $owner->getEmail());
-    }
-
-    return '';
-  }
-
-  private function buildFieldTextData(NodeInterface $node): array
-  {
-    return $this->zohoVariableManager->resolveAll($node);
-  }
-
-  private function getSolicitudCode(NodeInterface $node): string
-  {
-    if ($node->hasField('field_solicitud_id') && !$node->get('field_solicitud_id')->isEmpty()) {
-      return (string) $node->get('field_solicitud_id')->value;
-    }
-
-    return 'NID-' . $node->id();
   }
 
   private function resolveTermNameByTid(int $tid): ?string
