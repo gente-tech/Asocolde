@@ -428,119 +428,94 @@ final class SolicitudNotificationManager
 	}
 
 	/**
-	 * Builds Twilio WhatsApp template variables.
-	 *
-	 * Soporta temporalmente varios tipos de plantillas:
-	 *
-	 * 1. Plantilla general de creación/cambio de estado:
-	 *    {{1}} = Nombre completo del aspirante
-	 *    {{2}} = Código público de la solicitud
-	 *    {{3}} = Estado de la solicitud
-	 *
-	 * 2. Plantilla de rechazo:
-	 *    {{name_user}} = Nombre completo del aspirante
-	 *    {{id_solicitud}} = Código público de la solicitud
-	 *
-	 * 3. Plantilla de pendiente aclaración:
-	 *    {{name_user}} = Nombre completo del aspirante
-	 *    {{id_solicitud}} = Código público de la solicitud
-	 *    {{motivo_aclaracion}} = Motivo/comentario de aclaración
-	 *
-	 * 4. Plantilla de pendiente firma de documentos:
-	 *    {{name_user}} = Nombre completo del aspirante
-	 *    {{id_solicitud}} = Código público de la solicitud
-	 *
-	 * 5. Plantilla de pendiente pago de ingreso:
-	 *    {{name_user}} = Nombre completo del aspirante
-	 *    {{id_solicitud}} = Código público de la solicitud
-	 *
-	 * Más adelante este método podrá normalizarse usando el diccionario
-	 * institucional completo de variables.
+	 * Builds Twilio WhatsApp template variables from the canonical phase context.
 	 */
-	private function buildTwilioVariables(NodeInterface $node, string $phase_key, array $context): array
-	{
-		$variables = $this->buildNotificationVariables($node, $phase_key, $context);
+	private function buildTwilioVariables(
+		NodeInterface $node,
+		string $phase_key,
+		array $context,
+	): array {
+		$variables = $this->buildNotificationVariables(
+			$node,
+			$phase_key,
+			$context,
+		);
 
-		$user_full_name = trim((string) ($variables['user_full_name'] ?? ''));
-		$request_code = trim((string) ($variables['request_code'] ?? ''));
+		$user_full_name = trim(
+			(string) ($variables['user_full_name'] ?? '')
+		);
 
-		$status = trim((string) ($variables['request_new_status'] ?? ''));
+		$request_code = trim(
+			(string) ($variables['request_code'] ?? '')
+		);
+
+		$status = trim(
+			(string) ($variables['request_new_status'] ?? '')
+		);
 
 		if ($status === '') {
-			$status = trim((string) ($variables['request_current_status'] ?? ''));
+			$status = trim(
+				(string) ($variables['request_current_status'] ?? '')
+			);
 		}
 
-		$phase_key_normalized = mb_strtolower($phase_key);
-		$status_normalized = mb_strtolower($status);
+		$context_type = $this->phaseCatalog->getContextType($phase_key);
 
-		$is_clarification_phase = str_contains($phase_key_normalized, 'pendiente_aclaracion')
-			|| str_contains($phase_key_normalized, 'aclaracion')
-			|| str_contains($status_normalized, 'pendiente aclaración')
-			|| str_contains($status_normalized, 'pendiente aclaracion')
-			|| str_contains($status_normalized, 'aclaración')
-			|| str_contains($status_normalized, 'aclaracion');
-
-		if ($is_clarification_phase) {
-			$motivo_aclaracion = trim((string) ($variables['request_status_change_comment'] ?? ''));
-
-			if ($motivo_aclaracion === '') {
-				$motivo_aclaracion = trim((string) ($context['request_status_change_comment'] ?? ''));
-			}
-
-			if ($motivo_aclaracion === '') {
-				$motivo_aclaracion = 'Por favor ingresa a la plataforma para consultar el detalle de la aclaración solicitada.';
-			}
-
-			return [
-				'name_user' => $user_full_name,
-				'id_solicitud' => $request_code,
-				'motivo_aclaracion' => $motivo_aclaracion,
-			];
+		if ($context_type === NULL) {
+			throw new \LogicException(
+				sprintf(
+					'No existe contexto de notificación para la fase "%s".',
+					$phase_key,
+				)
+			);
 		}
 
-		$is_rejected_phase = str_contains($phase_key_normalized, 'rechazada')
-			|| str_contains($phase_key_normalized, 'rechazado')
-			|| $status_normalized === 'rechazada'
-			|| $status_normalized === 'rechazado';
+		switch ($context_type) {
+			case 'clarification':
+				$clarification_reason = trim(
+					(string) ($variables['request_status_change_comment'] ?? '')
+				);
 
-		if ($is_rejected_phase) {
-			return [
-				'name_user' => $user_full_name,
-				'id_solicitud' => $request_code,
-			];
+				if ($clarification_reason === '') {
+					$clarification_reason = trim(
+						(string) ($context['request_status_change_comment'] ?? '')
+					);
+				}
+
+				if ($clarification_reason === '') {
+					$clarification_reason =
+						'Por favor ingresa a la plataforma para consultar el detalle de la aclaración solicitada.';
+				}
+
+				return [
+					'name_user' => $user_full_name,
+					'id_solicitud' => $request_code,
+					'motivo_aclaracion' => $clarification_reason,
+				];
+
+			case 'rejection':
+			case 'payment':
+				return [
+					'name_user' => $user_full_name,
+					'id_solicitud' => $request_code,
+				];
+
+			case 'status_change':
+				return [
+					'1' => $user_full_name,
+					'2' => $request_code,
+					'3' => $status,
+				];
+
+			default:
+				throw new \LogicException(
+					sprintf(
+						'El tipo de contexto "%s" de la fase "%s" no está soportado.',
+						$context_type,
+						$phase_key,
+					)
+				);
 		}
-
-		$is_signature_pending_phase = str_contains($phase_key_normalized, 'pendiente_firma')
-			|| str_contains($phase_key_normalized, 'firma')
-			|| str_contains($status_normalized, 'pendiente firma')
-			|| str_contains($status_normalized, 'pendiente de firma')
-			|| str_contains($status_normalized, 'firma de documentos');
-
-		if ($is_signature_pending_phase) {
-			return [
-				'name_user' => $user_full_name,
-				'id_solicitud' => $request_code,
-			];
-		}
-
-		$is_payment_pending_phase = str_contains($phase_key_normalized, 'pendiente_pago')
-			|| str_contains($phase_key_normalized, 'pago')
-			|| str_contains($status_normalized, 'pendiente pago')
-			|| str_contains($status_normalized, 'pendiente de pago')
-			|| str_contains($status_normalized, 'pago de ingreso');
-
-		if ($is_payment_pending_phase) {
-			return [
-				'name_user' => $user_full_name,
-				'id_solicitud' => $request_code,
-			];
-		}
-
-		return [
-			'1' => $user_full_name,
-			'2' => $request_code,
-			'3' => $status,
-		];
 	}
 
 	/**

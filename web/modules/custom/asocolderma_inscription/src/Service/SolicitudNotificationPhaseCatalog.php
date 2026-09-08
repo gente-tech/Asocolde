@@ -24,50 +24,62 @@ final class SolicitudNotificationPhaseCatalog
 		'solicitud_creada' => [
 			'label' => 'Solicitud creada / En trámite',
 			'description' => 'Se ejecuta cuando el aspirante crea una solicitud de ingreso.',
+			'context_type' => 'status_change',
 		],
 		'pendiente_aclaracion' => [
 			'label' => 'Pendiente aclaración',
 			'description' => 'Se ejecuta cuando Secretaría General solicita aclaraciones al aspirante.',
+			'context_type' => 'clarification',
 		],
 		'ajustes_realizados' => [
 			'label' => 'Ajustes realizados',
 			'description' => 'Se ejecuta cuando el aspirante realiza las correcciones solicitadas y devuelve la solicitud a Secretaría General.',
+			'context_type' => 'status_change',
 		],
 		'aprobada_secretaria' => [
 			'label' => 'Aprobada por Secretaría General',
 			'description' => 'Se ejecuta cuando Secretaría General aprueba la solicitud.',
+			'context_type' => 'status_change',
 		],
 		'rechazada_secretaria' => [
 			'label' => 'Rechazada por Secretaría General',
 			'description' => 'Se ejecuta cuando Secretaría General rechaza la solicitud.',
+			'context_type' => 'rejection',
 		],
 		'aprobada_junta_directiva' => [
 			'label' => 'Aprobada por Junta Directiva',
 			'description' => 'Se ejecuta cuando la Junta Directiva aprueba la solicitud.',
+			'context_type' => 'status_change',
 		],
 		'rechazada_junta_directiva' => [
 			'label' => 'Rechazada por Junta Directiva',
 			'description' => 'Se ejecuta cuando la Junta Directiva rechaza la solicitud.',
+			'context_type' => 'rejection',
 		],
 		'aprobada_asamblea_general' => [
 			'label' => 'Aprobada por Asamblea General',
 			'description' => 'Se ejecuta cuando la Asamblea General aprueba la solicitud.',
+			'context_type' => 'status_change',
 		],
 		'rechazada_asamblea_general' => [
 			'label' => 'Rechazada por Asamblea General',
 			'description' => 'Se ejecuta cuando la Asamblea General rechaza la solicitud.',
+			'context_type' => 'rejection',
 		],
 		'documentos_enviados' => [
 			'label' => 'Documentos enviados',
 			'description' => 'Se ejecuta cuando los documentos quedan disponibles para el proceso de firma.',
+			'context_type' => 'status_change',
 		],
 		'pendiente_pago_ingreso' => [
 			'label' => 'Pendiente pago de ingreso',
 			'description' => 'Se ejecuta cuando se envían al aspirante las instrucciones para realizar el pago de ingreso.',
+			'context_type' => 'payment',
 		],
 		'miembro_activo' => [
 			'label' => 'Miembro activo',
 			'description' => 'Se ejecuta cuando el aspirante completa el proceso y es convertido en miembro activo.',
+			'context_type' => 'status_change',
 		],
 	];
 
@@ -126,5 +138,15 @@ final class SolicitudNotificationPhaseCatalog
 		}
 
 		return self::STATE_TO_PHASE[$toFunctionalKey] ?? NULL;
+	}
+
+	/**
+	 * Obtiene el tipo de contexto requerido por una fase notificable.
+	 */
+	public function getContextType(string $phaseKey): ?string
+	{
+		$phaseKey = trim($phaseKey);
+
+		return self::PHASES[$phaseKey]['context_type'] ?? NULL;
 	}
 }
