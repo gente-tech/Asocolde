@@ -10,31 +10,27 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Routing\TrustedRedirectResponse;
-use Drupal\asocolderma_inscription\Service\SolicitudStateManager;
+use Drupal\asocolderma_inscription\Exception\SolicitudSignatureException;
+use Drupal\asocolderma_inscription\Service\SolicitudSignatureManager;
 
 final class SolicitudSignatureController extends ControllerBase
 {
 
 	public function __construct(
 		private readonly ZohoSignService $zohoSignService,
-		private readonly SolicitudStateManager $stateManager,
+		private readonly SolicitudSignatureManager $signatureManager,
 	) {}
 
 	public static function create(ContainerInterface $container): self
 	{
 		return new self(
 			$container->get('enterprise_integrations.zoho_sign'),
-			$container->get('asocolderma_inscription.solicitud_state_manager'),
+			$container->get('asocolderma_inscription.solicitud_signature_manager'),
 		);
 	}
 
 	public function redirectToSign(NodeInterface $node): RedirectResponse
 	{
-		$this->getLogger('asocolderma_inscription')->error(
-			'DEBUG FIRMA: entrando a redirectToSign para solicitud @nid',
-			['@nid' => $node->id()]
-		);
-
 		if ($node->bundle() !== 'solicitud_ingreso') {
 			throw new AccessDeniedHttpException();
 		}
@@ -44,10 +40,15 @@ final class SolicitudSignatureController extends ControllerBase
 		}
 
 		try {
-			if (
-				$this->zohoSignService
-				->isSignatureCompletedForSolicitud((int) $node->id(), TRUE)
-			) {
+			$sign_url = $this->signatureManager->prepareSignUrl($node);
+
+			return new TrustedRedirectResponse($sign_url);
+		} catch (SolicitudSignatureException $e) {
+			/*
+			* Una firma ya completada es una condición de negocio, no un fallo
+			* técnico que debamos exponer al aspirante.
+			*/
+			if ($e->getTechnicalCode() === 'FIRMA_SOLICITUD_YA_COMPLETADA') {
 				$this->messenger()->addStatus(
 					'Este documento ya fue firmado correctamente.'
 				);
@@ -56,89 +57,45 @@ final class SolicitudSignatureController extends ControllerBase
 					'asocolderma_inscription.user_zone_requests'
 				);
 			}
-		} catch (\Throwable $e) {
-			$this->getLogger('asocolderma_inscription')->error(
-				'Error validando firma existente para solicitud @nid: @message',
-				[
-					'@nid' => $node->id(),
-					'@message' => $e->getMessage(),
-				]
-			);
 
+			/*
+			* Los detalles técnicos ya fueron registrados por
+			* SolicitudSignatureManager.
+			*
+			* Nunca exponemos nombres de campos, IDs de Zoho, respuestas HTTP,
+			* payloads ni detalles de configuración al aspirante.
+			*/
 			$this->messenger()->addError(
-				'No fue posible validar el estado de la firma.'
+				'En este momento no está habilitada la firma del documento. Por favor, contacte con el administrador del sistema para continuar con el proceso.'
 			);
 
 			return $this->redirect(
 				'asocolderma_inscription.user_zone_requests'
 			);
-		}
-
-		$state_functional_key = $this->getStateFunctionalKey($node);
-
-		if ($state_functional_key !== 'coord_documentos_enviados') {
-			$this->messenger()->addError('La solicitud no está habilitada para firma.');
-			return $this->redirect('asocolderma_inscription.user_zone_requests');
-		}
-
-		try {
-			$mapping = $this->zohoSignService->getLatestRequestMappingBySolicitud((int) $node->id());
-
-			if (empty($mapping['zoho_request_id']) || empty($mapping['zoho_action_id'])) {
-				$this->getLogger('asocolderma_inscription')->error(
-					'DEBUG FIRMA: NO existe request, se va a crear uno nuevo para @nid',
-					['@nid' => $node->id()]
-				);
-
-				$recipient_name = $this->resolveRecipientName($node);
-				$recipient_email = $this->resolveRecipientEmail($node);
-
-				if ($recipient_name === '' || $recipient_email === '') {
-					throw new \RuntimeException('No fue posible resolver los datos del firmante.');
-				}
-
-				$created = $this->zohoSignService->createSignatureRequest([
-					'solicitud_nid' => (int) $node->id(),
-					'recipient_name' => $recipient_name,
-					'recipient_email' => $recipient_email,
-					'field_text_data' => $this->buildFieldTextData($node),
-					'notes' => 'Solicitud de ingreso Asocolderma #' . $this->getSolicitudCode($node),
-				]);
-
-				$request_id = (string) ($created['request_id'] ?? '');
-				$action_id = (string) ($created['action_id'] ?? '');
-			} else {
-				$this->getLogger('asocolderma_inscription')->error(
-					'DEBUG FIRMA: ya existe request para @nid',
-					['@nid' => $node->id()]
-				);
-				$request_id = (string) $mapping['zoho_request_id'];
-				$action_id = (string) $mapping['zoho_action_id'];
-			}
-
-			if ($request_id === '' || $action_id === '') {
-				throw new \RuntimeException('No fue posible determinar request_id/action_id.');
-			}
-
-			$fresh_sign = $this->zohoSignService->generateFreshSignUrl($request_id, $action_id);
-			$sign_url = (string) ($fresh_sign['sign_url'] ?? '');
-
-			if ($sign_url === '') {
-				throw new \RuntimeException('Zoho no devolvió una URL de firma.');
-			}
-
-			return new TrustedRedirectResponse($sign_url);
 		} catch (\Throwable $e) {
+			$solicitud_code = (
+				$node->hasField('field_solicitud_id')
+				&& !$node->get('field_solicitud_id')->isEmpty()
+			)
+				? (string) $node->get('field_solicitud_id')->value
+				: 'NID-' . $node->id();
+
 			$this->getLogger('asocolderma_inscription')->error(
-				'Error preparando firma para solicitud @nid: @message',
+				'[FIRMA_ERROR_NO_CONTROLADO_CONTROLLER] Error inesperado en el controlador de firma | Solicitud NID: @nid | Código: @code | Error: @error',
 				[
 					'@nid' => $node->id(),
-					'@message' => $e->getMessage(),
+					'@code' => $solicitud_code,
+					'@error' => $e->getMessage(),
 				]
 			);
 
-			$this->messenger()->addError('No fue posible abrir la firma en este momento.');
-			return $this->redirect('asocolderma_inscription.user_zone_requests');
+			$this->messenger()->addError(
+				'En este momento no está habilitada la firma del documento. Por favor, contacte con el administrador del sistema para continuar con el proceso.'
+			);
+
+			return $this->redirect(
+				'asocolderma_inscription.user_zone_requests'
+			);
 		}
 	}
 
@@ -185,92 +142,6 @@ final class SolicitudSignatureController extends ControllerBase
 		}
 
 		return $this->redirect('asocolderma_inscription.user_zone_requests');
-	}
-
-	private function getStateFunctionalKey(NodeInterface $node): string
-	{
-		if (!$node->hasField('field_state') || $node->get('field_state')->isEmpty()) {
-			return '';
-		}
-
-		$term = $node->get('field_state')->entity;
-
-		return $term
-			? \asocolderma_inscription_get_state_functional_key_from_term($term)
-			: '';
-	}
-
-	private function resolveRecipientName(NodeInterface $node): string
-	{
-		$parts = [];
-
-		foreach (['field_nombre1', 'field_nombre2', 'field_apellido1', 'field_apellido2'] as $field_name) {
-			if ($node->hasField($field_name) && !$node->get($field_name)->isEmpty()) {
-				$parts[] = trim((string) $node->get($field_name)->value);
-			}
-		}
-
-		$full_name = trim(implode(' ', array_filter($parts)));
-
-		if ($full_name !== '') {
-			return $full_name;
-		}
-
-		$owner = $node->getOwner();
-		return $owner ? trim((string) $owner->getDisplayName()) : '';
-	}
-
-	private function resolveRecipientEmail(NodeInterface $node): string
-	{
-		if ($node->hasField('field_email') && !$node->get('field_email')->isEmpty()) {
-			return trim((string) $node->get('field_email')->value);
-		}
-
-		$owner = $node->getOwner();
-		return ($owner && $owner->getEmail()) ? trim((string) $owner->getEmail()) : '';
-	}
-
-	private function buildFieldTextData(NodeInterface $node): array
-	{
-		return [
-			'solicitud_id' => $this->getSolicitudCode($node),
-			'nombre_completo' => $this->resolveRecipientName($node),
-			'correo' => $this->resolveRecipientEmail($node),
-			'documento' => $node->hasField('field_numero_documento') && !$node->get('field_numero_documento')->isEmpty()
-				? (string) $node->get('field_numero_documento')->value
-				: '',
-			'registro_medico' => $node->hasField('field_registro_medico') && !$node->get('field_registro_medico')->isEmpty()
-				? (string) $node->get('field_registro_medico')->value
-				: '',
-			'ciudad' => $node->hasField('field_ciudad_ejercicio') && !$node->get('field_ciudad_ejercicio')->isEmpty()
-				? ($node->get('field_ciudad_ejercicio')->entity?->label() ?? '')
-				: '',
-		];
-	}
-
-	private function getSolicitudCode(NodeInterface $node): string
-	{
-		if ($node->hasField('field_solicitud_id') && !$node->get('field_solicitud_id')->isEmpty()) {
-			return (string) $node->get('field_solicitud_id')->value;
-		}
-
-		return 'NID-' . $node->id();
-	}
-
-	private function getStateTidByName(string $state_name): ?int
-	{
-		$storage = $this->entityTypeManager()->getStorage('taxonomy_term');
-		$terms = $storage->loadByProperties([
-			'vid' => 'estado_solicitud_ingreso',
-			'name' => $state_name,
-		]);
-
-		if (!$terms) {
-			return NULL;
-		}
-
-		$term = reset($terms);
-		return $term ? (int) $term->id() : NULL;
 	}
 
 	public function viewSignedDocument(NodeInterface $node): Response
