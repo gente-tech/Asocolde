@@ -635,6 +635,68 @@ class ZohoSignService
 	}
 
 	/**
+	 * Marca un mapping anterior como reemplazado por una nueva versión.
+	 *
+	 * El registro no se elimina para conservar trazabilidad y auditoría.
+	 *
+	 * @param int $mapping_id
+	 *   ID local del mapping.
+	 * @param string $reason
+	 *   Motivo técnico por el cual el request deja de ser reutilizable.
+	 *
+	 * @throws \InvalidArgumentException
+	 * @throws \RuntimeException
+	 */
+	public function markRequestMappingSuperseded(
+		int $mapping_id,
+		string $reason,
+	): void {
+		if ($mapping_id <= 0) {
+			throw new \InvalidArgumentException(
+				'El ID del mapping de Zoho Sign no es válido.',
+			);
+		}
+
+		$reason = trim($reason);
+
+		if ($reason === '') {
+			throw new \InvalidArgumentException(
+				'Debe indicarse el motivo por el cual el mapping es reemplazado.',
+			);
+		}
+
+		$now = \Drupal::time()->getRequestTime();
+
+		$updated = $this->database
+			->update('enterprise_integrations_zoho_sign_requests')
+			->fields([
+				'status' => 'superseded',
+				'error_message' => $reason,
+				'changed' => $now,
+			])
+			->condition('id', $mapping_id)
+			->condition('status', ['completed', 'signed'], 'NOT IN')
+			->execute();
+
+		if ($updated === 0) {
+			throw new \RuntimeException(
+				sprintf(
+					'No fue posible marcar como superseded el mapping %d.',
+					$mapping_id,
+				),
+			);
+		}
+
+		$this->logger->notice(
+			'Mapping Zoho Sign @mapping_id marcado como superseded. Motivo: @reason',
+			[
+				'@mapping_id' => $mapping_id,
+				'@reason' => $reason,
+			],
+		);
+	}
+
+	/**
 	 * Retorna el último mapeo guardado para una solicitud.
 	 *
 	 * @param int $solicitud_nid
