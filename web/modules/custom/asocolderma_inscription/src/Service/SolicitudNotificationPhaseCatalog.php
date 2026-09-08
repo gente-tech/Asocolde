@@ -21,6 +21,11 @@ final class SolicitudNotificationPhaseCatalog
 	 * Fases notificables vigentes.
 	 */
 	private const PHASES = [
+		'activacion_cuenta' => [
+			'label' => 'Activación de cuenta',
+			'description' => 'Se ejecuta cuando el aspirante se registra y debe activar su cuenta antes de iniciar sesión.',
+			'context_type' => 'account_activation',
+		],
 		'solicitud_creada' => [
 			'label' => 'Solicitud creada / En trámite',
 			'description' => 'Se ejecuta cuando el aspirante crea una solicitud de ingreso.',
