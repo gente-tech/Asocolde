@@ -76,29 +76,94 @@ final class SolicitudSignatureManager
 				);
 			}
 
-			/*
-       * Si ya existe un request vigente, no generamos otro documento.
-       * Únicamente solicitamos una URL de firma fresca.
-       */
-			if ($this->isReusable($mapping)) {
+			/**
+			 * Siempre hacemos el preflight contra la plantilla activa.
+			 *
+			 * Esto permite comprobar que un request pendiente fue creado con el mismo
+			 * contrato de plantilla que está vigente en este momento.
+			 */
+			$payload = $this->payloadBuilder->build($node);
+
+			/**
+			 * Si existe un request reutilizable y fue creado con exactamente la misma
+			 * plantilla y esquema, únicamente generamos una URL embebida fresca.
+			 */
+			if (
+				$this->isReusable($mapping)
+				&& $this->isTemplateCompatible($mapping, $payload)
+			) {
 				return $this->generateFreshSignUrl(
 					(string) $mapping['zoho_request_id'],
 					(string) $mapping['zoho_action_id'],
 				);
 			}
 
-			/*
-       * No existe un request reutilizable.
-       *
-       * En este punto se ejecuta el preflight:
-       * Drupal ↔ plantilla Zoho.
-       */
-			$payload = $this->payloadBuilder->build($node);
+			/**
+			 * Si el request todavía parece reutilizable por estado, pero fue creado con
+			 * otra versión de la plantilla o es un mapping legado sin trazabilidad,
+			 * se conserva para auditoría y se marca como reemplazado.
+			 */
+			if (
+				$this->isReusable($mapping)
+				&& !$this->isTemplateCompatible($mapping, $payload)
+			) {
+				$mapping_id = (int) ($mapping['id'] ?? 0);
 
-			/*
-       * La identidad del firmante no depende de que esos campos estén
-       * presentes en la plantilla. Se obtiene del catálogo completo Drupal.
-       */
+				if ($mapping_id <= 0) {
+					throw new SolicitudSignatureException(
+						'FIRMA_SOLICITUD_INVALIDA',
+						'El mapping anterior no contiene un identificador local válido.',
+						[
+							'zoho_request_id' => (string) ($mapping['zoho_request_id'] ?? ''),
+						],
+					);
+				}
+
+				$old_template_id = trim(
+					(string) ($mapping['template_id'] ?? ''),
+				);
+
+				$old_schema_hash = trim(
+					(string) ($mapping['template_schema_hash'] ?? ''),
+				);
+
+				$new_template_id = trim(
+					(string) ($payload['template_id'] ?? ''),
+				);
+
+				$new_schema_hash = trim(
+					(string) ($payload['template_schema_hash'] ?? ''),
+				);
+
+				try {
+					$this->zohoSignService->markRequestMappingSuperseded(
+						$mapping_id,
+						sprintf(
+							'Request reemplazado automáticamente por cambio de plantilla o esquema. Template anterior: %s. Hash anterior: %s. Template actual: %s. Hash actual: %s.',
+							$old_template_id !== '' ? $old_template_id : 'NO_REGISTRADO',
+							$old_schema_hash !== '' ? $old_schema_hash : 'NO_REGISTRADO',
+							$new_template_id,
+							$new_schema_hash,
+						),
+					);
+				} catch (\Throwable $e) {
+					throw new SolicitudSignatureException(
+						'FIRMA_SOLICITUD_INVALIDA',
+						'No fue posible reemplazar de forma segura el request anterior.',
+						[
+							'mapping_id' => $mapping_id,
+							'zoho_request_id' => (string) ($mapping['zoho_request_id'] ?? ''),
+							'error_original' => $e->getMessage(),
+						],
+						$e,
+					);
+				}
+			}
+
+			/**
+			 * La identidad del firmante no depende de que esos campos estén
+			 * presentes en la plantilla. Se obtiene del catálogo completo Drupal.
+			 */
 			$variables = $this->variableManager->resolveAll($node);
 
 			$recipient_name = trim(
@@ -291,6 +356,50 @@ final class SolicitudSignatureManager
 			self::COMPLETED_STATUSES,
 			TRUE,
 		);
+	}
+
+	/**
+	 * Comprueba que el request existente pertenezca exactamente al contrato
+	 * de plantilla actualmente validado.
+	 *
+	 * Los mappings antiguos sin template_id o schema hash se consideran
+	 * incompatibles y deben reemplazarse.
+	 */
+	private function isTemplateCompatible(
+		?array $mapping,
+		array $payload,
+	): bool {
+		if (!$mapping) {
+			return FALSE;
+		}
+
+		$mapping_template_id = trim(
+			(string) ($mapping['template_id'] ?? ''),
+		);
+
+		$mapping_schema_hash = trim(
+			(string) ($mapping['template_schema_hash'] ?? ''),
+		);
+
+		$current_template_id = trim(
+			(string) ($payload['template_id'] ?? ''),
+		);
+
+		$current_schema_hash = trim(
+			(string) ($payload['template_schema_hash'] ?? ''),
+		);
+
+		if (
+			$mapping_template_id === ''
+			|| $mapping_schema_hash === ''
+			|| $current_template_id === ''
+			|| $current_schema_hash === ''
+		) {
+			return FALSE;
+		}
+
+		return hash_equals($mapping_template_id, $current_template_id)
+			&& hash_equals($mapping_schema_hash, $current_schema_hash);
 	}
 
 	/**
