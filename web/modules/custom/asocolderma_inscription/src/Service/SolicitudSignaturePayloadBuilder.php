@@ -127,6 +127,7 @@ final class SolicitudSignaturePayloadBuilder
 		return [
 			'template_id' => (string) ($schema['template_id'] ?? ''),
 			'template_name' => (string) ($schema['template_name'] ?? ''),
+			'template_schema_hash' => (string) ($schema['schema_hash'] ?? ''),
 			'action_id' => (string) ($schema['action_id'] ?? ''),
 			'role' => (string) ($schema['role'] ?? ''),
 			'field_text_data' => $field_text_data,
