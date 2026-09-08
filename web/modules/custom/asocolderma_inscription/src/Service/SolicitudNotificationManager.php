@@ -18,27 +18,18 @@ final class SolicitudNotificationManager
 {
 
 	public function __construct(
+		private readonly SolicitudNotificationPhaseCatalog $phaseCatalog,
 		private readonly ConfigFactoryInterface $configFactory,
 		private readonly MandrillService $mandrillService,
 		private readonly TwilioWhatsAppService $twilioWhatsAppService,
 		private readonly LoggerChannelInterface $logger,
 	) {}
 
-	/**
-	 * Sends configured notifications for a workflow phase.
-	 *
-	 * @param \Drupal\node\NodeInterface $node
-	 *   Solicitud ingreso node.
-	 * @param string $phase_key
-	 *   Internal workflow phase key configured in notification settings.
-	 * @param array $context
-	 *   Optional extra context.
-	 *
-	 * @return array
-	 *   Normalized notification result.
-	 */
-	public function sendForPhase(NodeInterface $node, string $phase_key, array $context = []): array
-	{
+	public function sendForPhase(
+		NodeInterface $node,
+		string $phase_key,
+		array $context = [],
+	): array {
 		if ($node->bundle() !== 'solicitud_ingreso') {
 			return [
 				'success' => FALSE,
@@ -48,29 +39,64 @@ final class SolicitudNotificationManager
 			];
 		}
 
-		$phase_config = $this->getPhaseConfig($phase_key);
+		$phase_key = trim($phase_key);
 
-		if (!$phase_config) {
+		if (!$this->phaseCatalog->has($phase_key)) {
 			return [
 				'success' => FALSE,
-				'message' => sprintf('No existe configuración de notificaciones para la fase "%s".', $phase_key),
+				'message' => sprintf(
+					'La fase de notificación "%s" no pertenece al flujo vigente.',
+					$phase_key,
+				),
 				'mandrill' => NULL,
 				'twilio' => NULL,
 			];
 		}
 
+		/*
+     * Una fase válida puede no tener configuración guardada.
+     *
+     * Esto es completamente válido: significa que no se enviará ningún
+     * canal hasta que sea configurado explícitamente desde administración.
+     */
+		$phase_config = $this->getPhaseConfig($phase_key) ?? [];
+
+		$mandrill_key = trim(
+			(string) ($phase_config['mandrill_template_key'] ?? '')
+		);
+
+		$twilio_key = trim(
+			(string) ($phase_config['twilio_template_key'] ?? '')
+		);
+
 		$mandrill_result = NULL;
 		$twilio_result = NULL;
 
-		$mandrill_key = trim((string) ($phase_config['mandrill_template_key'] ?? ''));
-		$twilio_key = trim((string) ($phase_config['twilio_template_key'] ?? ''));
-
 		if ($mandrill_key !== '') {
-			$mandrill_result = $this->sendMandrillNotification($node, $phase_key, $mandrill_key, $context);
+			$mandrill_result = $this->sendMandrillNotification(
+				$node,
+				$phase_key,
+				$mandrill_key,
+				$context,
+			);
 		}
 
 		if ($twilio_key !== '') {
-			$twilio_result = $this->sendTwilioNotification($node, $phase_key, $twilio_key, $context);
+			$twilio_result = $this->sendTwilioNotification(
+				$node,
+				$phase_key,
+				$twilio_key,
+				$context,
+			);
+		}
+
+		if ($mandrill_key === '' && $twilio_key === '') {
+			return [
+				'success' => TRUE,
+				'message' => 'La fase no tiene canales de notificación configurados.',
+				'mandrill' => NULL,
+				'twilio' => NULL,
+			];
 		}
 
 		return [

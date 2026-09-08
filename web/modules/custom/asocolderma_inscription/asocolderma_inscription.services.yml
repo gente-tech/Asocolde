@@ -52,6 +52,7 @@ services:
   asocolderma_inscription.solicitud_notification_manager:
     class: Drupal\asocolderma_inscription\Service\SolicitudNotificationManager
     arguments:
+      - '@asocolderma_inscription.solicitud_notification_phase_catalog'
       - '@config.factory'
       - '@enterprise_integrations.mandrill'
       - '@enterprise_integrations.twilio_whatsapp'
