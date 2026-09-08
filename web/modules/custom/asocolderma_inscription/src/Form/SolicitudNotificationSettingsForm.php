@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\asocolderma_inscription\Form;
 
+use Drupal\asocolderma_inscription\Service\SolicitudNotificationPhaseCatalog;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configuration form for solicitud notification mappings.
@@ -16,6 +18,26 @@ use Drupal\Core\Form\FormStateInterface;
  */
 final class SolicitudNotificationSettingsForm extends ConfigFormBase
 {
+
+	/**
+	 * Catálogo único de fases notificables.
+	 */
+	private SolicitudNotificationPhaseCatalog $phaseCatalog;
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public static function create(ContainerInterface $container): static
+	{
+		/** @var static $instance */
+		$instance = parent::create($container);
+
+		$instance->phaseCatalog = $container->get(
+			'asocolderma_inscription.solicitud_notification_phase_catalog'
+		);
+
+		return $instance;
+	}
 
 	/**
 	 * {@inheritdoc}
@@ -75,7 +97,7 @@ final class SolicitudNotificationSettingsForm extends ConfigFormBase
 			'#tree' => TRUE,
 		];
 
-		foreach ($this->getSolicitudPhases() as $phase_key => $phase) {
+		foreach ($this->phaseCatalog->all() as $phase_key => $phase) {
 			$form['phases'][$phase_key] = [
 				'#type' => 'details',
 				'#title' => $phase['label'],
@@ -112,18 +134,24 @@ final class SolicitudNotificationSettingsForm extends ConfigFormBase
 	 */
 	public function submitForm(array &$form, FormStateInterface $form_state): void
 	{
-		$config = $this->configFactory->getEditable('asocolderma_inscription.notification_settings');
+		$config = $this->configFactory->getEditable(
+			'asocolderma_inscription.notification_settings'
+		);
 
 		$values = $form_state->getValue('phases') ?? [];
 		$clean_phases = [];
 
-		foreach ($this->getSolicitudPhases() as $phase_key => $phase) {
+		foreach ($this->phaseCatalog->all() as $phase_key => $phase) {
 			$phase_values = $values[$phase_key] ?? [];
 
 			$clean_phases[$phase_key] = [
 				'label' => $phase['label'],
-				'mandrill_template_key' => trim((string) ($phase_values['mandrill_template_key'] ?? '')),
-				'twilio_template_key' => trim((string) ($phase_values['twilio_template_key'] ?? '')),
+				'mandrill_template_key' => trim(
+					(string) ($phase_values['mandrill_template_key'] ?? '')
+				),
+				'twilio_template_key' => trim(
+					(string) ($phase_values['twilio_template_key'] ?? '')
+				),
 			];
 		}
 
@@ -132,70 +160,6 @@ final class SolicitudNotificationSettingsForm extends ConfigFormBase
 			->save();
 
 		parent::submitForm($form, $form_state);
-	}
-
-	/**
-	 * Returns workflow phases used by solicitud_ingreso.
-	 *
-	 * @return array
-	 *   Phase definitions keyed by internal phase key.
-	 */
-	private function getSolicitudPhases(): array
-	{
-		return [
-			'solicitud_creada' => [
-				'label' => $this->t('Solicitud creada / En trámite'),
-				'description' => $this->t('Se ejecuta cuando el aspirante crea una solicitud de ingreso y queda en estado En trámite.'),
-			],
-			'pendiente_aclaracion' => [
-				'label' => $this->t('Pendiente aclaración'),
-				'description' => $this->t('Se ejecuta cuando Secretaría General solicita aclaraciones al aspirante.'),
-			],
-			'aprobada_secretaria' => [
-				'label' => $this->t('Aprobada por Secretaría General'),
-				'description' => $this->t('Se ejecuta cuando Secretaría General aprueba la revisión inicial.'),
-			],
-			'rechazada_secretaria' => [
-				'label' => $this->t('Rechazada por Secretaría General'),
-				'description' => $this->t('Se ejecuta cuando Secretaría General rechaza la solicitud en la fase inicial.'),
-			],
-			'aprobada_junta_directiva' => [
-				'label' => $this->t('Aprobada por Junta Directiva'),
-				'description' => $this->t('Se ejecuta cuando se registra aprobación en sesión de Junta Directiva.'),
-			],
-			'rechazada_junta_directiva' => [
-				'label' => $this->t('Rechazada por Junta Directiva'),
-				'description' => $this->t('Se ejecuta cuando se registra rechazo en sesión de Junta Directiva.'),
-			],
-			'aprobada_asamblea_general' => [
-				'label' => $this->t('Aprobada por Asamblea General'),
-				'description' => $this->t('Se ejecuta cuando se registra aprobación en sesión de Asamblea General.'),
-			],
-			'rechazada_asamblea_general' => [
-				'label' => $this->t('Rechazada por Asamblea General'),
-				'description' => $this->t('Se ejecuta cuando se registra rechazo en sesión de Asamblea General.'),
-			],
-			'documentos_enviados' => [
-				'label' => $this->t('Documentos enviados'),
-				'description' => $this->t('Se ejecuta cuando Coordinación Administrativa envía la carta de bienvenida y documentos a firmar.'),
-			],
-			'pendiente_pago_ingreso' => [
-				'label' => $this->t('Pendiente pago de ingreso'),
-				'description' => $this->t('Se ejecuta cuando la solicitud pasa a la fase administrativa de pago.'),
-			],
-			'pendiente_firma_documentos' => [
-				'label' => $this->t('Pendiente firma de documentos'),
-				'description' => $this->t('Se ejecuta cuando se confirma el pago y se inicia el proceso de firma documental.'),
-			],
-			'documentos_firmados' => [
-				'label' => $this->t('Documentos firmados'),
-				'description' => $this->t('Se ejecuta cuando se confirma la firma de documentos.'),
-			],
-			'miembro_activo' => [
-				'label' => $this->t('Miembro activo'),
-				'description' => $this->t('Se ejecuta cuando el aspirante finaliza el proceso y se convierte formalmente en miembro activo.'),
-			],
-		];
 	}
 
 	/**
@@ -210,7 +174,10 @@ final class SolicitudNotificationSettingsForm extends ConfigFormBase
 			'' => $this->t('- No enviar correo -'),
 		];
 
-		$enterprise_config = $this->configFactory->get('enterprise_integrations.settings');
+		$enterprise_config = $this->configFactory->get(
+			'enterprise_integrations.settings'
+		);
+
 		$groups = $enterprise_config->get('mandrill.message_groups') ?? [];
 
 		if (!is_array($groups)) {
@@ -247,7 +214,10 @@ final class SolicitudNotificationSettingsForm extends ConfigFormBase
 			'' => $this->t('- No enviar WhatsApp -'),
 		];
 
-		$enterprise_config = $this->configFactory->get('enterprise_integrations.settings');
+		$enterprise_config = $this->configFactory->get(
+			'enterprise_integrations.settings'
+		);
+
 		$templates = $enterprise_config->get('twilio.templates') ?? [];
 
 		if (!is_array($templates)) {
