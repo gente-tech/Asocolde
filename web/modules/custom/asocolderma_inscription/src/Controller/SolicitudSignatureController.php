@@ -42,7 +42,23 @@ final class SolicitudSignatureController extends ControllerBase
 		try {
 			$sign_url = $this->signatureManager->prepareSignUrl($node);
 
-			return new TrustedRedirectResponse($sign_url);
+			$response = new TrustedRedirectResponse($sign_url);
+
+			/*
+			* La URL embebida de Zoho Sign es efímera y de un solo uso.
+			* La respuesta que la contiene nunca debe almacenarse en caché.
+			*/
+			$response->getCacheableMetadata()->setCacheMaxAge(0);
+
+			$response->headers->set(
+				'Cache-Control',
+				'no-store, no-cache, must-revalidate, max-age=0, private'
+			);
+			$response->headers->set('Pragma', 'no-cache');
+			$response->headers->set('Expires', '0');
+
+			return $response;
+
 		} catch (SolicitudSignatureException $e) {
 			/*
 			* Una firma ya completada es una condición de negocio, no un fallo

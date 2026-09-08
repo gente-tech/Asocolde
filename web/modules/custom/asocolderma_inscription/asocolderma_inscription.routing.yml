@@ -112,6 +112,7 @@ asocolderma_inscription.solicitud_sign_redirect:
     _user_is_logged_in: 'TRUE'
     _entity_access: 'node.view'
   options:
+    no_cache: 'TRUE'
     parameters:
       node:
         type: entity:node
