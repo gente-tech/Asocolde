@@ -25,66 +25,79 @@ final class InscriptionNotificationCatalog
 			'label' => 'Activación de cuenta',
 			'description' => 'Se ejecuta cuando el aspirante se registra y debe activar su cuenta antes de iniciar sesión.',
 			'context_type' => 'account_activation',
+			'channels' => ['mandrill'],
 		],
 		'solicitud_creada' => [
 			'label' => 'Solicitud creada / En trámite',
 			'description' => 'Se ejecuta cuando el aspirante crea una solicitud de ingreso.',
 			'context_type' => 'status_change',
+			'channels' => ['mandrill', 'twilio'],
 		],
 		'pendiente_aclaracion' => [
 			'label' => 'Pendiente aclaración',
 			'description' => 'Se ejecuta cuando Secretaría General solicita aclaraciones al aspirante.',
 			'context_type' => 'clarification',
+			'channels' => ['mandrill', 'twilio'],
 		],
 		'ajustes_realizados' => [
 			'label' => 'Ajustes realizados',
 			'description' => 'Se ejecuta cuando el aspirante realiza las correcciones solicitadas y devuelve la solicitud a Secretaría General.',
 			'context_type' => 'status_change',
+			'channels' => ['mandrill', 'twilio'],
 		],
 		'aprobada_secretaria' => [
 			'label' => 'Aprobada por Secretaría General',
 			'description' => 'Se ejecuta cuando Secretaría General aprueba la solicitud.',
 			'context_type' => 'status_change',
+			'channels' => ['mandrill', 'twilio'],
 		],
 		'rechazada_secretaria' => [
 			'label' => 'Rechazada por Secretaría General',
 			'description' => 'Se ejecuta cuando Secretaría General rechaza la solicitud.',
 			'context_type' => 'rejection',
+			'channels' => ['mandrill', 'twilio'],
 		],
 		'aprobada_junta_directiva' => [
 			'label' => 'Aprobada por Junta Directiva',
 			'description' => 'Se ejecuta cuando la Junta Directiva aprueba la solicitud.',
 			'context_type' => 'status_change',
+			'channels' => ['mandrill', 'twilio'],
 		],
 		'rechazada_junta_directiva' => [
 			'label' => 'Rechazada por Junta Directiva',
 			'description' => 'Se ejecuta cuando la Junta Directiva rechaza la solicitud.',
 			'context_type' => 'rejection',
+			'channels' => ['mandrill', 'twilio'],
 		],
 		'aprobada_asamblea_general' => [
 			'label' => 'Aprobada por Asamblea General',
 			'description' => 'Se ejecuta cuando la Asamblea General aprueba la solicitud.',
 			'context_type' => 'status_change',
+			'channels' => ['mandrill', 'twilio'],
 		],
 		'rechazada_asamblea_general' => [
 			'label' => 'Rechazada por Asamblea General',
 			'description' => 'Se ejecuta cuando la Asamblea General rechaza la solicitud.',
 			'context_type' => 'rejection',
+			'channels' => ['mandrill', 'twilio'],
 		],
 		'documentos_enviados' => [
 			'label' => 'Documentos enviados',
 			'description' => 'Se ejecuta cuando los documentos quedan disponibles para el proceso de firma.',
 			'context_type' => 'status_change',
+			'channels' => ['mandrill', 'twilio'],
 		],
 		'pendiente_pago_ingreso' => [
 			'label' => 'Pendiente pago de ingreso',
 			'description' => 'Se ejecuta cuando se envían al aspirante las instrucciones para realizar el pago de ingreso.',
 			'context_type' => 'payment',
+			'channels' => ['mandrill', 'twilio'],
 		],
 		'miembro_activo' => [
 			'label' => 'Miembro activo',
 			'description' => 'Se ejecuta cuando el aspirante completa el proceso y es convertido en miembro activo.',
 			'context_type' => 'status_change',
+			'channels' => ['mandrill', 'twilio'],
 		],
 	];
 
@@ -153,5 +166,24 @@ final class InscriptionNotificationCatalog
 		$phaseKey = trim($phaseKey);
 
 		return self::PHASES[$phaseKey]['context_type'] ?? NULL;
+	}
+
+	/**
+	 * Determines whether a notification event supports a delivery channel.
+	 */
+	public function supportsChannel(string $phaseKey, string $channel): bool
+	{
+		$phaseKey = trim($phaseKey);
+		$channel = trim($channel);
+
+		if (!isset(self::PHASES[$phaseKey])) {
+			return FALSE;
+		}
+
+		return in_array(
+			$channel,
+			self::PHASES[$phaseKey]['channels'] ?? [],
+			TRUE,
+		);
 	}
 }
