@@ -522,11 +522,10 @@ class ZohoSignService
 			throw new \Exception('Falta solicitud_nid.');
 		}
 
-		$template = $this->getTemplateDetails();
+		$action_id = trim((string) ($data['action_id'] ?? ''));
 
-		$action_id = $template['templates']['actions'][0]['action_id'] ?? '';
-		if (empty($action_id)) {
-			throw new \Exception('No fue posible obtener el action_id de la plantilla.');
+		if ($action_id === '') {
+			throw new \Exception('Falta action_id para crear la solicitud de firma.');
 		}
 
 		$config = $this->getSettings();
