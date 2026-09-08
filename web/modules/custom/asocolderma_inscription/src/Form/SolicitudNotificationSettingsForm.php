@@ -109,21 +109,33 @@ final class SolicitudNotificationSettingsForm extends ConfigFormBase
 				'#markup' => '<p>' . $phase['description'] . '</p>',
 			];
 
-			$form['phases'][$phase_key]['mandrill_template_key'] = [
-				'#type' => 'select',
-				'#title' => $this->t('Plantilla Mandrill'),
-				'#description' => $this->t('Seleccione la configuración de correo que se enviará en esta fase.'),
-				'#options' => $mandrill_options,
-				'#default_value' => $config->get("phases.$phase_key.mandrill_template_key") ?? '',
-			];
+			if ($this->phaseCatalog->supportsChannel($phase_key, 'mandrill')) {
+				$form['phases'][$phase_key]['mandrill_template_key'] = [
+					'#type' => 'select',
+					'#title' => $this->t('Plantilla Mandrill'),
+					'#description' => $this->t(
+						'Seleccione la configuración de correo que se enviará en esta fase.'
+					),
+					'#options' => $mandrill_options,
+					'#default_value' => $config->get(
+						"phases.$phase_key.mandrill_template_key"
+					) ?? '',
+				];
+			}
 
-			$form['phases'][$phase_key]['twilio_template_key'] = [
-				'#type' => 'select',
-				'#title' => $this->t('Plantilla Twilio WhatsApp'),
-				'#description' => $this->t('Seleccione la plantilla de WhatsApp que se enviará en esta fase.'),
-				'#options' => $twilio_options,
-				'#default_value' => $config->get("phases.$phase_key.twilio_template_key") ?? '',
-			];
+			if ($this->phaseCatalog->supportsChannel($phase_key, 'twilio')) {
+				$form['phases'][$phase_key]['twilio_template_key'] = [
+					'#type' => 'select',
+					'#title' => $this->t('Plantilla Twilio WhatsApp'),
+					'#description' => $this->t(
+						'Seleccione la plantilla de WhatsApp que se enviará en esta fase.'
+					),
+					'#options' => $twilio_options,
+					'#default_value' => $config->get(
+						"phases.$phase_key.twilio_template_key"
+					) ?? '',
+				];
+			}
 		}
 
 		return parent::buildForm($form, $form_state);
@@ -144,15 +156,23 @@ final class SolicitudNotificationSettingsForm extends ConfigFormBase
 		foreach ($this->phaseCatalog->all() as $phase_key => $phase) {
 			$phase_values = $values[$phase_key] ?? [];
 
-			$clean_phases[$phase_key] = [
+			$clean_phase = [
 				'label' => $phase['label'],
-				'mandrill_template_key' => trim(
-					(string) ($phase_values['mandrill_template_key'] ?? '')
-				),
-				'twilio_template_key' => trim(
-					(string) ($phase_values['twilio_template_key'] ?? '')
-				),
 			];
+
+			if ($this->phaseCatalog->supportsChannel($phase_key, 'mandrill')) {
+				$clean_phase['mandrill_template_key'] = trim(
+					(string) ($phase_values['mandrill_template_key'] ?? '')
+				);
+			}
+
+			if ($this->phaseCatalog->supportsChannel($phase_key, 'twilio')) {
+				$clean_phase['twilio_template_key'] = trim(
+					(string) ($phase_values['twilio_template_key'] ?? '')
+				);
+			}
+
+			$clean_phases[$phase_key] = $clean_phase;
 		}
 
 		$config
