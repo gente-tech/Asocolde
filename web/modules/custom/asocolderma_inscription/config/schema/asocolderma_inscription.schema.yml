@@ -6,46 +6,9 @@ asocolderma_inscription.notification_settings:
       type: mapping
       label: 'Notification phases'
       mapping:
-        solicitud_creada:
+        '*':
           type: asocolderma_inscription.notification_phase
-          label: 'Solicitud creada'
-        pendiente_aclaracion:
-          type: asocolderma_inscription.notification_phase
-          label: 'Pendiente aclaración'
-        aprobada_secretaria:
-          type: asocolderma_inscription.notification_phase
-          label: 'Aprobada por Secretaría General'
-        rechazada_secretaria:
-          type: asocolderma_inscription.notification_phase
-          label: 'Rechazada por Secretaría General'
-        aprobada_junta_directiva:
-          type: asocolderma_inscription.notification_phase
-          label: 'Aprobada por Junta Directiva'
-        rechazada_junta_directiva:
-          type: asocolderma_inscription.notification_phase
-          label: 'Rechazada por Junta Directiva'
-        aprobada_asamblea_general:
-          type: asocolderma_inscription.notification_phase
-          label: 'Aprobada por Asamblea General'
-        rechazada_asamblea_general:
-          type: asocolderma_inscription.notification_phase
-          label: 'Rechazada por Asamblea General'
-        documentos_enviados:
-          type: asocolderma_inscription.notification_phase
-          label: 'Documentos enviados'
-        pendiente_pago_ingreso:
-        pendiente_pago_ingreso:
-          type: asocolderma_inscription.notification_phase
-          label: 'Pendiente pago de ingreso'
-        pendiente_firma_documentos:
-          type: asocolderma_inscription.notification_phase
-          label: 'Pendiente firma de documentos'
-        documentos_firmados:
-          type: asocolderma_inscription.notification_phase
-          label: 'Documentos firmados'
-        miembro_activo:
-          type: asocolderma_inscription.notification_phase
-          label: 'Miembro activo'
+          label: 'Notification phase'
 
 asocolderma_inscription.notification_phase:
   type: mapping
