@@ -1635,3 +1635,173 @@ function asocolderma_inscription_update_9016(): void
   $table = asocolderma_inscription_schema()['asocolderma_solicitud_aclaracion'];
   $schema->createTable('asocolderma_solicitud_aclaracion', $table);
 }
+
+/**
+ * Estandariza a 255 caracteres los campos string de solicitud_ingreso.
+ */
+function asocolderma_inscription_update_9017(): void
+{
+  $entity_type_id = 'node';
+  $new_length = 255;
+
+  // Lista explícita y auditable de campos string del flujo de solicitudes.
+  $field_names = [
+    'field_apellido1',
+    'field_apellido2',
+    'field_celular',
+    'field_correspondencia_fisica',
+    'field_direccion',
+    'field_direccion_institucional',
+    'field_nombre1',
+    'field_nombre2',
+    'field_numero_documento',
+    'field_registro_medico',
+    'field_solicitud_id',
+  ];
+
+  $database = \Drupal::database();
+  $database_schema = $database->schema();
+
+  $config_factory = \Drupal::configFactory();
+
+  $storage_schema_store = \Drupal::keyValue(
+    'entity.storage_schema.sql'
+  );
+
+  $field_storage_config_storage = \Drupal::entityTypeManager()
+    ->getStorage('field_storage_config');
+
+  $field_manager = \Drupal::service('entity_field.manager');
+
+  $last_installed_schema = \Drupal::service(
+    'entity.last_installed_schema.repository'
+  );
+
+  foreach ($field_names as $field_name) {
+    $config_name = sprintf(
+      'field.storage.%s.%s',
+      $entity_type_id,
+      $field_name
+    );
+
+    $config = $config_factory->getEditable($config_name);
+
+    if ($config->isNew()) {
+      throw new \RuntimeException(
+        sprintf(
+          'No existe la configuración de almacenamiento del campo "%s".',
+          $field_name
+        )
+      );
+    }
+
+    if ($config->get('type') !== 'string') {
+      throw new \RuntimeException(
+        sprintf(
+          'El campo "%s" no es de tipo string.',
+          $field_name
+        )
+      );
+    }
+
+    /*
+     * 1. Actualizar físicamente las columnas SQL.
+     *
+     * Drupal almacena estos campos en una tabla de datos y, al ser nodos
+     * revisionables, también en una tabla de revisiones.
+     */
+    $schema_key = sprintf(
+      '%s.field_schema_data.%s',
+      $entity_type_id,
+      $field_name
+    );
+
+    $stored_schema = $storage_schema_store->get($schema_key);
+
+    if (!is_array($stored_schema) || !$stored_schema) {
+      throw new \RuntimeException(
+        sprintf(
+          'No existe schema SQL registrado para el campo "%s".',
+          $field_name
+        )
+      );
+    }
+
+    $column_name = $field_name . '_value';
+
+    foreach ($stored_schema as $table_name => &$table_schema) {
+      if (
+        empty($table_schema['fields'][$column_name])
+        || !$database_schema->tableExists($table_name)
+        || !$database_schema->fieldExists($table_name, $column_name)
+      ) {
+        continue;
+      }
+
+      $column_spec = $table_schema['fields'][$column_name];
+      $column_spec['length'] = $new_length;
+
+      $database_schema->changeField(
+        $table_name,
+        $column_name,
+        $column_name,
+        $column_spec
+      );
+
+      $table_schema['fields'][$column_name]['length'] = $new_length;
+    }
+
+    unset($table_schema);
+
+    /*
+     * 2. Actualizar el schema SQL que Drupal mantiene internamente.
+     */
+    $storage_schema_store->set(
+      $schema_key,
+      $stored_schema
+    );
+
+    /*
+     * 3. Actualizar la configuración activa del FieldStorage.
+     *
+     * Se usa Config API porque el cambio físico del schema ya fue realizado
+     * explícitamente arriba.
+     */
+    $config
+      ->set('settings.max_length', $new_length)
+      ->save();
+
+    /*
+     * 4. Invalidar definiciones cacheadas para volver a obtener el storage
+     * con la configuración nueva.
+     */
+    $field_storage_config_storage->resetCache([
+      $entity_type_id . '.' . $field_name,
+    ]);
+
+    $field_manager->clearCachedFieldDefinitions();
+
+    $current_definitions = $field_manager
+      ->getFieldStorageDefinitions($entity_type_id);
+
+    if (!isset($current_definitions[$field_name])) {
+      throw new \RuntimeException(
+        sprintf(
+          'No fue posible reconstruir la definición del campo "%s".',
+          $field_name
+        )
+      );
+    }
+
+    /*
+     * 5. Sincronizar la definición "last installed" de Drupal para evitar
+     * falsos positivos de cambios pendientes en el esquema de entidades.
+     */
+    $last_installed_schema
+      ->setLastInstalledFieldStorageDefinition(
+        $current_definitions[$field_name]
+      );
+  }
+
+  $field_manager->clearCachedFieldDefinitions();
+}
