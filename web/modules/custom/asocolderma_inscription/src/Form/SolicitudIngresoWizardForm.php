@@ -270,6 +270,7 @@ final class SolicitudIngresoWizardForm extends FormBase
         '#description' => $this->t('Digite su primer nombre exactamente como figura en su documento de identidad. Ejemplo: Carlos.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['general']['nombre1'] ?? '',
+        '#maxlength' => $this->getStringFieldMaxLength('field_nombre1'),
       ];
 
       $form['general']['nombre2'] = [
@@ -277,6 +278,7 @@ final class SolicitudIngresoWizardForm extends FormBase
         '#title' => $this->t('Segundo nombre'),
         '#description' => $this->t('Digite su segundo nombre, si aplica, tal como aparece en su documento de identidad. Ejemplo: Andrés.'),
         '#default_value' => $wizard_values['general']['nombre2'] ?? '',
+        '#maxlength' => $this->getStringFieldMaxLength('field_nombre2'),
       ];
 
       $form['general']['apellido1'] = [
@@ -285,6 +287,7 @@ final class SolicitudIngresoWizardForm extends FormBase
         '#description' => $this->t('Digite su primer apellido exactamente como figura en su documento de identidad. Ejemplo: Gómez.'),
         '#required' => TRUE,
         '#default_value' => $wizard_values['general']['apellido1'] ?? '',
+        '#maxlength' => $this->getStringFieldMaxLength('field_apellido1'),
       ];
 
       $form['general']['apellido2'] = [
@@ -292,6 +295,7 @@ final class SolicitudIngresoWizardForm extends FormBase
         '#title' => $this->t('Segundo apellido'),
         '#description' => $this->t('Digite su segundo apellido, si aplica, tal como aparece en su documento de identidad. Ejemplo: Rodríguez.'),
         '#default_value' => $wizard_values['general']['apellido2'] ?? '',
+        '#maxlength' => $this->getStringFieldMaxLength('field_apellido2'),
       ];
 
       $max_birth_date = (new \DateTimeImmutable('today'))->modify('-18 years')->format('Y-m-d');
@@ -343,6 +347,7 @@ final class SolicitudIngresoWizardForm extends FormBase
         '#title' => $this->t('Número de documento'),
         '#description' => $this->t('Ingrese el número del documento sin puntos, comas ni espacios. Ejemplo: 1234567890.'),
         '#required' => TRUE,
+        '#maxlength' => $this->getStringFieldMaxLength('field_numero_documento'),
         '#default_value' => $wizard_values['general']['numero_documento'] ?? '',
       ];
 
@@ -351,6 +356,7 @@ final class SolicitudIngresoWizardForm extends FormBase
         '#title' => $this->t('Registro médico'),
         '#description' => $this->t('Ingrese el número de su registro médico profesional vigente. Ejemplo: RM-12345 o el consecutivo oficial que corresponda.'),
         '#required' => TRUE,
+        '#maxlength' => $this->getStringFieldMaxLength('field_registro_medico'),
         '#default_value' => $wizard_values['general']['registro_medico'] ?? '',
       ];
 
@@ -397,6 +403,7 @@ final class SolicitudIngresoWizardForm extends FormBase
         '#title' => $this->t('Dirección física principal'),
         '#description' => $this->t('Ingrese su dirección física principal. Ejemplo: Calle 123 # 45-67, Apartamento 201.'),
         '#required' => TRUE,
+        '#maxlength' => $this->getStringFieldMaxLength('field_correspondencia_fisica'),
         '#default_value' => $wizard_values['contacto']['direccion'] ?? '',
       ];
 
@@ -405,6 +412,7 @@ final class SolicitudIngresoWizardForm extends FormBase
         '#title' => $this->t('Dirección institucional'),
         '#description' => $this->t('Ingrese la dirección institucional o profesional asociada a su ejercicio médico.'),
         '#required' => TRUE,
+        '#maxlength' => $this->getStringFieldMaxLength('field_direccion_institucional'),
         '#default_value' => $wizard_values['contacto']['correspondencia_fisica'] ?? '',
       ];
 
@@ -1264,5 +1272,33 @@ final class SolicitudIngresoWizardForm extends FormBase
     $minimum_birth_date = $today->modify('-18 years');
 
     return $date <= $minimum_birth_date;
+  }
+
+  /**
+   * Returns the configured maximum length for a string field.
+   */
+  private function getStringFieldMaxLength(string $field_name): int
+  {
+    $storage = \Drupal::entityTypeManager()
+      ->getStorage('field_storage_config')
+      ->load('node.' . $field_name);
+
+    if (!$storage || $storage->getType() !== 'string') {
+      throw new \LogicException(sprintf(
+        'El campo node.%s no existe o no es de tipo string.',
+        $field_name
+      ));
+    }
+
+    $max_length = (int) $storage->getSetting('max_length');
+
+    if ($max_length <= 0) {
+      throw new \LogicException(sprintf(
+        'El campo node.%s no tiene un max_length válido.',
+        $field_name
+      ));
+    }
+
+    return $max_length;
   }
 }
