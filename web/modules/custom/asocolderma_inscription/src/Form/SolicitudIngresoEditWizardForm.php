@@ -123,12 +123,14 @@ final class SolicitudIngresoEditWizardForm extends FormBase
       '#type' => 'textfield',
       '#title' => $this->t('Primer nombre'),
       '#required' => TRUE,
+      '#maxlength' => $this->getStringFieldMaxLength('field_nombre1'),
       '#default_value' => $this->getStringValue($node, 'field_nombre1'),
     ];
 
     $form['general']['nombre2'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Segundo nombre'),
+      '#maxlength' => $this->getStringFieldMaxLength('field_nombre2'),
       '#default_value' => $this->getStringValue($node, 'field_nombre2'),
     ];
 
@@ -136,12 +138,14 @@ final class SolicitudIngresoEditWizardForm extends FormBase
       '#type' => 'textfield',
       '#title' => $this->t('Primer apellido'),
       '#required' => TRUE,
+      '#maxlength' => $this->getStringFieldMaxLength('field_apellido1'),
       '#default_value' => $this->getStringValue($node, 'field_apellido1'),
     ];
 
     $form['general']['apellido2'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Segundo apellido'),
+      '#maxlength' => $this->getStringFieldMaxLength('field_apellido2'),
       '#default_value' => $this->getStringValue($node, 'field_apellido2'),
     ];
 
@@ -190,6 +194,7 @@ final class SolicitudIngresoEditWizardForm extends FormBase
       '#type' => 'textfield',
       '#title' => $this->t('Número de documento'),
       '#required' => TRUE,
+      '#maxlength' => $this->getStringFieldMaxLength('field_numero_documento'),
       '#default_value' => $this->getStringValue($node, 'field_numero_documento'),
     ];
 
@@ -197,6 +202,7 @@ final class SolicitudIngresoEditWizardForm extends FormBase
       '#type' => 'textfield',
       '#title' => $this->t('Registro médico'),
       '#required' => TRUE,
+      '#maxlength' => $this->getStringFieldMaxLength('field_registro_medico'),
       '#default_value' => $this->getStringValue($node, 'field_registro_medico'),
     ];
 
@@ -239,6 +245,7 @@ final class SolicitudIngresoEditWizardForm extends FormBase
       '#type' => 'textfield',
       '#title' => $this->t('Dirección física principal'),
       '#required' => TRUE,
+      '#maxlength' => $this->getStringFieldMaxLength('field_correspondencia_fisica'),
       '#default_value' => $this->getStringValue($node, 'field_correspondencia_fisica'),
     ];
 
@@ -246,6 +253,7 @@ final class SolicitudIngresoEditWizardForm extends FormBase
       '#type' => 'textfield',
       '#title' => $this->t('Dirección institucional'),
       '#required' => TRUE,
+      '#maxlength' => $this->getStringFieldMaxLength('field_direccion_institucional'),
       '#default_value' => $this->getStringValue($node, 'field_direccion_institucional'),
     ];
 
@@ -1194,5 +1202,33 @@ final class SolicitudIngresoEditWizardForm extends FormBase
       || str_contains($haystack, 'upload')
       || str_contains($haystack, 'remover')
       || str_contains($haystack, 'remove');
+  }
+
+  /**
+   * Returns the configured maximum length for a string field.
+   */
+  private function getStringFieldMaxLength(string $field_name): int
+  {
+    $storage = \Drupal::entityTypeManager()
+      ->getStorage('field_storage_config')
+      ->load('node.' . $field_name);
+
+    if (!$storage || $storage->getType() !== 'string') {
+      throw new \LogicException(sprintf(
+        'El campo node.%s no existe o no es de tipo string.',
+        $field_name
+      ));
+    }
+
+    $max_length = (int) $storage->getSetting('max_length');
+
+    if ($max_length <= 0) {
+      throw new \LogicException(sprintf(
+        'El campo node.%s no tiene un max_length válido.',
+        $field_name
+      ));
+    }
+
+    return $max_length;
   }
 }
