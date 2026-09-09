@@ -1,0 +1,21 @@
+uuid: cf984227-aea1-4d21-8d2d-418028f5df87
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_registro_medico
+field_name: field_registro_medico
+entity_type: node
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

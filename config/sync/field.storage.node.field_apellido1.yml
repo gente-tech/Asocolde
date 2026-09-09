@@ -1,0 +1,21 @@
+uuid: 5268bc0a-9655-47a6-ad98-6d03f37ba935
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_apellido1
+field_name: field_apellido1
+entity_type: node
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
