@@ -1,5 +1,8 @@
 <?php
 
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\node\NodeInterface;
+
 /**
  * @file
  * asocolderma_B5 theme file.
@@ -9,14 +12,23 @@
  * Preprocess variables for html templates.
  * @param $variables
  */
-function asocolderma_b5_preprocess_html(&$variables) {
+function asocolderma_b5_preprocess_html(&$variables)
+{
   $node = \Drupal::routeMatch()->getParameter('node');
   // dpm($node);
   // Check for a node.
-  if ($node instanceof \Drupal\node\NodeInterface
+  if (
+    $node instanceof \Drupal\node\NodeInterface
     && $node->hasField('field_body_class')
-    && !$node->field_body_class->isEmpty()) {
-      $variables['attributes']['class'][] = \Drupal\Component\Utility\Html::cleanCssIdentifier($node->field_body_class->getString());
+    && !$node->field_body_class->isEmpty()
+  ) {
+    $variables['attributes']['class'][] = \Drupal\Component\Utility\Html::cleanCssIdentifier($node->field_body_class->getString());
+  }
+
+  $current_user = \Drupal::currentUser();
+
+  if ($current_user->isAuthenticated() && in_array('aspirante', $current_user->getRoles(), TRUE)) {
+    $variables['attributes']['class'][] = 'user-role-aspirante';
   }
 }
 
@@ -24,12 +36,15 @@ function asocolderma_b5_preprocess_html(&$variables) {
  * Implements template_preprocess_views_view().
  *
  */
-function asocolderma_b5_preprocess_views_view(&$variables) {
+function asocolderma_b5_preprocess_views_view(&$variables)
+{
   $view = $variables['view'];
   $views_top_link_more = _get_views_top_link_more();
-  if(in_array($view->id(), array_keys($views_top_link_more)) &&
-    in_array($view->current_display, $views_top_link_more[$view->id()])) {
-      $variables['title'] = $view->getTitle();
+  if (
+    in_array($view->id(), array_keys($views_top_link_more)) &&
+    in_array($view->current_display, $views_top_link_more[$view->id()])
+  ) {
+    $variables['title'] = $view->getTitle();
   }
 }
 
@@ -40,20 +55,24 @@ function asocolderma_b5_preprocess_views_view(&$variables) {
  *
  * @inheritdoc
  */
-function asocolderma_b5_theme_suggestions_views_view_alter(array &$suggestions, array $variables) {
+function asocolderma_b5_theme_suggestions_views_view_alter(array &$suggestions, array $variables)
+{
   $view = $variables['view'];
   $views_top_link_more = _get_views_top_link_more();
-  if(in_array($view->id(), array_keys($views_top_link_more)) &&
-    in_array($view->current_display, $views_top_link_more[$view->id()])) {
-      $suggestions[] = 'views_view__top__link_more';
+  if (
+    in_array($view->id(), array_keys($views_top_link_more)) &&
+    in_array($view->current_display, $views_top_link_more[$view->id()])
+  ) {
+    $suggestions[] = 'views_view__top__link_more';
   }
 }
 
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
  */
-function asocolderma_b5_theme_suggestions_form_alter(array &$suggestions, array $variables) {
-  switch($variables['element']['#form_id']) {
+function asocolderma_b5_theme_suggestions_form_alter(array &$suggestions, array $variables)
+{
+  switch ($variables['element']['#form_id']) {
     case 'user_login_form':
       $suggestions[] = $variables['theme_hook_original'] . '__user_login';
       break;
@@ -81,7 +100,8 @@ function asocolderma_b5_theme_suggestions_form_alter(array &$suggestions, array 
 /**
  * Implements hook_preprocess_HOOK() for user_services form.
  */
-function asocolderma_b5_preprocess_form__user_services(&$variables) {
+function asocolderma_b5_preprocess_form__user_services(&$variables)
+{
   if ($account = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id())) {
     $variables['user_link'] = $account->toLink('Vista actual de mi perfil');
   }
@@ -90,7 +110,8 @@ function asocolderma_b5_preprocess_form__user_services(&$variables) {
 /**
  * Implements hook_preprocess_HOOK() for user_services form.
  */
-function asocolderma_b5_preprocess_form__user_public(&$variables) {
+function asocolderma_b5_preprocess_form__user_public(&$variables)
+{
   if ($account = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id())) {
     $variables['user_link'] = $account->toLink('Vista actual de mi perfil')->toRenderable();
     $variables['user_link']['#attributes']['class'][] = 'btn btn--primary';
@@ -100,15 +121,25 @@ function asocolderma_b5_preprocess_form__user_public(&$variables) {
 /**
  * Implements hook_preprocess_HOOK() for block.html.twig.
  */
-function asocolderma_b5_preprocess_block(&$variables) {
+function asocolderma_b5_preprocess_block(&$variables)
+{
   // adding custom attribute class for block
   if ($variables['elements']['#base_plugin_id'] == 'block_content') {
     $blockType = strtr($variables['content']['#block_content']->bundle(), '_', '-');
     $variables['attributes']['class'][] = 'block--type-' . $blockType;
   }
+
+  // Importante: los menús cambian según rol.
+  if (
+    isset($variables['elements']['#base_plugin_id']) &&
+    $variables['elements']['#base_plugin_id'] === 'system_menu_block'
+  ) {
+    $variables['elements']['#cache']['contexts'][] = 'user.roles';
+  }
 }
 
-function _get_views_top_link_more() {
+function _get_views_top_link_more()
+{
   return [
     'patient_articles' => [
       'block_other_news',
@@ -129,4 +160,156 @@ function _get_views_top_link_more() {
       'block',
     ],
   ];
+}
+
+/**
+ * Implements hook_preprocess_node().
+ */
+function asocolderma_b5_preprocess_node(array &$variables): void
+{
+  $variables['estado_color_solicitud'] = '';
+
+  if (empty($variables['node']) || !$variables['node'] instanceof \Drupal\node\NodeInterface) {
+    return;
+  }
+
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $variables['node'];
+
+  if ($node->bundle() !== 'solicitud_ingreso') {
+    return;
+  }
+
+  $variables['elements']['#cache']['max-age'] = 0;
+  $variables['elements']['#cache']['contexts'][] = 'url.path';
+  $variables['elements']['#cache']['contexts'][] = 'user.roles';
+
+  $variables['elements']['#cache']['tags'][] = 'asocolderma_estado_solicitud_colors';
+
+  if (!$node->hasField('field_state') || $node->get('field_state')->isEmpty()) {
+    return;
+  }
+
+  $estado = $node->get('field_state')->entity;
+
+  if ($estado) {
+    CacheableMetadata::createFromObject($estado)->applyTo($variables['elements']);
+  }
+
+  if (!$estado || !$estado->hasField('field_color_estado_solicitud') || $estado->get('field_color_estado_solicitud')->isEmpty()) {
+    return;
+  }
+
+  $color_item = $estado->get('field_color_estado_solicitud')->first();
+
+  if (!$color_item) {
+    return;
+  }
+
+  $color_values = $color_item->toArray();
+
+  if (!empty($color_values['color'])) {
+    $variables['estado_color_solicitud'] = $color_values['color'];
+    return;
+  }
+
+  if (!empty($color_values['value'])) {
+    $variables['estado_color_solicitud'] = $color_values['value'];
+  }
+}
+
+/**
+ * Implements hook_entity_view_alter().
+ */
+function asocolderma_b5_entity_view_alter(array &$build, \Drupal\Core\Entity\EntityInterface $entity, \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display): void
+{
+  if ($entity->getEntityTypeId() !== 'node') {
+    return;
+  }
+
+  if (!$entity instanceof \Drupal\node\NodeInterface) {
+    return;
+  }
+
+  if ($entity->bundle() !== 'solicitud_ingreso') {
+    return;
+  }
+
+  $build['#cache']['max-age'] = 0;
+  $build['#cache']['contexts'][] = 'url.path';
+  $build['#cache']['contexts'][] = 'user.roles';
+}
+
+/**
+ * Oculta enlaces de menú para usuarios con rol aspirante.
+ */
+function asocolderma_b5_preprocess_menu(array &$variables)
+{
+  $current_user = \Drupal::currentUser();
+
+  if (!$current_user->isAuthenticated()) {
+    return;
+  }
+
+  if (!in_array('aspirante', $current_user->getRoles(), TRUE)) {
+    return;
+  }
+
+  // Menús donde se aplicará la restricción.
+  // Si quieres aplicarlo a todos los menús, deja este arreglo vacío.
+  $allowed_menus = [
+    'top-header',
+  ];
+
+  if (!empty($allowed_menus) && !in_array($variables['menu_name'], $allowed_menus, TRUE)) {
+    return;
+  }
+
+  // Títulos de enlaces que NO debe ver el aspirante.
+  $hidden_titles = [
+    'Paute con nosotros',
+    'Contáctenos',
+  ];
+
+  _asocolderma_b5_filter_menu_items_for_aspirante($variables['items'], $hidden_titles);
+}
+
+/**
+ * Filtra recursivamente ítems de menú por título.
+ */
+function _asocolderma_b5_filter_menu_items_for_aspirante(array &$items, array $hidden_titles)
+{
+  foreach ($items as $key => &$item) {
+    if (!is_array($item)) {
+      continue;
+    }
+
+    $title = isset($item['title']) ? trim((string) $item['title']) : '';
+
+    if (in_array($title, $hidden_titles, TRUE)) {
+      unset($items[$key]);
+      continue;
+    }
+
+    if (!empty($item['below']) && is_array($item['below'])) {
+      _asocolderma_b5_filter_menu_items_for_aspirante($item['below'], $hidden_titles);
+    }
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_page_alter().
+ */
+function asocolderma_b5_theme_suggestions_page_alter(array &$suggestions, array $variables): void
+{
+  $request = \Drupal::request();
+  $path = $request->getPathInfo();
+
+  if ($path === '/gestion-data' || str_starts_with($path, '/gestion-data/')) {
+    $suggestions[] = 'page__gestion_data';
+  }
+
+  if ($path === '/zona' || str_starts_with($path, '/zona/')) {
+    $suggestions[] = 'page__zona_aspirante';
+  }
 }

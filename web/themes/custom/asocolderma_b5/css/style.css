@@ -11714,4 +11714,59 @@ code {
 }
 
 
-/*# sourceMappingURL=style.css.map */
+/*# Inicio - modal - pdf */
+   a.btn-pdf {
+    background: #def5f6;
+		padding: 8px 16px;
+		border-radius: 8px;
+		font-size: 14px;
+    }
+    a.btn-pdf:hover {
+      background: #b6e8ea;
+    }
+    .overlay-pdf {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-pdf {
+      background: #fff;
+      border-radius: 6px;
+      width: 90%;
+      height: 90%;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modal-pdf .modal-header {
+      background: #f5f5f5;
+      padding: 8px;
+      text-align: right;
+    }
+    .modal-pdf .modal-header button {
+      background: #999999;
+      color: #fff;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .modal-pdf .modal-header button:hover {
+      background: #737373;
+    }
+    .modal-pdf .modal-content {
+      flex: 1;
+      overflow: hidden;
+    }
+    .modal-pdf .modal-content iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+/*# Fin - modal - pdf */
