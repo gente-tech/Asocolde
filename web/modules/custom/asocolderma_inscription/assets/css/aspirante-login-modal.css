@@ -106,3 +106,7 @@
   background: #0b5ed7 !important;
   color: #ffffff !important;
 }
+
+.modal-login-content--aspirante .top-elements {
+  display: none !important;
+}
