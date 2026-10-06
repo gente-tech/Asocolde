@@ -200,6 +200,6 @@ final class AspiranteRegisterForm extends FormBase
 			);
 		}
 
-		$form_state->setRedirect('user.login');
+		$form_state->setRedirect('asocolderma_inscription.aspirante_login');
 	}
 }
