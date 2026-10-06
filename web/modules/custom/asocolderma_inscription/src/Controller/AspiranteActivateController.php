@@ -54,6 +54,6 @@ class AspiranteActivateController extends ControllerBase
 
 		$this->messenger()->addStatus('Cuenta activada correctamente.');
 
-		return new RedirectResponse('/user/login');
+		return new RedirectResponse('/aspirante/login');
 	}
 }
