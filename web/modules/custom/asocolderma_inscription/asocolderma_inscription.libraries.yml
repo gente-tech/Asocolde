@@ -66,3 +66,8 @@ admin_zone:
   dependencies:
     - core/drupal
     - core/once
+
+aspirante_register:
+  css:
+    theme:
+      css/aspirante-register.css: {}

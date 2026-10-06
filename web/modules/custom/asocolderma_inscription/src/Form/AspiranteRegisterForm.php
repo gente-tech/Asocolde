@@ -49,10 +49,22 @@ final class AspiranteRegisterForm extends FormBase
 		array $form,
 		FormStateInterface $form_state,
 	): array {
+		$form['#attributes']['class'][] = 'asocolderma-register-form';
+
+		$form['#attached']['library'][] =
+			'asocolderma_inscription/aspirante_register';
+
 		$form['mail'] = [
 			'#type' => 'email',
 			'#title' => $this->t('Correo electrónico'),
 			'#required' => TRUE,
+			'#attributes' => [
+				'class' => [
+					'asocolderma-register-form__input',
+				],
+				'placeholder' => $this->t('correo@ejemplo.com'),
+				'autocomplete' => 'email',
+			],
 		];
 
 		$form['pass'] = [
@@ -66,11 +78,21 @@ final class AspiranteRegisterForm extends FormBase
 			'#type' => 'checkbox',
 			'#title' => $this->t('Acepto los términos y condiciones'),
 			'#required' => TRUE,
+			'#wrapper_attributes' => [
+				'class' => [
+					'asocolderma-register-form__terms',
+				],
+			],
 		];
 
 		$form['actions']['submit'] = [
 			'#type' => 'submit',
 			'#value' => $this->t('Registrarme'),
+			'#attributes' => [
+				'class' => [
+					'asocolderma-register-form__submit',
+				],
+			],
 		];
 
 		return $form;
