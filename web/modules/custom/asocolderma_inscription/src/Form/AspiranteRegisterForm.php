@@ -58,6 +58,7 @@ final class AspiranteRegisterForm extends FormBase
 		$form['pass'] = [
 			'#type' => 'password_confirm',
 			'#title' => $this->t('Contraseña'),
+			'#title_display' => 'invisible',
 			'#required' => TRUE,
 		];
 
