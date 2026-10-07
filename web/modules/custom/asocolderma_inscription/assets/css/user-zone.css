@@ -1345,23 +1345,42 @@ body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-footer {
   background: #ffffff !important;
 }
 
-body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-messages__continue {
-  min-width: 160px;
-  min-height: 44px;
-  padding: 10px 24px;
-  border: 1px solid #008c8c;
-  border-radius: 8px;
-  background: #008c8c;
-  color: #ffffff;
-  font-weight: 700;
-  text-align: center;
+body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-footer {
+  display: flex !important;
+  justify-content: center !important;
+  padding: 0 30px 24px !important;
+  border: 0 !important;
+  background: #ffffff !important;
 }
 
-body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-messages__continue:hover,
-body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-messages__continue:focus {
-  border-color: #007575;
-  background: #007575;
-  color: #ffffff;
+body.asocolderma-inscription-zone-page div[id^="modal-messages"] button.modal-messages__continue {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 120px !important;
+  height: auto !important;
+  min-height: 40px !important;
+  margin: 0 !important;
+  padding: 8px 18px !important;
+  border: 0 !important;
+  border-radius: 5px !important;
+  background: #008c8c !important;
+  color: #ffffff !important;
+  font-family: inherit !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+}
+
+body.asocolderma-inscription-zone-page div[id^="modal-messages"] button.modal-messages__continue:hover,
+body.asocolderma-inscription-zone-page div[id^="modal-messages"] button.modal-messages__continue:focus {
+  background: #007575 !important;
+  color: #ffffff !important;
+  outline: none !important;
 }
 
 @media (max-width: 520px) {
@@ -1369,7 +1388,8 @@ body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-messages
     padding: 0 20px 22px !important;
   }
 
-  body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-messages__continue {
-    width: 100%;
+  body.asocolderma-inscription-zone-page div[id^="modal-messages"] button.modal-messages__continue {
+    width: auto !important;
+    min-width: 120px !important;
   }
 }
