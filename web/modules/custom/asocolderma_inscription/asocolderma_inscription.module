@@ -1833,3 +1833,45 @@ function asocolderma_inscription_get_future_semaforo_label(string $internal_labe
     default => $internal_label,
   };
 }
+
+/**
+ * Implements hook_preprocess_status_messages().
+ *
+ * Oculta únicamente el aviso informativo que Drupal genera cuando
+ * renombra automáticamente un archivo por colisión de nombre.
+ *
+ * No afecta errores, advertencias ni mensajes de seguridad.
+ */
+function asocolderma_inscription_preprocess_status_messages(array &$variables): void
+{
+  if (empty($variables['message_list']['status'])) {
+    return;
+  }
+
+  $filtered_messages = [];
+
+  foreach ($variables['message_list']['status'] as $message) {
+    $plain_message = trim(strip_tags((string) $message));
+
+    if (
+      str_starts_with(
+        $plain_message,
+        'Su archivo fue renombrado como'
+      )
+      || str_starts_with(
+        $plain_message,
+        'Your upload has been renamed to'
+      )
+    ) {
+      continue;
+    }
+
+    $filtered_messages[] = $message;
+  }
+
+  if ($filtered_messages) {
+    $variables['message_list']['status'] = $filtered_messages;
+  } else {
+    unset($variables['message_list']['status']);
+  }
+}
