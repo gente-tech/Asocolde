@@ -1337,10 +1337,14 @@ body.asocolderma-inscription-zone-page.modal-open {
   }
 }
 
+/* =========================
+   BOTÓN CONTINUAR - MODAL MENSAJES
+   ========================= */
+
 div[id^="modal-messages"] .modal-footer {
   display: flex !important;
-  justify-content: center !important;
   align-items: center !important;
+  justify-content: center !important;
   padding: 0 30px 24px !important;
   border: 0 !important;
   background: #ffffff !important;
@@ -1353,15 +1357,15 @@ div[id^="modal-messages"] button.modal-messages__continue {
 
   width: auto !important;
   min-width: 120px !important;
-  height: 40px !important;
+  min-height: 40px !important;
 
   margin: 0 !important;
   padding: 8px 18px !important;
 
-  border: 1px solid #008f8c !important;
+  border: 1px solid #008c8c !important;
   border-radius: 5px !important;
 
-  background-color: #008f8c !important;
+  background-color: #008c8c !important;
   background-image: none !important;
 
   color: #ffffff !important;
@@ -1369,7 +1373,7 @@ div[id^="modal-messages"] button.modal-messages__continue {
   font-family: inherit !important;
   font-size: 14px !important;
   font-weight: 700 !important;
-  line-height: 1 !important;
+  line-height: 1.2 !important;
 
   text-align: center !important;
   text-decoration: none !important;
@@ -1383,11 +1387,11 @@ div[id^="modal-messages"] button.modal-messages__continue {
 
 div[id^="modal-messages"] button.modal-messages__continue:hover,
 div[id^="modal-messages"] button.modal-messages__continue:focus {
-  border-color: #007875 !important;
-  background-color: #007875 !important;
+  border-color: #006d6d !important;
+  background-color: #006d6d !important;
   color: #ffffff !important;
-  text-decoration: none !important;
   outline: none !important;
+  text-decoration: none !important;
 }
 
 @media (max-width: 520px) {
@@ -1396,6 +1400,7 @@ div[id^="modal-messages"] button.modal-messages__continue:focus {
   }
 
   div[id^="modal-messages"] button.modal-messages__continue {
+    width: auto !important;
     min-width: 120px !important;
   }
 }
