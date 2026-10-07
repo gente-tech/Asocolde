@@ -1416,3 +1416,13 @@ div[id^="modal-messages"] button.modal-messages__continue:focus {
     min-width: 120px !important;
   }
 }
+
+div[id^="modal-messages"] .solicitud-created-id-label,
+div[id^="modal-messages"] .solicitud-created-id {
+  color: #008c8c !important;
+  font-weight: 800 !important;
+}
+
+div[id^="modal-messages"] .solicitud-created-id {
+  white-space: nowrap;
+}

@@ -7,6 +7,7 @@ use Drupal\asocolderma_inscription\Service\SolicitudManager;
 use Drupal\asocolderma_inscription\Service\SolicitudNotificationManager;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Markup;
 
 final class SolicitudIngresoWizardForm extends FormBase
 {
@@ -1224,7 +1225,15 @@ final class SolicitudIngresoWizardForm extends FormBase
     // Limpieza draft.
     $this->getTempStore()->delete(self::TEMPSTORE_KEY);
 
-    $this->messenger()->addStatus($this->t('Solicitud creada correctamente con ID: @id', ['@id' => $id_solicitud]));
+    $this->messenger()->addStatus(
+      Markup::create(
+        'Solicitud creada correctamente<br>' .
+          'con <span class="solicitud-created-id-label">ID:</span> ' .
+          '<span class="solicitud-created-id">' .
+          htmlspecialchars($id_solicitud, ENT_QUOTES, 'UTF-8') .
+          '</span>'
+      )
+    );
     $form_state->setRedirect('asocolderma_inscription.user_zone_requests');
   }
 
