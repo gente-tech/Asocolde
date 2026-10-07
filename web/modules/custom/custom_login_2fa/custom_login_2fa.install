@@ -1,0 +1,96 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall hooks for Custom Login 2FA.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function custom_login_2fa_schema(): array
+{
+	$schema['custom_login_2fa_code'] = [
+		'description' => 'Stores temporary 2FA login codes.',
+		'fields' => [
+			'id' => [
+				'description' => 'Primary key.',
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'uid' => [
+				'description' => 'Drupal user ID associated with the login attempt.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'mail' => [
+				'description' => 'Email address where the 2FA code was sent.',
+				'type' => 'varchar',
+				'length' => 254,
+				'not null' => TRUE,
+			],
+			'code_hash' => [
+				'description' => 'Hashed 2FA code.',
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => TRUE,
+			],
+			'created' => [
+				'description' => 'Unix timestamp when the code was created.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'expires' => [
+				'description' => 'Unix timestamp when the code expires.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'consumed' => [
+				'description' => 'Unix timestamp when the code was consumed.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => FALSE,
+			],
+			'attempts' => [
+				'description' => 'Number of validation attempts.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'ip_address' => [
+				'description' => 'IP address used during the login attempt.',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => FALSE,
+			],
+			'user_agent' => [
+				'description' => 'User agent used during the login attempt.',
+				'type' => 'varchar',
+				'length' => 512,
+				'not null' => FALSE,
+			],
+			'status' => [
+				'description' => 'Code status: pending, consumed, expired or blocked.',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => TRUE,
+				'default' => 'pending',
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'uid' => ['uid'],
+			'mail' => ['mail'],
+			'expires' => ['expires'],
+			'status' => ['status'],
+			'uid_status' => ['uid', 'status'],
+		],
+	];
+
+	return $schema;
+}

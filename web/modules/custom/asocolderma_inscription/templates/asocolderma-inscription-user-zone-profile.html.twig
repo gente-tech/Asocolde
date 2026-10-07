@@ -1,0 +1,53 @@
+{#
+/**
+ * Template de la vista inicial del aspirante logueado.
+ *
+ * Ruta:
+ * /zona/perfil
+ */
+#}
+
+<section class="user-zone-page user-zone-page--profile">
+	<header class="user-zone-header">
+		<div class="user-zone-header__content">
+			<div class="user-zone-header__brand">
+				<span class="user-zone-header__eyebrow">AsoColDerma</span>
+				<h1 class="user-zone-header__title">Zona del aspirante</h1>
+				<p class="user-zone-header__description">
+					Gestiona tu información personal y consulta el estado de tu proceso de ingreso.
+				</p>
+			</div>
+
+			<div class="user-zone-header__user">
+				<span class="user-zone-header__label">Usuario</span>
+				<strong class="user-zone-header__name">{{ user_name }}</strong>
+			</div>
+		</div>
+	</header>
+	
+	<div class="user-zone-card user-zone-card--profile">
+		<div class="user-zone-card__header">
+			<div>
+				<span class="user-zone-card__eyebrow">Información personal</span>
+				<h2 class="user-zone-card__title">Mi perfil de aspirante</h2>
+			</div>
+
+			<div class="user-zone-card__actions">
+				{% if primary_action %}
+					<a
+						href="{{ primary_action.url }}"
+						class="user-zone-button user-zone-button--primary"
+					>
+						{{ primary_action.label }}
+					</a>
+				{% endif %}
+
+				{{ edit_link }}
+			</div>
+		</div>
+
+		<div class="user-zone-card__body">
+			{{ profile }}
+		</div>
+	</div>
+</section>

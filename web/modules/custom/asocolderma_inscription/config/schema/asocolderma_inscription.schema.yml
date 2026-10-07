@@ -1,0 +1,49 @@
+asocolderma_inscription.notification_settings:
+  type: config_object
+  label: 'Asocolderma inscription notification settings'
+  mapping:
+    phases:
+      type: mapping
+      label: 'Notification phases'
+      mapping:
+        '*':
+          type: asocolderma_inscription.notification_phase
+          label: 'Notification phase'
+
+asocolderma_inscription.notification_phase:
+  type: mapping
+  label: 'Notification phase'
+  mapping:
+    label:
+      type: label
+      label: 'Label'
+    mandrill_template_key:
+      type: string
+      label: 'Mandrill template key'
+    twilio_template_key:
+      type: string
+      label: 'Twilio template key'
+
+asocolderma_inscription.solicitud_form_settings:
+  type: config_object
+  label: 'Solicitud ingreso form settings'
+  mapping:
+    fields:
+      type: sequence
+      label: 'Fields'
+      sequence:
+        type: sequence
+        label: 'Field group'
+        sequence:
+          type: mapping
+          label: 'Field settings'
+          mapping:
+            label:
+              type: label
+              label: 'Label'
+            placeholder:
+              type: string
+              label: 'Placeholder'
+            description:
+              type: text
+              label: 'Description'

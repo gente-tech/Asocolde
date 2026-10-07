@@ -1,0 +1,14 @@
+create solicitud ingreso:
+  title: 'Crear solicitud de ingreso (aspirante)'
+  description: 'Permite crear solicitud de ingreso'
+  restrict access: true
+
+view sg solicitudes:
+  title: 'Ver listado de solicitudes SG'
+  description: 'Permite ver el listado de solicitudes activas.'
+  restrict access: true
+
+manage sg solicitudes:
+  title: 'Gestionar solicitudes SG'
+  description: 'Permite revisar y cambiar el estado de solicitudes activas.'
+  restrict access: true

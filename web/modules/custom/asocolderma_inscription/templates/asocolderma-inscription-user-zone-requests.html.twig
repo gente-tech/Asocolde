@@ -1,0 +1,114 @@
+{#
+/**
+ * Template del listado de solicitudes del aspirante.
+ *
+ * Ruta:
+ * /zona/solicitudes
+ */
+#}
+
+<section class="user-zone-page user-zone-page--requests">
+	<header class="user-zone-header">
+		<div class="user-zone-header__content">
+			<div class="user-zone-header__brand">
+				<span class="user-zone-header__eyebrow">AsoColDerma</span>
+				<h1 class="user-zone-header__title">Mis solicitudes</h1>
+				<p class="user-zone-header__description">
+					Consulta el avance de tus solicitudes de ingreso y continúa el proceso cuando sea necesario.
+				</p>
+			</div>
+
+			<div class="user-zone-header__user">
+				<span class="user-zone-header__label">Aspirante</span>
+				<strong class="user-zone-header__name">{{ user_name }}</strong>
+			</div>
+		</div>
+	</header>
+
+	<div class="user-zone-card user-zone-card--requests">
+		<div class="user-zone-card__header">
+			<div>
+				<span class="user-zone-card__eyebrow">Proceso de ingreso</span>
+				<h2 class="user-zone-card__title">Solicitudes registradas</h2>
+			</div>
+
+			{% if primary_action %}
+				<a href="{{ primary_action.url }}" class="user-zone-button user-zone-button--primary">
+					{{ primary_action.label }}
+				</a>
+			{% endif %}
+		</div>
+
+		{% if has_active %}
+			<div class="user-zone-alert user-zone-alert--info">
+				Tienes una solicitud activa en curso. No puedes crear otra hasta que finalice.
+			</div>
+		{% endif %}
+
+		<div class="user-zone-table-wrapper">
+			<table class="user-zone-table">
+				<thead>
+					<tr>
+						<th>Solicitud</th>
+						<th>Estado</th>
+						<th>Fecha de creación</th>
+						<th class="user-zone-table__actions-head">Acciones</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					{% if requests %}
+						{% for item in requests %}
+							<tr>
+								<td data-label="Solicitud">
+									<a href="{{ item.detail_url }}" class="user-zone-table__code">
+										{{ item.code }}
+									</a>
+								</td>
+
+								<td data-label="Estado">
+									<span class="user-zone-status user-zone-status--{{ item.state|clean_class }}">
+										{{ item.state }}
+									</span>
+								</td>
+
+								<td data-label="Fecha de creación">
+									{{ item.created }}
+								</td>
+
+								<td data-label="Acciones" class="user-zone-table__actions">
+									<a href="{{ item.detail_url }}" class="user-zone-button user-zone-button--secondary">
+										Ver detalle
+									</a>
+
+									{% for action in item.actions %}
+										<a href="{{ action.url }}" class="user-zone-button user-zone-button--{{ action.modifier }}">
+											{{ action.label }}
+										</a>
+									{% endfor %}
+								</td>
+							</tr>
+						{% endfor %}
+					{% else %}
+						<tr>
+							<td colspan="4">
+								<div class="user-zone-empty">
+									<h3 class="user-zone-empty__title">Aún no has creado solicitudes</h3>
+									<p class="user-zone-empty__text">
+										Cuando inicies tu proceso de ingreso, aquí podrás consultar el estado de tu solicitud.
+									</p>
+
+									{% if primary_action %}
+										<a href="{{ primary_action.url }}" class="user-zone-button user-zone-button--primary">
+											{{ primary_action.label }}
+										</a>
+									{% endif %}
+								</div>
+							</td>
+						</tr>
+					{% endif %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</section>

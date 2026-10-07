@@ -1,0 +1,8 @@
+name: 'Custom Login 2FA'
+type: module
+description: 'Provides reusable email-based two-factor authentication for configurable Drupal roles.'
+package: Custom
+core_version_requirement: ^10 || ^11
+dependencies:
+  - drupal:user
+  - enterprise_integrations:enterprise_integrations

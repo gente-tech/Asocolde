@@ -13015,11 +13015,12 @@ section.solicitud-ingreso {
 
 	details > .details-wrapper > div { flex: 1 50%; }
 	form .form-actions {
-    justify-content: center;
-    flex-direction: column;
-    gap: 10px;
-  }
+		justify-content: center;
+    	flex-direction: column;
+    	gap: 10px;
+	}
 	form .form-actions input {  margin: 0 !important; }
+	
 }
 
 /**** FIN AJUSTES 04-03-2026 *****/

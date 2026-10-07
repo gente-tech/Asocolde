@@ -1,0 +1,80 @@
+enterprise_integrations.settings:
+  type: config_object
+  label: 'Enterprise Integrations settings'
+  mapping:
+    mandrill:
+      type: mapping
+      label: 'Mandrill settings'
+      mapping:
+        api_key:
+          type: string
+          label: 'API key'
+        message_groups_last_id:
+          type: integer
+          label: 'Last message group ID'
+        message_groups:
+          type: sequence
+          label: 'Message groups'
+          sequence:
+            type: mapping
+            label: 'Message group'
+            mapping:
+              key:
+                type: string
+                label: 'Key'
+              mandrill_template_slug:
+                type: string
+                label: 'Mandrill template slug'
+              subject:
+                type: string
+                label: 'Subject'
+              send_copy:
+                type: boolean
+                label: 'Send copy'
+              copy_template_slug:
+                type: string
+                label: 'Copy template slug'
+              copy_subject:
+                type: string
+                label: 'Copy subject'
+              copy_emails:
+                type: sequence
+                label: 'Copy emails'
+                sequence:
+                  type: string
+                  label: 'Copy email'
+    twilio:
+      type: mapping
+      label: 'Twilio settings'
+      mapping:
+        account_sid:
+          type: string
+          label: 'Account SID'
+        auth_token:
+          type: string
+          label: 'Auth token'
+        api_base_url:
+          type: string
+          label: 'API base URL'
+        whatsapp_from:
+          type: string
+          label: 'WhatsApp from'
+        templates_last_id:
+          type: integer
+          label: 'Last template ID'
+        templates:
+          type: sequence
+          label: 'Templates'
+          sequence:
+            type: mapping
+            label: 'Template'
+            mapping:
+              key:
+                type: string
+                label: 'Key'
+              label:
+                type: string
+                label: 'Label'
+              content_sid:
+                type: string
+                label: 'Content SID'

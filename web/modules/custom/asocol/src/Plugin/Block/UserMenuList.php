@@ -14,6 +14,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 
 /**
  * Provides a 'UserMenuList' block.
@@ -23,7 +24,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   admin_label = @Translation("User Menu List block"),
  * )
  */
-class UserMenuList extends BlockBase implements ContainerFactoryPluginInterface {
+class UserMenuList extends BlockBase implements ContainerFactoryPluginInterface
+{
 
   /**
    * Stores an entity type manager instance.
@@ -102,7 +104,8 @@ class UserMenuList extends BlockBase implements ContainerFactoryPluginInterface 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition)
+  {
     return new static(
       $configuration,
       $plugin_id,
@@ -116,7 +119,8 @@ class UserMenuList extends BlockBase implements ContainerFactoryPluginInterface 
   /**
    * {@inheritdoc}
    */
-  public function build() {
+  public function build()
+  {
     $build = [
       '#cache' => [
         'context' => $this->getCacheContexts(),
@@ -126,36 +130,84 @@ class UserMenuList extends BlockBase implements ContainerFactoryPluginInterface 
       '#theme' => 'user_menu_list',
     ];
 
-    if($this->currentUser != NULL) {
-      if($this->currentUser->hasField('user_picture')  &&  !$this->currentUser->user_picture->isEmpty()) {
+    if ($this->currentUser != NULL) {
+      if ($this->currentUser->hasField('user_picture')  &&  !$this->currentUser->user_picture->isEmpty()) {
         $image_uri = $this->currentUser->user_picture->entity->getFileUri();
       }
 
-      if(empty($image_uri)) {
+      if (empty($image_uri)) {
         /* var $field_config FieldConfig */
         $field_config = FieldConfig::loadByName('user', 'user', 'user_picture');
         $file_uuid = $field_config->getSetting('default_image')['uuid'];
         if ($file_uuid) {
           $file = \Drupal::service('entity.repository')->loadEntityByUuid('file', $file_uuid);
-          if($file instanceof File) {
+          if ($file instanceof File) {
             $image_uri = $file->getFileUri();
           }
         }
       }
 
+      $profiles = $this->entityTypeManager
+        ->getStorage('profile')
+        ->loadByProperties([
+          'uid' => $this->currentUser->id(),
+          'type' => 'aspirante',
+        ]);
+
+      $has_aspirante_profile = !empty($profiles);
+
+      \Drupal::logger('debug')->notice('Profiles count: @count', [
+        '@count' => count($profiles),
+      ]);
+
       $fullname = NULL;
-      if(!$this->currentUser->field_first_name->isEmpty()) {
+      if (!$this->currentUser->field_first_name->isEmpty()) {
         $fullname = $this->currentUser->field_first_name->getString();
       }
 
       $prefix = 'Dr.';
-      if(!$this->currentUser->field_sex->isEmpty()  &&  $this->currentUser->field_sex->value == '1') {
+      if (!$this->currentUser->field_sex->isEmpty()  &&  $this->currentUser->field_sex->value == '1') {
         $prefix = 'Dra.';
       }
 
-      $build['#fullname'] = "$prefix $fullname";
+      if ($this->currentUser->hasRole('aspirante') && $has_aspirante_profile) {
+        \Drupal::logger('debug')->notice('Es perfil aspirante');
 
-      if(!empty($image_uri)) {
+        $profile = reset($profiles);
+
+        $nombres = '';
+        $apellidos = '';
+
+        if ($profile->hasField('field_nombre') && !$profile->get('field_nombre')->isEmpty()) {
+          $nombres = $profile->get('field_nombre')->value;
+        }
+
+        if ($profile->hasField('field_apellidos') && !$profile->get('field_apellidos')->isEmpty()) {
+          $apellidos = $profile->get('field_apellidos')->value;
+        }
+
+        \Drupal::logger('asocolderma_inscription')->info(
+          'Los datos del usuario son: @nombres y @apellidos',
+          [
+            '@nombres' => $nombres,
+            '@apellidos' => $apellidos,
+          ]
+        );
+
+        $nombre_completo = trim($nombres . ' ' . $apellidos);
+
+        if (!empty($nombre_completo)) {
+          $fullname = $nombre_completo;
+          $prefix = ''; // Aspirante no lleva Dr/Dra
+        } else {
+          $fullname = 'Aspirante';
+          $prefix = '';
+        }
+      }
+
+      $build['#fullname'] = trim($prefix . ' ' . $fullname);
+
+      if (!empty($image_uri)) {
         $build['#picture'] = [
           '#theme' => 'image_style',
           '#style_name' => 'thumbnail',
@@ -163,9 +215,34 @@ class UserMenuList extends BlockBase implements ContainerFactoryPluginInterface 
         ];
       }
 
-      $build['#menu'] = $this->getMenuItems('account');
+      $menu_name = 'account';
 
+      if (
+        $this->currentUser->hasRole('aspirante') &&
+        $has_aspirante_profile
+      ) {
+        $menu_name = 'account-aspirante';
+      }
+
+      $build['#menu'] = $this->getMenuItems($menu_name);
+
+      \Drupal::logger('asocolderma_inscription')->info(
+        'El menú que debe verse es: @menu_name',
+        [
+          '@menu_name' => $menu_name,
+        ]
+      );
     }
+
+    $cache = new CacheableMetadata();
+    $cache->addCacheContexts(['user']);
+    $cache->addCacheTags(['user:' . $this->currentUser->id()]);
+
+    if ($has_aspirante_profile) {
+      $cache->addCacheTags($profile->getCacheTags());
+    }
+
+    $cache->applyTo($build);
 
     return $build;
   }
@@ -173,25 +250,27 @@ class UserMenuList extends BlockBase implements ContainerFactoryPluginInterface 
   /**
    * {@inheritdoc}
    */
-  public function getCacheTags() {
+  public function getCacheTags()
+  {
     $uid = (NULL != $this->currentUser) ? $this->currentUser->id() : FALSE;
     if ($uid) {
       $tags = [
         'user:' . $uid,
       ];
       return Cache::mergeTags(parent::getCacheTags(), $tags);
-    }
-    else {
+    } else {
       // Return default tags instead.
       return parent::getCacheTags();
     }
   }
 
-  public function getCacheContexts() {
+  public function getCacheContexts()
+  {
     return Cache::mergeContexts(parent::getCacheContexts(), ['user']);
   }
 
-  protected function getMenuItems($menu_name) {
+  protected function getMenuItems($menu_name)
+  {
     $menu_tree = \Drupal::menuTree();
     $parameters = $menu_tree->getCurrentRouteMenuTreeParameters($menu_name);
     $parameters->setMinDepth(0);

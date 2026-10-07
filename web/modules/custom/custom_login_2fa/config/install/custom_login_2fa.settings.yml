@@ -1,0 +1,10 @@
+enabled: true
+protected_roles: {  }
+code_ttl: 20
+code_length: 5
+max_attempts: 3
+mandrill_message_key: ''
+default_redirect_path: '/'
+role_redirect_paths: {  }
+resend_cooldown: 20
+max_resends: 3

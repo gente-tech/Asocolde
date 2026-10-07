@@ -1,0 +1,113 @@
+/*
+ * Header exclusivo para usuarios aspirante.
+ * Solo reemplaza el color institucional #008b8f por violeta.
+ * No modifica el fondo general del header.
+ */
+
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .dropdown-menu .nav:before {
+  border-color: transparent transparent #2f2f2f transparent !important;
+}
+
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .dropdown-menu .nav-item:last-child .nav-link,
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .dropdown-menu .nav-item .nav-link__accent {
+  background: #2f2f2f !important;
+  background-color: #2f2f2f !important;
+  color: #ffffff !important;
+}
+
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .dropdown-menu .nav-item:hover {
+  border-bottom-color: #2f2f2f !important;
+}
+
+/* Botón principal del usuario logueado. */
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list > .dropdown-toggle,
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list > a,
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .user-menu-toggle {
+  background: #2f2f2f !important;
+  background-color: #2f2f2f !important;
+  color: #ffffff !important;
+}
+
+/* Iconos superiores: carrito, configuración, campana, etc. */
+body.asocolderma-role-aspirante .top-menu .region-header .menu--user-tools .nav-item .nav-link,
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-notifications .btn-notifications {
+  color: #2f2f2f !important;
+}
+
+/* Iconos generados por pseudo-elementos del theme. */
+body.asocolderma-role-aspirante .top-menu .region-header .menu--user-tools .nav-item .nav-link:before,
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-notifications .btn-notifications:before {
+  color: #2f2f2f !important;
+}
+
+/* Triángulo del dropdown de notificaciones, si aparece. */
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-notifications .dropdown-menu:before {
+  border-color: transparent transparent #2f2f2f transparent !important;
+}
+
+/*
+ * Botón principal del menú de usuario aspirante.
+ * Reemplaza el verde #008b8f por violeta.
+ */
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user,
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user.dropdown-toggle,
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user.dropdown-toggle.show {
+  background: #2f2f2f !important;
+  background-color: #2f2f2f !important;
+  color: #ffffff !important;
+  border-color: #2f2f2f !important;
+}
+
+/*
+ * Flecha blanca del dropdown.
+ */
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user::after,
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user.dropdown-toggle::after {
+  color: #ffffff !important;
+  border-top-color: #ffffff !important;
+}
+
+/*
+ * Estado hover/focus/active del botón.
+ */
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user:hover,
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user:focus,
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user:active,
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .btn-user.show {
+  background: #2f2f2f !important;
+  background-color: #2f2f2f !important;
+  color: #ffffff !important;
+  border-color: #2f2f2f !important;
+  box-shadow: none !important;
+}
+
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .dropdown-menu::before,
+body.asocolderma-role-aspirante .top-menu .region-header .block-user-menu-list .dropdown-menu .nav::before {
+  border-color: transparent transparent #2f2f2f transparent !important;
+}
+
+/*
+ * Aspirante:
+ * Oculta iconos superiores del header y deja visible solo el menú visual del usuario.
+ */
+
+body.asocolderma-role-aspirante #block-menu-usertools,
+body.asocolderma-role-aspirante #block-user-notifications {
+  display: none !important;
+}
+
+/*
+ * Conserva visible el menú principal del usuario aspirante.
+ */
+body.asocolderma-role-aspirante #block-user-menu-list {
+  display: block !important;
+}
+
+
+/**
+ * Header scroll - ocultar búsqueda y título Dermatologos para aspirante.
+ */
+body.user-role-aspirante #block-asocol-search-scroll,
+body.user-role-aspirante #block-asocoltitle {
+  display: none !important;
+}

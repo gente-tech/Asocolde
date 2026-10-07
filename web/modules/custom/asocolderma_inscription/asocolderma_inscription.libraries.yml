@@ -1,0 +1,73 @@
+solicitud_state_confirm:
+  version: 1.x
+  js:
+    assets/js/solicitud-state-confirm.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/once
+    - core/drupal.dialog
+    - core/drupal.dialog.ajax
+
+intl_phone_field:
+  version: 1.x
+  css:
+    theme:
+      https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css:
+        type: external
+        minified: true
+      assets/css/intl-phone-field.css: {}
+  js:
+    https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js:
+      type: external
+      minified: true
+    assets/js/intl-phone-field.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+
+user_zone:
+  version: 1.x
+  css:
+    theme:
+      assets/css/user-zone.css: {}
+  js:
+    assets/js/user-zone.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+    - core/drupalSettings
+
+navbar_margin_top:
+  version: 1.x
+  css:
+    theme:
+      assets/css/asocolderma_inscription_front.css: {}
+
+aspirante_header:
+  version: 1.x
+  css:
+    theme:
+      assets/css/aspirante-header.css: { weight: 200 }
+
+aspirante_login_modal:
+  version: 1.x
+  css:
+    theme:
+      assets/css/aspirante-login-modal.css: { weight: 250 }
+
+admin_zone:
+  version: 1.x
+  css:
+    theme:
+      assets/css/admin-zone.css: {}
+  js:
+    assets/js/user-zone.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+
+aspirante_register:
+  css:
+    theme:
+      css/aspirante-register.css: {}

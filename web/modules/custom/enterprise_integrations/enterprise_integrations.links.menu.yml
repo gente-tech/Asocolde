@@ -1,0 +1,48 @@
+enterprise_integrations.asocolderma:
+  title: 'Asocolderma'
+  description: 'Configuraciones de Asocolderma'
+  route_name: enterprise_integrations.asocolderma
+  parent: system.admin_config
+  weight: 100
+
+enterprise_integrations.integraciones:
+  title: 'Integraciones'
+  description: 'Integraciones externas'
+  route_name: enterprise_integrations.integraciones
+  parent: enterprise_integrations.asocolderma
+  weight: 10
+
+enterprise_integrations.zohosign_settings:
+  title: 'SignDoc'
+  description: 'Configuración de Zoho Sign'
+  route_name: enterprise_integrations.zohosign_settings
+  parent: enterprise_integrations.integraciones
+  weight: 10
+
+enterprise_integrations.mailchimp_settings:
+  title: 'Mandrill configuraciones'
+  description: 'Configuración Mailchimp Transactional (Mandrill) integration.'
+  route_name: enterprise_integrations.mailchimp_settings
+  parent: enterprise_integrations.integraciones
+  weight: 100
+
+enterprise_integrations.hubspot_settings:
+  title: 'HubSpot Integration'
+  description: 'HubSpot API configuration'
+  route_name: enterprise_integrations.hubspot_settings
+  parent: enterprise_integrations.integraciones
+  weight: 200
+
+enterprise_integrations.twilio:
+  title: 'Twilio'
+  description: 'Configuración de integración con Twilio'
+  route_name: enterprise_integrations.twilio
+  parent: enterprise_integrations.integraciones
+  weight: 300
+
+enterprise_integrations.twilio_templates_settings:
+  title: 'Templates'
+  description: 'Configuración de plantillas de Twilio'
+  route_name: enterprise_integrations.twilio_templates_settings
+  parent: enterprise_integrations.twilio
+  weight: 10

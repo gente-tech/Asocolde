@@ -1,0 +1,1627 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for AsoColDerma Data Core.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function asocolderma_data_core_schema()
+{
+	$record_status_fields = [
+		'is_active' => [
+			'description' => 'Indicates whether the record is active or disabled.',
+			'type' => 'int',
+			'size' => 'tiny',
+			'unsigned' => TRUE,
+			'not null' => TRUE,
+			'default' => 1,
+		],
+		'status_changed' => [
+			'description' => 'Unix timestamp when the active status was last changed.',
+			'type' => 'int',
+			'unsigned' => TRUE,
+			'not null' => FALSE,
+		],
+		'status_changed_by' => [
+			'description' => 'User ID who last changed the active status.',
+			'type' => 'int',
+			'unsigned' => TRUE,
+			'not null' => FALSE,
+		],
+		'status_change_reason' => [
+			'description' => 'Reason or context of the latest active status change.',
+			'type' => 'text',
+			'size' => 'normal',
+			'not null' => FALSE,
+		],
+	];
+
+	$schema['asocolderma_import_batch'] = [
+		'description' => 'Stores metadata for massive CSV import batches.',
+		'fields' => [
+			'id' => [
+				'description' => 'Primary key of the import batch.',
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'import_type' => [
+				'description' => 'Type of data being imported.',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => TRUE,
+			],
+			'filename' => [
+				'description' => 'Original uploaded filename.',
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'status' => [
+				'description' => 'Current status of the import batch.',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => TRUE,
+				'default' => 'uploaded',
+			],
+			'total_records' => [
+				'description' => 'Total records detected in the file.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'valid_records' => [
+				'description' => 'Total valid records after validation.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'error_records' => [
+				'description' => 'Total records with validation errors.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'created_by' => [
+				'description' => 'User ID who uploaded the file.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'created' => [
+				'description' => 'Unix timestamp when the batch was created.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'changed' => [
+				'description' => 'Unix timestamp when the batch was last updated.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'import_type' => ['import_type'],
+			'status' => ['status'],
+			'created_by' => ['created_by'],
+			'created' => ['created'],
+		],
+	];
+
+	$schema['asocolderma_audit_event'] = [
+		'description' => 'Stores global audit events for AsoColDerma data operations.',
+		'fields' => [
+			'id' => [
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'event_type' => [
+				'type' => 'varchar',
+				'length' => 50,
+				'not null' => TRUE,
+			],
+			'source' => [
+				'type' => 'varchar',
+				'length' => 50,
+				'not null' => TRUE,
+			],
+			'target_table' => [
+				'type' => 'varchar',
+				'length' => 100,
+				'not null' => FALSE,
+			],
+			'target_record_id' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => FALSE,
+			],
+			'target_record_label' => [
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'user_id' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'user_name' => [
+				'type' => 'varchar',
+				'length' => 150,
+				'not null' => FALSE,
+			],
+			'user_email' => [
+				'type' => 'varchar',
+				'length' => 150,
+				'not null' => FALSE,
+			],
+			'user_roles' => [
+				'type' => 'text',
+				'size' => 'normal',
+				'not null' => FALSE,
+			],
+			'user_permissions_snapshot' => [
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+			'ip_address' => [
+				'type' => 'varchar',
+				'length' => 45,
+				'not null' => FALSE,
+			],
+			'user_agent' => [
+				'type' => 'text',
+				'size' => 'normal',
+				'not null' => FALSE,
+			],
+			'request_uri' => [
+				'type' => 'varchar',
+				'length' => 500,
+				'not null' => FALSE,
+			],
+			'created' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'context' => [
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'event_type' => ['event_type'],
+			'source' => ['source'],
+			'target_table' => ['target_table'],
+			'target_record_id' => ['target_record_id'],
+			'user_id' => ['user_id'],
+			'created' => ['created'],
+		],
+	];
+
+	$schema['asocolderma_audit_change'] = [
+		'description' => 'Stores field-level changes related to audit events.',
+		'fields' => [
+			'id' => [
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'audit_event_id' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'field_name' => [
+				'type' => 'varchar',
+				'length' => 150,
+				'not null' => TRUE,
+			],
+			'field_label' => [
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'change_type' => [
+				'type' => 'varchar',
+				'length' => 30,
+				'not null' => TRUE,
+			],
+			'old_value' => [
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+			'new_value' => [
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+			'created' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'audit_event_id' => ['audit_event_id'],
+			'field_name' => ['field_name'],
+			'change_type' => ['change_type'],
+			'created' => ['created'],
+		],
+	];
+
+	$schema['asocolderma_audit_query'] = [
+		'description' => 'Stores query, search and filter audit details.',
+		'fields' => [
+			'id' => [
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'audit_event_id' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'target_table' => [
+				'type' => 'varchar',
+				'length' => 100,
+				'not null' => TRUE,
+			],
+			'query_type' => [
+				'type' => 'varchar',
+				'length' => 30,
+				'not null' => TRUE,
+			],
+			'search_text' => [
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'filters_payload' => [
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+			'columns_payload' => [
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+			'result_count' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'created' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'audit_event_id' => ['audit_event_id'],
+			'target_table' => ['target_table'],
+			'query_type' => ['query_type'],
+			'created' => ['created'],
+		],
+	];
+
+	$schema['asocolderma_audit_import'] = [
+		'description' => 'Stores import audit details.',
+		'fields' => [
+			'id' => [
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'audit_event_id' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'batch_id' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => FALSE,
+			],
+			'target_table' => [
+				'type' => 'varchar',
+				'length' => 100,
+				'not null' => TRUE,
+			],
+			'filename' => [
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'file_uri' => [
+				'type' => 'varchar',
+				'length' => 500,
+				'not null' => FALSE,
+			],
+			'total_rows' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'valid_rows' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'error_rows' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'created' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'audit_event_id' => ['audit_event_id'],
+			'batch_id' => ['batch_id'],
+			'target_table' => ['target_table'],
+			'created' => ['created'],
+		],
+	];
+
+	$schema['asocolderma_audit_export'] = [
+		'description' => 'Stores export audit details.',
+		'fields' => [
+			'id' => [
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'audit_event_id' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'target_table' => [
+				'type' => 'varchar',
+				'length' => 100,
+				'not null' => TRUE,
+			],
+			'export_format' => [
+				'type' => 'varchar',
+				'length' => 20,
+				'not null' => TRUE,
+			],
+			'file_name' => [
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'file_uri' => [
+				'type' => 'varchar',
+				'length' => 500,
+				'not null' => FALSE,
+			],
+			'filters_payload' => [
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+			'columns_payload' => [
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+			'result_count' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'created' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'audit_event_id' => ['audit_event_id'],
+			'target_table' => ['target_table'],
+			'export_format' => ['export_format'],
+			'created' => ['created'],
+		],
+	];
+
+	$schema['asocolderma_audit_record_link'] = [
+		'description' => 'Links audit events with one or many affected records.',
+		'fields' => [
+			'id' => [
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'audit_event_id' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'target_table' => [
+				'type' => 'varchar',
+				'length' => 100,
+				'not null' => TRUE,
+			],
+			'target_record_id' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'relation_type' => [
+				'type' => 'varchar',
+				'length' => 30,
+				'not null' => TRUE,
+			],
+			'created' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'audit_event_id' => ['audit_event_id'],
+			'target_table' => ['target_table'],
+			'target_record_id' => ['target_record_id'],
+			'relation_type' => ['relation_type'],
+			'created' => ['created'],
+		],
+	];
+
+	$schema['asocolderma_import_patrocinadores'] = [
+		'description' => 'Staging table for patrocinadores CSV imports.',
+		'fields' => [
+			'id' => [
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'batch_id' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'row_number' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+		] + $record_status_fields + [
+			'id_asocolderma' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'estado_patrocinador' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'tipo_patrocinador' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'anios_vinculacion' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'razon_social' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'nombre_comercial' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'nit' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'pais' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'ciudad_sede_principal' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'direccion_fiscal' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'sitio_web_corporativo' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'nombre_contacto_principal' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'cargo_contacto' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'correo_corporativo' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'telefono_corporativo' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'celular_contacto' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'correo_contacto_2' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'nombre_contacto_2' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'cargo_contacto_2' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'estado_pago' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'valor_comprometido_evento_1' => ['type' => 'numeric', 'precision' => 14, 'scale' => 2, 'not null' => FALSE],
+			'valor_pagado_evento_1' => ['type' => 'numeric', 'precision' => 14, 'scale' => 2, 'not null' => FALSE],
+			'valor_comprometido_evento_2' => ['type' => 'numeric', 'precision' => 14, 'scale' => 2, 'not null' => FALSE],
+			'valor_pagado_evento_2' => ['type' => 'numeric', 'precision' => 14, 'scale' => 2, 'not null' => FALSE],
+			'valor_comprometido_evento_3' => ['type' => 'numeric', 'precision' => 14, 'scale' => 2, 'not null' => FALSE],
+			'valor_pagado_evento_3' => ['type' => 'numeric', 'precision' => 14, 'scale' => 2, 'not null' => FALSE],
+			'metodo_pago' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'iva_aplicable' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'datos_bancarios' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'carta_compromiso_evento_1' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'carta_compromiso_evento_2' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'carta_compromiso_evento_3' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'contrato_evento_1' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'contrato_evento_2' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'contrato_evento_3' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_rut' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_camara_comercio' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_cedula_representante' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_certificacion_bancaria' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'otros_documentos_adjuntos' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'observaciones_generales' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'eventos_vinculados' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'beneficios_pactados' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'contacto_comercial_asocolderma' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'raw_payload' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'validation_status' => [
+				'type' => 'varchar',
+				'length' => 20,
+				'not null' => TRUE,
+				'default' => 'pending',
+			],
+			'validation_errors' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'created' => [
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'batch_id' => ['batch_id'],
+			'id_asocolderma' => ['id_asocolderma'],
+			'nit' => ['nit'],
+			'correo_corporativo' => ['correo_corporativo'],
+			'validation_status' => ['validation_status'],
+			'is_active' => ['is_active'],
+		],
+	];
+
+	$schema['asocolderma_import_asociados'] = [
+		'description' => 'Staging table for asociados imports.',
+		'fields' => [
+			'id' => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
+			'batch_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+			'row_number' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+		] + $record_status_fields + [
+			'id_asocolderma' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'estado_afiliacion' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'tipo_asociado' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'fecha_ingreso_asocolderma' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'edad' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'miembro_numero_1' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'miembro_numero_2' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'capitulo_regional' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'primer_nombre' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'segundo_nombre' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'primer_apellido' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'segundo_apellido' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'fecha_nacimiento' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'estado_civil' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'sexo' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'tipo_documento' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'numero_documento' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'pais_nacimiento' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'direccion_principal' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'correspondencia_en' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'correo_principal' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'telefono_celular' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'registro_medico_tarjeta' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'pais_ejercicio' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'ciudad_ejercicio' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'departamento' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'facultad_pregrado' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'pais_pregrado' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'titulo_universitario' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'universidad_residencia' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'pais_residencia' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'especialidad' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'subespecialidad' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'pertenece_filial' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'grupos_estudio' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'recertificado_camec' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'fecha_inicio_recertificacion' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'fecha_fin_recertificacion' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'mostrar_perfil_publico' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'correo_publico' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'sitio_web_publico' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'horario_atencion' => ['type' => 'text', 'size' => 'normal', 'not null' => FALSE],
+			'telefono_publico_1' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'telefono_publico_2' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'perfil_profesional' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'direccion_consultorio' => ['type' => 'text', 'size' => 'normal', 'not null' => FALSE],
+			'imagenes_consultorio' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'palabras_clave_tags' => ['type' => 'text', 'size' => 'normal', 'not null' => FALSE],
+			'capilaroscopia' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'cicatrices_acne' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'dermatologia_general' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'dermatologia_oncologica' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'dermatologia_pediatrica' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'dermatopatologia' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'fototerapia' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'laser' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'microdermoabrasion' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'peeling' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'inyectables' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'trasplante_pelo' => ['type' => 'varchar', 'length' => 10, 'not null' => FALSE],
+			'otros_servicios' => ['type' => 'text', 'size' => 'normal', 'not null' => FALSE],
+			'estado_cuota' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'valor_cuota_vigente' => ['type' => 'numeric', 'precision' => 14, 'scale' => 2, 'not null' => FALSE],
+			'fecha_ultimo_pago' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'comprobante_pago' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'carta_presentacion_1' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'carta_presentacion_2' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_rut' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_cedula_id' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'carta_solicitud_ingreso' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'hoja_vida' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_diploma_medico' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_diploma_dermatologo' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'registro_rethus' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'carta_autorizacion_verificacion' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'certificacion_congreso_publicacion' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'otros_documentos_adjuntos' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+
+			'raw_payload' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'validation_status' => ['type' => 'varchar', 'length' => 20, 'not null' => TRUE, 'default' => 'pending'],
+			'validation_errors' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'batch_id' => ['batch_id'],
+			'id_asocolderma' => ['id_asocolderma'],
+			'numero_documento' => ['numero_documento'],
+			'correo_principal' => ['correo_principal'],
+			'validation_status' => ['validation_status'],
+			'is_active' => ['is_active'],
+		],
+	];
+
+	$schema['asocolderma_import_residentes'] = [
+		'description' => 'Staging table for residentes imports.',
+		'fields' => [
+			'id' => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
+			'batch_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+			'row_number' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+		] + $record_status_fields + [
+			'id_asocolderma' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'estado_residente' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'primer_nombre' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'segundo_nombre' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'primer_apellido' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'segundo_apellido' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'fecha_nacimiento' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'estado_civil' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'sexo' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'tipo_documento' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'numero_documento' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'pais' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'ciudad' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'departamento' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'direccion_fisica_institucional' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'correo_principal' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'telefono_celular' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'registro_medico_tarjeta' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'universidad_residencia' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'programa_especialidad' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'anio_residencia' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'fecha_estimada_finalizacion' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'aspira_asociarse' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'eventos_participados' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'ponencia_presentacion' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'observaciones' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'copia_cedula_id' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'carta_aval_universidad' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'otros_documentos_adjuntos' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+
+			'raw_payload' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'validation_status' => ['type' => 'varchar', 'length' => 20, 'not null' => TRUE, 'default' => 'pending'],
+			'validation_errors' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'batch_id' => ['batch_id'],
+			'id_asocolderma' => ['id_asocolderma'],
+			'numero_documento' => ['numero_documento'],
+			'correo_principal' => ['correo_principal'],
+			'validation_status' => ['validation_status'],
+			'is_active' => ['is_active'],
+		],
+	];
+
+	$schema['asocolderma_import_proveedores'] = [
+		'description' => 'Staging table for proveedores imports.',
+		'fields' => [
+			'id' => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
+			'batch_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+			'row_number' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+		] + $record_status_fields + [
+			'id_asocolderma' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'estado_proveedor' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'tipo_proveedor' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'anios_vinculacion_desde' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'razon_social' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'nombre_comercial' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'nit' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'pais' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'ciudad_sede_principal' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'direccion_fiscal' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'sitio_web_corporativo' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'nombre_contacto_principal' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'cargo_contacto' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'correo_corporativo' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'telefono_corporativo' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'celular_contacto' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'descripcion_servicio_prestado' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'eventos_proyectos_vinculados' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'responsable_asocolderma_gestiona' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'observaciones_generales' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'estado_pago' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'valor_contrato_vigente' => ['type' => 'numeric', 'precision' => 14, 'scale' => 2, 'not null' => FALSE],
+			'valor_pagado' => ['type' => 'numeric', 'precision' => 14, 'scale' => 2, 'not null' => FALSE],
+			'metodo_pago' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'iva' => ['type' => 'varchar', 'length' => 20, 'not null' => FALSE],
+			'datos_bancarios' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'copia_contrato_vigente' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_rut' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_camara_comercio' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_cedula_representante' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_certificacion_bancaria' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'otros_documentos_adjuntos' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+
+			'raw_payload' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'validation_status' => ['type' => 'varchar', 'length' => 20, 'not null' => TRUE, 'default' => 'pending'],
+			'validation_errors' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'batch_id' => ['batch_id'],
+			'id_asocolderma' => ['id_asocolderma'],
+			'nit' => ['nit'],
+			'correo_corporativo' => ['correo_corporativo'],
+			'validation_status' => ['validation_status'],
+			'is_active' => ['is_active'],
+		],
+	];
+
+	$schema['asocolderma_import_empleados'] = [
+		'description' => 'Staging table for empleados imports.',
+		'fields' => [
+			'id' => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
+			'batch_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+			'row_number' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+		] + $record_status_fields + [
+			'id_asocolderma' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'estado_empleado' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'cargo' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'area_dependencia' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'tipo_contrato' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'fecha_ingreso' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'fecha_retiro' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+
+			'primer_nombre' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'segundo_nombre' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'primer_apellido' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'segundo_apellido' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'fecha_nacimiento' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'estado_civil' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'sexo' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'tipo_documento' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'numero_documento' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+
+			'pais' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'ciudad_residencia' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'departamento' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'direccion_fisica_personal' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'correo_personal' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'telefono_celular_personal' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'correo_corporativo' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+
+			'observaciones_administrativas' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'contacto_emergencia_nombre' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'contacto_emergencia_telefono' => ['type' => 'varchar', 'length' => 50, 'not null' => FALSE],
+			'contacto_emergencia_relacion' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+
+			'salario_mensual' => ['type' => 'numeric', 'precision' => 14, 'scale' => 2, 'not null' => FALSE],
+			'tipo_pago' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'eps' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'fondo_pensiones' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'arl' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'caja_compensacion' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+
+			'datos_bancarios_banco' => ['type' => 'varchar', 'length' => 150, 'not null' => FALSE],
+			'datos_bancarios_tipo_cuenta' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+			'datos_bancarios_numero_cuenta' => ['type' => 'varchar', 'length' => 100, 'not null' => FALSE],
+
+			'copia_contrato_vigente' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_rut' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_cedula' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_certificacion_bancaria' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'copia_hoja_vida' => ['type' => 'varchar', 'length' => 255, 'not null' => FALSE],
+			'otros_documentos_adjuntos' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+
+			'raw_payload' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'validation_status' => ['type' => 'varchar', 'length' => 20, 'not null' => TRUE, 'default' => 'pending'],
+			'validation_errors' => ['type' => 'text', 'size' => 'big', 'not null' => FALSE],
+			'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'batch_id' => ['batch_id'],
+			'id_asocolderma' => ['id_asocolderma'],
+			'numero_documento' => ['numero_documento'],
+			'correo_personal' => ['correo_personal'],
+			'correo_corporativo' => ['correo_corporativo'],
+			'validation_status' => ['validation_status'],
+			'is_active' => ['is_active'],
+		],
+	];
+
+	$schema['asocolderma_data_import_log'] = [
+		'description' => 'Stores master logs for data import processes.',
+		'fields' => [
+			'id' => [
+				'description' => 'Primary key of the import log.',
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'import_uuid' => [
+				'description' => 'Unique identifier of the import process.',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => TRUE,
+			],
+			'uid' => [
+				'description' => 'Drupal user ID who executed the import.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'username' => [
+				'description' => 'Username snapshot at the time of import.',
+				'type' => 'varchar',
+				'length' => 150,
+				'not null' => FALSE,
+			],
+			'target_label' => [
+				'description' => 'Human-readable destination label of the imported data.',
+				'type' => 'varchar',
+				'length' => 100,
+				'not null' => TRUE,
+			],
+			'original_filename' => [
+				'description' => 'Original uploaded filename.',
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'stored_filename' => [
+				'description' => 'Internal stored filename.',
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'file_uri' => [
+				'description' => 'Internal file URI where the imported file was stored.',
+				'type' => 'varchar',
+				'length' => 500,
+				'not null' => FALSE,
+			],
+			'file_count' => [
+				'description' => 'Number of files included in the import process.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 1,
+			],
+			'total_rows' => [
+				'description' => 'Total rows detected in the imported file.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'imported_rows' => [
+				'description' => 'Total rows imported successfully.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'failed_rows' => [
+				'description' => 'Total rows that failed during import.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'status' => [
+				'description' => 'General import process status.',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => TRUE,
+				'default' => 'pending',
+			],
+			'message' => [
+				'description' => 'General import result message.',
+				'type' => 'text',
+				'size' => 'normal',
+				'not null' => FALSE,
+			],
+			'ip' => [
+				'description' => 'IP address from which the import was executed.',
+				'type' => 'varchar',
+				'length' => 45,
+				'not null' => FALSE,
+			],
+			'user_agent' => [
+				'description' => 'Browser or client user agent used during import.',
+				'type' => 'text',
+				'size' => 'normal',
+				'not null' => FALSE,
+			],
+			'created' => [
+				'description' => 'Unix timestamp when the import process was created.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'finished' => [
+				'description' => 'Unix timestamp when the import process finished.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => FALSE,
+			],
+			'duration_seconds' => [
+				'description' => 'Total import duration in seconds.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => FALSE,
+			],
+		],
+		'primary key' => ['id'],
+		'unique keys' => [
+			'import_uuid' => ['import_uuid'],
+		],
+		'indexes' => [
+			'uid' => ['uid'],
+			'target_label' => ['target_label'],
+			'status' => ['status'],
+			'created' => ['created'],
+		],
+	];
+
+	$schema['asocolderma_data_import_log_item'] = [
+		'description' => 'Stores row-level details for data import processes.',
+		'fields' => [
+			'id' => [
+				'description' => 'Primary key of the import log item.',
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'import_uuid' => [
+				'description' => 'Unique identifier of the related import process.',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => TRUE,
+			],
+			'row_number' => [
+				'description' => 'Source row number from the imported file.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => FALSE,
+			],
+			'reference_label' => [
+				'description' => 'Main readable reference of the imported record.',
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'reference_document' => [
+				'description' => 'Document number, NIT or secondary identifier of the imported record.',
+				'type' => 'varchar',
+				'length' => 100,
+				'not null' => FALSE,
+			],
+			'target_record_id' => [
+				'description' => 'ID of the inserted or updated destination record.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => FALSE,
+			],
+			'operation' => [
+				'description' => 'Operation performed for the row: insert, update, skip or error.',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => TRUE,
+				'default' => 'insert',
+			],
+			'status' => [
+				'description' => 'Processing status of the row: success, failed, warning or skipped.',
+				'type' => 'varchar',
+				'length' => 32,
+				'not null' => TRUE,
+				'default' => 'success',
+			],
+			'message' => [
+				'description' => 'Specific result message for the processed row.',
+				'type' => 'text',
+				'size' => 'normal',
+				'not null' => FALSE,
+			],
+			'created' => [
+				'description' => 'Unix timestamp when the row log was created.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'import_uuid' => ['import_uuid'],
+			'reference_label' => ['reference_label'],
+			'reference_document' => ['reference_document'],
+			'target_record_id' => ['target_record_id'],
+			'operation' => ['operation'],
+			'status' => ['status'],
+			'created' => ['created'],
+		],
+	];
+
+	$schema['asocolderma_data_import_log_item_change'] = [
+		'description' => 'Stores field-level changes detected during import update operations.',
+		'fields' => [
+			'id' => [
+				'description' => 'Primary key of the import item change.',
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'import_uuid' => [
+				'description' => 'Unique identifier of the related import process.',
+				'type' => 'varchar',
+				'length' => 64,
+				'not null' => TRUE,
+			],
+			'import_log_item_id' => [
+				'description' => 'Related row-level import log item ID.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'target_record_id' => [
+				'description' => 'ID of the updated destination record.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => FALSE,
+			],
+			'field_name' => [
+				'description' => 'Machine name of the field or column that changed.',
+				'type' => 'varchar',
+				'length' => 128,
+				'not null' => TRUE,
+			],
+			'old_value' => [
+				'description' => 'Previous value before the import update.',
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+			'new_value' => [
+				'description' => 'New value received from the imported file.',
+				'type' => 'text',
+				'size' => 'big',
+				'not null' => FALSE,
+			],
+			'created' => [
+				'description' => 'Unix timestamp when the field-level change was created.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'import_uuid' => ['import_uuid'],
+			'import_log_item_id' => ['import_log_item_id'],
+			'target_record_id' => ['target_record_id'],
+			'field_name' => ['field_name'],
+			'created' => ['created'],
+		],
+	];
+
+	$schema['asocolderma_record_action_log'] = [
+		'description' => 'Stores activation, deactivation and definitive deletion logs for imported institutional records.',
+		'fields' => [
+			'id' => [
+				'description' => 'Primary key of the action log.',
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'action' => [
+				'description' => 'Action executed over the record: activate, deactivate or delete.',
+				'type' => 'varchar',
+				'length' => 30,
+				'not null' => TRUE,
+			],
+			'table_name' => [
+				'description' => 'Affected database table name.',
+				'type' => 'varchar',
+				'length' => 128,
+				'not null' => TRUE,
+			],
+			'record_id' => [
+				'description' => 'Affected record ID in the source table.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'identifier_type' => [
+				'description' => 'Identifier type used to recognize the affected record, for example nit or documento.',
+				'type' => 'varchar',
+				'length' => 50,
+				'not null' => FALSE,
+			],
+			'identifier_value' => [
+				'description' => 'Identifier value, for example NIT or document number.',
+				'type' => 'varchar',
+				'length' => 100,
+				'not null' => FALSE,
+			],
+			'record_label' => [
+				'description' => 'Human-readable name of the affected record.',
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'record_summary' => [
+				'description' => 'Prebuilt human-readable summary of the affected record.',
+				'type' => 'text',
+				'size' => 'normal',
+				'not null' => FALSE,
+			],
+			'uid' => [
+				'description' => 'Drupal user ID who executed the action.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'username' => [
+				'description' => 'Username snapshot at the time of the action.',
+				'type' => 'varchar',
+				'length' => 150,
+				'not null' => FALSE,
+			],
+			'ip_address' => [
+				'description' => 'IP address from which the action was executed.',
+				'type' => 'varchar',
+				'length' => 45,
+				'not null' => FALSE,
+			],
+			'request_uri' => [
+				'description' => 'Request URI from which the action was executed.',
+				'type' => 'varchar',
+				'length' => 500,
+				'not null' => FALSE,
+			],
+			'created' => [
+				'description' => 'Unix timestamp when the action log was created.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'notes' => [
+				'description' => 'Simple description of the action performed.',
+				'type' => 'text',
+				'size' => 'normal',
+				'not null' => FALSE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'action' => ['action'],
+			'table_name' => ['table_name'],
+			'record_id' => ['record_id'],
+			'identifier_value' => ['identifier_value'],
+			'uid' => ['uid'],
+			'created' => ['created'],
+		],
+	];
+
+	$schema['asocolderma_export_log'] = [
+		'description' => 'Stores export logs for AsoColDerma institutional data.',
+		'fields' => [
+			'id' => [
+				'description' => 'Primary key of the export log.',
+				'type' => 'serial',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'module_key' => [
+				'description' => 'Functional module exported, for example patrocinadores.',
+				'type' => 'varchar',
+				'length' => 50,
+				'not null' => TRUE,
+			],
+			'export_type' => [
+				'description' => 'Export format, for example excel.',
+				'type' => 'varchar',
+				'length' => 30,
+				'not null' => TRUE,
+			],
+			'export_scope' => [
+				'description' => 'Export scope: selected, filtered or all.',
+				'type' => 'varchar',
+				'length' => 30,
+				'not null' => TRUE,
+			],
+			'record_count' => [
+				'description' => 'Number of exported records.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+			],
+			'filters_applied' => [
+				'description' => 'Human-readable filters applied at export time.',
+				'type' => 'text',
+				'size' => 'normal',
+				'not null' => FALSE,
+			],
+			'export_filename' => [
+				'description' => 'Generated export file name.',
+				'type' => 'varchar',
+				'length' => 255,
+				'not null' => FALSE,
+			],
+			'uid' => [
+				'description' => 'Drupal user ID who executed the export.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'username' => [
+				'description' => 'Username snapshot at export time.',
+				'type' => 'varchar',
+				'length' => 150,
+				'not null' => FALSE,
+			],
+			'ip_address' => [
+				'description' => 'IP address from which the export was executed.',
+				'type' => 'varchar',
+				'length' => 45,
+				'not null' => FALSE,
+			],
+			'request_uri' => [
+				'description' => 'Request URI from which the export was executed.',
+				'type' => 'varchar',
+				'length' => 500,
+				'not null' => FALSE,
+			],
+			'created' => [
+				'description' => 'Unix timestamp when the export log was created.',
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+			],
+			'notes' => [
+				'description' => 'Simple description of the export performed.',
+				'type' => 'text',
+				'size' => 'normal',
+				'not null' => FALSE,
+			],
+		],
+		'primary key' => ['id'],
+		'indexes' => [
+			'module_key' => ['module_key'],
+			'export_type' => ['export_type'],
+			'export_scope' => ['export_scope'],
+			'uid' => ['uid'],
+			'created' => ['created'],
+		],
+	];
+
+	return $schema;
+}
+
+/**
+ * Create import batch table for CSV processing.
+ */
+function asocolderma_data_core_update_10001()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_import_batch')) {
+		$table = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_import_batch', $table['asocolderma_import_batch']);
+	}
+}
+
+/**
+ * Create audit event table.
+ */
+function asocolderma_data_core_update_10002()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_audit_event')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_audit_event', $tables['asocolderma_audit_event']);
+	}
+}
+
+/**
+ * Create audit change table.
+ */
+function asocolderma_data_core_update_10003()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_audit_change')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_audit_change', $tables['asocolderma_audit_change']);
+	}
+}
+
+/**
+ * Create audit query table.
+ */
+function asocolderma_data_core_update_10004()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_audit_query')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_audit_query', $tables['asocolderma_audit_query']);
+	}
+}
+
+/**
+ * Create audit import table.
+ */
+function asocolderma_data_core_update_10005()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_audit_import')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_audit_import', $tables['asocolderma_audit_import']);
+	}
+}
+
+/**
+ * Create audit export table.
+ */
+function asocolderma_data_core_update_10006()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_audit_export')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_audit_export', $tables['asocolderma_audit_export']);
+	}
+}
+
+/**
+ * Create audit record link table.
+ */
+function asocolderma_data_core_update_10007()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_audit_record_link')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_audit_record_link', $tables['asocolderma_audit_record_link']);
+	}
+}
+
+/**
+ * Create patrocinadores import staging table.
+ */
+function asocolderma_data_core_update_10008()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_import_patrocinadores')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_import_patrocinadores', $tables['asocolderma_import_patrocinadores']);
+	}
+}
+
+/**
+ * Create asociados import staging table.
+ */
+function asocolderma_data_core_update_10009()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_import_asociados')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_import_asociados', $tables['asocolderma_import_asociados']);
+	}
+}
+
+/**
+ * Create residentes import staging table.
+ */
+function asocolderma_data_core_update_10010()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_import_residentes')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_import_residentes', $tables['asocolderma_import_residentes']);
+	}
+}
+
+/**
+ * Create proveedores import staging table.
+ */
+function asocolderma_data_core_update_10011()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_import_proveedores')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_import_proveedores', $tables['asocolderma_import_proveedores']);
+	}
+}
+
+/**
+ * Create empleados import staging table.
+ */
+function asocolderma_data_core_update_10012()
+{
+	$schema = \Drupal::database()->schema();
+
+	if (!$schema->tableExists('asocolderma_import_empleados')) {
+		$tables = asocolderma_data_core_schema();
+		$schema->createTable('asocolderma_import_empleados', $tables['asocolderma_import_empleados']);
+	}
+}
+
+/**
+ * Add active/disabled status fields to imported data tables.
+ */
+function asocolderma_data_core_update_10013()
+{
+	$schema = \Drupal::database()->schema();
+
+	$tables = [
+		'asocolderma_import_patrocinadores',
+		'asocolderma_import_asociados',
+		'asocolderma_import_residentes',
+		'asocolderma_import_proveedores',
+		'asocolderma_import_empleados',
+	];
+
+	$fields = [
+		'is_active' => [
+			'description' => 'Indicates whether the record is active or disabled.',
+			'type' => 'int',
+			'size' => 'tiny',
+			'unsigned' => TRUE,
+			'not null' => TRUE,
+			'default' => 1,
+		],
+		'status_changed' => [
+			'description' => 'Unix timestamp when the active status was last changed.',
+			'type' => 'int',
+			'unsigned' => TRUE,
+			'not null' => FALSE,
+		],
+		'status_changed_by' => [
+			'description' => 'User ID who last changed the active status.',
+			'type' => 'int',
+			'unsigned' => TRUE,
+			'not null' => FALSE,
+		],
+		'status_change_reason' => [
+			'description' => 'Reason or context of the latest active status change.',
+			'type' => 'text',
+			'size' => 'normal',
+			'not null' => FALSE,
+		],
+	];
+
+	foreach ($tables as $table) {
+		if (!$schema->tableExists($table)) {
+			continue;
+		}
+
+		foreach ($fields as $field_name => $field_definition) {
+			if (!$schema->fieldExists($table, $field_name)) {
+				$schema->addField($table, $field_name, $field_definition);
+			}
+		}
+
+		if (!$schema->indexExists($table, 'is_active')) {
+			$table_spec = [
+				'fields' => [
+					'is_active' => [
+						'type' => 'int',
+						'size' => 'tiny',
+						'unsigned' => TRUE,
+						'not null' => TRUE,
+						'default' => 1,
+					],
+				],
+				'indexes' => [
+					'is_active' => ['is_active'],
+				],
+			];
+
+			$schema->addIndex($table, 'is_active', ['is_active'], $table_spec);
+		}
+	}
+}
+
+/**
+ * Create import tracking log tables.
+ */
+function asocolderma_data_core_update_10014()
+{
+	$schema = \Drupal::database()->schema();
+	$module_schema = asocolderma_data_core_schema();
+
+	if (!$schema->tableExists('asocolderma_data_import_log')) {
+		$schema->createTable('asocolderma_data_import_log', $module_schema['asocolderma_data_import_log']);
+	}
+
+	if (!$schema->tableExists('asocolderma_data_import_log_item')) {
+		$schema->createTable('asocolderma_data_import_log_item', $module_schema['asocolderma_data_import_log_item']);
+	}
+}
+
+/**
+ * Create import field-level change tracking table.
+ */
+function asocolderma_data_core_update_10015()
+{
+	$schema = \Drupal::database()->schema();
+	$module_schema = asocolderma_data_core_schema();
+
+	if (!$schema->tableExists('asocolderma_data_import_log_item_change')) {
+		$schema->createTable('asocolderma_data_import_log_item_change', $module_schema['asocolderma_data_import_log_item_change']);
+	}
+}
+
+/**
+ * Create record action log table for activation, deactivation and definitive deletion.
+ */
+function asocolderma_data_core_update_10016()
+{
+	$schema = \Drupal::database()->schema();
+	$module_schema = asocolderma_data_core_schema();
+
+	if (!$schema->tableExists('asocolderma_record_action_log')) {
+		$schema->createTable('asocolderma_record_action_log', $module_schema['asocolderma_record_action_log']);
+	}
+}
+
+/**
+ * Create export log table.
+ */
+function asocolderma_data_core_update_10017()
+{
+	$schema = \Drupal::database()->schema();
+	$module_schema = asocolderma_data_core_schema();
+
+	if (!$schema->tableExists('asocolderma_export_log')) {
+		$schema->createTable('asocolderma_export_log', $module_schema['asocolderma_export_log']);
+	}
+}

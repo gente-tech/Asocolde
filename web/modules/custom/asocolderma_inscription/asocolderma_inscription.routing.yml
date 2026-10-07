@@ -1,0 +1,192 @@
+asocolderma_inscription.register:
+  path: '/registro-aspirante'
+  defaults:
+    _form: '\Drupal\asocolderma_inscription\Form\AspiranteRegisterForm'
+    _title: 'Registro de Aspirantes'
+  requirements:
+    _access: 'TRUE'
+
+asocolderma_inscription.activate:
+  path: '/activar-cuenta/{token}'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\AspiranteActivateController::activate'
+    _title: 'Activación de cuenta'
+  requirements:
+    _access: 'TRUE'
+
+asocolderma_inscription.user_zone:
+  path: '/zona'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\UserZoneController::redirectDefault'
+    _title: 'Zona de usuario'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+asocolderma_inscription.user_zone_profile:
+  path: '/zona/perfil'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\UserZoneController::profile'
+    _title: 'Perfil'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+asocolderma_inscription.user_zone_profile_edit:
+  path: '/zona/perfil/editar'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\UserZoneController::profileEdit'
+    _title: 'Editar perfil'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+asocolderma_inscription.user_zone_requests:
+  path: '/zona/solicitudes'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\UserZoneController::requests'
+    _title: 'Solicitudes'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+asocolderma_inscription.user_zone_request_detail:
+  path: '/zona/solicitudes/{node}'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\UserZoneController::requestDetail'
+    _title: 'Detalle de solicitud'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    node: '\d+'
+  options:
+    parameters:
+      node:
+        type: entity:node
+
+asocolderma_inscription.solicitud_create:
+  path: '/zona/solicitudes/crear'
+  defaults:
+    _form: '\Drupal\asocolderma_inscription\Form\SolicitudIngresoWizardForm'
+    _title: 'Crear solicitud'
+  requirements:
+    _permission: 'create solicitud ingreso'
+    _custom_access: 'asocolderma_inscription.solicitud_create_access::access'
+
+# Aspirante: editar solicitud (solo si está en aclaración, por ejemplo)
+asocolderma_inscription.solicitud_edit:
+  path: '/zona/solicitudes/{node}/editar'
+  defaults:
+    _form: '\Drupal\asocolderma_inscription\Form\SolicitudIngresoEditWizardForm'
+    _title: 'Editar solicitud'
+  requirements:
+    _custom_access: 'asocolderma_inscription.solicitud_edit_clarification_access::access'
+  options:
+    parameters:
+      node:
+        type: entity:node
+
+# Secretaría General: listado
+asocolderma_inscription.sg_list:
+  path: '/admin/asocolderma/solicitudes'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\SolicitudSgController::list'
+    _title: 'Solicitudes (Secretaría General)'
+  requirements:
+    _permission: 'view sg solicitudes'
+
+asocolderma_inscription.sg_review:
+  path: '/admin/asocolderma/solicitudes/{node}/revisar'
+  defaults:
+    _form: '\Drupal\asocolderma_inscription\Form\SolicitudNodeSgReviewForm'
+    _title: 'Revisar solicitud'
+  requirements:
+    _permission: 'manage sg solicitudes'
+    node: '\d+'
+  options:
+    parameters:
+      node:
+        type: entity:node
+
+asocolderma_inscription.solicitud_sign_redirect:
+  path: '/solicitud/{node}/firmar'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\SolicitudSignatureController::redirectToSign'
+    _title: 'Firmar documentos'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _entity_access: 'node.view'
+  options:
+    no_cache: 'TRUE'
+    parameters:
+      node:
+        type: entity:node
+
+asocolderma_inscription.solicitud_sign_return:
+  path: '/solicitud/{node}/firma/retorno'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\SolicitudSignatureController::returnFromSign'
+    _title: 'Retorno firma'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _entity_access: 'node.view'
+  options:
+    parameters:
+      node:
+        type: entity:node
+
+asocolderma_inscription.solicitud_signed_document:
+  path: '/solicitud/{node}/documento-firmado'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\SolicitudSignatureController::viewSignedDocument'
+    _title: 'Documento firmado'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _entity_access: 'node.view'
+  options:
+    parameters:
+      node:
+        type: entity:node
+
+asocolderma_inscription.usuarios_nuevos:
+  path: '/admin/config/asocolderma/usuarios-nuevos'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Usuarios nuevos'
+  requirements:
+    _permission: 'administer site configuration'
+
+asocolderma_inscription.notification_settings:
+  path: '/admin/config/asocolderma/usuarios-nuevos/notificaciones'
+  defaults:
+    _form: '\Drupal\asocolderma_inscription\Form\SolicitudNotificationSettingsForm'
+    _title: 'Configuración de notificaciones'
+  requirements:
+    _permission: 'administer site configuration'
+
+asocolderma_inscription.variables_dictionary:
+  path: '/admin/config/asocolderma/usuarios-nuevos/diccionario-variables'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\SolicitudVariablesDictionaryController::build'
+    _title: 'Diccionario de variables'
+  requirements:
+    _permission: 'administer site configuration'
+
+asocolderma_inscription.solicitud_form_settings:
+  path: '/admin/config/asocolderma/usuarios-nuevos/formulario-solicitud'
+  defaults:
+    _form: '\Drupal\asocolderma_inscription\Form\SolicitudFormSettingsForm'
+    _title: 'Configuración formulario de solicitud'
+  requirements:
+    _permission: 'administer site configuration'
+
+asocolderma_inscription.aspirante_login:
+  path: '/aspirante/login'
+  defaults:
+    _controller: '\Drupal\asocolderma_inscription\Controller\AspiranteLoginController::login'
+    _title: 'Ingreso aspirantes'
+  requirements:
+    _access: 'TRUE'
+
+asocolderma_inscription.state_visual_labels_settings:
+  path: '/admin/config/asocolderma/usuarios-nuevos/etiquetas-visuales-estados'
+  defaults:
+    _form: '\Drupal\asocolderma_inscription\Form\SolicitudStateVisualLabelsSettingsForm'
+    _title: 'Etiquetas visuales de estados'
+  requirements:
+    _permission: 'administer site configuration'

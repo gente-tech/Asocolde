@@ -1,0 +1,12 @@
+administer asocolderma data core:
+  title: 'Administrar Data Core AsoColDerma'
+  description: 'Permite ver, crear, editar, eliminar, importar, exportar y consultar logs del módulo Data Core.'
+  restrict access: true
+
+view asocolderma data core:
+  title: 'Ver Data Core AsoColDerma'
+  description: 'Permite consultar registros del módulo Data Core.'
+
+audit asocolderma data core:
+  title: 'Auditar Data Core AsoColDerma'
+  description: 'Permite consultar registros y exportar información del módulo Data Core.'

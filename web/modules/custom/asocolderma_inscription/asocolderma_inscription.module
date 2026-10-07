@@ -1,0 +1,1877 @@
+<?php
+
+use Drupal\node\NodeInterface;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\block\BlockInterface;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Session\AccountInterface;
+
+/**
+ * Implements hook_theme().
+ */
+function asocolderma_inscription_theme($existing, $type, $theme, $path): array
+{
+  return [
+    'asocolderma_inscription_user_zone_profile' => [
+      'variables' => [
+        'user_name' => NULL,
+        'profile' => NULL,
+        'edit_link' => NULL,
+        'primary_action' => NULL,
+        'header_menu_items' => [],
+        'logout_url' => NULL,
+      ],
+      'template' => 'asocolderma-inscription-user-zone-profile',
+    ],
+    'asocolderma_inscription_user_zone_requests' => [
+      'variables' => [
+        'user_name' => NULL,
+        'requests' => [],
+        'primary_action' => NULL,
+        'has_active' => FALSE,
+        'has_draft' => FALSE,
+        'header_menu_items' => [],
+        'logout_url' => NULL,
+      ],
+      'template' => 'asocolderma-inscription-user-zone-requests',
+    ],
+    'asocolderma_inscription_user_zone_header' => [
+      'variables' => [
+        'menu_items' => [],
+        'logout_url' => NULL,
+      ],
+      'template' => 'asocolderma-inscription-user-zone-header',
+    ],
+    'asocolderma_inscription_aspirante_modal_login' => [
+      'variables' => [
+        'form' => NULL,
+      ],
+      'template' => 'asocolderma-inscription-aspirante-modal-login',
+    ],
+    'asocolderma_inscription_admin_zone_header' => [
+      'variables' => [
+        'menu_items' => [],
+        'logout_url' => NULL,
+      ],
+      'template' => 'asocolderma-inscription-admin-zone-header',
+    ],
+  ];
+}
+
+function asocolderma_inscription_preprocess_node(array &$variables)
+{
+  if (empty($variables['node']) || !$variables['node'] instanceof NodeInterface) {
+    return;
+  }
+
+  $node = $variables['node'];
+
+  if ($node->bundle() !== 'solicitud_ingreso') {
+    return;
+  }
+
+  $variables['semaforo_steps'] = asocolderma_inscription_build_semaforo_steps($node);
+
+  $request = \Drupal::request();
+  $session = $request->getSession();
+  $referer = $request->headers->get('referer');
+
+  if ($referer) {
+    $host = $request->getSchemeAndHttpHost();
+
+    if (str_starts_with($referer, $host)) {
+      $referer_path = parse_url($referer, PHP_URL_PATH) ?: '/';
+      $current_path = $request->getPathInfo();
+      $internal_node_path = '/node/' . $node->id();
+      $current_alias = \Drupal::service('path_alias.manager')->getAliasByPath($internal_node_path);
+
+      if (
+        $referer_path !== $current_path &&
+        $referer_path !== $internal_node_path &&
+        $referer_path !== $current_alias
+      ) {
+        $session->set('asocolderma_inscription.solicitud_return_url', $referer_path);
+      }
+    }
+  }
+
+  $variables['semaforo_steps'] = asocolderma_inscription_build_semaforo_steps($node);
+  $estado_visual_solicitud = '';
+
+  if ($node->hasField('field_state') && !$node->get('field_state')->isEmpty()) {
+    $estado_entity = $node->get('field_state')->entity;
+
+    if ($estado_entity instanceof \Drupal\taxonomy\TermInterface) {
+      $estado_visual_solicitud = asocolderma_inscription_get_state_visual_label_from_term($estado_entity);
+    }
+  }
+
+  $variables['estado_visual_solicitud'] = $estado_visual_solicitud;
+
+  $variables['documento_firmado_disponible'] = FALSE;
+
+  try {
+    $variables['documento_firmado_disponible'] = \Drupal::service(
+      'asocolderma_inscription.solicitud_state_manager'
+    )->isSignatureCompleted($node, TRUE);
+  } catch (\Throwable $e) {
+    \Drupal::logger('asocolderma_inscription')->error(
+      'Error validando documento firmado para la solicitud @nid: @message',
+      [
+        '@nid' => $node->id(),
+        '@message' => $e->getMessage(),
+      ]
+    );
+  }
+}
+
+function asocolderma_inscription_build_semaforo_steps(NodeInterface $node): array
+{
+  $current_tid = (int) ($node->get('field_state')->target_id ?? 0);
+  $current_name = asocolderma_inscription_get_term_name_by_tid($current_tid) ?? '';
+  $current_key = asocolderma_inscription_get_state_functional_key_by_tid($current_tid);
+
+  if ($current_key === '') {
+    $current_key = asocolderma_inscription_get_functional_key_from_state_name($current_name);
+  }
+
+  $history_rows = asocolderma_inscription_get_state_history_rows((int) $node->id());
+  $steps_by_slot = [];
+
+  $add_state_step = function (
+    int $tid,
+    string $state_name,
+    int $created,
+    string $note,
+    string $origin,
+    int $history_id
+  ) use (&$steps_by_slot): void {
+    $functional_key = asocolderma_inscription_get_state_functional_key_by_tid($tid);
+
+    if ($functional_key === '') {
+      $functional_key = asocolderma_inscription_get_functional_key_from_state_name($state_name);
+    }
+
+    if ($functional_key === '') {
+      return;
+    }
+
+    $date = \Drupal::service('date.formatter')->format($created, 'custom', 'd/m/Y h:i A');
+
+    switch ($functional_key) {
+      case 'sg_en_tramite':
+      case 'sg_aprobado':
+      case 'sg_pendiente_aclaracion':
+      case 'sg_rechazado':
+        $steps_by_slot['secretaria_general'] = [
+          'label' => asocolderma_inscription_get_state_visual_label_by_tid($tid) ?: $state_name,
+          'status' => $functional_key === 'sg_rechazado' ? 'cancelled' : 'done',
+          'date' => $date,
+          'note' => $note,
+          'state_name' => $state_name,
+          'origin' => $origin,
+          'history_id' => $history_id,
+        ];
+        break;
+
+      case 'junta_aprobado':
+      case 'junta_rechazado':
+        $steps_by_slot['junta_directiva'] = [
+          'label' => asocolderma_inscription_get_state_visual_label_by_tid($tid) ?: $state_name,
+          'status' => $functional_key === 'junta_rechazado' ? 'cancelled' : 'done',
+          'date' => $date,
+          'note' => $note,
+          'state_name' => $state_name,
+          'origin' => $origin,
+          'history_id' => $history_id,
+        ];
+        break;
+
+      case 'asamblea_aprobado':
+      case 'asamblea_rechazado':
+        $steps_by_slot['asamblea_general'] = [
+          'label' => asocolderma_inscription_get_state_visual_label_by_tid($tid) ?: $state_name,
+          'status' => $functional_key === 'asamblea_rechazado' ? 'cancelled' : 'done',
+          'date' => $date,
+          'note' => $note,
+          'state_name' => $state_name,
+          'origin' => $origin,
+          'history_id' => $history_id,
+        ];
+        break;
+
+      case 'coord_documentos_enviados':
+        $steps_by_slot['enviar_documentos'] = [
+          'label' => asocolderma_inscription_get_semaforo_node_label('enviar_documentos', 'done'),
+          'status' => 'done',
+          'date' => $date,
+          'note' => $note,
+          'state_name' => $state_name,
+          'origin' => $origin,
+          'history_id' => $history_id,
+        ];
+        break;
+
+      case 'coord_pago_ingreso':
+        $steps_by_slot['enviar_pasos_pago'] = [
+          'label' => asocolderma_inscription_get_semaforo_node_label('enviar_pasos_pago', 'done'),
+          'status' => 'done',
+          'date' => $date,
+          'note' => $note,
+          'state_name' => $state_name,
+          'origin' => $origin,
+          'history_id' => $history_id,
+        ];
+        break;
+
+      case 'coord_miembro_activo':
+        $steps_by_slot['validar_pago'] = [
+          'label' => asocolderma_inscription_get_semaforo_node_label('validar_pago', 'done'),
+          'status' => 'done',
+          'date' => $date,
+          'note' => $note,
+          'state_name' => $state_name,
+          'origin' => $origin,
+          'history_id' => $history_id,
+        ];
+
+        $steps_by_slot['miembro_activo'] = [
+          'label' => asocolderma_inscription_get_semaforo_node_label('miembro_activo', 'done'),
+          'status' => 'done',
+          'date' => $date,
+          'note' => $note,
+          'state_name' => $state_name,
+          'origin' => $origin,
+          'history_id' => $history_id,
+        ];
+        break;
+    }
+  };
+
+  foreach ($history_rows as $row) {
+    $state_name = asocolderma_inscription_get_term_name_by_tid((int) $row->to_tid);
+
+    if (!$state_name) {
+      continue;
+    }
+
+    $add_state_step(
+      (int) $row->to_tid,
+      $state_name,
+      (int) $row->created,
+      trim((string) ($row->comment ?? '')),
+      (string) ($row->origin ?? ''),
+      (int) $row->id
+    );
+  }
+
+  if (empty($steps_by_slot) && $current_tid > 0 && $current_name !== '') {
+    $add_state_step(
+      $current_tid,
+      $current_name,
+      (int) $node->getCreatedTime(),
+      '',
+      'current_node_state',
+      0
+    );
+  }
+
+  $has_rejected = in_array($current_key, [
+    'sg_rechazado',
+    'junta_rechazado',
+    'asamblea_rechazado',
+  ], TRUE);
+
+  if (!$has_rejected) {
+    switch ($current_key) {
+      case 'sg_en_tramite':
+      case 'sg_pendiente_aclaracion':
+        if (!isset($steps_by_slot['secretaria_general'])) {
+          $steps_by_slot['secretaria_general'] = [
+            'label' => asocolderma_inscription_get_state_visual_label_by_tid($current_tid) ?: $current_name,
+            'status' => 'current',
+            'date' => \Drupal::service('date.formatter')->format($node->getCreatedTime(), 'custom', 'd/m/Y h:i A'),
+            'note' => '',
+            'state_name' => $current_name,
+            'origin' => 'current_node_state',
+            'history_id' => 0,
+          ];
+        } else {
+          $steps_by_slot['secretaria_general']['status'] = 'current';
+        }
+
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'junta_directiva', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'asamblea_general', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'enviar_documentos', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'enviar_pasos_pago', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'validar_pago', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'miembro_activo', 'pending');
+        break;
+
+      case 'sg_aprobado':
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'junta_directiva', 'current');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'asamblea_general', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'enviar_documentos', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'enviar_pasos_pago', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'validar_pago', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'miembro_activo', 'pending');
+        break;
+
+      case 'junta_aprobado':
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'asamblea_general', 'current');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'enviar_documentos', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'enviar_pasos_pago', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'validar_pago', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'miembro_activo', 'pending');
+        break;
+
+      case 'asamblea_aprobado':
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'enviar_documentos', 'current');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'enviar_pasos_pago', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'validar_pago', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'miembro_activo', 'pending');
+        break;
+
+      case 'coord_documentos_enviados':
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'enviar_pasos_pago', 'current');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'validar_pago', 'pending');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'miembro_activo', 'pending');
+        break;
+
+      case 'coord_pago_ingreso':
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'validar_pago', 'current');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'miembro_activo', 'pending');
+        break;
+
+      case 'coord_miembro_activo':
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'validar_pago', 'done');
+        asocolderma_inscription_add_semaforo_virtual_step($steps_by_slot, 'miembro_activo', 'done');
+        break;
+    }
+  }
+
+  $order = [
+    'secretaria_general',
+    'junta_directiva',
+    'asamblea_general',
+    'enviar_documentos',
+    'enviar_pasos_pago',
+    'validar_pago',
+    'miembro_activo',
+  ];
+
+  $steps = [];
+
+  foreach ($order as $slot) {
+    if (isset($steps_by_slot[$slot])) {
+      $steps[] = $steps_by_slot[$slot];
+    }
+  }
+
+  return $steps;
+}
+
+function asocolderma_inscription_get_state_history_rows(int $nid): array
+{
+  $connection = \Drupal::database();
+
+  $query = $connection->select('asocolderma_solicitud_historial', 'h');
+  $query->fields('h', [
+    'id',
+    'to_tid',
+    'created',
+    'origin',
+    'comment',
+  ]);
+  $query->condition('h.solicitud_nid', $nid);
+  $query->orderBy('h.created', 'ASC');
+  $query->orderBy('h.id', 'ASC');
+
+  return $query->execute()->fetchAll();
+}
+
+function asocolderma_inscription_get_future_flow_steps(string $last_visible_label, string $current_name, string $current_key = ''): array
+{
+  if (asocolderma_inscription_is_cancelled_functional_key($current_key, $current_name)) {
+    return [];
+  }
+
+  $future_labels = [];
+  $next_current_label = NULL;
+
+  switch ($current_key) {
+    case 'sg_en_tramite':
+    case 'sg_pendiente_aclaracion':
+      $future_labels = [
+        'Junta directiva',
+        'Asamblea general',
+        'Envío de documentos',
+        'Pago de ingreso',
+        'Miembro activo',
+      ];
+      break;
+
+    case 'sg_aprobado':
+      $future_labels = [
+        'Junta directiva',
+        'Asamblea general',
+        'Envío de documentos',
+        'Pago de ingreso',
+        'Miembro activo',
+      ];
+      $next_current_label = 'Junta directiva';
+      break;
+
+    case 'junta_aprobado':
+      $future_labels = [
+        'Asamblea general',
+        'Envío de documentos',
+        'Pago de ingreso',
+        'Miembro activo',
+      ];
+      $next_current_label = 'Asamblea general';
+      break;
+
+    case 'asamblea_aprobado':
+      $future_labels = [
+        'Envío de documentos',
+        'Pago de ingreso',
+        'Miembro activo',
+      ];
+      $next_current_label = 'Envío de documentos';
+      break;
+
+    case 'coord_documentos_enviados':
+      $future_labels = [
+        'Pago de ingreso',
+        'Miembro activo',
+      ];
+      $next_current_label = 'Pago de ingreso';
+      break;
+
+    case 'coord_pago_ingreso':
+      $future_labels = [
+        'Miembro activo',
+      ];
+      break;
+
+    case 'coord_miembro_activo':
+      $future_labels = [];
+      break;
+
+    default:
+      /*
+       * Fallback temporal por compatibilidad si algún término todavía no tiene
+       * equivalencia funcional configurada.
+       */
+      switch ($current_name) {
+        case 'En trámite':
+        case 'Pendiente aclaración':
+          $future_labels = [
+            'Junta directiva',
+            'Asamblea general',
+            'Envío de documentos',
+            'Pago de ingreso',
+            'Miembro activo',
+          ];
+          break;
+
+        case 'Aprobada':
+          $future_labels = [
+            'Junta directiva',
+            'Asamblea general',
+            'Envío de documentos',
+            'Pago de ingreso',
+            'Miembro activo',
+          ];
+          $next_current_label = 'Junta directiva';
+          break;
+
+        case 'Aprobado Junta D.':
+          $future_labels = [
+            'Asamblea general',
+            'Envío de documentos',
+            'Pago de ingreso',
+            'Miembro activo',
+          ];
+          $next_current_label = 'Asamblea general';
+          break;
+
+        case 'Aprobado Asamblea G.':
+          $future_labels = [
+            'Envío de documentos',
+            'Pago de ingreso',
+            'Miembro activo',
+          ];
+          $next_current_label = 'Envío de documentos';
+          break;
+
+        case 'Documentos enviados':
+          $future_labels = [
+            'Pago de ingreso',
+            'Miembro activo',
+          ];
+          $next_current_label = 'Pago de ingreso';
+          break;
+
+        case 'Pendiente pago de ingreso':
+          $future_labels = [
+            'Miembro activo',
+          ];
+          break;
+      }
+      break;
+  }
+
+  $steps = [];
+
+  foreach ($future_labels as $label) {
+    $status = $label === $next_current_label ? 'current' : 'pending';
+    $visual_label = asocolderma_inscription_get_future_semaforo_label($label, $status);
+
+    $steps[] = [
+      'label' => $visual_label,
+      'status' => $status,
+      'date' => '',
+      'note' => '',
+      'state_name' => '',
+      'functional_key' => '',
+      'slot' => '',
+      'origin' => 'future',
+      'history_id' => 0,
+    ];
+  }
+
+  return $steps;
+}
+/**
+ * Devuelve el flujo visible del semáforo según el estado actual.
+ */
+function asocolderma_inscription_get_visible_flow(string $current_name): array
+{
+  $later_flow = [
+    'Junta directiva',
+    'Asamblea general',
+    'Envío de documentos',
+    'Pago de ingreso',
+    'Activación de miembro',
+    'Miembro activo',
+  ];
+
+  if ($current_name === 'Pendiente aclaración') {
+    return array_merge(['Pendiente aclaración'], $later_flow);
+  }
+
+  if ($current_name === 'Rechazada') {
+    return ['Rechazada'];
+  }
+
+  return array_merge(['En trámite'], $later_flow);
+}
+
+/**
+ * Mapea el estado actual real al label del nodo del semáforo.
+ */
+function asocolderma_inscription_map_current_state_to_flow_label(string $current_name): string
+{
+  return match ($current_name) {
+    'En trámite' => 'En trámite',
+    'Pendiente aclaración' => 'Pendiente aclaración',
+    'Rechazada' => 'Rechazada',
+
+    'Aprobada' => 'Aprobada',
+    'Aprobado Junta D.',
+    'Rechazado Junta D.' => 'Junta directiva',
+
+    'Aprobado Asamblea G.',
+    'Rechazado Asamblea G.' => 'Asamblea general',
+
+    'Documentos enviados' => 'Envío de documentos',
+    'Pendiente pago de ingreso' => 'Pago de ingreso',
+    'Activar miembro nuevo' => 'Activación de miembro',
+    'Miembro activo' => 'Miembro activo',
+
+    default => 'En trámite',
+  };
+}
+
+/**
+ * Indica si el estado actual es de rechazo/cancelación.
+ */
+function asocolderma_inscription_is_cancelled_state(string $current_name): bool
+{
+  $cancelled_states = [
+    'Rechazada',
+    'Rechazado Junta D.',
+    'Rechazado Asamblea G.',
+  ];
+
+  return in_array($current_name, $cancelled_states, TRUE);
+}
+
+/**
+ * Devuelve los nombres de estados recorridos por la solicitud, en orden cronológico.
+ */
+function asocolderma_inscription_get_state_history_names(int $nid): array
+{
+  $connection = \Drupal::database();
+
+  $query = $connection->select('asocolderma_solicitud_historial', 'h');
+  $query->fields('h', ['to_tid', 'created']);
+  $query->condition('solicitud_nid', $nid);
+  $query->orderBy('created', 'ASC');
+  $query->orderBy('id', 'ASC');
+
+  $results = $query->execute()->fetchAll();
+
+  $names = [];
+
+  foreach ($results as $row) {
+    $name = asocolderma_inscription_get_term_name_by_tid((int) $row->to_tid);
+    if ($name) {
+      $names[] = $name;
+    }
+  }
+
+  return array_values(array_unique($names));
+}
+
+/**
+ * Devuelve la primera fecha en que la solicitud llegó a un estado del flujo.
+ */
+function asocolderma_inscription_get_first_date_for_state(int $nid, string $state_name): string
+{
+  $tid = asocolderma_inscription_get_tid_by_term_name('estado_solicitud_ingreso', $state_name);
+
+  if (!$tid) {
+    return '';
+  }
+
+  $connection = \Drupal::database();
+
+  $query = $connection->select('asocolderma_solicitud_historial', 'h');
+  $query->fields('h', ['created']);
+  $query->condition('solicitud_nid', $nid);
+  $query->condition('to_tid', $tid);
+  $query->orderBy('created', 'ASC');
+  $query->range(0, 1);
+
+  $created = $query->execute()->fetchField();
+
+  if (!$created) {
+    return '';
+  }
+
+  return \Drupal::service('date.formatter')->format((int) $created, 'custom', 'd/m/Y');
+}
+
+/**
+ * Devuelve el nombre del término por tid.
+ */
+function asocolderma_inscription_get_term_name_by_tid(int $tid): ?string
+{
+  if ($tid <= 0) {
+    return NULL;
+  }
+
+  $term = Term::load($tid);
+  return $term ? (string) $term->getName() : NULL;
+}
+
+/**
+ * Devuelve la etiqueta visual administrable de un término de estado.
+ *
+ * El mapeo se guarda por UUID del término para no depender de TID ni nombre.
+ */
+function asocolderma_inscription_get_state_visual_label_from_term($term): string
+{
+  if (!$term instanceof \Drupal\taxonomy\TermInterface) {
+    return '';
+  }
+
+  $real_label = (string) $term->label();
+  $uuid = (string) $term->uuid();
+
+  if ($uuid === '') {
+    return $real_label;
+  }
+
+  $labels = \Drupal::config('asocolderma_inscription.state_visual_labels')->get('labels') ?? [];
+
+  if (!empty($labels[$uuid]) && is_string($labels[$uuid])) {
+    $visual_label = trim($labels[$uuid]);
+
+    if ($visual_label !== '') {
+      return $visual_label;
+    }
+  }
+
+  return $real_label;
+}
+
+/**
+ * Devuelve la etiqueta visual administrable de un estado por TID.
+ */
+function asocolderma_inscription_get_state_visual_label_by_tid(int $tid): string
+{
+  if ($tid <= 0) {
+    return '';
+  }
+
+  $term = Term::load($tid);
+
+  if (!$term) {
+    return '';
+  }
+
+  return asocolderma_inscription_get_state_visual_label_from_term($term);
+}
+
+/**
+ * Devuelve la equivalencia funcional administrable de un término de estado.
+ *
+ * El mapeo se guarda por UUID del término.
+ */
+function asocolderma_inscription_get_state_functional_key_from_term($term): string
+{
+  if (!$term instanceof \Drupal\taxonomy\TermInterface) {
+    return '';
+  }
+
+  $uuid = (string) $term->uuid();
+
+  if ($uuid === '') {
+    return '';
+  }
+
+  $state_keys = \Drupal::config('asocolderma_inscription.state_visual_labels')->get('state_keys') ?? [];
+
+  if (!empty($state_keys[$uuid]) && is_string($state_keys[$uuid])) {
+    return trim($state_keys[$uuid]);
+  }
+
+  return '';
+}
+
+/**
+ * Devuelve la equivalencia funcional administrable de un estado por TID.
+ */
+function asocolderma_inscription_get_state_functional_key_by_tid(int $tid): string
+{
+  if ($tid <= 0) {
+    return '';
+  }
+
+  $term = Term::load($tid);
+
+  if (!$term) {
+    return '';
+  }
+
+  return asocolderma_inscription_get_state_functional_key_from_term($term);
+}
+
+/**
+ * Fallback de equivalencia funcional por nombre real del término.
+ */
+function asocolderma_inscription_get_functional_key_from_state_name(string $state_name): string
+{
+  return match ($state_name) {
+    'En trámite' => 'sg_en_tramite',
+    'Aprobada' => 'sg_aprobado',
+    'Rechazada' => 'sg_rechazado',
+    'Pendiente aclaración' => 'sg_pendiente_aclaracion',
+
+    'Aprobado Junta D.' => 'junta_aprobado',
+    'Rechazado Junta D.' => 'junta_rechazado',
+
+    'Aprobado Asamblea G.' => 'asamblea_aprobado',
+    'Rechazado Asamblea G.' => 'asamblea_rechazado',
+
+    'Documentos enviados' => 'coord_documentos_enviados',
+    'Pendiente pago de ingreso' => 'coord_pago_ingreso',
+    'Activar miembro nuevo',
+    'Miembro activo' => 'coord_miembro_activo',
+
+    default => '',
+  };
+}
+
+/**
+ * Agrega un paso virtual del semáforo si todavía no existe.
+ */
+function asocolderma_inscription_add_semaforo_virtual_step(array &$steps_by_slot, string $slot, string $status): void
+{
+  if (isset($steps_by_slot[$slot])) {
+    if ($status === 'current' && $steps_by_slot[$slot]['status'] !== 'done') {
+      $steps_by_slot[$slot]['status'] = 'current';
+      $steps_by_slot[$slot]['label'] = asocolderma_inscription_get_semaforo_node_label($slot, 'current');
+    }
+
+    return;
+  }
+
+  $steps_by_slot[$slot] = [
+    'label' => asocolderma_inscription_get_semaforo_node_label($slot, $status),
+    'status' => $status,
+    'date' => '',
+    'note' => '',
+    'state_name' => '',
+    'origin' => 'future',
+    'history_id' => 0,
+  ];
+}
+
+/**
+ * Devuelve la etiqueta administrable de un nodo visual del semáforo.
+ */
+function asocolderma_inscription_get_semaforo_node_label(string $slot, string $status): string
+{
+  return match ($slot) {
+    'junta_directiva' => $status === 'current'
+      ? asocolderma_inscription_get_semaforo_visual_label('pending_junta_directiva', 'Pendiente Junta Directiva')
+      : asocolderma_inscription_get_semaforo_visual_label('junta_directiva', 'Junta Directiva'),
+
+    'asamblea_general' => $status === 'current'
+      ? asocolderma_inscription_get_semaforo_visual_label('pending_asamblea_general', 'Pendiente Asamblea General')
+      : asocolderma_inscription_get_semaforo_visual_label('asamblea_general', 'Asamblea General'),
+
+    'enviar_documentos' => match ($status) {
+      'current' => asocolderma_inscription_get_semaforo_visual_label('pending_enviar_documentos', 'Pendiente por enviar documentos'),
+      'done' => asocolderma_inscription_get_semaforo_visual_label('documentos_enviados', 'Documentos enviados'),
+      default => asocolderma_inscription_get_semaforo_visual_label('enviar_documentos', 'Enviar documentos'),
+    },
+
+    'enviar_pasos_pago' => match ($status) {
+      'current' => asocolderma_inscription_get_semaforo_visual_label('pending_enviar_pasos_pago', 'Pendiente enviar pasos para pago'),
+      'done' => asocolderma_inscription_get_semaforo_visual_label('pasos_pago_enviados', 'Pasos para pago enviados'),
+      default => asocolderma_inscription_get_semaforo_visual_label('enviar_pasos_pago', 'Enviar pasos para pago'),
+    },
+
+    'validar_pago' => match ($status) {
+      'current' => asocolderma_inscription_get_semaforo_visual_label('pending_validar_pago', 'Pendiente validar pago'),
+      'done' => asocolderma_inscription_get_semaforo_visual_label('pago_validado', 'Pago validado correctamente'),
+      default => asocolderma_inscription_get_semaforo_visual_label('validar_pago', 'Validar pago'),
+    },
+
+    'miembro_activo' => $status === 'done'
+      ? asocolderma_inscription_get_semaforo_visual_label('miembro_activo', 'Miembro activo')
+      : asocolderma_inscription_get_semaforo_visual_label('activar_miembro', 'Activar miembro'),
+
+    default => $slot,
+  };
+}
+
+/**
+ * Devuelve la etapa lógica del semáforo a partir de la equivalencia funcional.
+ */
+function asocolderma_inscription_get_flow_slot_from_functional_key(string $functional_key, string $fallback_name = ''): string
+{
+  return match ($functional_key) {
+    'sg_en_tramite',
+    'sg_aprobado',
+    'sg_rechazado',
+    'sg_pendiente_aclaracion' => 'secretaria_general',
+
+    'junta_aprobado',
+    'junta_rechazado' => 'junta_directiva',
+
+    'asamblea_aprobado',
+    'asamblea_rechazado' => 'asamblea_general',
+
+    'coord_documentos_enviados' => 'envio_documentos',
+    'coord_pago_ingreso' => 'pago_ingreso',
+    'coord_miembro_activo' => 'miembro_activo',
+
+    default => asocolderma_inscription_get_flow_slot_from_state_name($fallback_name),
+  };
+}
+
+/**
+ * Fallback por nombre real del término.
+ */
+function asocolderma_inscription_get_flow_slot_from_state_name(string $state_name): string
+{
+  return match ($state_name) {
+    'En trámite',
+    'Aprobada',
+    'Rechazada',
+    'Pendiente aclaración' => 'secretaria_general',
+
+    'Aprobado Junta D.',
+    'Rechazado Junta D.' => 'junta_directiva',
+
+    'Aprobado Asamblea G.',
+    'Rechazado Asamblea G.' => 'asamblea_general',
+
+    'Documentos enviados' => 'envio_documentos',
+    'Pendiente pago de ingreso' => 'pago_ingreso',
+    'Activar miembro nuevo',
+    'Miembro activo' => 'miembro_activo',
+
+    default => '',
+  };
+}
+
+/**
+ * Indica si una equivalencia funcional representa cierre/rechazo.
+ */
+function asocolderma_inscription_is_cancelled_functional_key(string $functional_key, string $fallback_name = ''): bool
+{
+  if (in_array($functional_key, [
+    'sg_rechazado',
+    'junta_rechazado',
+    'asamblea_rechazado',
+  ], TRUE)) {
+    return TRUE;
+  }
+
+  return asocolderma_inscription_is_cancelled_state($fallback_name);
+}
+
+/**
+ * Indica si el estado actual completó su etapa y debe avanzar al siguiente paso.
+ */
+function asocolderma_inscription_is_completed_functional_key(string $functional_key, string $fallback_name = ''): bool
+{
+  if (in_array($functional_key, [
+    'sg_aprobado',
+    'junta_aprobado',
+    'asamblea_aprobado',
+    'coord_documentos_enviados',
+    'coord_miembro_activo',
+  ], TRUE)) {
+    return TRUE;
+  }
+
+  return in_array($fallback_name, [
+    'Aprobada',
+    'Aprobado Junta D.',
+    'Aprobado Asamblea G.',
+    'Documentos enviados',
+    'Miembro activo',
+    'Activar miembro nuevo',
+  ], TRUE);
+}
+
+/**
+ * Devuelve la etiqueta visual de un estado según el contexto institucional.
+ *
+ * No modifica la taxonomía ni el estado real de la solicitud.
+ * Solo cambia el texto mostrado en la interfaz.
+ */
+function asocolderma_inscription_get_contextual_state_label(string $state_label, string $context = ''): string
+{
+  $state_label = trim($state_label);
+
+  if ($context === 'secretaria_general') {
+    $map = [
+      'En trámite' => 'En trámite Secretaría General',
+      'Aprobada' => 'Aprobado Secretaría General',
+      'Rechazada' => 'Rechazado Secretaría General',
+      'Pendiente aclaración' => 'Pendiente aclaración Secretaría General',
+    ];
+
+    return $map[$state_label] ?? $state_label;
+  }
+
+  return $state_label;
+}
+
+/**
+ * Busca un tid por nombre dentro de un vocabulario.
+ */
+function asocolderma_inscription_get_tid_by_term_name(string $vid, string $name): ?int
+{
+  $terms = \Drupal::entityTypeManager()
+    ->getStorage('taxonomy_term')
+    ->loadByProperties([
+      'vid' => $vid,
+      'name' => $name,
+    ]);
+
+  if (!$terms) {
+    return NULL;
+  }
+
+  $term = reset($terms);
+  return $term ? (int) $term->id() : NULL;
+}
+
+/**
+ * Mapea el estado rechazado al paso del flujo que debe quedar en rojo.
+ */
+function asocolderma_inscription_get_cancelled_from_state(string $current_name): ?string
+{
+  return match ($current_name) {
+    'Rechazada' => 'Aprobada',
+    'Rechazado Junta D.' => 'Aprobado Junta D.',
+    'Rechazado Asamblea G.' => 'Aprobado Asamblea G.',
+    default => NULL,
+  };
+}
+
+/**
+ * Devuelve la fecha a mostrar para un paso del semáforo.
+ */
+function asocolderma_inscription_get_date_for_step(NodeInterface $node, string $step_label, string $current_name): string
+{
+  $history = asocolderma_inscription_get_state_history_names_with_dates((int) $node->id());
+
+  $state_names_for_step = match ($step_label) {
+    'En trámite' => ['En trámite'],
+    'Pendiente aclaración' => ['Pendiente aclaración'],
+    'Rechazada' => ['Rechazada'],
+    'Aprobada' => ['Aprobada'],
+    'Junta directiva' => ['Aprobado Junta D.', 'Rechazado Junta D.'],
+    'Asamblea general' => ['Aprobado Asamblea G.', 'Rechazado Asamblea G.'],
+    'Envío de documentos' => ['Documentos enviados'],
+    'Pago de ingreso' => ['Pendiente pago de ingreso'],
+    'Activación de miembro' => ['Activar miembro nuevo'],
+    'Miembro activo' => ['Miembro activo', 'Activar miembro nuevo'],
+    default => [],
+  };
+
+  foreach ($state_names_for_step as $state_name) {
+    if (!empty($history[$state_name])) {
+      return $history[$state_name];
+    }
+  }
+
+  if ($step_label === asocolderma_inscription_map_current_state_to_flow_label($current_name)) {
+    return \Drupal::service('date.formatter')->format($node->getCreatedTime(), 'custom', 'd/m/Y h:i A');
+  }
+
+  return '';
+}
+
+/**
+ * Devuelve el histórico de estados con su primera fecha, indexado por nombre.
+ */
+function asocolderma_inscription_get_state_history_names_with_dates(int $nid): array
+{
+  $connection = \Drupal::database();
+
+  $query = $connection->select('asocolderma_solicitud_historial', 'h');
+  $query->fields('h', ['to_tid', 'created']);
+  $query->condition('solicitud_nid', $nid);
+  $query->orderBy('created', 'ASC');
+  $query->orderBy('id', 'ASC');
+
+  $results = $query->execute()->fetchAll();
+
+  $history = [];
+
+  foreach ($results as $row) {
+    $name = asocolderma_inscription_get_term_name_by_tid((int) $row->to_tid);
+
+    if ($name && empty($history[$name])) {
+      $history[$name] = \Drupal::service('date.formatter')->format((int) $row->created, 'custom', 'd/m/Y');
+    }
+  }
+
+  return $history;
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function asocolderma_inscription_entity_update(\Drupal\Core\Entity\EntityInterface $entity): void
+{
+  if ($entity->getEntityTypeId() !== 'taxonomy_term') {
+    return;
+  }
+
+  if (!$entity instanceof \Drupal\taxonomy\TermInterface) {
+    return;
+  }
+
+  if ($entity->bundle() !== 'estado_solicitud_ingreso') {
+    return;
+  }
+
+  \Drupal\Core\Cache\Cache::invalidateTags([
+    'asocolderma_estado_solicitud_colors',
+  ]);
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function asocolderma_inscription_entity_insert(\Drupal\Core\Entity\EntityInterface $entity): void
+{
+  if ($entity->getEntityTypeId() !== 'taxonomy_term') {
+    return;
+  }
+
+  if (!$entity instanceof \Drupal\taxonomy\TermInterface) {
+    return;
+  }
+
+  if ($entity->bundle() !== 'estado_solicitud_ingreso') {
+    return;
+  }
+
+  \Drupal\Core\Cache\Cache::invalidateTags([
+    'asocolderma_estado_solicitud_colors',
+  ]);
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function asocolderma_inscription_entity_delete(\Drupal\Core\Entity\EntityInterface $entity): void
+{
+  if ($entity->getEntityTypeId() !== 'taxonomy_term') {
+    return;
+  }
+
+  if (!$entity instanceof \Drupal\taxonomy\TermInterface) {
+    return;
+  }
+
+  if ($entity->bundle() !== 'estado_solicitud_ingreso') {
+    return;
+  }
+
+  \Drupal\Core\Cache\Cache::invalidateTags([
+    'asocolderma_estado_solicitud_colors',
+  ]);
+}
+
+/**
+ * Indica si la ruta actual pertenece a la zona administrativa del flujo de solicitudes.
+ */
+function asocolderma_inscription_is_admin_zone_path(?string $path = NULL): bool
+{
+  $path = $path ?? \Drupal::service('path.current')->getPath();
+
+  $admin_paths = [
+    // Secretaría General.
+    '/solicitudes',
+    '/solicitudes-aspirantes',
+    '/aprobadas-secretaria-general',
+    '/aprobadas-junta-directiva',
+
+    // Coordinación Administrativa.
+    '/coord-admin/enviar-documentos',
+    '/coord-admin/pasos-pago',
+    '/coord-admin/validar-pago',
+    '/coord-admin/miembros-activos',
+
+    // Reportes.
+    '/reportes/solicitudes',
+  ];
+
+  if (in_array($path, $admin_paths, TRUE)) {
+    return TRUE;
+  }
+
+  // Alias público/controlado del detalle administrativo:
+  if (preg_match('#^/solicitud/[0-9]{8}-[0-9]{3}-[0-9]{3}$#', $path)) {
+    return TRUE;
+  }
+
+  // Fallback robusto:
+  // Si Drupal resolvió la URL como entity.node.canonical o /node/NID,
+  // detectamos que sea un nodo solicitud_ingreso.
+  $route_match = \Drupal::routeMatch();
+  $node = $route_match->getParameter('node');
+
+  if ($node instanceof \Drupal\node\NodeInterface && $node->bundle() === 'solicitud_ingreso') {
+    // Evitar interferir con la zona del aspirante.
+    if ($path === '/zona' || str_starts_with($path, '/zona/')) {
+      return FALSE;
+    }
+
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**
+ * Indica si la ruta actual pertenece a una zona limpia del sistema.
+ *
+ * Incluye:
+ * - Zona aspirante.
+ * - Zona administrativa de solicitudes.
+ */
+function asocolderma_inscription_is_clean_zone_path(?string $path = NULL): bool
+{
+  $path = $path ?? \Drupal::service('path.current')->getPath();
+
+  if ($path === '/zona' || str_starts_with($path, '/zona/')) {
+    return TRUE;
+  }
+
+  if (asocolderma_inscription_is_admin_zone_path($path)) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+/**
+ * Indica si el usuario actual tiene rol administrativo del flujo de solicitudes.
+ */
+function asocolderma_inscription_current_user_is_admin_zone_user(): bool
+{
+  $current_user = \Drupal::currentUser();
+
+  if (!$current_user->isAuthenticated()) {
+    return FALSE;
+  }
+
+  $roles = $current_user->getRoles();
+
+  return in_array('secretaria_general', $roles, TRUE)
+    || in_array('coordinacion_administrativa', $roles, TRUE)
+    || in_array('administrator', $roles, TRUE);
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function asocolderma_inscription_page_attachments(array &$attachments): void
+{
+  $path = \Drupal::service('path.current')->getPath();
+
+  // En zonas limpias no aplicamos margen superior del sitio viejo.
+  if (function_exists('asocolderma_inscription_is_clean_zone_path') && asocolderma_inscription_is_clean_zone_path($path)) {
+    $attachments['#cache']['contexts'][] = 'url.path';
+    return;
+  }
+
+  $attachments['#attached']['library'][] = 'asocolderma_inscription/navbar_margin_top';
+  $attachments['#cache']['contexts'][] = 'url.path';
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for html.html.twig.
+ */
+function asocolderma_inscription_preprocess_html(array &$variables): void
+{
+  $current_user = \Drupal::currentUser();
+  $path = \Drupal::service('path.current')->getPath();
+
+  if ($current_user->isAuthenticated() && in_array('aspirante', $current_user->getRoles(), TRUE)) {
+    $variables['attributes']['class'][] = 'asocolderma-role-aspirante';
+
+    $variables['#attached']['library'][] = 'asocolderma_inscription/aspirante_header';
+    $variables['#cache']['contexts'][] = 'user.roles';
+  }
+
+  if ($path === '/zona' || str_starts_with($path, '/zona/')) {
+    $variables['attributes']['class'][] = 'asocolderma-inscription-zone-page';
+
+    $variables['#attached']['library'][] = 'asocolderma_inscription/user_zone';
+    $variables['#cache']['contexts'][] = 'url.path';
+  }
+
+  if (
+    asocolderma_inscription_is_admin_zone_path($path)
+    && asocolderma_inscription_current_user_is_admin_zone_user()
+  ) {
+    $variables['attributes']['class'][] = 'asocolderma-admin-zone-page';
+    $variables['attributes']['class'][] = 'asocolderma-admin-zone-clean';
+
+    $variables['#cache']['contexts'][] = 'url.path';
+    $variables['#cache']['contexts'][] = 'user.roles';
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_access() for block entities.
+ *
+ * Bloquea los bloques del sitio público dentro de las zonas limpias:
+ * - Zona del aspirante.
+ * - Zona administrativa de solicitudes.
+ *
+ * Se permite únicamente el contenido principal y mensajes del sistema.
+ */
+function asocolderma_inscription_block_access(BlockInterface $block, $operation, AccountInterface $account): AccessResult
+{
+  if ($operation !== 'view') {
+    return AccessResult::neutral();
+  }
+
+  $path = \Drupal::service('path.current')->getPath();
+
+  if (!asocolderma_inscription_is_clean_zone_path($path)) {
+    return AccessResult::neutral()
+      ->addCacheContexts(['url.path']);
+  }
+
+  $allowed_plugin_ids = [
+    'system_main_block',
+    'system_messages_block',
+    'local_tasks_block',
+  ];
+
+  if (in_array($block->getPluginId(), $allowed_plugin_ids, TRUE)) {
+    return AccessResult::neutral()
+      ->addCacheContexts(['url.path', 'user.roles']);
+  }
+
+  return AccessResult::forbidden()
+    ->addCacheContexts(['url.path', 'user.roles']);
+}
+
+/**
+ * Implements hook_page_top().
+ *
+ * Renderiza headers propios para:
+ * - Zona del aspirante.
+ * - Zona administrativa de solicitudes.
+ */
+function asocolderma_inscription_page_top(array &$page_top): void
+{
+  $path = \Drupal::service('path.current')->getPath();
+  $current_user = \Drupal::currentUser();
+
+  if (!$current_user->isAuthenticated()) {
+    return;
+  }
+
+  if (
+    asocolderma_inscription_is_admin_zone_path($path)
+    && asocolderma_inscription_current_user_is_admin_zone_user()
+  ) {
+    $page_top['asocolderma_inscription_admin_zone_header'] = [
+      '#theme' => 'asocolderma_inscription_admin_zone_header',
+      '#menu_items' => asocolderma_inscription_build_admin_zone_menu_items(),
+      '#logout_url' => asocolderma_inscription_logout_url_with_token(),
+      '#attached' => [
+        'library' => [
+          'asocolderma_inscription/user_zone',
+          'asocolderma_inscription/admin_zone',
+        ],
+      ],
+      '#cache' => [
+        'contexts' => [
+          'user',
+          'user.roles',
+          'url.path',
+          'route',
+        ],
+      ],
+    ];
+
+    return;
+  }
+
+  if (!in_array('aspirante', $current_user->getRoles(), TRUE)) {
+    return;
+  }
+
+  if ($path !== '/zona' && !str_starts_with($path, '/zona/')) {
+    return;
+  }
+
+  $page_top['asocolderma_inscription_user_zone_header'] = [
+    '#theme' => 'asocolderma_inscription_user_zone_header',
+    '#menu_items' => asocolderma_inscription_build_aspirante_menu_items(),
+    '#logout_url' => asocolderma_inscription_logout_url_with_token(),
+    '#attached' => [
+      'library' => [
+        'asocolderma_inscription/user_zone',
+      ],
+    ],
+    '#cache' => [
+      'contexts' => [
+        'user',
+        'user.roles',
+        'url.path',
+        'route',
+      ],
+    ],
+  ];
+}
+
+/**
+ * Construye los ítems del menú Drupal account-aspirante.
+ */
+function asocolderma_inscription_build_aspirante_menu_items(): array
+{
+  $menu_name = 'account-aspirante';
+  $menu_tree = \Drupal::menuTree();
+
+  $parameters = $menu_tree->getCurrentRouteMenuTreeParameters($menu_name);
+  $parameters->onlyEnabledLinks();
+  $parameters->setMinDepth(1);
+  $parameters->setMaxDepth(1);
+
+  $tree = $menu_tree->load($menu_name, $parameters);
+
+  $tree = $menu_tree->transform($tree, [
+    ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+    ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+  ]);
+
+  $items = [];
+
+  foreach ($tree as $element) {
+    if (!$element->access->isAllowed()) {
+      continue;
+    }
+
+    $url = $element->link->getUrlObject();
+    $url_string = $url->toString();
+
+    $items[] = [
+      'title' => $element->link->getTitle(),
+      'url' => $url_string,
+      'active' => (bool) $element->inActiveTrail,
+      'is_logout' => $element->link->getRouteName() === 'user.logout' || str_contains($url_string, '/user/logout'),
+    ];
+  }
+
+  return $items;
+}
+
+/**
+ * Construye los ítems del menú administrativo según el rol del usuario.
+ *
+ * El menú se administra desde Drupal, pero aquí se filtra y ordena
+ * para evitar que un rol vea enlaces de otro flujo.
+ */
+function asocolderma_inscription_build_admin_zone_menu_items(): array
+{
+  $current_user = \Drupal::currentUser();
+  $roles = $current_user->getRoles();
+  $current_path = \Drupal::service('path.current')->getPath();
+
+  $is_secretaria_general = in_array('secretaria_general', $roles, TRUE);
+  $is_coordinacion_administrativa = in_array('coordinacion_administrativa', $roles, TRUE);
+  $is_admin = in_array('administrator', $roles, TRUE);
+
+  /**
+   * Orden y permisos reales por rol.
+   *
+   * La URL /solicitud/{codigo_solicitud} no va en el menú,
+   * porque es una ruta dinámica de detalle.
+   */
+  $secretaria_items = [
+    '/solicitudes' => 'Solicitudes',
+    '/solicitudes-aspirantes' => 'Secretaría General',
+    '/aprobadas-secretaria-general' => 'Junta Directiva',
+    '/aprobadas-junta-directiva' => 'Asamblea General',
+  ];
+
+  $coordinacion_items = [
+    '/coord-admin/enviar-documentos' => 'Enviar documentos',
+    '/coord-admin/pasos-pago' => 'Pasos para pago',
+    '/coord-admin/validar-pago' => 'Validar pago',
+    '/coord-admin/miembros-activos' => 'Miembros activos',
+  ];
+
+  $allowed_items = [];
+
+  if ($is_admin) {
+    $allowed_items = $secretaria_items + $coordinacion_items;
+  } elseif ($is_secretaria_general) {
+    $allowed_items = $secretaria_items;
+  } elseif ($is_coordinacion_administrativa) {
+    $allowed_items = $coordinacion_items;
+  }
+
+  if (empty($allowed_items)) {
+    return [];
+  }
+
+  $items = [];
+
+  foreach ($allowed_items as $path => $title) {
+    $items[] = [
+      'title' => $title,
+      'url' => $path,
+      'active' => $current_path === $path,
+      'is_logout' => FALSE,
+    ];
+  }
+
+  return $items;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for user_login_form.
+ */
+function asocolderma_inscription_form_user_login_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state, string $form_id): void
+{
+  $route_name = \Drupal::routeMatch()->getRouteName();
+
+  $form['#validate'][] = 'asocolderma_inscription_user_login_role_validate';
+
+  if ($route_name === 'asocolderma_inscription.aspirante_login') {
+    $form['#submit'][] = 'asocolderma_inscription_aspirante_login_submit';
+  }
+}
+
+/**
+ * Valida que cada tipo de usuario ingrese por su formulario correcto.
+ */
+function asocolderma_inscription_user_login_role_validate(array &$form, \Drupal\Core\Form\FormStateInterface $form_state): void
+{
+  $uid = (int) $form_state->get('uid');
+
+  if (!$uid) {
+    return;
+  }
+
+  $account = \Drupal\user\Entity\User::load($uid);
+
+  if (!$account) {
+    return;
+  }
+
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  $is_aspirante_login = $route_name === 'asocolderma_inscription.aspirante_login';
+  $is_aspirante = $account->hasRole('aspirante');
+
+  if ($is_aspirante_login && !$is_aspirante) {
+    $form_state->setErrorByName('name', t('Este formulario es exclusivo para aspirantes. Por favor ingrese por el formulario de miembros de AsoColDerma.'));
+    return;
+  }
+
+  if (!$is_aspirante_login && $is_aspirante) {
+    $form_state->setErrorByName('name', t('Los aspirantes deben iniciar sesión desde el formulario exclusivo para aspirantes.'));
+  }
+}
+
+/**
+ * Redirecciona al aspirante a su zona privada.
+ */
+function asocolderma_inscription_aspirante_login_submit(array &$form, \Drupal\Core\Form\FormStateInterface $form_state): void
+{
+  $form_state->setRedirect('asocolderma_inscription.user_zone');
+}
+
+/**
+ * Convierte el ID de solicitud en enlace al detalle público de la solicitud.
+ */
+function asocolderma_inscription_preprocess_views_view_field(array &$variables): void
+{
+  /**
+   * Etiqueta contextual del estado en el listado de Secretaría General.
+   *
+   * Vista:
+   * - ID: solicitudes_aspirantes
+   * - Display: page_1
+   * - URL: /solicitudes-aspirantes
+   */
+  if (
+    !empty($variables['view']) &&
+    $variables['view']->id() === 'solicitudes_aspirantes' &&
+    $variables['view']->current_display === 'page_1' &&
+    !empty($variables['field']) &&
+    $variables['field']->field === 'field_state'
+  ) {
+    $row = $variables['row'] ?? NULL;
+
+    if (
+      $row &&
+      !empty($row->_entity) &&
+      $row->_entity instanceof \Drupal\node\NodeInterface
+    ) {
+      /** @var \Drupal\node\NodeInterface $node */
+      $node = $row->_entity;
+
+      if (
+        $node->bundle() === 'solicitud_ingreso' &&
+        $node->hasField('field_state') &&
+        !$node->get('field_state')->isEmpty()
+      ) {
+        $estado_entity = $node->get('field_state')->entity;
+
+        if ($estado_entity) {
+          $estado_real = (string) $estado_entity->label();
+          $estado_visual = asocolderma_inscription_get_contextual_state_label($estado_real, 'secretaria_general');
+
+          $variables['output'] = [
+            '#markup' => $estado_visual,
+          ];
+        }
+      }
+    }
+
+    return;
+  }
+  if (
+    empty($variables['view']) ||
+    $variables['view']->id() !== 'solicitudes_aspirantes' ||
+    $variables['view']->current_display !== 'page_9'
+  ) {
+    return;
+  }
+
+  if (
+    empty($variables['field']) ||
+    $variables['field']->field !== 'nothing_1'
+  ) {
+    return;
+  }
+
+  $row = $variables['row'] ?? NULL;
+
+  if (
+    !$row ||
+    empty($row->_entity) ||
+    !$row->_entity instanceof \Drupal\node\NodeInterface
+  ) {
+    return;
+  }
+
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $row->_entity;
+
+  if ($node->bundle() !== 'solicitud_ingreso') {
+    return;
+  }
+
+  if (!$node->hasField('field_solicitud_id') || $node->get('field_solicitud_id')->isEmpty()) {
+    return;
+  }
+
+  $codigo_solicitud = trim((string) $node->get('field_solicitud_id')->value);
+
+  if ($codigo_solicitud === '') {
+    return;
+  }
+
+  $url = \Drupal\Core\Url::fromUri('internal:/solicitud/' . $codigo_solicitud);
+
+  $variables['output'] = \Drupal\Core\Link::fromTextAndUrl($codigo_solicitud, $url)->toRenderable();
+
+  $variables['output']['#attributes'] = [
+    'class' => [
+      'solicitud-id-link',
+    ],
+    'title' => 'Ver detalle de la solicitud ' . $codigo_solicitud,
+  ];
+}
+
+/**
+ * Ajustes visuales sobre tablas de solicitudes.
+ *
+ * - Cambia visualmente el estado para Secretaría General.
+ * - Convierte el ID de solicitud en enlace dentro de /solicitudes.
+ */
+function asocolderma_inscription_preprocess_views_view_table(array &$variables): void
+{
+  if (
+    empty($variables['view']) ||
+    $variables['view']->id() !== 'solicitudes_aspirantes'
+  ) {
+    return;
+  }
+
+  $current_display = (string) $variables['view']->current_display;
+
+  foreach ($variables['rows'] as $row_index => &$row) {
+    $result_row = $variables['view']->result[$row_index] ?? NULL;
+
+    if (
+      !$result_row ||
+      empty($result_row->_entity) ||
+      !$result_row->_entity instanceof \Drupal\node\NodeInterface
+    ) {
+      continue;
+    }
+
+    /** @var \Drupal\node\NodeInterface $node */
+    $node = $result_row->_entity;
+
+    if ($node->bundle() !== 'solicitud_ingreso') {
+      continue;
+    }
+
+    /*
+     * 1. Cambiar visualmente la columna Estado en:
+     * - /solicitudes-aspirantes: page_1
+     * - /solicitudes: page_9
+     */
+    if (
+      in_array($current_display, ['page_1', 'page_9'], TRUE) &&
+      $node->hasField('field_state') &&
+      !$node->get('field_state')->isEmpty()
+    ) {
+      $estado_entity = $node->get('field_state')->entity;
+
+      if ($estado_entity) {
+        $estado_visual = asocolderma_inscription_get_state_visual_label_from_term($estado_entity);
+
+        $estado_color = '';
+        if (
+          $estado_entity->hasField('field_color_estado_solicitud') &&
+          !$estado_entity->get('field_color_estado_solicitud')->isEmpty()
+        ) {
+          $estado_color = (string) $estado_entity->get('field_color_estado_solicitud')->value;
+        }
+
+        foreach ($row['columns'] as $column_key => &$column) {
+          $column_label = trim((string) ($variables['header'][$column_key]['content'] ?? ''));
+
+          if (
+            $column_key === 'field_state' ||
+            str_contains((string) $column_key, 'field_state') ||
+            mb_strtolower($column_label) === 'estado'
+          ) {
+            $style = '';
+
+            if ($estado_color !== '') {
+              $style = ' style="background-color: ' . htmlspecialchars($estado_color, ENT_QUOTES, 'UTF-8') . ';"';
+            }
+
+            $column['content'] = [
+              [
+                'separator' => '',
+                'field_output' => [
+                  '#markup' => '<span class="estado-solicitud-color"' . $style . '>' . htmlspecialchars($estado_visual, ENT_QUOTES, 'UTF-8') . '</span>',
+                ],
+              ],
+            ];
+
+            break;
+          }
+        }
+      }
+    }
+
+    /*
+     * 2. Mantener el ID de solicitud como enlace en /solicitudes.
+     */
+    if ($current_display !== 'page_9') {
+      continue;
+    }
+
+    if (!$node->hasField('field_solicitud_id') || $node->get('field_solicitud_id')->isEmpty()) {
+      continue;
+    }
+
+    $codigo_solicitud = trim((string) $node->get('field_solicitud_id')->value);
+
+    if ($codigo_solicitud === '') {
+      continue;
+    }
+
+    if (!isset($row['columns']['nothing_1'])) {
+      continue;
+    }
+
+    $link = [
+      '#type' => 'link',
+      '#title' => $codigo_solicitud,
+      '#url' => \Drupal\Core\Url::fromUri('internal:/solicitud/' . $codigo_solicitud),
+      '#attributes' => [
+        'class' => [
+          'solicitud-id-link',
+        ],
+        'title' => 'Ver detalle de la solicitud ' . $codigo_solicitud,
+      ],
+    ];
+
+    $row['columns']['nothing_1']['content'] = [
+      [
+        'separator' => '',
+        'field_output' => $link,
+      ],
+    ];
+  }
+}
+
+/**
+ * Genera la URL segura de cierre de sesión con token CSRF.
+ */
+function asocolderma_inscription_logout_url_with_token(): string
+{
+  $token = \Drupal::service('csrf_token')->get('user/logout');
+
+  return \Drupal\Core\Url::fromRoute('user.logout', [], [
+    'query' => [
+      'token' => $token,
+    ],
+  ])->toString();
+}
+
+/**
+ * Devuelve una etiqueta visual administrable del semáforo.
+ */
+function asocolderma_inscription_get_semaforo_visual_label(string $key, string $fallback): string
+{
+  $labels = \Drupal::config('asocolderma_inscription.state_visual_labels')->get('semaforo_labels') ?? [];
+
+  if (!empty($labels[$key]) && is_string($labels[$key])) {
+    $label = trim($labels[$key]);
+
+    if ($label !== '') {
+      return $label;
+    }
+  }
+
+  return $fallback;
+}
+
+/**
+ * Devuelve la etiqueta visual de un paso futuro del semáforo.
+ */
+function asocolderma_inscription_get_future_semaforo_label(string $internal_label, string $status): string
+{
+  return match ($internal_label) {
+    'Junta directiva' => $status === 'current'
+      ? asocolderma_inscription_get_semaforo_visual_label('pending_junta_directiva', 'Pendiente Junta Directiva')
+      : asocolderma_inscription_get_semaforo_visual_label('junta_directiva', 'Junta Directiva'),
+
+    'Asamblea general' => $status === 'current'
+      ? asocolderma_inscription_get_semaforo_visual_label('pending_asamblea_general', 'Pendiente Asamblea General')
+      : asocolderma_inscription_get_semaforo_visual_label('asamblea_general', 'Asamblea General'),
+
+    'Envío de documentos' => asocolderma_inscription_get_semaforo_visual_label('envio_documentos', 'Documentos enviados'),
+    'Pago de ingreso' => asocolderma_inscription_get_semaforo_visual_label('pago_ingreso', 'Pago de ingreso'),
+    'Activación de miembro' => asocolderma_inscription_get_semaforo_visual_label('activacion_miembro', 'Activación de miembro'),
+    'Miembro activo' => asocolderma_inscription_get_semaforo_visual_label('miembro_activo', 'Miembro activo'),
+
+    default => $internal_label,
+  };
+}
+
+/**
+ * Implements hook_preprocess_status_messages().
+ *
+ * Oculta únicamente el aviso informativo que Drupal genera cuando
+ * renombra automáticamente un archivo por colisión de nombre.
+ *
+ * No afecta errores, advertencias ni mensajes de seguridad.
+ */
+function asocolderma_inscription_preprocess_status_messages(array &$variables): void
+{
+  if (empty($variables['message_list']['status'])) {
+    return;
+  }
+
+  $filtered_messages = [];
+
+  foreach ($variables['message_list']['status'] as $message) {
+    $plain_message = trim(strip_tags((string) $message));
+
+    if (
+      str_starts_with(
+        $plain_message,
+        'Su archivo fue renombrado como'
+      )
+      || str_starts_with(
+        $plain_message,
+        'Your upload has been renamed to'
+      )
+    ) {
+      continue;
+    }
+
+    $filtered_messages[] = $message;
+  }
+
+  if ($filtered_messages) {
+    $variables['message_list']['status'] = $filtered_messages;
+  } else {
+    unset($variables['message_list']['status']);
+  }
+}

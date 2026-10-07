@@ -1,0 +1,1807 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for asocolderma_inscription.
+ */
+
+use Drupal\Core\Database\Database;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface;
+
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\node\Entity\NodeType;
+
+/**
+ * Instala las tablas de la entidad solicitud_ingreso si el módulo ya estaba instalado
+ * cuando se agregó la entidad al código.
+ */
+function asocolderma_inscription_update_8001(): void
+{
+  $connection = Database::getConnection();
+  $schema = $connection->schema();
+
+  // Si ya existe la tabla base, no hacemos nada.
+  if ($schema->tableExists('solicitud_ingreso')) {
+    return;
+  }
+
+  // Verifica que la definición de entidad exista.
+  $etm = \Drupal::entityTypeManager();
+  $definition = $etm->getDefinition('solicitud_ingreso', FALSE);
+  if (!$definition) {
+    throw new \RuntimeException('No existe la definición de entidad "solicitud_ingreso". Revisa el EntityType en el módulo.');
+  }
+
+  // Instala el entity type (crea tablas base/field_data/revision si aplica).
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  $update_manager->installEntityType($definition);
+}
+
+/**
+ * Instala/actualiza base fields nuevos en solicitud_ingreso.
+ */
+function asocolderma_inscription_update_8002(): void
+{
+  $entity_type_id = 'solicitud_ingreso';
+
+  $etm = \Drupal::entityTypeManager();
+  $update_manager = \Drupal::entityDefinitionUpdateManager();
+  $field_manager = \Drupal::service('entity_field.manager');
+
+  $entity_type = $etm->getDefinition($entity_type_id);
+  $new_definitions = \Drupal\asocolderma_inscription\Entity\SolicitudIngreso::baseFieldDefinitions($entity_type);
+  $current = $field_manager->getFieldStorageDefinitions($entity_type_id);
+
+  foreach ($new_definitions as $field_name => $storage_def) {
+    // Ya existe en BD -> no tocar.
+    if (isset($current[$field_name])) {
+      continue;
+    }
+
+    // Campos base/core que no debes instalar manualmente.
+    if (in_array($field_name, ['id', 'uuid', 'langcode', 'created', 'changed'], TRUE)) {
+      continue;
+    }
+
+    // Instalar solo los nuevos.
+    $update_manager->installFieldStorageDefinition(
+      $field_name,
+      $entity_type_id,
+      $entity_type_id,
+      $storage_def
+    );
+  }
+}
+
+/**
+ * Crea el tipo de contenido y campos para persistir Solicitud como Node.
+ */
+function asocolderma_inscription_update_9001(): void
+{
+  $type = 'solicitud_ingreso';
+
+  // 1) Content type.
+  if (!NodeType::load($type)) {
+    $node_type = NodeType::create([
+      'type' => $type,
+      'name' => 'Solicitud de ingreso',
+      'description' => 'Persistencia completa de la solicitud de ingreso (datos + adjuntos).',
+    ]);
+    $node_type->save();
+  }
+
+  // Helper: crea field storage si no existe.
+  $ensure_storage = static function (string $field_name, string $field_type, array $storage_settings = [], int $cardinality = 1) use ($type): void {
+    $existing = FieldStorageConfig::loadByName('node', $field_name);
+    if ($existing) {
+      return;
+    }
+    FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => 'node',
+      'type' => $field_type,
+      'settings' => $storage_settings,
+      'cardinality' => $cardinality,
+      'translatable' => FALSE,
+    ])->save();
+  };
+
+  // Helper: crea field instance en el bundle si no existe.
+  $ensure_field = static function (string $field_name, string $label, array $field_settings = [], bool $required = FALSE) use ($type): void {
+    $existing = FieldConfig::loadByName('node', $type, $field_name);
+    if ($existing) {
+      return;
+    }
+    FieldConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => 'node',
+      'bundle' => $type,
+      'label' => $label,
+      'required' => $required,
+      'settings' => $field_settings,
+    ])->save();
+  };
+
+  // 2) Campos core de negocio.
+  $ensure_storage('field_solicitud_id', 'string', ['max_length' => 32]);
+  $ensure_field('field_solicitud_id', 'ID Solicitud', [], TRUE);
+
+  $allowed_states = [
+    'in_progress' => 'En trámite',
+    'needs_clarification' => 'Pendiente aclaración',
+    'sg_approved' => 'Aprobada por Secretaría',
+    'rejected' => 'Rechazada',
+    'payment_pending' => 'Pago pendiente',
+    'pending_signature' => 'Pendiente firma',
+    'active_member' => 'Miembro activo',
+  ];
+  $ensure_storage('field_state', 'list_string', ['allowed_values' => $allowed_states]);
+  $ensure_field('field_state', 'Estado', [], TRUE);
+
+  $ensure_storage('field_sg_reason', 'string_long');
+  $ensure_field('field_sg_reason', 'Motivo / observación Secretaría General', [], FALSE);
+
+  $ensure_storage('field_terms_accepted', 'boolean');
+  $ensure_field('field_terms_accepted', 'Aceptó términos', [], TRUE);
+
+  // 3) Paso 1: Información general.
+  $ensure_storage('field_tipo_asociado', 'entity_reference', [
+    'target_type' => 'taxonomy_term',
+  ]);
+
+  $ensure_field('field_tipo_asociado', 'Tipo de asociado', [
+    'handler' => 'default:taxonomy_term',
+    'handler_settings' => [
+      'target_bundles' => [
+        'tipo_de_asociado' => 'tipo_de_asociado',
+      ],
+      'sort' => [
+        'field' => 'weight',
+        'direction' => 'ASC',
+      ],
+      'auto_create' => FALSE,
+    ],
+  ], TRUE);
+
+  $ensure_storage('field_nombre1', 'string', ['max_length' => 100]);
+  $ensure_field('field_nombre1', 'Primer nombre', [], TRUE);
+
+  $ensure_storage('field_nombre2', 'string', ['max_length' => 100]);
+  $ensure_field('field_nombre2', 'Segundo nombre', [], FALSE);
+
+  $ensure_storage('field_apellido1', 'string', ['max_length' => 100]);
+  $ensure_field('field_apellido1', 'Primer apellido', [], TRUE);
+
+  $ensure_storage('field_apellido2', 'string', ['max_length' => 100]);
+  $ensure_field('field_apellido2', 'Segundo apellido', [], FALSE);
+
+  $ensure_storage('field_fecha_nacimiento', 'datetime', ['datetime_type' => 'date']);
+  $ensure_field('field_fecha_nacimiento', 'Fecha de nacimiento', [], TRUE);
+
+  $ensure_storage('field_estado_civil', 'entity_reference', [
+    'target_type' => 'taxonomy_term',
+  ]);
+
+  $ensure_field('field_estado_civil', 'Estado civil', [
+    'handler' => 'default:taxonomy_term',
+    'handler_settings' => [
+      'target_bundles' => [
+        'estado_civil' => 'estado_civil',
+      ],
+      'sort' => [
+        'field' => 'weight',
+        'direction' => 'ASC',
+      ],
+      'auto_create' => FALSE,
+    ],
+  ], TRUE);
+
+  $ensure_storage('field_sexo', 'entity_reference', [
+    'target_type' => 'taxonomy_term',
+  ]);
+
+  $ensure_field('field_sexo', 'Sexo', [
+    'handler' => 'default:taxonomy_term',
+    'handler_settings' => [
+      'target_bundles' => [
+        'sexo' => 'sexo',
+      ],
+      'sort' => [
+        'field' => 'weight',
+        'direction' => 'ASC',
+      ],
+      'auto_create' => FALSE,
+    ],
+  ], TRUE);
+
+  $ensure_storage('field_tipo_documento', 'entity_reference', [
+    'target_type' => 'taxonomy_term',
+  ]);
+
+  $ensure_field('field_tipo_documento', 'Tipo de documento', [
+    'handler' => 'default:taxonomy_term',
+    'handler_settings' => [
+      'target_bundles' => [
+        'tipo_de_documento' => 'tipo_de_documento',
+      ],
+      'sort' => [
+        'field' => 'weight',
+        'direction' => 'ASC',
+      ],
+      'auto_create' => FALSE,
+    ],
+  ], TRUE);
+
+  $ensure_storage('field_numero_documento', 'string', ['max_length' => 50]);
+  $ensure_field('field_numero_documento', 'Número de documento', [], TRUE);
+
+  $ensure_storage('field_registro_medico', 'string', ['max_length' => 100]);
+  $ensure_field('field_registro_medico', 'Registro médico / tarjeta profesional', [], TRUE);
+
+  $ensure_storage('field_pais', 'entity_reference', [
+    'target_type' => 'taxonomy_term',
+  ]);
+
+  $ensure_field('field_pais', 'País', [
+    'handler' => 'default:taxonomy_term',
+    'handler_settings' => [
+      'target_bundles' => [
+        'country' => 'country',
+      ],
+      'sort' => [
+        'field' => 'name',
+        'direction' => 'ASC',
+      ],
+      'auto_create' => FALSE,
+    ],
+  ], TRUE);
+
+  $ensure_storage('field_departamento', 'entity_reference', [
+    'target_type' => 'taxonomy_term',
+  ]);
+
+  $ensure_field('field_departamento', 'Departamento', [
+    'handler' => 'default:taxonomy_term',
+    'handler_settings' => [
+      'target_bundles' => [
+        'departametos' => 'departametos',
+      ],
+      'sort' => [
+        'field' => 'name',
+        'direction' => 'ASC',
+      ],
+      'auto_create' => FALSE,
+    ],
+  ], TRUE);
+
+  $ensure_storage('field_ciudad_ejercicio', 'entity_reference', [
+    'target_type' => 'taxonomy_term',
+  ]);
+
+  $ensure_field('field_ciudad_ejercicio', 'Ciudad de ejercicio principal', [
+    'handler' => 'default:taxonomy_term',
+    'handler_settings' => [
+      'target_bundles' => [
+        'city' => 'city',
+      ],
+      'sort' => [
+        'field' => 'name',
+        'direction' => 'ASC',
+      ],
+      'auto_create' => FALSE,
+    ],
+  ], TRUE);
+
+  // 4) Paso 2: Institucional.
+  $ensure_storage('field_direccion_institucional', 'string', ['max_length' => 255]);
+  $ensure_field('field_direccion_institucional', 'Dirección institucional', [], TRUE);
+
+  $ensure_storage('field_email_principal', 'email');
+  $ensure_field('field_email_principal', 'Correo principal', [], TRUE);
+
+  $ensure_storage('field_celular', 'string', ['max_length' => 30]);
+  $ensure_field('field_celular', 'Celular', [], TRUE);
+
+  $ensure_storage('field_correspondencia_fisica', 'string', ['max_length' => 32]);
+  $ensure_field('field_correspondencia_fisica', 'Correspondencia física', [], TRUE);
+
+  // 5) Paso 3: Información académica.
+  $taxonomy_reference_settings = [
+    'target_type' => 'taxonomy_term',
+  ];
+
+  $taxonomy_handler = static function (string $vocabulary): array {
+    return [
+      'handler' => 'default:taxonomy_term',
+      'handler_settings' => [
+        'target_bundles' => [
+          $vocabulary => $vocabulary,
+        ],
+        'sort' => [
+          'field' => 'name',
+          'direction' => 'ASC',
+        ],
+        'auto_create' => FALSE,
+        'auto_create_bundle' => '',
+      ],
+    ];
+  };
+
+  $ensure_storage('field_facultad_pregrado', 'entity_reference', $taxonomy_reference_settings);
+  $ensure_field(
+    'field_facultad_pregrado',
+    'Facultad de medicina – Pregrado',
+    $taxonomy_handler('university_undergraduate'),
+    TRUE
+  );
+
+  $ensure_storage('field_pais_pregrado', 'entity_reference', $taxonomy_reference_settings);
+  $ensure_field(
+    'field_pais_pregrado',
+    'País donde realizó el pregrado en medicina',
+    $taxonomy_handler('country'),
+    TRUE
+  );
+
+  $ensure_storage('field_titulo_universitario', 'entity_reference', $taxonomy_reference_settings);
+  $ensure_field(
+    'field_titulo_universitario',
+    'Título universitario',
+    $taxonomy_handler('university_degree'),
+    TRUE
+  );
+
+  $ensure_storage('field_universidad_residencia', 'entity_reference', $taxonomy_reference_settings);
+  $ensure_field(
+    'field_universidad_residencia',
+    'Universidad de residencia',
+    $taxonomy_handler('university_residence'),
+    TRUE
+  );
+
+  $ensure_storage('field_pais_residencia', 'entity_reference', $taxonomy_reference_settings);
+  $ensure_field(
+    'field_pais_residencia',
+    'País donde realizó la residencia',
+    $taxonomy_handler('country'),
+    TRUE
+  );
+
+  $ensure_storage('field_tiene_subespecialidad', 'boolean');
+  $ensure_field(
+    'field_tiene_subespecialidad',
+    'Tiene una Subespecialidad?',
+    [],
+    TRUE
+  );
+
+  $ensure_storage('field_subespecialidad_cual', 'entity_reference', $taxonomy_reference_settings);
+  $ensure_field(
+    'field_subespecialidad_cual',
+    'Subespecialidad',
+    $taxonomy_handler('services_specialties'),
+    FALSE
+  );
+
+  // 6) Adjuntos (file, private://).
+  $file_storage_settings = [
+    'uri_scheme' => 'private',
+    'target_type' => 'file',
+    'display_field' => FALSE,
+    'display_default' => FALSE,
+  ];
+  $file_field_settings = [
+    'file_directory' => 'solicitudes',
+    'file_extensions' => 'pdf jpg jpeg png',
+    'max_filesize' => '10 MB',
+    'description_field' => FALSE,
+  ];
+
+  $file_fields_required = [
+    'field_adj_carta_1' => 'Copia carta 1 de presentación',
+    'field_adj_carta_2' => 'Copia carta 2 de presentación',
+    'field_adj_rut' => 'Copia RUT',
+    'field_adj_id' => 'Copia cédula o ID',
+    'field_adj_carta_ingreso' => 'Carta de solicitud de ingreso',
+    'field_adj_hv' => 'Hoja de vida',
+    'field_adj_diploma_medico' => 'Copia diploma médico general',
+    'field_adj_diploma_dermatologo' => 'Copia diploma dermatólogo',
+    'field_adj_rethus' => 'Registro médico / RETHUS',
+    'field_adj_aut_verificacion' => 'Carta autorización verificación títulos',
+    'field_adj_cert_publicacion' => 'Certificación conferencia/caso/póster/publicación',
+  ];
+
+  foreach ($file_fields_required as $fname => $label) {
+    $ensure_storage($fname, 'file', $file_storage_settings, 1);
+    $ensure_field($fname, $label, $file_field_settings, TRUE);
+  }
+
+  // 7) Displays (mínimos) para que se renderice sin configuración manual.
+  $form_display = EntityFormDisplay::load("node.$type.default");
+  if (!$form_display) {
+    $form_display = EntityFormDisplay::create([
+      'targetEntityType' => 'node',
+      'bundle' => $type,
+      'mode' => 'default',
+      'status' => TRUE,
+    ]);
+  }
+
+  // Widget para campos clave.
+  $form_display->setComponent('title', ['type' => 'string_textfield']);
+  $form_display->setComponent('field_solicitud_id', ['type' => 'string_textfield']);
+  $form_display->setComponent('field_state', ['type' => 'options_select']);
+  $form_display->setComponent('field_sg_reason', ['type' => 'string_textarea']);
+  $form_display->setComponent('field_terms_accepted', ['type' => 'boolean_checkbox']);
+
+  // Deja el resto con defaults (si no existen, no rompe).
+  $form_display->save();
+
+  $view_display = EntityViewDisplay::load("node.$type.default");
+  if (!$view_display) {
+    $view_display = EntityViewDisplay::create([
+      'targetEntityType' => 'node',
+      'bundle' => $type,
+      'mode' => 'default',
+      'status' => TRUE,
+    ]);
+  }
+
+  // Mostrar campos clave por defecto.
+  $view_display->setComponent('field_solicitud_id', ['type' => 'string']);
+  $view_display->setComponent('field_state', ['type' => 'list_default']);
+  $view_display->setComponent('field_sg_reason', ['type' => 'basic_string']);
+  $view_display->save();
+}
+
+function asocolderma_inscription_update_9003(): void
+{
+  $type = 'solicitud_ingreso';
+
+  $form_display = EntityFormDisplay::load("node.$type.default");
+  if (!$form_display) {
+    $form_display = EntityFormDisplay::create([
+      'targetEntityType' => 'node',
+      'bundle' => $type,
+      'mode' => 'default',
+      'status' => TRUE,
+    ]);
+  }
+
+  $fields = [
+    'field_adj_aut_verificacion',
+    'field_adj_carta_1',
+    'field_adj_carta_2',
+    'field_adj_carta_ingreso',
+    'field_adj_cert_publicacion',
+    'field_adj_diploma_dermatologo',
+    'field_adj_diploma_medico',
+    'field_adj_hv',
+    'field_adj_id',
+    'field_adj_rethus',
+    'field_adj_rut',
+  ];
+
+  $weight = 50;
+  foreach ($fields as $field_name) {
+    $form_display->setComponent($field_name, [
+      'type' => 'file_generic',
+      'weight' => $weight++,
+      'settings' => [
+        'progress_indicator' => 'throbber',
+      ],
+    ]);
+  }
+
+  $form_display->save();
+}
+
+function asocolderma_inscription_schema()
+{
+  $schema['asocolderma_solicitud_historial'] = [
+    'description' => 'Historial append-only de transiciones de estado de solicitudes.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'solicitud_nid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'from_tid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+      ],
+      'to_tid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'actor_uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'created' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'origin' => [
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => TRUE,
+        'default' => 'unknown',
+      ],
+      'comment' => [
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => FALSE,
+      ],
+      'metadata' => [
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => FALSE,
+        'description' => 'JSON string con metadata técnica (ip, user_agent, etc.)',
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'idx_solicitud_created' => ['solicitud_nid', 'created'],
+      'idx_to_created' => ['to_tid', 'created'],
+      'idx_actor_created' => ['actor_uid', 'created'],
+    ],
+  ];
+
+  $schema['asocolderma_solicitud_aclaracion'] = [
+    'description' => 'Registro auditable de solicitudes de aclaración realizadas por Secretaría General.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'solicitud_nid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'NID de la solicitud de ingreso.',
+      ],
+      'requested_fields' => [
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => TRUE,
+        'description' => 'JSON con los campos solicitados para corrección.',
+      ],
+      'message' => [
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => TRUE,
+        'description' => 'Mensaje u observación enviada al aspirante.',
+      ],
+      'requested_by_uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'UID del usuario de Secretaría General que solicitó la aclaración.',
+      ],
+      'created' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Fecha Unix de creación de la solicitud de aclaración.',
+      ],
+      'resolved_by_uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'description' => 'UID del aspirante que respondió la aclaración.',
+      ],
+      'resolved' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'description' => 'Fecha Unix en que el aspirante respondió la aclaración.',
+      ],
+      'resolution_metadata' => [
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => FALSE,
+        'description' => 'JSON con resumen de campos modificados y valores técnicos comparados.',
+      ],
+      'status' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => 'open',
+        'description' => 'Estado interno de la aclaración: open, answered.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'idx_solicitud_status_created' => ['solicitud_nid', 'status', 'created'],
+      'idx_requested_by_created' => ['requested_by_uid', 'created'],
+      'idx_resolved_by_resolved' => ['resolved_by_uid', 'resolved'],
+    ],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Update hook para crear tabla en sitios ya instalados.
+ */
+function asocolderma_inscription_update_9004(): void
+{
+  $schema = \Drupal::database()->schema();
+
+  if ($schema->tableExists('asocolderma_solicitud_historial')) {
+    return;
+  }
+
+  $table = asocolderma_inscription_schema()['asocolderma_solicitud_historial'];
+  $schema->createTable('asocolderma_solicitud_historial', $table);
+}
+
+/**
+ * Migra field_tipo_asociado de string a referencia de taxonomía.
+ */
+function asocolderma_inscription_update_9005(): void
+{
+  $entity_type = 'node';
+  $bundle = 'solicitud_ingreso';
+  $field_name = 'field_tipo_asociado';
+  $vocabulary = 'tipo_de_asociado';
+
+  $storage = FieldStorageConfig::loadByName($entity_type, $field_name);
+  $field = FieldConfig::loadByName($entity_type, $bundle, $field_name);
+
+  if ($storage && $storage->getType() === 'entity_reference') {
+    return;
+  }
+
+  $connection = \Drupal::database();
+
+  $backup = [];
+
+  if ($connection->schema()->tableExists("node__{$field_name}")) {
+    $records = $connection->select("node__{$field_name}", 'f')
+      ->fields('f', ['entity_id', "{$field_name}_value"])
+      ->execute()
+      ->fetchAll();
+
+    foreach ($records as $record) {
+      $backup[(int) $record->entity_id] = (string) $record->{$field_name . '_value'};
+    }
+  }
+
+  if ($field) {
+    $field->delete();
+  }
+
+  if ($storage) {
+    $storage->delete();
+  }
+
+  try {
+    field_purge_batch(50);
+  } catch (\Throwable $e) {
+    \Drupal::logger('asocolderma_inscription')->warning(
+      'No fue posible purgar completamente el campo @field durante la migración. Se continúa con la recreación del campo. Error: @message',
+      [
+        '@field' => $field_name,
+        '@message' => $e->getMessage(),
+      ]
+    );
+  }
+
+  FieldStorageConfig::create([
+    'field_name' => $field_name,
+    'entity_type' => $entity_type,
+    'type' => 'entity_reference',
+    'settings' => [
+      'target_type' => 'taxonomy_term',
+    ],
+    'cardinality' => 1,
+    'translatable' => FALSE,
+  ])->save();
+
+  FieldConfig::create([
+    'field_name' => $field_name,
+    'entity_type' => $entity_type,
+    'bundle' => $bundle,
+    'label' => 'Tipo de asociado',
+    'required' => TRUE,
+    'settings' => [
+      'handler' => 'default:taxonomy_term',
+      'handler_settings' => [
+        'target_bundles' => [
+          $vocabulary => $vocabulary,
+        ],
+        'sort' => [
+          'field' => 'weight',
+          'direction' => 'ASC',
+        ],
+        'auto_create' => FALSE,
+      ],
+    ],
+  ])->save();
+
+  $form_display = EntityFormDisplay::load("{$entity_type}.{$bundle}.default");
+  if ($form_display) {
+    $form_display->setComponent($field_name, [
+      'type' => 'options_select',
+      'weight' => 10,
+    ]);
+    $form_display->save();
+  }
+
+  $view_display = EntityViewDisplay::load("{$entity_type}.{$bundle}.default");
+  if ($view_display) {
+    $view_display->setComponent($field_name, [
+      'type' => 'entity_reference_label',
+      'label' => 'above',
+      'settings' => [
+        'link' => FALSE,
+      ],
+    ]);
+    $view_display->save();
+  }
+
+  if ($backup) {
+    $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+
+    $terms = $term_storage->loadByProperties([
+      'vid' => $vocabulary,
+    ]);
+
+    $term_map = [];
+    foreach ($terms as $term) {
+      $term_map[strtolower(trim($term->label()))] = $term->id();
+    }
+
+    foreach ($backup as $nid => $old_value) {
+      $key = strtolower(trim($old_value));
+
+      if ($key === '' || !isset($term_map[$key])) {
+        continue;
+      }
+
+      $node = $node_storage->load($nid);
+      if (!$node) {
+        continue;
+      }
+
+      $node->set($field_name, [
+        'target_id' => $term_map[$key],
+      ]);
+      $node->save();
+    }
+  }
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
+
+/**
+ * Migra estado civil, sexo y tipo de documento a referencias de taxonomía.
+ */
+function asocolderma_inscription_update_9006(): void
+{
+  $fields = [
+    'field_estado_civil' => [
+      'label' => 'Estado civil',
+      'vocabulary' => 'estado_civil',
+      'weight' => 11,
+    ],
+    'field_sexo' => [
+      'label' => 'Sexo',
+      'vocabulary' => 'sexo',
+      'weight' => 12,
+    ],
+    'field_tipo_documento' => [
+      'label' => 'Tipo de documento',
+      'vocabulary' => 'tipo_de_documento',
+      'weight' => 13,
+    ],
+  ];
+
+  foreach ($fields as $field_name => $definition) {
+    asocolderma_inscription_migrate_string_field_to_taxonomy_reference(
+      'node',
+      'solicitud_ingreso',
+      $field_name,
+      $definition['label'],
+      $definition['vocabulary'],
+      $definition['weight']
+    );
+  }
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
+
+/**
+ * Migra un campo string existente a referencia de taxonomía.
+ */
+function asocolderma_inscription_migrate_string_field_to_taxonomy_reference(
+  string $entity_type,
+  string $bundle,
+  string $field_name,
+  string $label,
+  string $vocabulary,
+  int $weight = 10,
+): void {
+  $storage = FieldStorageConfig::loadByName($entity_type, $field_name);
+  $field = FieldConfig::loadByName($entity_type, $bundle, $field_name);
+
+  if ($storage && $storage->getType() === 'entity_reference') {
+    return;
+  }
+
+  $connection = \Drupal::database();
+  $backup = [];
+
+  if ($connection->schema()->tableExists("{$entity_type}__{$field_name}")) {
+    $records = $connection->select("{$entity_type}__{$field_name}", 'f')
+      ->fields('f', ['entity_id', "{$field_name}_value"])
+      ->execute()
+      ->fetchAll();
+
+    foreach ($records as $record) {
+      $backup[(int) $record->entity_id] = (string) $record->{$field_name . '_value'};
+    }
+  }
+
+  try {
+    if ($field) {
+      $field->delete();
+    }
+
+    if ($storage) {
+      $storage->delete();
+    }
+
+    field_purge_batch(50);
+  } catch (\Throwable $e) {
+    \Drupal::logger('asocolderma_inscription')->warning(
+      'No fue posible purgar completamente el campo @field durante la migración. Se continúa con la recreación del campo. Error: @message',
+      [
+        '@field' => $field_name,
+        '@message' => $e->getMessage(),
+      ]
+    );
+  }
+
+  FieldStorageConfig::create([
+    'field_name' => $field_name,
+    'entity_type' => $entity_type,
+    'type' => 'entity_reference',
+    'settings' => [
+      'target_type' => 'taxonomy_term',
+    ],
+    'cardinality' => 1,
+    'translatable' => FALSE,
+  ])->save();
+
+  FieldConfig::create([
+    'field_name' => $field_name,
+    'entity_type' => $entity_type,
+    'bundle' => $bundle,
+    'label' => $label,
+    'required' => TRUE,
+    'settings' => [
+      'handler' => 'default:taxonomy_term',
+      'handler_settings' => [
+        'target_bundles' => [
+          $vocabulary => $vocabulary,
+        ],
+        'sort' => [
+          'field' => 'weight',
+          'direction' => 'ASC',
+        ],
+        'auto_create' => FALSE,
+      ],
+    ],
+  ])->save();
+
+  $form_display = EntityFormDisplay::load("{$entity_type}.{$bundle}.default");
+  if ($form_display) {
+    $form_display->setComponent($field_name, [
+      'type' => 'options_select',
+      'weight' => $weight,
+    ]);
+    $form_display->save();
+  }
+
+  $view_display = EntityViewDisplay::load("{$entity_type}.{$bundle}.default");
+  if ($view_display) {
+    $view_display->setComponent($field_name, [
+      'type' => 'entity_reference_label',
+      'label' => 'above',
+      'settings' => [
+        'link' => FALSE,
+      ],
+    ]);
+    $view_display->save();
+  }
+
+  if (!$backup) {
+    return;
+  }
+
+  $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+  $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+
+  $terms = $term_storage->loadByProperties([
+    'vid' => $vocabulary,
+  ]);
+
+  $term_map = [];
+  foreach ($terms as $term) {
+    $term_map[strtolower(trim($term->label()))] = $term->id();
+  }
+
+  foreach ($backup as $nid => $old_value) {
+    $key = strtolower(trim($old_value));
+
+    if ($key === '' || !isset($term_map[$key])) {
+      continue;
+    }
+
+    $node = $node_storage->load($nid);
+    if (!$node) {
+      continue;
+    }
+
+    $node->set($field_name, [
+      'target_id' => $term_map[$key],
+    ]);
+    $node->save();
+  }
+}
+
+/**
+ * Migra país, departamento y ciudad de ejercicio a referencias de taxonomía.
+ */
+function asocolderma_inscription_update_9007(): void
+{
+  $fields = [
+    'field_pais' => [
+      'label' => 'País',
+      'vocabulary' => 'country',
+      'weight' => 14,
+    ],
+    'field_departamento' => [
+      'label' => 'Departamento',
+      'vocabulary' => 'departametos',
+      'weight' => 15,
+    ],
+    'field_ciudad_ejercicio' => [
+      'label' => 'Ciudad de ejercicio principal',
+      'vocabulary' => 'city',
+      'weight' => 16,
+    ],
+  ];
+
+  foreach ($fields as $field_name => $definition) {
+    asocolderma_inscription_migrate_string_field_to_taxonomy_reference(
+      'node',
+      'solicitud_ingreso',
+      $field_name,
+      $definition['label'],
+      $definition['vocabulary'],
+      $definition['weight']
+    );
+  }
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
+
+/**
+ * Ajusta campos de dirección en solicitud de ingreso.
+ */
+function asocolderma_inscription_update_9008(): void
+{
+  $type = 'solicitud_ingreso';
+
+  // Crear field_direccion si no existe.
+  if (!FieldStorageConfig::loadByName('node', 'field_direccion')) {
+    FieldStorageConfig::create([
+      'field_name' => 'field_direccion',
+      'entity_type' => 'node',
+      'type' => 'string',
+      'settings' => [
+        'max_length' => 255,
+      ],
+      'cardinality' => 1,
+      'translatable' => FALSE,
+    ])->save();
+  }
+
+  if (!FieldConfig::loadByName('node', $type, 'field_direccion')) {
+    FieldConfig::create([
+      'field_name' => 'field_direccion',
+      'entity_type' => 'node',
+      'bundle' => $type,
+      'label' => 'Dirección',
+      'required' => TRUE,
+      'settings' => [],
+    ])->save();
+  }
+
+  // Ajustar label del campo ya existente.
+  $field = FieldConfig::loadByName('node', $type, 'field_correspondencia_fisica');
+  if ($field) {
+    $field->setLabel('Dirección de correspondencia física');
+    $field->setRequired(TRUE);
+    $field->save();
+  }
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
+
+/**
+ * Agrega el campo de lugar de correspondencia a la solicitud de ingreso.
+ */
+function asocolderma_inscription_update_9009(): void
+{
+  $type = 'solicitud_ingreso';
+
+  // Ajustar label del campo usado para Dirección física principal.
+  $field_correspondencia = FieldConfig::loadByName('node', $type, 'field_correspondencia_fisica');
+  if ($field_correspondencia) {
+    $field_correspondencia->setLabel('Dirección física principal');
+    $field_correspondencia->setRequired(TRUE);
+    $field_correspondencia->save();
+  }
+
+  // Ajustar label del campo usado para Dirección institucional.
+  $field_direccion_institucional = FieldConfig::loadByName('node', $type, 'field_direccion_institucional');
+  if ($field_direccion_institucional) {
+    $field_direccion_institucional->setLabel('Dirección institucional');
+    $field_direccion_institucional->setRequired(TRUE);
+    $field_direccion_institucional->save();
+  }
+
+  // Crear almacenamiento del campo taxonomy reference si no existe.
+  if (!FieldStorageConfig::loadByName('node', 'field_lugar_correspondencia')) {
+    FieldStorageConfig::create([
+      'field_name' => 'field_lugar_correspondencia',
+      'entity_type' => 'node',
+      'type' => 'entity_reference',
+      'settings' => [
+        'target_type' => 'taxonomy_term',
+      ],
+      'cardinality' => 1,
+      'translatable' => FALSE,
+    ])->save();
+  }
+
+  // Crear instancia del campo en solicitud_ingreso si no existe.
+  if (!FieldConfig::loadByName('node', $type, 'field_lugar_correspondencia')) {
+    FieldConfig::create([
+      'field_name' => 'field_lugar_correspondencia',
+      'entity_type' => 'node',
+      'bundle' => $type,
+      'label' => 'En caso de ser ratificado ¿Dónde desea recibir la correspondencia física?',
+      'required' => TRUE,
+      'settings' => [
+        'handler' => 'default:taxonomy_term',
+        'handler_settings' => [
+          'target_bundles' => [
+            'lugar_de_correspondencia' => 'lugar_de_correspondencia',
+          ],
+          'sort' => [
+            'field' => 'name',
+            'direction' => 'ASC',
+          ],
+          'auto_create' => FALSE,
+          'auto_create_bundle' => '',
+        ],
+      ],
+    ])->save();
+  }
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
+
+/**
+ * Corrige campos académicos del tipo de contenido solicitud_ingreso.
+ */
+function asocolderma_inscription_update_9010(): void
+{
+  $type = 'solicitud_ingreso';
+
+  $delete_field_completely = static function (string $field_name) use ($type): void {
+    $field = FieldConfig::loadByName('node', $type, $field_name);
+    if ($field) {
+      $field->delete();
+    }
+
+    $storage = FieldStorageConfig::loadByName('node', $field_name);
+    if ($storage) {
+      $storage->delete();
+    }
+  };
+
+  $ensure_taxonomy_reference_field = static function (
+    string $field_name,
+    string $label,
+    string $vocabulary,
+    bool $required = TRUE
+  ) use ($type, $delete_field_completely): void {
+    $storage = FieldStorageConfig::loadByName('node', $field_name);
+
+    if ($storage && $storage->getType() !== 'entity_reference') {
+      $delete_field_completely($field_name);
+      if (function_exists('field_purge_batch')) {
+        field_purge_batch(1000);
+      }
+      $storage = NULL;
+    }
+
+    if (!$storage) {
+      FieldStorageConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => 'node',
+        'type' => 'entity_reference',
+        'settings' => [
+          'target_type' => 'taxonomy_term',
+        ],
+        'cardinality' => 1,
+        'translatable' => FALSE,
+      ])->save();
+    }
+
+    $field = FieldConfig::loadByName('node', $type, $field_name);
+
+    if (!$field) {
+      FieldConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => 'node',
+        'bundle' => $type,
+        'label' => $label,
+        'required' => $required,
+        'settings' => [
+          'handler' => 'default:taxonomy_term',
+          'handler_settings' => [
+            'target_bundles' => [
+              $vocabulary => $vocabulary,
+            ],
+            'sort' => [
+              'field' => 'name',
+              'direction' => 'ASC',
+            ],
+            'auto_create' => FALSE,
+            'auto_create_bundle' => '',
+          ],
+        ],
+      ])->save();
+      return;
+    }
+
+    $field->setLabel($label);
+    $field->setRequired($required);
+    $field->setSettings([
+      'handler' => 'default:taxonomy_term',
+      'handler_settings' => [
+        'target_bundles' => [
+          $vocabulary => $vocabulary,
+        ],
+        'sort' => [
+          'field' => 'name',
+          'direction' => 'ASC',
+        ],
+        'auto_create' => FALSE,
+        'auto_create_bundle' => '',
+      ],
+    ]);
+    $field->save();
+  };
+
+  $ensure_boolean_field = static function (
+    string $field_name,
+    string $label,
+    bool $required = FALSE
+  ) use ($type): void {
+    $storage = FieldStorageConfig::loadByName('node', $field_name);
+
+    if (!$storage) {
+      FieldStorageConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => 'node',
+        'type' => 'boolean',
+        'cardinality' => 1,
+        'translatable' => FALSE,
+      ])->save();
+    }
+
+    $field = FieldConfig::loadByName('node', $type, $field_name);
+
+    if (!$field) {
+      FieldConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => 'node',
+        'bundle' => $type,
+        'label' => $label,
+        'required' => $required,
+      ])->save();
+      return;
+    }
+
+    $field->setLabel($label);
+    $field->setRequired($required);
+    $field->save();
+  };
+
+  $ensure_string_field = static function (
+    string $field_name,
+    string $label,
+    bool $required = FALSE
+  ) use ($type): void {
+    $storage = FieldStorageConfig::loadByName('node', $field_name);
+
+    if (!$storage) {
+      FieldStorageConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => 'node',
+        'type' => 'string',
+        'settings' => [
+          'max_length' => 255,
+        ],
+        'cardinality' => 1,
+        'translatable' => FALSE,
+      ])->save();
+    }
+
+    $field = FieldConfig::loadByName('node', $type, $field_name);
+
+    if (!$field) {
+      FieldConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => 'node',
+        'bundle' => $type,
+        'label' => $label,
+        'required' => $required,
+      ])->save();
+      return;
+    }
+
+    $field->setLabel($label);
+    $field->setRequired($required);
+    $field->save();
+  };
+
+  // Campos académicos como referencias a taxonomía.
+  $ensure_taxonomy_reference_field(
+    'field_facultad_pregrado',
+    'Facultad de medicina – Pregrado',
+    'university_undergraduate',
+    TRUE
+  );
+
+  $ensure_taxonomy_reference_field(
+    'field_pais_pregrado',
+    'País donde realizó el pregrado en medicina',
+    'country',
+    TRUE
+  );
+
+  $ensure_taxonomy_reference_field(
+    'field_titulo_universitario',
+    'Título universitario',
+    'university_degree',
+    TRUE
+  );
+
+  $ensure_taxonomy_reference_field(
+    'field_universidad_residencia',
+    'Universidad de residencia',
+    'university_residence',
+    TRUE
+  );
+
+  $ensure_taxonomy_reference_field(
+    'field_pais_residencia',
+    'País donde realizó la residencia',
+    'country',
+    TRUE
+  );
+
+  // Campos booleanos.
+  $ensure_boolean_field(
+    'field_tiene_subespecialidad',
+    'Tiene una Subespecialidad?',
+    TRUE
+  );
+
+  // Campo texto libre.
+  $ensure_string_field(
+    'field_subespecialidad_cual',
+    'Subespecialidad',
+    FALSE
+  );
+
+  // Campos antiguos del Paso 3 que ya no deben usarse.
+  $delete_field_completely('field_universidad');
+  $delete_field_completely('field_titulo');
+  $delete_field_completely('field_fecha_grado');
+  $delete_field_completely('field_especialidad');
+  $delete_field_completely('field_subespecialidad');
+  $delete_field_completely('field_lugar_trabajo');
+
+  if (function_exists('field_purge_batch')) {
+    field_purge_batch(1000);
+  }
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
+
+/**
+ * Configura los campos académicos de taxonomía como select en el formulario del contenido.
+ */
+function asocolderma_inscription_update_9011(): void
+{
+  $bundle = 'solicitud_ingreso';
+  $form_mode = 'default';
+
+  $form_display = \Drupal\Core\Entity\Entity\EntityFormDisplay::load("node.$bundle.$form_mode");
+
+  if (!$form_display) {
+    $form_display = \Drupal\Core\Entity\Entity\EntityFormDisplay::create([
+      'targetEntityType' => 'node',
+      'bundle' => $bundle,
+      'mode' => $form_mode,
+      'status' => TRUE,
+    ]);
+  }
+
+  $taxonomy_select_fields = [
+    'field_facultad_pregrado',
+    'field_pais_pregrado',
+    'field_titulo_universitario',
+    'field_universidad_residencia',
+    'field_pais_residencia',
+  ];
+
+  foreach ($taxonomy_select_fields as $field_name) {
+    $form_display->setComponent($field_name, [
+      'type' => 'options_select',
+      'weight' => match ($field_name) {
+        'field_facultad_pregrado' => 30,
+        'field_pais_pregrado' => 31,
+        'field_titulo_universitario' => 32,
+        'field_universidad_residencia' => 33,
+        'field_pais_residencia' => 34,
+        default => 50,
+      },
+      'region' => 'content',
+      'settings' => [],
+      'third_party_settings' => [],
+    ]);
+  }
+
+  $form_display->setComponent('field_tiene_subespecialidad', [
+    'type' => 'options_buttons',
+    'weight' => 36,
+    'region' => 'content',
+    'settings' => [],
+    'third_party_settings' => [],
+  ]);
+
+  $form_display->setComponent('field_subespecialidad_cual', [
+    'type' => 'string_textfield',
+    'weight' => 37,
+    'region' => 'content',
+    'settings' => [
+      'size' => 60,
+      'placeholder' => '',
+    ],
+    'third_party_settings' => [],
+  ]);
+
+  $form_display->save();
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
+
+/**
+ * Configura el campo lugar de correspondencia como select en el formulario del contenido.
+ */
+function asocolderma_inscription_update_9012(): void
+{
+  $bundle = 'solicitud_ingreso';
+  $form_mode = 'default';
+
+  $form_display = EntityFormDisplay::load("node.$bundle.$form_mode");
+
+  if (!$form_display) {
+    $form_display = EntityFormDisplay::create([
+      'targetEntityType' => 'node',
+      'bundle' => $bundle,
+      'mode' => $form_mode,
+      'status' => TRUE,
+    ]);
+  }
+
+  $form_display->setComponent('field_lugar_correspondencia', [
+    'type' => 'options_select',
+    'weight' => 25,
+    'region' => 'content',
+    'settings' => [],
+    'third_party_settings' => [],
+  ]);
+
+  $form_display->save();
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
+
+/**
+ * Convierte el campo Subespecialidad en referencia a taxonomía services_specialties.
+ */
+function asocolderma_inscription_update_9013(): void
+{
+  $entity_type = 'node';
+  $bundle = 'solicitud_ingreso';
+  $field_name = 'field_subespecialidad_cual';
+
+  $field = FieldConfig::loadByName($entity_type, $bundle, $field_name);
+  if ($field) {
+    $field->delete();
+  }
+
+  $storage = FieldStorageConfig::loadByName($entity_type, $field_name);
+  if ($storage) {
+    $storage->delete();
+  }
+
+  if (function_exists('field_purge_batch')) {
+    field_purge_batch(1000);
+  }
+
+  FieldStorageConfig::create([
+    'field_name' => $field_name,
+    'entity_type' => $entity_type,
+    'type' => 'entity_reference',
+    'settings' => [
+      'target_type' => 'taxonomy_term',
+    ],
+    'cardinality' => 1,
+    'translatable' => FALSE,
+  ])->save();
+
+  FieldConfig::create([
+    'field_name' => $field_name,
+    'entity_type' => $entity_type,
+    'bundle' => $bundle,
+    'label' => 'Subespecialidad',
+    'required' => FALSE,
+    'settings' => [
+      'handler' => 'default:taxonomy_term',
+      'handler_settings' => [
+        'target_bundles' => [
+          'services_specialties' => 'services_specialties',
+        ],
+        'sort' => [
+          'field' => 'name',
+          'direction' => 'ASC',
+        ],
+        'auto_create' => FALSE,
+        'auto_create_bundle' => '',
+      ],
+    ],
+  ])->save();
+
+  $form_display = EntityFormDisplay::load("node.$bundle.default");
+
+  if (!$form_display) {
+    $form_display = EntityFormDisplay::create([
+      'targetEntityType' => $entity_type,
+      'bundle' => $bundle,
+      'mode' => 'default',
+      'status' => TRUE,
+    ]);
+  }
+
+  $form_display->setComponent($field_name, [
+    'type' => 'options_select',
+    'weight' => 37,
+    'region' => 'content',
+    'settings' => [],
+    'third_party_settings' => [],
+  ]);
+
+  $form_display->save();
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
+
+/**
+ * Agrega nuevos adjuntos académicos PDF a la solicitud de ingreso.
+ */
+function asocolderma_inscription_update_9014(): void
+{
+  $entity_type = 'node';
+  $bundle = 'solicitud_ingreso';
+
+  $file_storage_settings = [
+    'uri_scheme' => 'private',
+    'target_type' => 'file',
+    'display_field' => FALSE,
+    'display_default' => FALSE,
+  ];
+
+  $file_field_settings = [
+    'file_directory' => 'solicitud_ingreso/adjuntos_academicos',
+    'file_extensions' => 'pdf',
+    'max_filesize' => '10 MB',
+    'description_field' => FALSE,
+  ];
+
+  $fields = [
+    'field_adj_acta_grado_medico' => 'Acta de grado como médico general',
+    'field_adj_acta_grado_dermatologo' => 'Acta de grado como dermatólogo',
+    'field_adj_convalidacion' => 'Copia de la resolución de la convalidación',
+    'field_adj_pensum_academico' => 'Copia del pénsum académico',
+    'field_adj_notas_dermatologia' => 'Notas obtenidas en la especialización en dermatología',
+  ];
+
+  foreach ($fields as $field_name => $label) {
+    if (!FieldStorageConfig::loadByName($entity_type, $field_name)) {
+      FieldStorageConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => $entity_type,
+        'type' => 'file',
+        'settings' => $file_storage_settings,
+        'cardinality' => 1,
+        'translatable' => FALSE,
+      ])->save();
+    }
+
+    if (!FieldConfig::loadByName($entity_type, $bundle, $field_name)) {
+      FieldConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => $entity_type,
+        'bundle' => $bundle,
+        'label' => $label,
+        'required' => FALSE,
+        'settings' => $file_field_settings,
+      ])->save();
+    }
+  }
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
+
+/**
+ * Crea estados administrativos para el nuevo flujo de coordinación.
+ */
+function asocolderma_inscription_update_9015(): void
+{
+  $vid = 'estado_solicitud_ingreso';
+
+  $states = [
+    'Documentos enviados' => '#0d6efd',
+    'Activar miembro nuevo' => '#009688',
+  ];
+
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+
+  foreach ($states as $name => $color) {
+    $existing = $storage->loadByProperties([
+      'vid' => $vid,
+      'name' => $name,
+    ]);
+
+    if ($existing) {
+      continue;
+    }
+
+    $term = $storage->create([
+      'vid' => $vid,
+      'name' => $name,
+    ]);
+
+    if ($term->hasField('field_color_estado_solicitud')) {
+      $term->set('field_color_estado_solicitud', $color);
+    }
+
+    $term->save();
+  }
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
+
+/**
+ * Crea tabla para registrar campos solicitados en aclaraciones.
+ */
+function asocolderma_inscription_update_9016(): void
+{
+  $schema = \Drupal::database()->schema();
+
+  if ($schema->tableExists('asocolderma_solicitud_aclaracion')) {
+    return;
+  }
+
+  $table = asocolderma_inscription_schema()['asocolderma_solicitud_aclaracion'];
+  $schema->createTable('asocolderma_solicitud_aclaracion', $table);
+}
+
+/**
+ * Estandariza a 255 caracteres los campos string de solicitud_ingreso.
+ */
+function asocolderma_inscription_update_9018(): void
+{
+  $entity_type_id = 'node';
+  $new_length = 255;
+
+  // Lista explícita y auditable de campos string del flujo de solicitudes.
+  $field_names = [
+    'field_apellido1',
+    'field_apellido2',
+    'field_celular',
+    'field_correspondencia_fisica',
+    'field_direccion',
+    'field_direccion_institucional',
+    'field_nombre1',
+    'field_nombre2',
+    'field_numero_documento',
+    'field_registro_medico',
+    'field_solicitud_id',
+  ];
+
+  $database = \Drupal::database();
+  $database_schema = $database->schema();
+
+  $config_factory = \Drupal::configFactory();
+
+  $storage_schema_store = \Drupal::keyValue(
+    'entity.storage_schema.sql'
+  );
+
+  $field_storage_config_storage = \Drupal::entityTypeManager()
+    ->getStorage('field_storage_config');
+
+  $field_manager = \Drupal::service('entity_field.manager');
+
+  $last_installed_schema = \Drupal::service(
+    'entity.last_installed_schema.repository'
+  );
+
+  foreach ($field_names as $field_name) {
+    $config_name = sprintf(
+      'field.storage.%s.%s',
+      $entity_type_id,
+      $field_name
+    );
+
+    $config = $config_factory->getEditable($config_name);
+
+    if ($config->isNew()) {
+      throw new \RuntimeException(
+        sprintf(
+          'No existe la configuración de almacenamiento del campo "%s".',
+          $field_name
+        )
+      );
+    }
+
+    if ($config->get('type') !== 'string') {
+      throw new \RuntimeException(
+        sprintf(
+          'El campo "%s" no es de tipo string.',
+          $field_name
+        )
+      );
+    }
+
+    /*
+     * 1. Actualizar físicamente las columnas SQL.
+     *
+     * Drupal almacena estos campos en una tabla de datos y, al ser nodos
+     * revisionables, también en una tabla de revisiones.
+     */
+    $schema_key = sprintf(
+      '%s.field_schema_data.%s',
+      $entity_type_id,
+      $field_name
+    );
+
+    $stored_schema = $storage_schema_store->get($schema_key);
+
+    if (!is_array($stored_schema) || !$stored_schema) {
+      throw new \RuntimeException(
+        sprintf(
+          'No existe schema SQL registrado para el campo "%s".',
+          $field_name
+        )
+      );
+    }
+
+    $column_name = $field_name . '_value';
+
+    foreach ($stored_schema as $table_name => &$table_schema) {
+      if (
+        empty($table_schema['fields'][$column_name])
+        || !$database_schema->tableExists($table_name)
+        || !$database_schema->fieldExists($table_name, $column_name)
+      ) {
+        continue;
+      }
+
+      $column_spec = $table_schema['fields'][$column_name];
+      $column_spec['length'] = $new_length;
+
+      $database_schema->changeField(
+        $table_name,
+        $column_name,
+        $column_name,
+        $column_spec
+      );
+
+      $table_schema['fields'][$column_name]['length'] = $new_length;
+    }
+
+    unset($table_schema);
+
+    /*
+     * 2. Actualizar el schema SQL que Drupal mantiene internamente.
+     */
+    $storage_schema_store->set(
+      $schema_key,
+      $stored_schema
+    );
+
+    /*
+     * 3. Actualizar la configuración activa del FieldStorage.
+     *
+     * Se usa Config API porque el cambio físico del schema ya fue realizado
+     * explícitamente arriba.
+     */
+    $config
+      ->set('settings.max_length', $new_length)
+      ->save();
+
+    /*
+     * 4. Invalidar definiciones cacheadas para volver a obtener el storage
+     * con la configuración nueva.
+     */
+    $field_storage_config_storage->resetCache([
+      $entity_type_id . '.' . $field_name,
+    ]);
+
+    $field_manager->clearCachedFieldDefinitions();
+
+    $current_definitions = $field_manager
+      ->getFieldStorageDefinitions($entity_type_id);
+
+    if (!isset($current_definitions[$field_name])) {
+      throw new \RuntimeException(
+        sprintf(
+          'No fue posible reconstruir la definición del campo "%s".',
+          $field_name
+        )
+      );
+    }
+
+    /*
+     * 5. Sincronizar la definición "last installed" de Drupal para evitar
+     * falsos positivos de cambios pendientes en el esquema de entidades.
+     */
+    $last_installed_schema
+      ->setLastInstalledFieldStorageDefinition(
+        $current_definitions[$field_name]
+      );
+  }
+
+  $field_manager->clearCachedFieldDefinitions();
+}

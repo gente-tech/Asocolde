@@ -1,0 +1,39 @@
+services:
+  logger.channel.asocolderma_data_core:
+    parent: logger.channel_base
+    arguments: ['asocolderma_data_core']
+
+  asocolderma_data_core.record_action_logger:
+    class: Drupal\asocolderma_data_core\Service\RecordActionLogger
+    arguments:
+      - '@database'
+      - '@current_user'
+      - '@request_stack'
+
+  asocolderma_data_core.export_logger:
+    class: Drupal\asocolderma_data_core\Service\ExportLogger
+    arguments:
+      - '@database'
+      - '@current_user'
+      - '@request_stack'
+
+  asocolderma_data_core.record_crud_logger:
+    class: Drupal\asocolderma_data_core\Service\RecordCrudLogger
+    arguments:
+      - '@database'
+      - '@current_user'
+      - '@request_stack'
+
+  asocolderma_data_core.hubspot_sync:
+    class: Drupal\asocolderma_data_core\Service\DataCoreHubspotSyncService
+    arguments:
+      - '@enterprise_integrations.hubspot'
+      - '@logger.channel.asocolderma_data_core'
+
+  asocolderma_data_core.asociado_from_solicitud_registrar:
+    class: Drupal\asocolderma_data_core\Service\AsociadoFromSolicitudRegistrar
+    arguments:
+      - '@database'
+      - '@date.formatter'
+      - '@asocolderma_data_core.hubspot_sync'
+      - '@logger.channel.asocolderma_data_core'
