@@ -98,11 +98,31 @@ final class UserZoneController extends ControllerBase
       ],
     ];
 
+    $has_active = $this->manager->hasActiveSolicitud((int) $account->id());
+
+    $tempStore = $this->tempStoreFactory->get(self::TEMPSTORE_COLLECTION);
+    $draft = $tempStore->get(self::TEMPSTORE_KEY);
+    $has_draft = !empty($draft) && is_array($draft);
+
+    $primary_action = NULL;
+
+    if (!$has_active) {
+      $primary_action = [
+        'label' => $has_draft
+          ? $this->t('Continuar solicitud')
+          : $this->t('Crear solicitud'),
+        'url' => Url::fromRoute(
+          'asocolderma_inscription.solicitud_create'
+        )->toString(),
+      ];
+    }
+
     return [
       '#theme' => 'asocolderma_inscription_user_zone_profile',
       '#user_name' => $account->getDisplayName(),
       '#profile' => $view_builder->view($profile, 'default'),
       '#edit_link' => $edit_link,
+      '#primary_action' => $primary_action,
       '#header_menu_items' => $this->buildAspiranteMenuItems(),
       '#logout_url' => Url::fromRoute('user.logout')->toString(),
       '#attached' => [
@@ -113,6 +133,7 @@ final class UserZoneController extends ControllerBase
       '#cache' => [
         'contexts' => ['user'],
         'tags' => $profile->getCacheTags(),
+        'max-age' => 0,
       ],
     ];
   }
