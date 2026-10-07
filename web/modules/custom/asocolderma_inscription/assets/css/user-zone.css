@@ -1310,3 +1310,29 @@ body.asocolderma-inscription-zone-page.modal-open {
     font-size: 16px !important;
   }
 }
+
+.user-zone-card__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 767.98px) {
+  .user-zone-card__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .user-zone-card__actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .user-zone-card__actions .user-zone-button,
+  .user-zone-card__actions .button {
+    width: 100%;
+  }
+}

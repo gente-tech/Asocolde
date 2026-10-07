@@ -33,6 +33,15 @@
 			</div>
 
 			<div class="user-zone-card__actions">
+				{% if primary_action %}
+					<a
+						href="{{ primary_action.url }}"
+						class="user-zone-button user-zone-button--primary"
+					>
+						{{ primary_action.label }}
+					</a>
+				{% endif %}
+
 				{{ edit_link }}
 			</div>
 		</div>
