@@ -17,6 +17,7 @@ function asocolderma_inscription_theme($existing, $type, $theme, $path): array
         'user_name' => NULL,
         'profile' => NULL,
         'edit_link' => NULL,
+        'primary_action' => NULL,
         'header_menu_items' => [],
         'logout_url' => NULL,
       ],
