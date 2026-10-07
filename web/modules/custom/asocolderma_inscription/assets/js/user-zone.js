@@ -141,6 +141,7 @@
           }
         });
       });
+
       once(
         'asocolderma-modal-message-continue',
         '#modal-messages .modal-footer',
@@ -149,6 +150,26 @@
         const modal = footer.closest('#modal-messages');
 
         if (!modal) {
+          return;
+        }
+
+        const modalBody = modal.querySelector('.modal-body');
+        const message = modalBody
+          ? modalBody.textContent.replace(/\s+/g, ' ').trim()
+          : '';
+
+        const isFileRenameMessage =
+          message.includes('Su archivo fue renombrado como') ||
+          message.includes('Your upload has been renamed to');
+
+        /*
+         * El botón Continuar pertenece únicamente al aviso informativo
+         * de renombrado automático de archivos.
+         *
+         * Los demás modales se cierran únicamente con la X.
+         */
+        if (!isFileRenameMessage) {
+          footer.remove();
           return;
         }
 
@@ -164,20 +185,20 @@
 
           if (modalInstance) {
             modalInstance.hide();
+            return;
           }
-          else {
-            modal.classList.remove('show');
-            modal.style.display = 'none';
-            modal.setAttribute('aria-hidden', 'true');
 
-            document.body.classList.remove('modal-open');
-            document.body.style.removeProperty('overflow');
-            document.body.style.removeProperty('padding-right');
+          modal.classList.remove('show');
+          modal.style.display = 'none';
+          modal.setAttribute('aria-hidden', 'true');
 
-            document.querySelectorAll('.modal-backdrop').forEach((backdrop) => {
-              backdrop.remove();
-            });
-          }
+          document.body.classList.remove('modal-open');
+          document.body.style.removeProperty('overflow');
+          document.body.style.removeProperty('padding-right');
+
+          document.querySelectorAll('.modal-backdrop').forEach((backdrop) => {
+            backdrop.remove();
+          });
         });
 
         footer.appendChild(button);
