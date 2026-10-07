@@ -141,6 +141,47 @@
           }
         });
       });
+      once(
+        'asocolderma-modal-message-continue',
+        '#modal-messages .modal-footer',
+        context
+      ).forEach((footer) => {
+        const modal = footer.closest('#modal-messages');
+
+        if (!modal) {
+          return;
+        }
+
+        footer.innerHTML = '';
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'modal-messages__continue';
+        button.textContent = 'Continuar >>';
+
+        button.addEventListener('click', () => {
+          const modalInstance = bootstrap.Modal.getInstance(modal);
+
+          if (modalInstance) {
+            modalInstance.hide();
+          }
+          else {
+            modal.classList.remove('show');
+            modal.style.display = 'none';
+            modal.setAttribute('aria-hidden', 'true');
+
+            document.body.classList.remove('modal-open');
+            document.body.style.removeProperty('overflow');
+            document.body.style.removeProperty('padding-right');
+
+            document.querySelectorAll('.modal-backdrop').forEach((backdrop) => {
+              backdrop.remove();
+            });
+          }
+        });
+
+        footer.appendChild(button);
+      });
     },
   };
 })(Drupal, once, drupalSettings);
