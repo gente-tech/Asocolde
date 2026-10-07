@@ -1336,3 +1336,40 @@ body.asocolderma-inscription-zone-page.modal-open {
     width: 100%;
   }
 }
+
+body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-footer {
+  display: flex;
+  justify-content: center;
+  padding: 0 30px 28px !important;
+  border: 0 !important;
+  background: #ffffff !important;
+}
+
+body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-messages__continue {
+  min-width: 160px;
+  min-height: 44px;
+  padding: 10px 24px;
+  border: 1px solid #008c8c;
+  border-radius: 8px;
+  background: #008c8c;
+  color: #ffffff;
+  font-weight: 700;
+  text-align: center;
+}
+
+body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-messages__continue:hover,
+body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-messages__continue:focus {
+  border-color: #007575;
+  background: #007575;
+  color: #ffffff;
+}
+
+@media (max-width: 520px) {
+  body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-footer {
+    padding: 0 20px 22px !important;
+  }
+
+  body.asocolderma-inscription-zone-page div[id^="modal-messages"] .modal-messages__continue {
+    width: 100%;
+  }
+}
