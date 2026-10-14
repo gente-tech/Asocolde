@@ -1875,3 +1875,54 @@ function asocolderma_inscription_preprocess_status_messages(array &$variables): 
     unset($variables['message_list']['status']);
   }
 }
+
+/**
+ * Implements hook_node_access().
+ *
+ * Protege las solicitudes de ingreso.
+ *
+ * Pueden verlas:
+ * - El aspirante propietario de la solicitud.
+ * - Secretaría General.
+ * - Coordinación Administrativa.
+ * - Administradores.
+ *
+ * Usuarios anónimos y otros usuarios autenticados no tienen acceso.
+ */
+function asocolderma_inscription_node_access(
+  NodeInterface $node,
+  string $op,
+  AccountInterface $account
+): AccessResult {
+  if ($node->bundle() !== 'solicitud_ingreso') {
+    return AccessResult::neutral();
+  }
+
+  if ($op !== 'view') {
+    return AccessResult::neutral();
+  }
+
+  if ($account->isAnonymous()) {
+    return AccessResult::forbidden()
+      ->addCacheContexts(['user.roles']);
+  }
+
+  $roles = $account->getRoles();
+
+  if (
+    in_array('administrator', $roles, TRUE) ||
+    in_array('secretaria_general', $roles, TRUE) ||
+    in_array('coordinacion_administrativa', $roles, TRUE)
+  ) {
+    return AccessResult::allowed()
+      ->addCacheContexts(['user.roles']);
+  }
+
+  if ((int) $node->getOwnerId() === (int) $account->id()) {
+    return AccessResult::allowed()
+      ->cachePerUser();
+  }
+
+  return AccessResult::forbidden()
+    ->cachePerUser();
+}
