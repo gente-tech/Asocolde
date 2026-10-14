@@ -1705,7 +1705,7 @@ function asocolderma_inscription_preprocess_views_view_table(array &$variables):
           $estado_entity->hasField('field_color_estado_solicitud') &&
           !$estado_entity->get('field_color_estado_solicitud')->isEmpty()
         ) {
-          $estado_color = (string) $estado_entity->get('field_color_estado_solicitud')->value;
+          $estado_color = (string) $estado_entity->get('field_color_estado_solicitud')->color;
         }
 
         foreach ($row['columns'] as $column_key => &$column) {
