@@ -127,4 +127,35 @@ final class SolicitudFormTextManager
 			}
 		}
 	}
+
+	/**
+	 * Aplica la configuración disponible a todos los campos presentes del formulario.
+	 */
+	public function applyToForm(array &$form): void
+	{
+		foreach ($this->getFields() as $group => $fields) {
+			if (
+				!isset($form[$group]) ||
+				!is_array($form[$group]) ||
+				!is_array($fields)
+			) {
+				continue;
+			}
+
+			foreach ($fields as $field => $settings) {
+				if (
+					!isset($form[$group][$field]) ||
+					!is_array($form[$group][$field])
+				) {
+					continue;
+				}
+
+				$this->applyToElement(
+					$form[$group][$field],
+					(string) $group,
+					(string) $field,
+				);
+			}
+		}
+	}
 }

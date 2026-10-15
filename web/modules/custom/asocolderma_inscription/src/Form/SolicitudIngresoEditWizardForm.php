@@ -455,6 +455,8 @@ final class SolicitudIngresoEditWizardForm extends FormBase
         'message' => $this->t('Para realizar la solicitud de ingreso debes ser mayor de edad. Verifica la fecha de nacimiento registrada.'),
       ];
     }
+    
+    $this->formTextManager->applyToForm($form);
 
     return $form;
   }
