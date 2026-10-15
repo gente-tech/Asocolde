@@ -1432,60 +1432,37 @@ div[id^="modal-messages"] .solicitud-created-id {
   align-items: center;
   justify-content: center;
   min-height: 42px;
-  padding: 10px 18px;
-  margin: 16px 0 24px;
-  border: 1px solid #07898d;
-  border-radius: 6px;
-  background-color: #ffffff;
-  color: #07898d;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.2;
-  text-decoration: none;
-}
-
-.solicitud-back-button:hover,
-.solicitud-back-button:focus {
-  background-color: #07898d;
-  border-color: #07898d;
-  color: #ffffff;
-  text-decoration: none;
-}
-
-@media (max-width: 767px) {
-  .solicitud-back-button {
-    display: flex;
-    width: calc(100% - 32px);
-    min-height: 46px;
-    margin: 16px;
-    padding: 12px 16px;
-    text-align: center;
-  }
-}
-
-.solicitud-back-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 42px;
   padding: 10px 20px;
   margin: 16px 8px 24px;
   border: 1px solid #07898d;
   border-radius: 8px;
-  background: #ffffff;
-  color: #07898d;
+  background-color: #07898d;
+  color: #ffffff;
   font-size: 14px;
   font-weight: 600;
   line-height: 1.2;
   text-decoration: none;
   box-sizing: border-box;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .solicitud-back-button:hover,
 .solicitud-back-button:focus {
-  background: #07898d;
+  background-color: #056b6e;
+  border-color: #056b6e;
   color: #ffffff;
   text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(7, 137, 141, 0.25);
+}
+
+.solicitud-back-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(7, 137, 141, 0.2);
 }
 
 @media (max-width: 767px) {
