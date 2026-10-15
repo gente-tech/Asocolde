@@ -318,8 +318,12 @@ final class UserZoneController extends ControllerBase
       '#url' => Url::fromRoute('asocolderma_inscription.user_zone_requests'),
       '#attributes' => [
         'class' => [
-          'button',
           'solicitud-back-button',
+        ],
+      ],
+      '#attached' => [
+        'library' => [
+          'asocolderma_inscription/user_zone',
         ],
       ],
     ];
