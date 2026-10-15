@@ -7,11 +7,18 @@
 
 {% if message_list %}
   {% set account_activated = false %}
+  {% set aspirante_wrong_login = false %}
 
   {% for type, messages in message_list %}
     {% for message in messages %}
-      {% if 'Cuenta activada correctamente.' in message|render %}
+      {% set message_text = message|render|striptags|trim %}
+
+      {% if 'Cuenta activada correctamente.' in message_text %}
         {% set account_activated = true %}
+      {% endif %}
+
+      {% if 'Los aspirantes deben iniciar sesión desde el formulario exclusivo para aspirantes.' in message_text %}
+        {% set aspirante_wrong_login = true %}
       {% endif %}
     {% endfor %}
   {% endfor %}
@@ -92,6 +99,16 @@
               type="button"
               class="btn btn-primary"
               id="aspirante-activation-continue"
+            >
+              Continuar &gt;&gt;
+            </button>
+          </div>
+        {% elseif aspirante_wrong_login %}
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="aspirante-wrong-login-continue"
             >
               Continuar &gt;&gt;
             </button>
