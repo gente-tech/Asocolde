@@ -1,14 +1,43 @@
 (function ($, Drupal, once) {
   Drupal.behaviors.asocoldermaSolicitudStateConfirm = {
     attach(context) {
-      once('asocolderma-confirm-yes', '#asocolderma-confirm-yes', context).forEach(function (el) {
+
+      once(
+        'asocolderma-center-confirm-dialog',
+        '.asocolderma-confirm-dialog',
+        context
+      ).forEach(function (el) {
+        const $dialogContent = $(el).closest('.ui-dialog-content');
+
+        if (!$dialogContent.length) {
+          return;
+        }
+
+        const $dialog = $dialogContent.closest('.ui-dialog');
+
+        if (!$dialog.length) {
+          return;
+        }
+
+        $dialog.addClass('asocolderma-state-confirm-dialog');
+      });
+
+      once(
+        'asocolderma-confirm-yes',
+        '#asocolderma-confirm-yes',
+        context
+      ).forEach(function (el) {
         $(el).on('click', function (e) {
           e.preventDefault();
           $('#asocolderma-solicitud-hidden-submit').trigger('click');
         });
       });
 
-      once('asocolderma-confirm-no', '#asocolderma-confirm-no', context).forEach(function (el) {
+      once(
+        'asocolderma-confirm-no',
+        '#asocolderma-confirm-no',
+        context
+      ).forEach(function (el) {
         $(el).on('click', function (e) {
           e.preventDefault();
 
@@ -23,7 +52,11 @@
         });
       });
 
-      once('asocolderma-cancel-button', '#asocolderma-cancel-button', context).forEach(function (el) {
+      once(
+        'asocolderma-cancel-button',
+        '#asocolderma-cancel-button',
+        context
+      ).forEach(function (el) {
         $(el).on('click', function (e) {
           e.preventDefault();
 

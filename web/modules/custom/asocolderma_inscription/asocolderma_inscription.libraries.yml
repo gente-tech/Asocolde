@@ -1,5 +1,8 @@
 solicitud_state_confirm:
   version: 1.x
+  css:
+    theme:
+      assets/css/solicitud-state-confirm.css: {}
   js:
     assets/js/solicitud-state-confirm.js: {}
   dependencies:
