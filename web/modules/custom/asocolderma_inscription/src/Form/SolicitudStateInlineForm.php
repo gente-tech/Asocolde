@@ -414,7 +414,7 @@ final class SolicitudStateInlineForm extends FormBase
 
     $comment = $is_pending_clarification
       ? $clarification_message
-      : ($requires_motivo ? $motivo : 'Cambio de estado desde modal de confirmación');
+      : ($requires_motivo ? $motivo : '');
 
     $metadata = [
       'nid' => $nid,
