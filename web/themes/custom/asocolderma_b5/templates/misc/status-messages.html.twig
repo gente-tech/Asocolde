@@ -2,77 +2,103 @@
 /**
  * @file
  * Theme override for status messages.
- *
- * Displays status, error, and warning messages, grouped by type.
- *
- * An invisible heading identifies the messages for assistive technology.
- * Sighted users see a colored box. See http://www.w3.org/TR/WCAG-TECHS/H69.html
- * for info.
- *
- * Add an ARIA label to the contentinfo area so that assistive technology
- * user agents will better describe this landmark.
- *
- * Available variables:
- * - message_list: List of messages to be displayed, grouped by type.
- * - status_headings: List of all status types.
- * - display: (optional) May have a value of 'status' or 'error' when only
- *   displaying messages of that specific type.
- * - attributes: HTML attributes for the element, including:
- *   - class: HTML classes.
  */
 #}
+
 {% if message_list %}
-  <div class="modal fade" tabindex="-1" id="modal-messages">
+  {% set account_activated = false %}
+
+  {% for type, messages in message_list %}
+    {% for message in messages %}
+      {% if 'Cuenta activada correctamente.' in message|render %}
+        {% set account_activated = true %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+
+  <div
+    class="modal fade"
+    tabindex="-1"
+    id="modal-messages"
+    {% if account_activated %}
+    data-open-aspirante-login="1"
+    {% endif %}
+  >
     <div class="modal-dialog">
       <div class="modal-content">
+
         <div class="modal-header">
           <h5 class="modal-title">Mensaje de alerta</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
         </div>
+
         <div class="modal-body">
           {% block messages %}
             {% for type, messages in message_list %}
+
               {%
-              set classes = [
-                'alert',
-                'alert-' ~ type,
-                type == 'error' ? 'alert-danger',
-                type == 'status' ? 'alert-success',
-                'alert-dismissible',
-                'fade',
-                'show'
-              ]
-            %}
-              <div aria-label="{{ status_headings[type] }}"{{ attributes.addClass(classes)|without('aria-label') }} role="alert">
+                set classes = [
+                  'alert',
+                  'alert-' ~ type,
+                  type == 'error' ? 'alert-danger',
+                  type == 'status' ? 'alert-success',
+                  'alert-dismissible',
+                  'fade',
+                  'show'
+                ]
+              %}
+
+              <div
+                aria-label="{{ status_headings[type] }}"
+                {{ attributes.addClass(classes)|without('aria-label') }}
+                role="alert"
+              >
+
                 {% if status_headings[type] %}
-                  <h2 class="visually-hidden">{{ status_headings[type] }}</h2>
+                  <h2 class="visually-hidden">
+                    {{ status_headings[type] }}
+                  </h2>
                 {% endif %}
+
                 {% if messages|length > 1 %}
                   <ul class="messages__list">
                     {% for message in messages %}
-                      <li class="messages__item">{{ message }}</li>
+                      <li class="messages__item">
+                        {{ message }}
+                      </li>
                     {% endfor %}
                   </ul>
                 {% else %}
                   {{ messages|first }}
                 {% endif %}
+
               </div>
+
               {% set attributes = attributes.removeClass(classes) %}
+
             {% endfor %}
           {% endblock messages %}
         </div>
 
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="modal-messages__continue"
-            data-bs-dismiss="modal"
-          >
-            Continuar &gt;&gt;
-          </button>
-        </div>
+        {% if account_activated %}
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="aspirante-activation-continue"
+            >
+              Continuar &gt;&gt;
+            </button>
+          </div>
+        {% endif %}
+
       </div>
     </div>
-  </div>
   </div>
 {% endif %}

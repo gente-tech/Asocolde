@@ -102,7 +102,7 @@
 
       once('submenu', '#block-menu-left .menu-level-0 .menu-item > span', context).forEach(function (element) {
         if (windowW <= 1024) {
-          $(element).click(function(){
+          $(element).click(function () {
             $('#block-menu-left .menu-dropdown').slideUp();
             $('#block-menu-left span[data-once="submenu"]').removeClass("open");
             $(this).next().slideToggle();
@@ -112,23 +112,23 @@
       });
 
       once('link-sidebar-mobile', '.menu-lateral .link-sidebar', context).forEach(function (element) {
-        if (windowW <= 1024){
-          $(element).click(function(){
-              $('.menu-lateral .region-menu-sidebar-first').slideToggle();
-              $('.main-menu .navbar-collapse').removeClass('show');
+        if (windowW <= 1024) {
+          $(element).click(function () {
+            $('.menu-lateral .region-menu-sidebar-first').slideToggle();
+            $('.main-menu .navbar-collapse').removeClass('show');
           });
         }
       });
 
       once('navbar-slide-up', '.menu-lateral .navbar-toggler', context).forEach(function (element) {
-        $(element).click(function(){
+        $(element).click(function () {
           $('.menu-lateral  .region-menu-sidebar-first').slideUp();
         });
       });
 
       /** Change color theme */
       once('body-color-theme', 'body', context).forEach(function (element) {
-        if($(element).hasClass('user-logged-in')){
+        if ($(element).hasClass('user-logged-in')) {
           $(':root').css('--main-color', '#07898d');
           $(':root').css('--main-color-50', '#f2fcff');
           $(':root').css('--main-color-100', '#f3fdff');
@@ -136,7 +136,7 @@
         }
 
         var congresos = document.querySelectorAll("[class*=path-congresos]");
-        if(congresos.length > 0 || $(element).hasClass('page-node-type-event')){
+        if (congresos.length > 0 || $(element).hasClass('page-node-type-event')) {
           $(':root').css('--main-color', '#513490');
           $(':root').css('--main-color-50', '#fbf9ff');
           $(':root').css('--main-color-100', '#00c1ca');
@@ -146,7 +146,7 @@
 
       /** Searcher mobile */
       once('search-icon', '.buttons-options .search-icon', context).forEach(function (element) {
-        $(element).click(function(){
+        $(element).click(function () {
           $(this).toggleClass('open');
           $('.menu-lateral').toggleClass('searcher-on');
           $('.main-header').toggleClass('searcher-on');
@@ -157,7 +157,7 @@
       });
 
       once('navbar-toggler', '.buttons-options .navbar-toggler', context).forEach(function (element) {
-        $(element).click(function(){
+        $(element).click(function () {
           $('.buttons-options .search-icon').removeClass('open');
           $('.menu-lateral').removeClass('searcher-on');
           $('.main-header').removeClass('searcher-on');
@@ -167,8 +167,40 @@
 
       /** Show message */
       once('modal-messages', '#modal-messages', context).forEach(function (element) {
-        var modalMessages = new bootstrap.Modal($(element));
+        var modalMessages = new bootstrap.Modal(element);
+
         modalMessages.show();
+
+        var openAspiranteLogin =
+          $(element).attr('data-open-aspirante-login') === '1';
+
+        if (!openAspiranteLogin) {
+          return;
+        }
+
+        $('#aspirante-activation-continue')
+          .off('click.asocoldermaActivation')
+          .on('click.asocoldermaActivation', function (event) {
+            event.preventDefault();
+
+            $(element).one('hidden.bs.modal', function () {
+              var $link = $('<a>', {
+                href: '/aspirante/login',
+                class: 'use-ajax login-popup-form',
+                'data-dialog-type': 'modal'
+              });
+
+              $('body').append($link);
+
+              Drupal.attachBehaviors($link[0]);
+
+              window.requestAnimationFrame(function () {
+                $link.trigger('click');
+              });
+            });
+
+            modalMessages.hide();
+          });
       });
 
       /** Login popup */
@@ -177,18 +209,18 @@
       });
 
       /* Add class header at scroll */
-      $(window).scroll(function(event) {
+      $(window).scroll(function (event) {
         var scroll = $(window).scrollTop();
-        if(scroll >= 20){
+        if (scroll >= 20) {
           $('header .top-menu').addClass('show-title');
         }
-        else{
+        else {
           $('header .top-menu').removeClass('show-title');
         }
-        if(scroll > 100 && $('.search-form').hasClass('show')){
+        if (scroll > 100 && $('.search-form').hasClass('show')) {
           $('body').addClass('open-searcher');
         }
-        else{
+        else {
           $('body').removeClass('open-searcher');
         }
       });
