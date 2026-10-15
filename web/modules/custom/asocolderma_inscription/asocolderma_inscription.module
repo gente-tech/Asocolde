@@ -1294,17 +1294,6 @@ function asocolderma_inscription_current_user_is_admin_zone_user(): bool
  */
 function asocolderma_inscription_page_attachments(array &$attachments): void
 {
-  $request = \Drupal::request();
-
-  if (
-    \Drupal::currentUser()->isAnonymous() &&
-    $request->query->get('open_aspirante_login') === '1'
-  ) {
-    $attachments['#attached']['library'][] =
-      'asocolderma_inscription/aspirante_activation_login';
-
-    $attachments['#cache']['contexts'][] = 'url.query_args:open_aspirante_login';
-  }
 
   $path = \Drupal::service('path.current')->getPath();
 
