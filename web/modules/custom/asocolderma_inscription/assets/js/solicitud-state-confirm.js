@@ -1,4 +1,45 @@
 (function ($, Drupal, once) {
+  'use strict';
+
+  function centerDialog($content) {
+    if (!$content || !$content.length) {
+      return;
+    }
+
+    if (!$content.hasClass('ui-dialog-content')) {
+      $content = $content.closest('.ui-dialog-content');
+    }
+
+    if (!$content.length || !$content.hasClass('ui-dialog-content')) {
+      return;
+    }
+
+    if (!$content.hasClass('ui-dialog-content')) {
+      return;
+    }
+
+    try {
+      $content.dialog('option', 'position', {
+        my: 'center',
+        at: 'center',
+        of: window,
+        collision: 'fit'
+      });
+
+      $content.dialog('option', 'position', $content.dialog('option', 'position'));
+    }
+    catch (e) {
+      // El diálogo puede no estar completamente inicializado todavía.
+    }
+  }
+
+  function centerOpenConfirmationDialogs() {
+    $('.asocolderma-confirm-dialog').each(function () {
+      const $content = $(this).closest('.ui-dialog-content');
+      centerDialog($content);
+    });
+  }
+
   Drupal.behaviors.asocoldermaSolicitudStateConfirm = {
     attach(context) {
 
@@ -7,19 +48,19 @@
         '.asocolderma-confirm-dialog',
         context
       ).forEach(function (el) {
-        const $dialogContent = $(el).closest('.ui-dialog-content');
+        const $content = $(el).closest('.ui-dialog-content');
 
-        if (!$dialogContent.length) {
-          return;
-        }
+        // Esperamos a que OpenModalDialogCommand termine de construir
+        // y posicionar completamente el jQuery UI dialog.
+        window.requestAnimationFrame(function () {
+          window.requestAnimationFrame(function () {
+            centerDialog($content);
+          });
+        });
 
-        const $dialog = $dialogContent.closest('.ui-dialog');
-
-        if (!$dialog.length) {
-          return;
-        }
-
-        $dialog.addClass('asocolderma-state-confirm-dialog');
+        window.setTimeout(function () {
+          centerDialog($content);
+        }, 50);
       });
 
       once(
@@ -62,6 +103,16 @@
 
           const destination = $(el).data('destination') || '/';
           window.location.href = destination;
+        });
+      });
+
+      once(
+        'asocolderma-confirm-resize',
+        'html',
+        context
+      ).forEach(function () {
+        $(window).on('resize.asocoldermaSolicitudStateConfirm', function () {
+          centerOpenConfirmationDialogs();
         });
       });
     }
