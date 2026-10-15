@@ -2,38 +2,23 @@
   'use strict';
 
   /**
-   * Lleva la página al inicio y centra el diálogo en el viewport.
+   * Lleva la página al inicio y centra el modal una vez Drupal
+   * ha terminado de crear el jQuery UI Dialog.
    */
-  function showConfirmationCentered($content) {
-    if (!$content || !$content.length) {
+  function positionConfirmationDialog($dialog) {
+    if (!$dialog || !$dialog.length) {
       return;
     }
 
-    // La confirmación siempre debe mostrarse desde el inicio de la página.
-    if (document.scrollingElement) {
-      document.scrollingElement.scrollTop = 0;
-    }
+    window.scrollTo(0, 0);
 
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: 'auto'
-    });
-
-    // Esperamos al siguiente ciclo de renderizado para que el navegador
-    // aplique primero el cambio de scroll.
     window.requestAnimationFrame(function () {
-      try {
-        $content.dialog('option', 'position', {
-          my: 'center',
-          at: 'center',
-          of: window,
-          collision: 'fit'
-        });
-      }
-      catch (error) {
-        // El diálogo debe estar inicializado por Drupal/jQuery UI.
-      }
+      $dialog.dialog('option', 'position', {
+        my: 'center',
+        at: 'center',
+        of: window,
+        collision: 'fit'
+      });
     });
   }
 
@@ -41,13 +26,26 @@
     attach(context) {
 
       once(
-        'asocolderma-confirm-dialog-position',
-        '.asocolderma-confirm-dialog',
+        'asocolderma-dialog-aftercreate',
+        'html',
         context
-      ).forEach(function (element) {
-        const $content = $(element).closest('.ui-dialog-content');
+      ).forEach(function () {
 
-        showConfirmationCentered($content);
+        $(window).on(
+          'dialog:aftercreate.asocoldermaSolicitudStateConfirm',
+          function (event, dialog, $element) {
+
+            if (
+              !$element ||
+              !$element.length ||
+              !$element.find('.asocolderma-confirm-dialog').length
+            ) {
+              return;
+            }
+
+            positionConfirmationDialog($element);
+          }
+        );
       });
 
       once(
