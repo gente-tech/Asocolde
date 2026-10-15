@@ -366,7 +366,14 @@ final class SolicitudStateInlineForm extends FormBase
     $response->addCommand(new OpenModalDialogCommand(
       $this->t('Confirmar cambio de estado'),
       $dialog_content,
-      ['width' => '500']
+      [
+        'width' => '500',
+        'position' => [
+          'my' => 'center',
+          'at' => 'center',
+          'of' => 'window',
+        ],
+      ]
     ));
 
     return $response;
