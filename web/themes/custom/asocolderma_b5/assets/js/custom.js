@@ -187,7 +187,13 @@
               var $link = $('<a>', {
                 href: '/aspirante/login',
                 class: 'use-ajax login-popup-form',
-                'data-dialog-type': 'modal'
+                'data-dialog-type': 'modal',
+                'data-dialog-options': JSON.stringify({
+                  classes: {
+                    'ui-dialog': 'login-dialog'
+                  },
+                  drupalAutoButtons: false
+                })
               });
 
               $('body').append($link);
