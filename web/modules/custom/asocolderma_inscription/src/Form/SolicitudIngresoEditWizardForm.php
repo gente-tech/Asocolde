@@ -7,6 +7,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\asocolderma_inscription\Service\SolicitudFormTextManager;
 
 /**
  * Formulario de edición de solicitud por aclaración para aspirantes.
@@ -16,18 +17,23 @@ final class SolicitudIngresoEditWizardForm extends FormBase
 
   protected SolicitudClarificationManager $clarificationManager;
 
-  public function __construct(SolicitudClarificationManager $clarification_manager)
-  {
+  protected SolicitudFormTextManager $formTextManager;
+
+  public function __construct(
+    SolicitudClarificationManager $clarification_manager,
+    SolicitudFormTextManager $form_text_manager,
+  ) {
     $this->clarificationManager = $clarification_manager;
+    $this->formTextManager = $form_text_manager;
   }
 
   public static function create(ContainerInterface $container): self
   {
     return new self(
-      $container->get('asocolderma_inscription.solicitud_clarification_manager')
+      $container->get('asocolderma_inscription.solicitud_clarification_manager'),
+      $container->get('asocolderma_inscription.solicitud_form_text_manager'),
     );
   }
-
   public function getFormId(): string
   {
     return 'asocolderma_solicitud_ingreso_edit_wizard';
