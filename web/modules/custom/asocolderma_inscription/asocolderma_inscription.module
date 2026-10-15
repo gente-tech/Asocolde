@@ -70,8 +70,6 @@ function asocolderma_inscription_preprocess_node(array &$variables)
     return;
   }
 
-  $variables['elements']['#cache']['tags'][] = 'config:asocolderma_inscription.solicitud_form_settings';
-
   $form_text_manager = \Drupal::service(
     'asocolderma_inscription.solicitud_form_text_manager'
   );
@@ -1987,4 +1985,19 @@ function asocolderma_inscription_node_access(
 
   return AccessResult::forbidden()
     ->cachePerUser();
+}
+
+/**
+ * Implements hook_node_view_alter().
+ */
+function asocolderma_inscription_node_view_alter(
+  array &$build,
+  NodeInterface $node
+): void {
+  if ($node->bundle() !== 'solicitud_ingreso') {
+    return;
+  }
+
+  $build['#cache']['tags'][] =
+    'config:asocolderma_inscription.solicitud_form_settings';
 }
