@@ -1,42 +1,39 @@
 (function ($, Drupal, once) {
   'use strict';
 
-  function centerDialog($content) {
+  /**
+   * Lleva la página al inicio y centra el diálogo en el viewport.
+   */
+  function showConfirmationCentered($content) {
     if (!$content || !$content.length) {
       return;
     }
 
-    if (!$content.hasClass('ui-dialog-content')) {
-      $content = $content.closest('.ui-dialog-content');
+    // La confirmación siempre debe mostrarse desde el inicio de la página.
+    if (document.scrollingElement) {
+      document.scrollingElement.scrollTop = 0;
     }
 
-    if (!$content.length || !$content.hasClass('ui-dialog-content')) {
-      return;
-    }
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'auto'
+    });
 
-    if (!$content.hasClass('ui-dialog-content')) {
-      return;
-    }
-
-    try {
-      $content.dialog('option', 'position', {
-        my: 'center',
-        at: 'center',
-        of: window,
-        collision: 'fit'
-      });
-
-      $content.dialog('option', 'position', $content.dialog('option', 'position'));
-    }
-    catch (e) {
-      // El diálogo puede no estar completamente inicializado todavía.
-    }
-  }
-
-  function centerOpenConfirmationDialogs() {
-    $('.asocolderma-confirm-dialog').each(function () {
-      const $content = $(this).closest('.ui-dialog-content');
-      centerDialog($content);
+    // Esperamos al siguiente ciclo de renderizado para que el navegador
+    // aplique primero el cambio de scroll.
+    window.requestAnimationFrame(function () {
+      try {
+        $content.dialog('option', 'position', {
+          my: 'center',
+          at: 'center',
+          of: window,
+          collision: 'fit'
+        });
+      }
+      catch (error) {
+        // El diálogo debe estar inicializado por Drupal/jQuery UI.
+      }
     });
   }
 
@@ -44,32 +41,23 @@
     attach(context) {
 
       once(
-        'asocolderma-center-confirm-dialog',
+        'asocolderma-confirm-dialog-position',
         '.asocolderma-confirm-dialog',
         context
-      ).forEach(function (el) {
-        const $content = $(el).closest('.ui-dialog-content');
+      ).forEach(function (element) {
+        const $content = $(element).closest('.ui-dialog-content');
 
-        // Esperamos a que OpenModalDialogCommand termine de construir
-        // y posicionar completamente el jQuery UI dialog.
-        window.requestAnimationFrame(function () {
-          window.requestAnimationFrame(function () {
-            centerDialog($content);
-          });
-        });
-
-        window.setTimeout(function () {
-          centerDialog($content);
-        }, 50);
+        showConfirmationCentered($content);
       });
 
       once(
         'asocolderma-confirm-yes',
         '#asocolderma-confirm-yes',
         context
-      ).forEach(function (el) {
-        $(el).on('click', function (e) {
-          e.preventDefault();
+      ).forEach(function (element) {
+        $(element).on('click', function (event) {
+          event.preventDefault();
+
           $('#asocolderma-solicitud-hidden-submit').trigger('click');
         });
       });
@@ -78,12 +66,12 @@
         'asocolderma-confirm-no',
         '#asocolderma-confirm-no',
         context
-      ).forEach(function (el) {
-        $(el).on('click', function (e) {
-          e.preventDefault();
+      ).forEach(function (element) {
+        $(element).on('click', function (event) {
+          event.preventDefault();
 
-          const destination = $(el).data('destination') || '/';
-          const $dialog = $(el).closest('.ui-dialog-content');
+          const destination = $(element).data('destination') || '/';
+          const $dialog = $(element).closest('.ui-dialog-content');
 
           if ($dialog.length) {
             $dialog.dialog('close');
@@ -97,22 +85,12 @@
         'asocolderma-cancel-button',
         '#asocolderma-cancel-button',
         context
-      ).forEach(function (el) {
-        $(el).on('click', function (e) {
-          e.preventDefault();
+      ).forEach(function (element) {
+        $(element).on('click', function (event) {
+          event.preventDefault();
 
-          const destination = $(el).data('destination') || '/';
+          const destination = $(element).data('destination') || '/';
           window.location.href = destination;
-        });
-      });
-
-      once(
-        'asocolderma-confirm-resize',
-        'html',
-        context
-      ).forEach(function () {
-        $(window).on('resize.asocoldermaSolicitudStateConfirm', function () {
-          centerOpenConfirmationDialogs();
         });
       });
     }
