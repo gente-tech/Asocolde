@@ -182,14 +182,11 @@ final class AspiranteRegisterForm extends FormBase
 					'Te enviamos un correo para activar tu cuenta.'
 				),
 			);
-			$form_state->setRedirectUrl(
-				\Drupal\Core\Url::fromUserInput('/como-ser-miembro-de-asocolderma')
-			);
 		} elseif (!empty($notificationResult['success'])) {
-			/*
-       * La cuenta fue creada correctamente, pero el canal fue
-       * deshabilitado desde la configuración administrativa.
-       */
+			/**
+			 * La cuenta fue creada correctamente, pero el canal fue
+			 * deshabilitado desde la configuración administrativa.
+			 */
 			$this->messenger()->addWarning(
 				$this->t(
 					'Tu cuenta fue creada, pero actualmente no hay un correo de activación configurado. Comunícate con la Asociación para continuar.'
@@ -203,6 +200,8 @@ final class AspiranteRegisterForm extends FormBase
 			);
 		}
 
-		$form_state->setRedirect('asocolderma_inscription.aspirante_login');
+		$form_state->setRedirectUrl(
+			Url::fromUserInput('/como-ser-miembro-de-asocolderma')
+		);
 	}
 }
