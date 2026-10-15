@@ -70,6 +70,66 @@ function asocolderma_inscription_preprocess_node(array &$variables)
     return;
   }
 
+  $form_text_manager = \Drupal::service(
+    'asocolderma_inscription.solicitud_form_text_manager'
+  );
+
+  $variables['solicitud_form_labels'] = [
+    'general' => [
+      'tipo_asociado' => $form_text_manager->getLabel('general', 'tipo_asociado', 'Tipo de asociado'),
+      'nombre1' => $form_text_manager->getLabel('general', 'nombre1', 'Primer nombre'),
+      'nombre2' => $form_text_manager->getLabel('general', 'nombre2', 'Segundo nombre'),
+      'apellido1' => $form_text_manager->getLabel('general', 'apellido1', 'Primer apellido'),
+      'apellido2' => $form_text_manager->getLabel('general', 'apellido2', 'Segundo apellido'),
+      'fecha_nacimiento' => $form_text_manager->getLabel('general', 'fecha_nacimiento', 'Fecha de nacimiento'),
+      'estado_civil' => $form_text_manager->getLabel('general', 'estado_civil', 'Estado civil'),
+      'sexo' => $form_text_manager->getLabel('general', 'sexo', 'Sexo'),
+      'tipo_documento' => $form_text_manager->getLabel('general', 'tipo_documento', 'Tipo de documento'),
+      'numero_documento' => $form_text_manager->getLabel('general', 'numero_documento', 'Número de documento'),
+      'registro_medico' => $form_text_manager->getLabel('general', 'registro_medico', 'Registro médico'),
+      'pais' => $form_text_manager->getLabel('general', 'pais', 'País'),
+      'departamento' => $form_text_manager->getLabel('general', 'departamento', 'Departamento'),
+      'ciudad_ejercicio' => $form_text_manager->getLabel('general', 'ciudad_ejercicio', 'Ciudad de ejercicio'),
+    ],
+    'contacto' => [
+      'direccion' => $form_text_manager->getLabel('contacto', 'direccion', 'Dirección física principal'),
+      'correspondencia_fisica' => $form_text_manager->getLabel('contacto', 'correspondencia_fisica', 'Dirección institucional'),
+      'email' => $form_text_manager->getLabel('contacto', 'email', 'Correo electrónico principal'),
+      'celular' => $form_text_manager->getLabel('contacto', 'celular', 'Teléfono celular de contacto'),
+      'lugar_correspondencia' => $form_text_manager->getLabel('contacto', 'lugar_correspondencia', 'Lugar de correspondencia'),
+    ],
+    'profesional' => [
+      'facultad_pregrado' => $form_text_manager->getLabel('profesional', 'facultad_pregrado', 'Facultad de medicina – Pregrado'),
+      'pais_pregrado' => $form_text_manager->getLabel('profesional', 'pais_pregrado', 'País donde realizó el pregrado en medicina'),
+      'titulo_universitario' => $form_text_manager->getLabel('profesional', 'titulo_universitario', 'Título universitario'),
+      'universidad_residencia' => $form_text_manager->getLabel('profesional', 'universidad_residencia', 'Universidad de residencia'),
+      'pais_residencia' => $form_text_manager->getLabel('profesional', 'pais_residencia', 'País donde realizó la residencia'),
+      'tiene_subespecialidad' => $form_text_manager->getLabel('profesional', 'tiene_subespecialidad', 'Tiene una Subespecialidad?'),
+      'subespecialidad_cual' => $form_text_manager->getLabel('profesional', 'subespecialidad_cual', 'Subespecialidad'),
+    ],
+    'adjuntos' => [
+      'adj_carta_1' => $form_text_manager->getLabel('adjuntos', 'adj_carta_1', 'Carta 1'),
+      'adj_carta_2' => $form_text_manager->getLabel('adjuntos', 'adj_carta_2', 'Carta 2'),
+      'adj_rut' => $form_text_manager->getLabel('adjuntos', 'adj_rut', 'RUT'),
+      'adj_id' => $form_text_manager->getLabel('adjuntos', 'adj_id', 'Documento de identidad'),
+      'adj_carta_ingreso' => $form_text_manager->getLabel('adjuntos', 'adj_carta_ingreso', 'Carta de solicitud de ingreso'),
+      'adj_hv' => $form_text_manager->getLabel('adjuntos', 'adj_hv', 'Hoja de vida'),
+      'adj_diploma_medico' => $form_text_manager->getLabel('adjuntos', 'adj_diploma_medico', 'Diploma médico'),
+      'adj_diploma_dermatologo' => $form_text_manager->getLabel('adjuntos', 'adj_diploma_dermatologo', 'Diploma dermatólogo'),
+      'adj_rethus' => $form_text_manager->getLabel('adjuntos', 'adj_rethus', 'RETHUS'),
+      'adj_aut_verificacion' => $form_text_manager->getLabel('adjuntos', 'adj_aut_verificacion', 'Autorización de verificación'),
+      'adj_cert_publicacion' => $form_text_manager->getLabel('adjuntos', 'adj_cert_publicacion', 'Certificación de publicaciones'),
+      'adj_acta_grado_medico' => $form_text_manager->getLabel('adjuntos', 'adj_acta_grado_medico', 'Acta de grado como médico general'),
+      'adj_acta_grado_dermatologo' => $form_text_manager->getLabel('adjuntos', 'adj_acta_grado_dermatologo', 'Acta de grado como dermatólogo'),
+      'adj_convalidacion' => $form_text_manager->getLabel('adjuntos', 'adj_convalidacion', 'Resolución de convalidación'),
+      'adj_pensum_academico' => $form_text_manager->getLabel('adjuntos', 'adj_pensum_academico', 'Pénsum académico'),
+      'adj_notas_dermatologia' => $form_text_manager->getLabel('adjuntos', 'adj_notas_dermatologia', 'Notas especialización dermatología'),
+    ],
+    'confirm' => [
+      'terms' => $form_text_manager->getLabel('confirm', 'terms', 'Acepto los términos y condiciones'),
+    ],
+  ];
+
   $variables['semaforo_steps'] = asocolderma_inscription_build_semaforo_steps($node);
 
   $request = \Drupal::request();
