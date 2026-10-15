@@ -1426,3 +1426,39 @@ div[id^="modal-messages"] .solicitud-created-id {
 div[id^="modal-messages"] .solicitud-created-id {
   white-space: nowrap;
 }
+
+.solicitud-back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 18px;
+  margin: 16px 0 24px;
+  border: 1px solid #07898d;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #07898d;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.solicitud-back-button:hover,
+.solicitud-back-button:focus {
+  background-color: #07898d;
+  border-color: #07898d;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+@media (max-width: 767px) {
+  .solicitud-back-button {
+    display: flex;
+    width: calc(100% - 32px);
+    min-height: 46px;
+    margin: 16px;
+    padding: 12px 16px;
+    text-align: center;
+  }
+}

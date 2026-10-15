@@ -317,10 +317,12 @@ final class UserZoneController extends ControllerBase
       '#title' => $this->t('Volver a mis solicitudes'),
       '#url' => Url::fromRoute('asocolderma_inscription.user_zone_requests'),
       '#attributes' => [
-        'class' => ['button'],
+        'class' => [
+          'button',
+          'solicitud-back-button',
+        ],
       ],
     ];
-
     $build['detail'] = $view_builder->view($node, 'full');
 
     $build['#cache'] = [
