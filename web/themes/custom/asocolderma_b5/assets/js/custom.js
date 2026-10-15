@@ -169,44 +169,11 @@
       once('modal-messages', '#modal-messages', context).forEach(function (element) {
         var modalMessages = new bootstrap.Modal(element);
 
-        modalMessages.show();
-
         var openAspiranteLogin =
           $(element).attr('data-open-aspirante-login') === '1';
 
-        if (!openAspiranteLogin) {
-          return;
-        }
-
-        $('#aspirante-activation-continue')
-          .off('click.asocoldermaActivation')
-          .on('click.asocoldermaActivation', function (event) {
-            event.preventDefault();
-
-            $(element).one('hidden.bs.modal', function () {
-              var $link = $('<a>', {
-                href: '/aspirante/login',
-                class: 'use-ajax login-popup-form',
-                'data-dialog-type': 'modal',
-                'data-dialog-options': JSON.stringify({
-                  classes: {
-                    'ui-dialog': 'login-dialog'
-                  },
-                  drupalAutoButtons: false
-                })
-              });
-
-              $('body').append($link);
-
-              Drupal.attachBehaviors($link[0]);
-
-              window.requestAnimationFrame(function () {
-                $link.trigger('click');
-              });
-            });
-
-            modalMessages.hide();
-          });
+        var wrongAspiranteLogin =
+          $('#aspirante-wrong-login-continue', element).length > 0;
 
         var openAspiranteLoginPopup = function () {
           var $link = $('<a>', {
@@ -230,31 +197,56 @@
           });
         };
 
-        $('#aspirante-wrong-login-continue')
-          .off('click.asocoldermaWrongLogin')
-          .on('click.asocoldermaWrongLogin', function (event) {
-            event.preventDefault();
+        modalMessages.show();
 
-            $(element).one('hidden.bs.modal', function () {
-              openAspiranteLoginPopup();
+        /**
+         * Cuenta activada correctamente.
+         */
+        if (openAspiranteLogin) {
+          $('#aspirante-activation-continue', element)
+            .off('click.asocoldermaActivation')
+            .on('click.asocoldermaActivation', function (event) {
+              event.preventDefault();
+
+              $(element).one('hidden.bs.modal', function () {
+                openAspiranteLoginPopup();
+              });
+
+              modalMessages.hide();
+            });
+        }
+
+        /**
+         * Aspirante intentando ingresar por /user/login.
+         */
+        if (wrongAspiranteLogin) {
+          $('#aspirante-wrong-login-continue', element)
+            .off('click.asocoldermaWrongLogin')
+            .on('click.asocoldermaWrongLogin', function (event) {
+              event.preventDefault();
+
+              $(element).one('hidden.bs.modal', function () {
+                openAspiranteLoginPopup();
+              });
+
+              modalMessages.hide();
             });
 
-            modalMessages.hide();
-          });
+          $(element)
+            .find('.btn-close')
+            .off('click.asocoldermaWrongLogin')
+            .on('click.asocoldermaWrongLogin', function (event) {
+              event.preventDefault();
 
-        $(element)
-          .find('.btn-close')
-          .off('click.asocoldermaWrongLogin')
-          .on('click.asocoldermaWrongLogin', function () {
-            if (!$('#aspirante-wrong-login-continue').length) {
-              return;
-            }
+              $(element).one('hidden.bs.modal', function () {
+                openAspiranteLoginPopup();
+              });
 
-            $(element).one('hidden.bs.modal', function () {
-              openAspiranteLoginPopup();
+              modalMessages.hide();
             });
-          });
+        }
       });
+
 
       /** Login popup */
       once('login-popup-form', '.login-popup-form', context).forEach(function (element) {
