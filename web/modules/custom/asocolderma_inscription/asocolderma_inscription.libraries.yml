@@ -71,3 +71,15 @@ aspirante_register:
   css:
     theme:
       css/aspirante-register.css: {}
+
+aspirante_activation_login:
+  version: 1.x
+  js:
+    assets/js/aspirante-activation-login.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/once
+    - core/drupal.ajax
+    - core/drupal.dialog
+    - core/drupal.dialog.ajax
