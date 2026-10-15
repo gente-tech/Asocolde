@@ -91,3 +91,8 @@ services:
       - '@enterprise_integrations.mandrill'
       - '@enterprise_integrations.token_resolver'
       - '@logger.channel.asocolderma_inscription'
+  
+  asocolderma_inscription.solicitud_form_text_manager:
+    class: Drupal\asocolderma_inscription\Service\SolicitudFormTextManager
+    arguments:
+      - '@config.factory'
