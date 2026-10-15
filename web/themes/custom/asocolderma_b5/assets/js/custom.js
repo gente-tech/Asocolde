@@ -207,6 +207,53 @@
 
             modalMessages.hide();
           });
+
+        var openAspiranteLoginPopup = function () {
+          var $link = $('<a>', {
+            href: '/aspirante/login',
+            class: 'use-ajax',
+            'data-dialog-type': 'modal',
+            'data-dialog-options': JSON.stringify({
+              classes: {
+                'ui-dialog': 'login-dialog aspirante-login-dialog'
+              },
+              drupalAutoButtons: false
+            })
+          });
+
+          $('body').append($link);
+
+          Drupal.attachBehaviors($link[0]);
+
+          window.requestAnimationFrame(function () {
+            $link.trigger('click');
+          });
+        };
+
+        $('#aspirante-wrong-login-continue')
+          .off('click.asocoldermaWrongLogin')
+          .on('click.asocoldermaWrongLogin', function (event) {
+            event.preventDefault();
+
+            $(element).one('hidden.bs.modal', function () {
+              openAspiranteLoginPopup();
+            });
+
+            modalMessages.hide();
+          });
+
+        $(element)
+          .find('.btn-close')
+          .off('click.asocoldermaWrongLogin')
+          .on('click.asocoldermaWrongLogin', function () {
+            if (!$('#aspirante-wrong-login-continue').length) {
+              return;
+            }
+
+            $(element).one('hidden.bs.modal', function () {
+              openAspiranteLoginPopup();
+            });
+          });
       });
 
       /** Login popup */
