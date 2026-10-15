@@ -70,6 +70,8 @@ function asocolderma_inscription_preprocess_node(array &$variables)
     return;
   }
 
+  $variables['elements']['#cache']['tags'][] = 'config:asocolderma_inscription.solicitud_form_settings';
+
   $form_text_manager = \Drupal::service(
     'asocolderma_inscription.solicitud_form_text_manager'
   );
