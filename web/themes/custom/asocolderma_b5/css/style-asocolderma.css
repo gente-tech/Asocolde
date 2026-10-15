@@ -13024,6 +13024,7 @@ section.solicitud-ingreso {
 }
 
 /**** FIN AJUSTES 04-03-2026 *****/
+
 /* Botón volver a mis solicitudes - detalle aspirante */
 .path-zona-solicitudes a.button[href="/zona/solicitudes"] {
   display: inline-flex;
@@ -13063,3 +13064,4 @@ section.solicitud-ingreso {
     text-align: center;
   }
 }
+/**** FIN AJUSTES 15-10-2026 *****/
