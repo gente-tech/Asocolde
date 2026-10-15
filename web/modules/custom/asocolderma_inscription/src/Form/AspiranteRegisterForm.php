@@ -182,6 +182,9 @@ final class AspiranteRegisterForm extends FormBase
 					'Te enviamos un correo para activar tu cuenta.'
 				),
 			);
+			$form_state->setRedirectUrl(
+				\Drupal\Core\Url::fromUserInput('/como-ser-miembro-de-asocolderma')
+			);
 		} elseif (!empty($notificationResult['success'])) {
 			/*
        * La cuenta fue creada correctamente, pero el canal fue
