@@ -2051,3 +2051,27 @@ function asocolderma_inscription_profile_create_access(
 
   return AccessResult::neutral();
 }
+
+/**
+ * Implements hook_user_access().
+ *
+ * Impide que los aspirantes editen o eliminen cuentas
+ * de usuario mediante las rutas nativas de Drupal.
+ */
+function asocolderma_inscription_user_access(
+  \Drupal\user\UserInterface $entity,
+  $operation,
+  AccountInterface $account
+): AccessResult {
+  $roles = $account->getRoles();
+
+  if (
+    in_array('aspirante', $roles, TRUE) &&
+    !in_array('administrator', $roles, TRUE) &&
+    in_array($operation, ['update', 'delete'], TRUE)
+  ) {
+    return AccessResult::forbidden()->cachePerUser();
+  }
+
+  return AccessResult::neutral();
+}
