@@ -84,21 +84,10 @@ final class UserZoneController extends ControllerBase
 
     $view_builder = $this->etm->getViewBuilder('profile');
 
-    $edit_link = [
-      '#type' => 'link',
-      '#title' => $this->t('Editar perfil'),
-      '#url' => Url::fromRoute('asocolderma_inscription.user_zone_profile_edit'),
-      '#attributes' => [
-        'class' => [
-          'button',
-          'button--primary',
-          'user-zone-button',
-          'user-zone-button--primary',
-        ],
-      ],
-    ];
-
-    $has_active = $this->manager->hasActiveSolicitud((int) $account->id());
+    // Verificar si el aspirante tiene una solicitud activa.
+    $has_active = $this->manager->hasActiveSolicitud(
+      (int) $account->id()
+    );
 
     $tempStore = $this->tempStoreFactory->get(self::TEMPSTORE_COLLECTION);
     $draft = $tempStore->get(self::TEMPSTORE_KEY);
@@ -121,8 +110,8 @@ final class UserZoneController extends ControllerBase
       '#theme' => 'asocolderma_inscription_user_zone_profile',
       '#user_name' => $account->getDisplayName(),
       '#profile' => $view_builder->view($profile, 'default'),
-      '#edit_link' => $edit_link,
       '#primary_action' => $primary_action,
+      '#has_active' => $has_active,
       '#header_menu_items' => $this->buildAspiranteMenuItems(),
       '#logout_url' => Url::fromRoute('user.logout')->toString(),
       '#attached' => [
