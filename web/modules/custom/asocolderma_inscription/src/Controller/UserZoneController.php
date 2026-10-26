@@ -150,7 +150,10 @@ final class UserZoneController extends ControllerBase
 
     foreach ($nodes as $n) {
       $term = $n->get('field_state')->entity;
-      $estado_label = $term ? (string) $term->label() : '-';
+
+      $estado_label = $term
+        ? \asocolderma_inscription_get_state_visual_label_from_term($term)
+        : '-';
       $estado_functional_key = $term
         ? \asocolderma_inscription_get_state_functional_key_from_term($term)
         : '';
