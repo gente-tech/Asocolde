@@ -32,7 +32,7 @@
 				<h2 class="user-zone-card__title">Solicitudes registradas</h2>
 			</div>
 
-			{% if primary_action %}
+			{% if not has_active and primary_action %}
 				<a href="{{ primary_action.url }}" class="user-zone-button user-zone-button--primary">
 					{{ primary_action.label }}
 				</a>
@@ -98,7 +98,7 @@
 										Cuando inicies tu proceso de ingreso, aquí podrás consultar el estado de tu solicitud.
 									</p>
 
-									{% if primary_action %}
+									{% if not has_active and primary_action %}
 										<a href="{{ primary_action.url }}" class="user-zone-button user-zone-button--primary">
 											{{ primary_action.label }}
 										</a>
