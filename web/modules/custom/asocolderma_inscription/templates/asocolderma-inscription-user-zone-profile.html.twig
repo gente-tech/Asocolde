@@ -1,3 +1,4 @@
+
 {#
 /**
  * Template de la vista inicial del aspirante logueado.
@@ -14,7 +15,7 @@
 				<span class="user-zone-header__eyebrow">AsoColDerma</span>
 				<h1 class="user-zone-header__title">Zona del aspirante</h1>
 				<p class="user-zone-header__description">
-					Gestiona tu información personal y consulta el estado de tu proceso de ingreso.
+					Consulta tu información personal y el estado de tu proceso de ingreso.
 				</p>
 			</div>
 
@@ -24,7 +25,7 @@
 			</div>
 		</div>
 	</header>
-	
+
 	<div class="user-zone-card user-zone-card--profile">
 		<div class="user-zone-card__header">
 			<div>
@@ -32,19 +33,23 @@
 				<h2 class="user-zone-card__title">Mi perfil de aspirante</h2>
 			</div>
 
-			<div class="user-zone-card__actions">
-				{% if primary_action %}
+			{% if primary_action %}
+				<div class="user-zone-card__actions">
 					<a
 						href="{{ primary_action.url }}"
 						class="user-zone-button user-zone-button--primary"
 					>
 						{{ primary_action.label }}
 					</a>
-				{% endif %}
-
-				{{ edit_link }}
-			</div>
+				</div>
+			{% endif %}
 		</div>
+
+		{% if has_active %}
+			<div class="user-zone-alert user-zone-alert--info">
+				Tienes una solicitud activa en curso. No puedes crear otra hasta que finalice.
+			</div>
+		{% endif %}
 
 		<div class="user-zone-card__body">
 			{{ profile }}
