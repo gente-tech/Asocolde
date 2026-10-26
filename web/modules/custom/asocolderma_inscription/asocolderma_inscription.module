@@ -2092,3 +2092,55 @@ function asocolderma_inscription_user_access(
 
   return AccessResult::neutral();
 }
+
+/**
+ * Implements hook_views_post_render().
+ *
+ * Registra las dependencias de caché de las vistas que muestran
+ * solicitudes de ingreso, para que los cambios en etiquetas visuales
+ * se reflejen automáticamente al guardar la configuración.
+ */
+function asocolderma_inscription_views_post_render(
+  \Drupal\views\ViewExecutable $view,
+  array &$output,
+  \Drupal\views\Plugin\views\cache\CachePluginBase $cache
+): void {
+  $cacheability = \Drupal\Core\Cache\CacheableMetadata::createFromRenderArray($output);
+
+  $has_solicitud = FALSE;
+
+  foreach ($view->result as $result) {
+    $node = $result->_entity ?? NULL;
+
+    if (
+      !$node instanceof NodeInterface ||
+      $node->bundle() !== 'solicitud_ingreso'
+    ) {
+      continue;
+    }
+
+    $has_solicitud = TRUE;
+    $cacheability->addCacheableDependency($node);
+
+    if (
+      $node->hasField('field_state') &&
+      !$node->get('field_state')->isEmpty()
+    ) {
+      $term = $node->get('field_state')->entity;
+
+      if ($term) {
+        $cacheability->addCacheableDependency($term);
+      }
+    }
+  }
+
+  if (!$has_solicitud) {
+    return;
+  }
+
+  $cacheability->addCacheableDependency(
+    \Drupal::config('asocolderma_inscription.state_visual_labels')
+  );
+
+  $cacheability->applyTo($output);
+}
