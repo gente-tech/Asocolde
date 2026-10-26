@@ -1990,6 +1990,9 @@ function asocolderma_inscription_node_access(
 
 /**
  * Implements hook_node_view_alter().
+ *
+ * Registra las dependencias de caché de la visualización
+ * de las solicitudes de ingreso.
  */
 function asocolderma_inscription_node_view_alter(
   array &$build,
@@ -1999,8 +2002,22 @@ function asocolderma_inscription_node_view_alter(
     return;
   }
 
-  $build['#cache']['tags'][] =
-    'config:asocolderma_inscription.solicitud_form_settings';
+  $config_factory = \Drupal::configFactory();
+
+  $form_settings = $config_factory->get(
+    'asocolderma_inscription.solicitud_form_settings'
+  );
+
+  $state_labels = $config_factory->get(
+    'asocolderma_inscription.state_visual_labels'
+  );
+
+  $cacheability = \Drupal\Core\Cache\CacheableMetadata::createFromRenderArray($build);
+
+  $cacheability->addCacheableDependency($form_settings);
+  $cacheability->addCacheableDependency($state_labels);
+
+  $cacheability->applyTo($build);
 }
 
 /**
