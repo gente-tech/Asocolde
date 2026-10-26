@@ -225,12 +225,21 @@ final class UserZoneController extends ControllerBase
     $draft = $tempStore->get(self::TEMPSTORE_KEY);
     $has_draft = !empty($draft) && is_array($draft);
 
-    $primary_action = NULL;
-
-    if (!$has_active) {
+    if ($has_active) {
       $primary_action = [
-        'label' => $has_draft ? $this->t('Continuar solicitud') : $this->t('Crear solicitud'),
-        'url' => Url::fromRoute('asocolderma_inscription.solicitud_create')->toString(),
+        'label' => $this->t('Listar solicitudes'),
+        'url' => Url::fromRoute(
+          'asocolderma_inscription.user_zone_requests'
+        )->toString(),
+      ];
+    } else {
+      $primary_action = [
+        'label' => $has_draft
+          ? $this->t('Continuar solicitud')
+          : $this->t('Crear solicitud'),
+        'url' => Url::fromRoute(
+          'asocolderma_inscription.solicitud_create'
+        )->toString(),
       ];
     }
 
