@@ -30,14 +30,6 @@ asocolderma_inscription.user_zone_profile:
   requirements:
     _user_is_logged_in: 'TRUE'
 
-asocolderma_inscription.user_zone_profile_edit:
-  path: '/zona/perfil/editar'
-  defaults:
-    _controller: '\Drupal\asocolderma_inscription\Controller\UserZoneController::profileEdit'
-    _title: 'Editar perfil'
-  requirements:
-    _user_is_logged_in: 'TRUE'
-
 asocolderma_inscription.user_zone_requests:
   path: '/zona/solicitudes'
   defaults:

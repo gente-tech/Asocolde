@@ -127,32 +127,6 @@ final class UserZoneController extends ControllerBase
     ];
   }
 
-  public function profileEdit(): RedirectResponse
-  {
-    if (!$this->isAspiranteUser()) {
-      return $this->redirectOutOfAspiranteZone();
-    }
-
-    $account = $this->currentUser();
-    $storage = $this->etm->getStorage('profile');
-
-    $profiles = $storage->loadByProperties([
-      'uid' => $account->id(),
-      'type' => 'aspirante',
-    ]);
-
-    $profile = $profiles ? reset($profiles) : NULL;
-
-    if (!$profile) {
-      $this->messenger()->addError($this->t('No se encontró un perfil para editar.'));
-      return $this->redirect('asocolderma_inscription.user_zone_profile');
-    }
-
-    return $this->redirect('entity.profile.edit_form', [
-      'profile' => $profile->id(),
-    ]);
-  }
-
   public function requests(): array|RedirectResponse
   {
     if (!$this->isAspiranteUser()) {
