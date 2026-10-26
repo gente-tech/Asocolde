@@ -82,7 +82,14 @@
 									</a>
 
 									{% for action in item.actions %}
-										<a href="{{ action.url }}" class="user-zone-button user-zone-button--{{ action.modifier }}">
+										<a
+											href="{{ action.url }}"
+											class="user-zone-button user-zone-button--{{ action.modifier }}"
+											{% if action.new_tab|default(false) %}
+											target="_blank"
+											rel="noopener noreferrer"
+											{% endif %}
+										>
 											{{ action.label }}
 										</a>
 									{% endfor %}

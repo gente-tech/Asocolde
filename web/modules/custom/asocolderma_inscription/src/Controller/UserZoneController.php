@@ -192,6 +192,7 @@ final class UserZoneController extends ControllerBase
               ['node' => $n->id()]
             )->toString(),
             'modifier' => 'secondary',
+            'new_tab' => TRUE,
           ];
         } else {
           $actions[] = [
