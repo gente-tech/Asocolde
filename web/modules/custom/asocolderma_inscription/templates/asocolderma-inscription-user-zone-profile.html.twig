@@ -33,16 +33,23 @@
 				<h2 class="user-zone-card__title">Mi perfil de aspirante</h2>
 			</div>
 
-			{% if primary_action %}
-				<div class="user-zone-card__actions">
+			<div class="user-zone-card__actions">
+				{% if has_active %}
+					<a
+						href="{{ path('asocolderma_inscription.user_zone_requests') }}"
+						class="user-zone-button user-zone-button--primary"
+					>
+						Listar solicitudes
+					</a>
+				{% elseif primary_action %}
 					<a
 						href="{{ primary_action.url }}"
 						class="user-zone-button user-zone-button--primary"
 					>
 						{{ primary_action.label }}
 					</a>
-				</div>
-			{% endif %}
+				{% endif %}
+			</div>
 		</div>
 
 		{% if has_active %}
