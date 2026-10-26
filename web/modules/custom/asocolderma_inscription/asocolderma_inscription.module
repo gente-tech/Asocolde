@@ -2002,3 +2002,52 @@ function asocolderma_inscription_node_view_alter(
   $build['#cache']['tags'][] =
     'config:asocolderma_inscription.solicitud_form_settings';
 }
+
+/**
+ * Implements hook_profile_access().
+ *
+ * Impide que los aspirantes editen o eliminen su perfil
+ * desde cualquier formulario de la entidad Profile.
+ */
+function asocolderma_inscription_profile_access(
+  \Drupal\profile\Entity\ProfileInterface $profile,
+  string $operation,
+  AccountInterface $account
+): AccessResult {
+  $roles = $account->getRoles();
+
+  if (
+    $profile->bundle() !== 'aspirante' ||
+    !in_array('aspirante', $roles, TRUE) ||
+    in_array('administrator', $roles, TRUE) ||
+    !in_array($operation, ['update', 'delete'], TRUE)
+  ) {
+    return AccessResult::neutral();
+  }
+
+  return AccessResult::forbidden()->cachePerUser();
+}
+
+/**
+ * Implements hook_profile_create_access().
+ *
+ * Impide que un aspirante cree otros perfiles
+ * de tipo aspirante mediante rutas de Drupal.
+ */
+function asocolderma_inscription_profile_create_access(
+  AccountInterface $account,
+  array $context,
+  $entity_bundle = NULL
+): AccessResult {
+  $roles = $account->getRoles();
+
+  if (
+    $entity_bundle === 'aspirante' &&
+    in_array('aspirante', $roles, TRUE) &&
+    !in_array('administrator', $roles, TRUE)
+  ) {
+    return AccessResult::forbidden()->cachePerUser();
+  }
+
+  return AccessResult::neutral();
+}
