@@ -501,6 +501,15 @@ final class SolicitudNotificationManager
 				];
 
 			case 'status_change':
+
+				// La plantilla de firma utiliza variables con nombre.
+				if ($phase_key === 'documentos_enviados') {
+					return [
+						'name_user' => $user_full_name,
+						'id_solicitud' => $request_code,
+					];
+				}
+
 				return [
 					'1' => $user_full_name,
 					'2' => $request_code,
