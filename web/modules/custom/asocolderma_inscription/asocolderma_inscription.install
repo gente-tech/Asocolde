@@ -633,6 +633,24 @@ function asocolderma_inscription_schema()
     ],
   ];
 
+  $schema['asocolderma_solicitud_id_sequence'] = [
+    'description' => 'Consecutivo diario persistente de solicitudes de ingreso.',
+    'fields' => [
+      'day' => [
+        'type' => 'varchar',
+        'length' => 8,
+        'not null' => TRUE,
+      ],
+      'last_value' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+    ],
+    'primary key' => ['day'],
+  ];
+
   return $schema;
 }
 
@@ -1804,4 +1822,72 @@ function asocolderma_inscription_update_9018(): void
   }
 
   $field_manager->clearCachedFieldDefinitions();
+}
+
+/**
+ * Instala y prepara el consecutivo persistente de solicitudes.
+ */
+function asocolderma_inscription_update_9019(): void
+{
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  $table = 'asocolderma_solicitud_id_sequence';
+
+  if (!$schema->tableExists($table)) {
+    $schema->createTable(
+      $table,
+      asocolderma_inscription_schema()[$table]
+    );
+  }
+
+  // Recuperar el consecutivo máximo de las solicitudes existentes.
+  $query = $database->select('node__field_solicitud_id', 's')
+    ->fields('s', ['field_solicitud_id_value'])
+    ->condition('s.bundle', 'solicitud_ingreso')
+    ->condition('s.deleted', 0);
+
+  $last_by_day = [];
+
+  foreach ($query->execute() as $row) {
+    $code = trim((string) $row->field_solicitud_id_value);
+
+    if (!preg_match(
+      '/^(\d{2})(\d{2})(\d{4})-\d{3}-(\d{3})$/',
+      $code,
+      $matches
+    )) {
+      continue;
+    }
+
+    if (!checkdate(
+      (int) $matches[2],
+      (int) $matches[1],
+      (int) $matches[3]
+    )) {
+      continue;
+    }
+
+    $day = $matches[3] . $matches[2] . $matches[1];
+    $sequence = (int) $matches[4];
+
+    $last_by_day[$day] = max(
+      $last_by_day[$day] ?? 0,
+      $sequence
+    );
+  }
+
+  foreach ($last_by_day as $day => $sequence) {
+    $existing = $database->select($table, 's')
+      ->fields('s', ['last_value'])
+      ->condition('day', $day)
+      ->execute()
+      ->fetchField();
+
+    $database->merge($table)
+      ->key(['day' => $day])
+      ->fields([
+        'last_value' => max((int) $existing, $sequence),
+      ])
+      ->execute();
+  }
 }
