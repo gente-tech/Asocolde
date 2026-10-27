@@ -1891,3 +1891,71 @@ function asocolderma_inscription_update_9019(): void
       ->execute();
   }
 }
+
+
+/**
+ * Impide identificadores duplicados en las solicitudes de ingreso.
+ */
+function asocolderma_inscription_update_9020(): void
+{
+  $database = \Drupal::database();
+  $schema = $database->schema();
+
+  $table = 'node__field_solicitud_id';
+  $column = 'field_solicitud_id_value';
+  $index = 'asocolderma_solicitud_id_unique';
+
+  if (!$schema->tableExists($table)) {
+    throw new \RuntimeException(
+      sprintf('No existe la tabla requerida: %s.', $table)
+    );
+  }
+
+  if (!$schema->fieldExists($table, $column)) {
+    throw new \RuntimeException(
+      sprintf('No existe la columna requerida: %s.', $column)
+    );
+  }
+
+  // Evitar recrear el índice si ya existe.
+  if ($schema->indexExists($table, $index)) {
+    return;
+  }
+
+  // Comprobar que no existan identificadores duplicados.
+  $query = $database->select($table, 's');
+
+  $query->addField(
+    's',
+    $column,
+    'codigo'
+  );
+
+  $query->addExpression(
+    'COUNT(*)',
+    'total'
+  );
+
+  $query->groupBy('s.' . $column);
+  $query->having('COUNT(*) > 1');
+  $query->range(0, 1);
+
+  $duplicate = $query->execute()->fetchObject();
+
+  if ($duplicate) {
+    throw new \RuntimeException(
+      sprintf(
+        'No se puede crear el índice UNIQUE. El código "%s" aparece %d veces.',
+        $duplicate->codigo,
+        $duplicate->total
+      )
+    );
+  }
+
+  // Protección definitiva en la tabla actual de solicitudes.
+  $schema->addUniqueKey(
+    $table,
+    $index,
+    [$column]
+  );
+}
