@@ -10,7 +10,7 @@ services:
 
   asocolderma_inscription.solicitud_id_generator:
     class: Drupal\asocolderma_inscription\Service\SolicitudIdGenerator
-    arguments: ["@entity_type.manager", "@lock", "@datetime.time"]
+    arguments: ["@database", "@lock", "@datetime.time"]
 
   asocolderma_inscription.solicitud_manager:
     class: Drupal\asocolderma_inscription\Service\SolicitudManager

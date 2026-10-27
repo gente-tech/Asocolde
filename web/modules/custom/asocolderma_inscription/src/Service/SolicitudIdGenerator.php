@@ -1,58 +1,112 @@
+
 <?php
 
 namespace Drupal\asocolderma_inscription\Service;
 
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Lock\LockBackendInterface;
 
-final class SolicitudIdGenerator {
+/**
+ * Genera identificadores únicos de solicitudes de ingreso.
+ *
+ * Formato: DDMMAAAA-XXX-NNN.
+ */
+final class SolicitudIdGenerator
+{
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $etm,
+    private readonly Connection $database,
     private readonly LockBackendInterface $lock,
     private readonly TimeInterface $time,
   ) {}
 
   /**
-   * Genera ID: DDMMAAAA-XXX-NNN
-   * - XXX: últimos 3 dígitos del documento
-   * - NNN: consecutivo del día (count + 1) protegido por lock
+   * Reserva un consecutivo diario persistente.
    */
-  public function generate(string $document_number): string {
-    $date_ddmmyyyy = date('dmY', $this->time->getCurrentTime());
+  public function generate(string $document_number): string
+  {
+    $digits = preg_replace('/\D+/', '', $document_number) ?? '';
 
-    $digits = preg_replace('/\D+/', '', $document_number) ?: '';
-    $last3 = substr($digits, -3);
-    $last3 = str_pad($last3, 3, '0', STR_PAD_LEFT);
+    if ($digits === '') {
+      throw new \InvalidArgumentException(
+        'El número de documento es obligatorio.'
+      );
+    }
 
-    // Lock por día para evitar colisiones por concurrencia.
-    $lock_name = "asocolderma_solicitud_id_$date_ddmmyyyy";
-    if (!$this->lock->acquire($lock_name, 10.0)) {
-      throw new \RuntimeException('No se pudo adquirir lock para generar ID de solicitud.');
+    $last3 = str_pad(
+      substr($digits, -3),
+      3,
+      '0',
+      STR_PAD_LEFT
+    );
+
+    $date = (new \DateTimeImmutable(
+      '@' . $this->time->getCurrentTime()
+    ))->setTimezone(
+      new \DateTimeZone('America/Bogota')
+    );
+
+    $day = $date->format('Ymd');
+    $date_ddmmyyyy = $date->format('dmY');
+
+    $table = 'asocolderma_solicitud_id_sequence';
+    $lock_name = 'asocolderma_solicitud_id_' . $day;
+
+    if (!$this->lock->acquire($lock_name, 30.0)) {
+      throw new \RuntimeException(
+        'No se pudo adquirir el bloqueo para generar el código de solicitud.'
+      );
     }
 
     try {
-      $start = strtotime(date('Y-m-d 00:00:00', $this->time->getCurrentTime()));
-      $end = strtotime(date('Y-m-d 23:59:59', $this->time->getCurrentTime()));
+      $current = $this->database->select($table, 's')
+        ->fields('s', ['last_value'])
+        ->condition('day', $day)
+        ->execute()
+        ->fetchField();
 
-      // Conteo de solicitudes creadas hoy.
-      $count_today = (int) $this->etm->getStorage('solicitud_ingreso')
-        ->getQuery()
-        ->condition('created', $start, '>=')
-        ->condition('created', $end, '<=')
-        ->accessCheck(FALSE)
-        ->count()
-        ->execute();
+      $next = $current === FALSE
+        ? 1
+        : (int) $current + 1;
 
-      // Consecutivo del día.
-      $nnn = str_pad((string) ($count_today + 1), 3, '0', STR_PAD_LEFT);
+      if ($next > 999) {
+        throw new \RuntimeException(
+          'Se agotó el consecutivo diario de tres dígitos.'
+        );
+      }
 
-      return "{$date_ddmmyyyy}-{$last3}-{$nnn}";
-    }
-    finally {
+      if ($current === FALSE) {
+        $this->database->insert($table)
+          ->fields([
+            'day' => $day,
+            'last_value' => $next,
+          ])
+          ->execute();
+      } else {
+        $updated = $this->database->update($table)
+          ->fields([
+            'last_value' => $next,
+          ])
+          ->condition('day', $day)
+          ->condition('last_value', (int) $current)
+          ->execute();
+
+        if ($updated !== 1) {
+          throw new \RuntimeException(
+            'El consecutivo diario cambió durante la asignación.'
+          );
+        }
+      }
+
+      return sprintf(
+        '%s-%s-%03d',
+        $date_ddmmyyyy,
+        $last3,
+        $next
+      );
+    } finally {
       $this->lock->release($lock_name);
     }
   }
-
 }
