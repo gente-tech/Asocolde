@@ -1721,11 +1721,10 @@ function asocolderma_inscription_preprocess_views_view_table(array &$variables):
 {
   if (
     empty($variables['view']) ||
-    $variables['view']->id() !== 'solicitudes_aspirantes'
+    empty($variables['rows'])
   ) {
     return;
   }
-
   $current_display = (string) $variables['view']->current_display;
 
   foreach ($variables['rows'] as $row_index => &$row) {
@@ -1752,7 +1751,6 @@ function asocolderma_inscription_preprocess_views_view_table(array &$variables):
      * - /solicitudes: page_9
      */
     if (
-      in_array($current_display, ['page_1', 'page_9'], TRUE) &&
       $node->hasField('field_state') &&
       !$node->get('field_state')->isEmpty()
     ) {
@@ -1801,7 +1799,10 @@ function asocolderma_inscription_preprocess_views_view_table(array &$variables):
     /*
      * 2. Mantener el ID de solicitud como enlace en /solicitudes.
      */
-    if ($current_display !== 'page_9') {
+    if (
+      $variables['view']->id() !== 'solicitudes_aspirantes' ||
+      $current_display !== 'page_9'
+    ) {
       continue;
     }
 
