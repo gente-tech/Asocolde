@@ -525,21 +525,21 @@ final class SolicitudNotificationManager
 	 */
 	private function buildNotificationVariables(NodeInterface $node, string $phase_key, array $context): array
 	{
-		$current_status = $this->resolveCurrentStateName($node);
+		$current_status = $this->resolveCurrentStateVisualLabel($node);
 
-		$previous_status = trim((string) (
+		$previous_status = $this->resolveStateVisualLabelFromName(trim((string) (
 			$context['request_previous_status']
 			?? $context['previous_status']
 			?? $context['from_state']
 			?? ''
-		));
+		)));
 
-		$new_status = trim((string) (
+		$new_status = $this->resolveStateVisualLabelFromName(trim((string) (
 			$context['request_new_status']
 			?? $context['new_status']
 			?? $context['to_state']
 			?? $current_status
-		));
+		)));
 
 		$status_changed_date = trim((string) (
 			$context['request_status_changed_date']
@@ -603,7 +603,7 @@ final class SolicitudNotificationManager
 			return $this->replaceSubjectTokens(trim((string) $context['subject']), $node, $phase_key, $context);
 		}
 
-		$estado = $this->resolveCurrentStateName($node);
+		$estado = $this->resolveCurrentStateVisualLabel($node);
 		$solicitud_id = $this->getSolicitudCode($node);
 
 		if ($estado !== '') {
@@ -707,21 +707,44 @@ final class SolicitudNotificationManager
 	}
 
 	/**
-	 * Resolves current solicitud state label.
+	 * Resolves the configured visual label for the current solicitud state.
 	 */
-	private function resolveCurrentStateName(NodeInterface $node): string
+	private function resolveCurrentStateVisualLabel(NodeInterface $node): string
 	{
 		if (!$node->hasField('field_state') || $node->get('field_state')->isEmpty()) {
 			return '';
 		}
 
-		$entity = $node->get('field_state')->entity;
+		$term = $node->get('field_state')->entity;
 
-		if ($entity) {
-			return (string) $entity->label();
+		return $term
+			? \asocolderma_inscription_get_state_visual_label_from_term($term)
+			: '';
+	}
+
+	/**
+	 * Resolves a taxonomy state name to its configured visual label.
+	 *
+	 * Only terms belonging to estado_solicitud_ingreso are considered.
+	 */
+	private function resolveStateVisualLabelFromName(string $state_name): string
+	{
+		if ($state_name === '') {
+			return '';
 		}
 
-		return '';
+		$terms = \Drupal::entityTypeManager()
+			->getStorage('taxonomy_term')
+			->loadByProperties([
+				'vid' => 'estado_solicitud_ingreso',
+				'name' => $state_name,
+			]);
+
+		$term = $terms ? reset($terms) : NULL;
+
+		return $term
+			? \asocolderma_inscription_get_state_visual_label_from_term($term)
+			: $state_name;
 	}
 
 	/**
