@@ -1559,6 +1559,12 @@ function asocolderma_inscription_build_admin_zone_menu_items(): array
  */
 function asocolderma_inscription_form_user_login_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state, string $form_id): void
 {
+  // Ocultar cualquier formulario de login si ya existe una sesión.
+  if (\Drupal::currentUser()->isAuthenticated()) {
+    $form['#access'] = FALSE;
+    return;
+  }
+
   $route_name = \Drupal::routeMatch()->getRouteName();
 
   $form['#validate'][] = 'asocolderma_inscription_user_login_role_validate';
