@@ -1,0 +1,49 @@
+/*
+ * Identidad visual según el rol autenticado.
+ * No modifica el theme ni los colores de usuarios anónimos.
+ */
+
+/* Aspirantes: negro institucional. */
+body.asocolderma-role-aspirante {
+	--main-color: #2f2f2f;
+	--main-color-50: #f5f5f5;
+	--main-color-100: #eeeeee;
+	--main-color-200: #dddddd;
+}
+
+/* Gestión Data: dorado institucional. */
+body.asocolderma-role-gestion-data {
+	--main-color: #c9934b;
+	--main-color-50: #fffaf2;
+	--main-color-100: #fff3e1;
+	--main-color-200: #ead0a7;
+}
+
+/* Color de selección del menú principal. */
+body.asocolderma-role-aspirante .main-menu__list li:first-child>a,
+body.asocolderma-role-gestion-data .main-menu__list li:first-child>a {
+	border-bottom-color: var(--main-color) !important;
+}
+
+/* Gestión Data: botón del usuario. */
+body.asocolderma-role-gestion-data .top-menu .region-header .block-user-menu-list .btn-user {
+	background: #c9934b !important;
+	border-color: #c9934b !important;
+	color: #212121 !important;
+}
+
+/* Gestión Data: acciones destacadas del menú. */
+body.asocolderma-role-gestion-data .top-menu .region-header .block-user-menu-list .dropdown-menu .nav-item:last-child .nav-link,
+body.asocolderma-role-gestion-data .top-menu .region-header .block-user-menu-list .dropdown-menu .nav-link__accent {
+	background: #c9934b !important;
+	color: #212121 !important;
+}
+
+/* Gestión Data: indicadores y bordes del menú. */
+body.asocolderma-role-gestion-data .top-menu .region-header .block-user-menu-list .dropdown-menu .nav::before {
+	border-color: transparent transparent #c9934b transparent !important;
+}
+
+body.asocolderma-role-gestion-data .top-menu .region-header .block-user-menu-list .dropdown-menu .nav-item:hover {
+	border-bottom-color: #c9934b !important;
+}

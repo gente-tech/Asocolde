@@ -1315,10 +1315,36 @@ function asocolderma_inscription_preprocess_html(array &$variables): void
   $current_user = \Drupal::currentUser();
   $path = \Drupal::service('path.current')->getPath();
 
-  if ($current_user->isAuthenticated() && in_array('aspirante', $current_user->getRoles(), TRUE)) {
+  $roles = $current_user->getRoles();
+
+  $data_roles = [
+    'admin_data_asocolderma',
+    'operador_data_asocolderma',
+    'auditor_data_asocolderma',
+  ];
+
+  if (
+    $current_user->isAuthenticated()
+    && array_intersect($data_roles, $roles)
+  ) {
+    $variables['attributes']['class'][] = 'asocolderma-role-gestion-data';
+
+    $variables['#attached']['library'][] =
+      'asocolderma_inscription/role_branding';
+
+    $variables['#cache']['contexts'][] = 'user.roles';
+  } elseif (
+    $current_user->isAuthenticated()
+    && in_array('aspirante', $roles, TRUE)
+  ) {
     $variables['attributes']['class'][] = 'asocolderma-role-aspirante';
 
-    $variables['#attached']['library'][] = 'asocolderma_inscription/aspirante_header';
+    $variables['#attached']['library'][] =
+      'asocolderma_inscription/aspirante_header';
+
+    $variables['#attached']['library'][] =
+      'asocolderma_inscription/role_branding';
+
     $variables['#cache']['contexts'][] = 'user.roles';
   }
 

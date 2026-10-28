@@ -71,3 +71,9 @@ aspirante_register:
   css:
     theme:
       css/aspirante-register.css: {}
+
+role_branding:
+  version: 1.x
+  css:
+    theme:
+      assets/css/role-branding.css: { weight: 210 }
