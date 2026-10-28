@@ -96,3 +96,9 @@ services:
     class: Drupal\asocolderma_inscription\Service\SolicitudFormTextManager
     arguments:
       - '@config.factory'
+
+  asocolderma_inscription.dermatologist_area_access_subscriber:
+    class: Drupal\asocolderma_inscription\EventSubscriber\DermatologistAreaAccessSubscriber
+    arguments: ['@current_user']
+    tags:
+      - { name: event_subscriber }
