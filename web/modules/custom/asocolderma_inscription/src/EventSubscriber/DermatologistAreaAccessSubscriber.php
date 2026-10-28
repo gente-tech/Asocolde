@@ -92,12 +92,9 @@ final class DermatologistAreaAccessSubscriber implements EventSubscriberInterfac
 		$event->setResponse($response);
 	}
 
-	/**
-	 * Determina el destino según el rol autenticado.
-	 */
+
 	private function getRestrictedRoleDestination(): ?string
 	{
-
 		// Usuarios de Gestión Data.
 		if (function_exists('asocolderma_data_core_database_login_allowed_roles')) {
 			foreach (asocolderma_data_core_database_login_allowed_roles() as $role) {
@@ -105,6 +102,16 @@ final class DermatologistAreaAccessSubscriber implements EventSubscriberInterfac
 					return asocolderma_data_core_database_default_path();
 				}
 			}
+		}
+
+		// Coordinación Administrativa.
+		if ($this->currentUser->hasRole('coordinacion_administrativa')) {
+			return '/coord-admin/enviar-documentos';
+		}
+
+		// Secretaría General.
+		if ($this->currentUser->hasRole('secretaria_general')) {
+			return '/solicitudes-aspirantes';
 		}
 
 		// Aspirantes.
