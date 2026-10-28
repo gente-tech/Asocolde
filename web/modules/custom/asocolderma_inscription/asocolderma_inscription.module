@@ -2200,32 +2200,24 @@ function asocolderma_inscription_block_build_alter(
 
 
 /**
- * Implements hook_block_view_alter().
+ * Implements hook_preprocess_HOOK() for user_menu_list.
  *
- * Fuera de la zona administrativa de Gestión Data, sustituye
- * el menú general de asociados por un único enlace hacia
- * la zona de Gestión Data.
+ * Muestra únicamente el acceso a Gestión Data cuando sus usuarios
+ * navegan fuera de la zona administrativa correspondiente.
  */
-function asocolderma_inscription_block_view_alter(
-  array &$build,
-  \Drupal\Core\Block\BlockPluginInterface $block
+function asocolderma_inscription_preprocess_user_menu_list(
+  array &$variables
 ): void {
-
-  // Intervenir únicamente el bloque real del menú de usuario.
-  if ($block->getPluginId() !== 'user_menu_list') {
-    return;
-  }
-
   $account = \Drupal::currentUser();
 
   if (
     !$account->isAuthenticated() ||
-    !function_exists('asocolderma_data_core_database_login_allowed_roles')
+    !function_exists('asocolderma_data_core_database_login_allowed_roles') ||
+    !function_exists('asocolderma_data_core_database_default_path')
   ) {
     return;
   }
 
-  // Identificar usuarios autorizados de Gestión Data.
   $data_roles = asocolderma_data_core_database_login_allowed_roles();
 
   if (!array_intersect($account->getRoles(), $data_roles)) {
@@ -2234,7 +2226,7 @@ function asocolderma_inscription_block_view_alter(
 
   $path = \Drupal::service('path.current')->getPath();
 
-  // Dentro de Gestión Data, conservar su navegación habitual.
+  // Conservar la navegación propia de Gestión Data dentro de su zona.
   if (
     $path === '/gestion-data' ||
     str_starts_with($path, '/gestion-data/')
@@ -2242,14 +2234,16 @@ function asocolderma_inscription_block_view_alter(
     return;
   }
 
-  // Reutilizar el destino oficial de Gestión Data.
-  $destination = asocolderma_data_core_database_default_path();
+  // Mostrar Gestión Data en lugar del tratamiento Dr./Dra.
+  $variables['fullname'] = t('Gestión Data');
 
-  $url = \Drupal\Core\Url::fromUserInput($destination);
+  // Reutilizar el destino oficial del módulo Gestión Data.
+  $url = \Drupal\Core\Url::fromUserInput(
+    asocolderma_data_core_database_default_path()
+  );
 
-  // El bloque de asocol renderiza el menú en $build['#menu'].
-  // Reemplazamos completamente su contenido.
-  $build['#menu'] = [
+  // Sustituir el menú de dermatólogos por un único enlace.
+  $variables['menu'] = [
     '#type' => 'container',
     '#attributes' => [
       'class' => ['nav', 'flex-column'],
@@ -2269,15 +2263,4 @@ function asocolderma_inscription_block_view_alter(
       ],
     ],
   ];
-
-  // Evitar identificar al usuario como dermatólogo.
-  $build['#fullname'] = t('Gestión Data');
-
-  // Variar el contenido del bloque por usuario y ruta.
-  $build['#cache']['contexts'] = array_values(array_unique(
-    array_merge(
-      $build['#cache']['contexts'] ?? [],
-      ['user', 'url.path']
-    )
-  ));
 }
