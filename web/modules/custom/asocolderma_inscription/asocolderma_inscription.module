@@ -2235,7 +2235,7 @@ function asocolderma_inscription_preprocess_user_menu_list(
   }
 
   // Mostrar Gestión Data en lugar del tratamiento Dr./Dra.
-  $variables['fullname'] = t('Gestión Data');
+  $variables['fullname'] = $account->getDisplayName();
 
   // Reutilizar el destino oficial del módulo Gestión Data.
   $url = \Drupal\Core\Url::fromUserInput(
