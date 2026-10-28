@@ -2202,61 +2202,86 @@ function asocolderma_inscription_block_build_alter(
 /**
  * Implements hook_preprocess_HOOK() for user_menu_list.
  *
- * Muestra únicamente el acceso a Gestión Data cuando sus usuarios
- * navegan fuera de la zona administrativa correspondiente.
+ * Personaliza el menú superior según el rol administrativo.
+ * Conserva la navegación propia dentro de cada zona.
  */
 function asocolderma_inscription_preprocess_user_menu_list(
   array &$variables
 ): void {
   $account = \Drupal::currentUser();
 
-  if (
-    !$account->isAuthenticated() ||
-    !function_exists('asocolderma_data_core_database_login_allowed_roles') ||
-    !function_exists('asocolderma_data_core_database_default_path')
-  ) {
+  if (!$account->isAuthenticated()) {
     return;
   }
 
-  $data_roles = asocolderma_data_core_database_login_allowed_roles();
-
-  if (!array_intersect($account->getRoles(), $data_roles)) {
-    return;
-  }
-
+  $roles = $account->getRoles();
   $path = \Drupal::service('path.current')->getPath();
 
-  // Conservar la navegación propia de Gestión Data dentro de su zona.
+  $destination = NULL;
+  $link_title = NULL;
+
+  // Gestión Data.
   if (
-    $path === '/gestion-data' ||
-    str_starts_with($path, '/gestion-data/')
+    function_exists('asocolderma_data_core_database_login_allowed_roles')
+    && function_exists('asocolderma_data_core_database_default_path')
+    && array_intersect(
+      $roles,
+      asocolderma_data_core_database_login_allowed_roles()
+    )
   ) {
+    if (
+      $path === '/gestion-data'
+      || str_starts_with($path, '/gestion-data/')
+    ) {
+      return;
+    }
+
+    $destination = asocolderma_data_core_database_default_path();
+    $link_title = t('Ver Gestión Data');
+  }
+
+  // Coordinación Administrativa.
+  elseif (in_array('coordinacion_administrativa', $roles, TRUE)) {
+    if (asocolderma_inscription_is_admin_zone_path($path)) {
+      return;
+    }
+
+    $destination = '/coord-admin/enviar-documentos';
+    $link_title = t('Ver Coordinación Administrativa');
+  }
+
+  // Secretaría General.
+  elseif (in_array('secretaria_general', $roles, TRUE)) {
+    if (asocolderma_inscription_is_admin_zone_path($path)) {
+      return;
+    }
+
+    $destination = '/solicitudes-aspirantes';
+    $link_title = t('Ver Secretaría General');
+  }
+
+  if ($destination === NULL) {
     return;
   }
 
-  // Mostrar Gestión Data en lugar del tratamiento Dr./Dra.
+  // Mostrar el nombre del usuario sin Dr. ni Dra.
   $variables['fullname'] = $account->getDisplayName();
 
-  // Reutilizar el destino oficial del módulo Gestión Data.
-  $url = \Drupal\Core\Url::fromUserInput(
-    asocolderma_data_core_database_default_path()
-  );
-
-  // Sustituir el menú de dermatólogos por un único enlace.
+  // Sustituir el menú general de dermatólogos.
   $variables['menu'] = [
     '#type' => 'container',
     '#attributes' => [
       'class' => ['nav', 'flex-column'],
     ],
-    'gestion_data' => [
+    'admin_access' => [
       '#type' => 'container',
       '#attributes' => [
         'class' => ['nav-item'],
       ],
       'link' => [
         '#type' => 'link',
-        '#title' => t('Ver Gestión Data'),
-        '#url' => $url,
+        '#title' => $link_title,
+        '#url' => \Drupal\Core\Url::fromUserInput($destination),
         '#attributes' => [
           'class' => ['nav-link'],
         ],
