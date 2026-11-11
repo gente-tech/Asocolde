@@ -102,3 +102,14 @@ services:
     arguments: ['@current_user']
     tags:
       - { name: event_subscriber }
+
+  asocolderma_inscription.aspirantes_report:
+    class: Drupal\asocolderma_inscription\Service\SolicitudAspirantesReportService
+    arguments:
+      - '@entity_type.manager'
+      - '@database'
+      - '@date.formatter'
+      - '@asocolderma_inscription.solicitud_zoho_variable_manager'
+
+  asocolderma_inscription.aspirantes_xlsx_writer:
+    class: Drupal\asocolderma_inscription\Service\SolicitudAspirantesXlsxWriter

@@ -12,3 +12,8 @@ manage sg solicitudes:
   title: 'Gestionar solicitudes SG'
   description: 'Permite revisar y cambiar el estado de solicitudes activas.'
   restrict access: true
+
+export asocolderma aspirantes report:
+  title: 'Descargar reporte de aspirantes Asocolderma'
+  description: 'Permite consultar y exportar datos personales e historial de las solicitudes.'
+  restrict access: true

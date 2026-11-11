@@ -44,3 +44,10 @@ asocolderma_inscription.state_visual_labels_settings:
   parent: asocolderma_inscription.usuarios_nuevos
   route_name: asocolderma_inscription.state_visual_labels_settings
   weight: 40
+
+asocolderma_inscription.aspirantes_report:
+  title: 'Reporte de Aspirantes'
+  description: 'Consultar y descargar el seguimiento de aspirantes en Excel.'
+  parent: asocolderma_inscription.usuarios_nuevos
+  route_name: asocolderma_inscription.aspirantes_report
+  weight: 50

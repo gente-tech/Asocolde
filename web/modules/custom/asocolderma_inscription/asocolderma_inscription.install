@@ -1959,3 +1959,20 @@ function asocolderma_inscription_update_9020(): void
     [$column]
   );
 }
+
+/**
+ * Habilita el permiso de exportación institucional a SG y Coordinación.
+ */
+function asocolderma_inscription_update_9021(): void
+{
+  $roleStorage = \Drupal::entityTypeManager()->getStorage('user_role');
+
+  foreach (['secretaria_general', 'coordinacion_administrativa'] as $roleId) {
+    $role = $roleStorage->load($roleId);
+
+    if ($role && !$role->hasPermission('export asocolderma aspirantes report')) {
+      $role->grantPermission('export asocolderma aspirantes report');
+      $role->save();
+    }
+  }
+}
