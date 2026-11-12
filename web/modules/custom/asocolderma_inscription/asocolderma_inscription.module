@@ -1522,6 +1522,7 @@ function asocolderma_inscription_build_aspirante_menu_items(): array
  * El menú se administra desde Drupal, pero aquí se filtra y ordena
  * para evitar que un rol vea enlaces de otro flujo.
  */
+
 function asocolderma_inscription_build_admin_zone_menu_items(): array
 {
   $current_user = \Drupal::currentUser();
@@ -1532,12 +1533,6 @@ function asocolderma_inscription_build_admin_zone_menu_items(): array
   $is_coordinacion_administrativa = in_array('coordinacion_administrativa', $roles, TRUE);
   $is_admin = in_array('administrator', $roles, TRUE);
 
-  /**
-   * Orden y permisos reales por rol.
-   *
-   * La URL /solicitud/{codigo_solicitud} no va en el menú,
-   * porque es una ruta dinámica de detalle.
-   */
   $secretaria_items = [
     '/solicitudes' => 'Solicitudes',
     '/solicitudes-aspirantes' => 'Secretaría General',
@@ -1566,6 +1561,16 @@ function asocolderma_inscription_build_admin_zone_menu_items(): array
     return [];
   }
 
+  // Descargar todas las solicitudes sin filtros.
+  // Solo mostrar el enlace cuando el usuario tiene acceso.
+  $report_url = \Drupal\Core\Url::fromRoute(
+    'asocolderma_inscription.aspirantes_report_download'
+  );
+
+  if ($report_url->access($current_user)) {
+    $allowed_items[$report_url->toString()] = 'Generar reporte';
+  }
+
   $items = [];
 
   foreach ($allowed_items as $path => $title) {
@@ -1579,6 +1584,7 @@ function asocolderma_inscription_build_admin_zone_menu_items(): array
 
   return $items;
 }
+
 
 /**
  * Implements hook_form_FORM_ID_alter() for user_login_form.
