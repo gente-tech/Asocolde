@@ -67,7 +67,7 @@
 }
 
 .solicitud-semaforo__item--current .solicitud-semaforo__dot {
-  color: #06e4eb;
+  color: #000000;
 }
 
 .solicitud-semaforo__content {
@@ -99,6 +99,7 @@
 .solicitud-semaforo__item--done .solicitud-semaforo__dot {
   background: #07898d;
   border-color: #06e4eb;
+  color: #ffffff;
 }
 
 .solicitud-semaforo__item--done .solicitud-semaforo__line {
