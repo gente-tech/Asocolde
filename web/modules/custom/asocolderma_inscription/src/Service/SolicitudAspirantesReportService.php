@@ -46,9 +46,8 @@ final class SolicitudAspirantesReportService
 		'asamblea_aprobado',
 		'coord_documentos_enviados',
 		'coord_pago_ingreso',
-		// No existe estado independiente "pago confirmado" en el flujo actual.
-		'',
-		'coord_miembro_activo',
+		'coord_miembro_activo', // ⑥ Pago validado.
+		'coord_miembro_activo', // ⑦ Miembro activo.
 	];
 
 	public function __construct(
