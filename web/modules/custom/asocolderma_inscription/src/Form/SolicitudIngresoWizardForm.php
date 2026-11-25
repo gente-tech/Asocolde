@@ -170,6 +170,7 @@ final class SolicitudIngresoWizardForm extends FormBase
         'adj_convalidacion',
         'adj_pensum_academico',
         'adj_notas_dermatologia',
+        'adj_articulo_cientifico',
       ],
       'confirm' => [
         'terms',
@@ -766,6 +767,19 @@ final class SolicitudIngresoWizardForm extends FormBase
           'file_validate_size' => [10 * 1024 * 1024],
         ],
       ];
+
+      $form['adjuntos']['adj_articulo_cientifico'] = [
+        '#type' => 'managed_file',
+        '#title' => $this->t('Artículo científico o soporte de trabajo académico'),
+        '#description' => $this->t('Adjunte el artículo científico o soporte de trabajo académico en formato PDF. Tamaño máximo: 10 MB.'),
+        '#required' => TRUE,
+        '#upload_location' => 'private://solicitud_ingreso/articulo_cientifico/',
+        '#default_value' => $wizard_values['adjuntos']['adj_articulo_cientifico'] ?? NULL,
+        '#upload_validators' => [
+          'file_validate_extensions' => ['pdf'],
+          'file_validate_size' => [10 * 1024 * 1024],
+        ],
+      ];
     }
 
     if ($step === 5) {
@@ -822,7 +836,12 @@ final class SolicitudIngresoWizardForm extends FormBase
         '#type' => 'submit',
         '#value' => $this->t('Enviar solicitud'),
         '#submit' => ['::submitSolicitud'],
+        '#attributes' => [
+          'id' => 'asocolderma-solicitud-submit',
+        ],
       ];
+
+      $form['#attached']['library'][] = 'asocolderma_inscription/solicitud_submit_confirm';
     }
 
     if ($form_state->get('show_underage_modal')) {
@@ -884,6 +903,23 @@ final class SolicitudIngresoWizardForm extends FormBase
 
     // No validar el celular cuando el usuario va hacia atrás o guarda y sale.
     if (in_array($trigger_name, ['back', 'save_exit'], TRUE)) {
+      return;
+    }
+
+    // Validar el adjunto académico antes del envío definitivo.
+    if ($step === 5) {
+      $wizard_values = (array) $form_state->get('wizard_values');
+      $fids = (array) ($wizard_values['adjuntos']['adj_articulo_cientifico'] ?? []);
+
+      $fid = (int) reset($fids);
+
+      if ($fid <= 0 || !\Drupal\file\Entity\File::load($fid)) {
+        $form_state->setErrorByName(
+          'confirm',
+          $this->t('Debes regresar al paso 4 y adjuntar el Artículo científico o soporte de trabajo académico antes de enviar la solicitud.')
+        );
+      }
+
       return;
     }
 
@@ -1030,6 +1066,7 @@ final class SolicitudIngresoWizardForm extends FormBase
         'adj_convalidacion' => $input['adjuntos']['adj_convalidacion'] ?? NULL,
         'adj_pensum_academico' => $input['adjuntos']['adj_pensum_academico'] ?? NULL,
         'adj_notas_dermatologia' => $input['adjuntos']['adj_notas_dermatologia'] ?? NULL,
+        'adj_articulo_cientifico' => $input['adjuntos']['adj_articulo_cientifico'] ?? NULL,
         'adj_aut_verificacion' => $input['adjuntos']['adj_aut_verificacion'] ?? NULL,
         'adj_carta_1' => $input['adjuntos']['adj_carta_1'] ?? NULL,
         'adj_carta_2' => $input['adjuntos']['adj_carta_2'] ?? NULL,
@@ -1163,6 +1200,7 @@ final class SolicitudIngresoWizardForm extends FormBase
       'adj_convalidacion' => 'field_adj_convalidacion',
       'adj_pensum_academico' => 'field_adj_pensum_academico',
       'adj_notas_dermatologia' => 'field_adj_notas_dermatologia',
+      'adj_articulo_cientifico' => 'field_adj_articulo_cientifico',
       'adj_aut_verificacion' => 'field_adj_aut_verificacion',
       'adj_carta_1' => 'field_adj_carta_1',
       'adj_carta_2' => 'field_adj_carta_2',

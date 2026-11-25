@@ -712,6 +712,7 @@ final class SolicitudStateInlineForm extends FormBase
       'field_adj_convalidacion' => $this->t('Adjunto: Copia de la resolución de convalidación'),
       'field_adj_pensum_academico' => $this->t('Adjunto: Copia del pénsum académico'),
       'field_adj_notas_dermatologia' => $this->t('Adjunto: Notas de especialización en dermatología'),
+      'field_adj_articulo_cientifico' => $this->t('Adjunto: Artículo científico o soporte de trabajo académico'),
     ];
 
     $options = [];

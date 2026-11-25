@@ -331,6 +331,11 @@ final class SolicitudFormSettingsForm extends ConfigFormBase
 						'placeholder' => '',
 						'description' => 'Si cuenta con publicaciones, adjunte los certificados o soportes correspondientes en formato PDF. Este campo es opcional. Tamaño máximo: 10 MB.',
 					],
+					'adj_articulo_cientifico' => [
+						'label' => 'Artículo científico o soporte de trabajo académico',
+						'placeholder' => '',
+						'description' => 'Adjunte el artículo científico o soporte de trabajo académico en formato PDF. Tamaño máximo: 10 MB.',
+					],
 				],
 			],
 

@@ -77,3 +77,13 @@ role_branding:
   css:
     theme:
       assets/css/role-branding.css: { weight: 210 }
+
+solicitud_submit_confirm:
+  version: 1.x
+  js:
+    assets/js/solicitud-submit-confirm.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/once
+    - core/drupal.dialog

@@ -124,6 +124,7 @@ function asocolderma_inscription_preprocess_node(array &$variables)
       'adj_convalidacion' => $form_text_manager->getLabel('adjuntos', 'adj_convalidacion', 'Resolución de convalidación'),
       'adj_pensum_academico' => $form_text_manager->getLabel('adjuntos', 'adj_pensum_academico', 'Pénsum académico'),
       'adj_notas_dermatologia' => $form_text_manager->getLabel('adjuntos', 'adj_notas_dermatologia', 'Notas especialización dermatología'),
+      'adj_articulo_cientifico' => $form_text_manager->getLabel('adjuntos', 'adj_articulo_cientifico', 'Artículo científico o soporte de trabajo académico'),
     ],
     'confirm' => [
       'terms' => $form_text_manager->getLabel('confirm', 'terms', 'Acepto los términos y condiciones'),

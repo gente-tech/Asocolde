@@ -413,6 +413,7 @@ final class SolicitudIngresoEditWizardForm extends FormBase
     $this->buildFileField($form, $node, 'adj_convalidacion', 'field_adj_convalidacion', 'Copia de la resolución de la convalidación', 'private://solicitud_ingreso/convalidacion/', 'pdf', FALSE);
     $this->buildFileField($form, $node, 'adj_pensum_academico', 'field_adj_pensum_academico', 'Copia del pénsum académico', 'private://solicitud_ingreso/pensum_academico/', 'pdf', TRUE);
     $this->buildFileField($form, $node, 'adj_notas_dermatologia', 'field_adj_notas_dermatologia', 'Notas obtenidas en la especialización en dermatología', 'private://solicitud_ingreso/notas_dermatologia/', 'pdf', TRUE);
+    $this->buildFileField($form, $node, 'adj_articulo_cientifico', 'field_adj_articulo_cientifico', 'Artículo científico o soporte de trabajo académico', 'private://solicitud_ingreso/articulo_cientifico/', 'pdf', TRUE);
     $this->applyClarificationRestrictions($form, $requested_fields);
 
     $form['confirmacion'] = [
@@ -455,7 +456,7 @@ final class SolicitudIngresoEditWizardForm extends FormBase
         'message' => $this->t('Para realizar la solicitud de ingreso debes ser mayor de edad. Verifica la fecha de nacimiento registrada.'),
       ];
     }
-    
+
     $this->formTextManager->applyToForm($form);
 
     return $form;
@@ -688,6 +689,7 @@ final class SolicitudIngresoEditWizardForm extends FormBase
       'adj_convalidacion' => 'field_adj_convalidacion',
       'adj_pensum_academico' => 'field_adj_pensum_academico',
       'adj_notas_dermatologia' => 'field_adj_notas_dermatologia',
+      'adj_articulo_cientifico' => 'field_adj_articulo_cientifico',
     ];
 
     $file_storage = \Drupal::entityTypeManager()->getStorage('file');
@@ -1067,6 +1069,7 @@ final class SolicitudIngresoEditWizardForm extends FormBase
       'field_adj_convalidacion' => ['adjuntos', 'adj_convalidacion'],
       'field_adj_pensum_academico' => ['adjuntos', 'adj_pensum_academico'],
       'field_adj_notas_dermatologia' => ['adjuntos', 'adj_notas_dermatologia'],
+      'field_adj_articulo_cientifico' => ['adjuntos', 'adj_articulo_cientifico'],
     ];
   }
 
