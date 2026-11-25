@@ -204,7 +204,7 @@ final class SolicitudAspirantesReportService
 						. ($optionalCount ? ' + ' . $optionalCount . ' opcionales' : ''),
 					$comment,
 					$payment,
-					'',
+					$stages[6] ?? '',
 				];
 			}
 		}
