@@ -1976,3 +1976,51 @@ function asocolderma_inscription_update_9021(): void
     }
   }
 }
+
+/**
+ * Agrega el adjunto de artículo científico o soporte de trabajo académico.
+ */
+function asocolderma_inscription_update_9022(): void
+{
+  $entity_type = 'node';
+  $bundle = 'solicitud_ingreso';
+  $field_name = 'field_adj_articulo_cientifico';
+
+  $file_storage_settings = [
+    'uri_scheme' => 'private',
+    'target_type' => 'file',
+    'display_field' => FALSE,
+    'display_default' => FALSE,
+  ];
+
+  $file_field_settings = [
+    'file_directory' => 'solicitud_ingreso/articulo_cientifico',
+    'file_extensions' => 'pdf',
+    'max_filesize' => '10 MB',
+    'description_field' => FALSE,
+  ];
+
+  if (!FieldStorageConfig::loadByName($entity_type, $field_name)) {
+    FieldStorageConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => $entity_type,
+      'type' => 'file',
+      'settings' => $file_storage_settings,
+      'cardinality' => 1,
+      'translatable' => FALSE,
+    ])->save();
+  }
+
+  if (!FieldConfig::loadByName($entity_type, $bundle, $field_name)) {
+    FieldConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => $entity_type,
+      'bundle' => $bundle,
+      'label' => 'Artículo científico o soporte de trabajo académico',
+      'required' => FALSE,
+      'settings' => $file_field_settings,
+    ])->save();
+  }
+
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
