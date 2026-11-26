@@ -50,7 +50,9 @@
 					);
 
 					const dialog = Drupal.dialog($content, {
-						dialogClass: 'asocolderma-submit-confirm-modal',
+						classes: {
+							'ui-dialog': 'asocolderma-submit-confirm-modal'
+						},
 						title: Drupal.t('Confirmar envío de solicitud'),
 						modal: true,
 						width: 600,
