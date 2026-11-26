@@ -55,6 +55,64 @@ final class SolicitudFormTextManager
 	}
 
 	/**
+	 * Retorna el recurso configurado para los términos y condiciones.
+	 *
+	 * El enlace tiene prioridad sobre el documento PDF.
+	 */
+	public function getTermsResource(): array
+	{
+		$settings = $this->configFactory
+			->get(self::CONFIG_NAME)
+			->get('terms_resource');
+
+		$settings = is_array($settings) ? $settings : [];
+
+		$url = trim((string) ($settings['url'] ?? ''));
+		$button_text = trim((string) ($settings['button_text'] ?? ''));
+
+		$resource = [
+			'url' => '',
+			'button_text' => $button_text !== '' ? $button_text : 'Ver',
+		];
+
+		// Prioridad 1: enlace externo configurado.
+		if (
+			$url !== ''
+			&& filter_var($url, FILTER_VALIDATE_URL)
+			&& in_array(
+				strtolower((string) parse_url($url, PHP_URL_SCHEME)),
+				['http', 'https'],
+				TRUE
+			)
+		) {
+			$resource['url'] = $url;
+
+			return $resource;
+		}
+
+		// Prioridad 2: documento PDF adjunto.
+		$documents = (array) ($settings['document'] ?? []);
+		$fid = (int) reset($documents);
+
+		if ($fid > 0) {
+			$file = \Drupal::entityTypeManager()
+				->getStorage('file')
+				->load($fid);
+
+			if (
+				$file
+				&& $file->isPermanent()
+				&& file_exists($file->getFileUri())
+			) {
+				$resource['url'] = \Drupal::service('file_url_generator')
+					->generateAbsoluteString($file->getFileUri());
+			}
+		}
+
+		return $resource;
+	}
+
+	/**
 	 * Retorna la configuración de un campo.
 	 */
 	public function getFieldSettings(string $group, string $field): array

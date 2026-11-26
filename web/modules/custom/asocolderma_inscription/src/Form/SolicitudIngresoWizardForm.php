@@ -797,10 +797,22 @@ final class SolicitudIngresoWizardForm extends FormBase
         '#default_value' => $wizard_values['confirm']['terms'] ?? 0,
       ];
 
+      $form_text_manager = \Drupal::service(
+        'asocolderma_inscription.solicitud_form_text_manager'
+      );
+
       $form['confirm']['preview'] = [
         '#type' => 'item',
-        '#title' => $this->t('Resumen'),
-        '#markup' => $this->t('Verifique cuidadosamente la información registrada antes de enviar su solicitud. Una vez remitida, será gestionada conforme al flujo institucional definido por la Asociación.'),
+        '#title' => $form_text_manager->getLabel(
+          'confirm',
+          'preview',
+          'Resumen'
+        ),
+        '#plain_text' => $form_text_manager->getDescription(
+          'confirm',
+          'preview',
+          'Verifique cuidadosamente la información registrada antes de enviar su solicitud. Una vez remitida, será gestionada conforme al flujo institucional definido por la Asociación.'
+        ),
       ];
     }
 
@@ -855,6 +867,39 @@ final class SolicitudIngresoWizardForm extends FormBase
       ];
     }
     $this->applyConfiguredFieldTexts($form);
+
+    // Incorporar el recurso de términos y condiciones.
+    if ($step === 5 && isset($form['confirm']['terms'])) {
+      $terms_resource = \Drupal::service(
+        'asocolderma_inscription.solicitud_form_text_manager'
+      )->getTermsResource();
+
+      if (!empty($terms_resource['url'])) {
+        $link = \Drupal\Core\Link::fromTextAndUrl(
+          $terms_resource['button_text'],
+          \Drupal\Core\Url::fromUri(
+            $terms_resource['url'],
+            [
+              'attributes' => [
+                'target' => '_blank',
+                'rel' => 'noopener noreferrer',
+                'class' => [
+                  'btn',
+                  'btn-outline-primary',
+                  'btn-sm',
+                  'solicitud-terms-link',
+                ],
+              ],
+            ]
+          )
+        )->toString();
+
+        $form['confirm']['terms']['#field_suffix'] = $link;
+        $form['confirm']['terms']['#wrapper_attributes']['class'][] =
+          'solicitud-terms-with-resource';
+      }
+    }
+
     return $form;
   }
 

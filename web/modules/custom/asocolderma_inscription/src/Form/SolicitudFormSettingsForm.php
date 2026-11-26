@@ -125,7 +125,69 @@ final class SolicitudFormSettingsForm extends ConfigFormBase
 			'#maxlength' => 100,
 		];
 
+		$form['confirm']['terms']['url'] = [
+			'#type' => 'url',
+			'#title' => $this->t('Enlace de términos y condiciones'),
+			'#default_value' => $config->get('terms_resource.url') ?? '',
+			'#description' => $this->t('Si se configura un enlace, tendrá prioridad sobre el documento PDF adjunto.'),
+			'#required' => FALSE,
+		];
+
+		$form['confirm']['terms']['document'] = [
+			'#type' => 'managed_file',
+			'#title' => $this->t('Documento de términos y condiciones'),
+			'#default_value' => $config->get('terms_resource.document') ?? [],
+			'#upload_location' => 'public://solicitud_ingreso/terminos_condiciones/',
+			'#upload_validators' => [
+				'file_validate_extensions' => ['pdf'],
+				'file_validate_size' => [10 * 1024 * 1024],
+			],
+			'#description' => $this->t('Adjunte un documento en formato PDF. Tamaño máximo: 10 MB. Se utilizará únicamente cuando no exista un enlace configurado.'),
+			'#required' => FALSE,
+		];
+
+		$form['confirm']['terms']['button_text'] = [
+			'#type' => 'textfield',
+			'#title' => $this->t('Texto del botón Ver'),
+			'#default_value' => $config->get('terms_resource.button_text') ?? 'Ver',
+			'#maxlength' => 100,
+			'#required' => TRUE,
+		];
+
+		// El resumen no requiere placeholder.
+		unset($form['confirm']['preview']['placeholder']);
+
 		return parent::buildForm($form, $form_state);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function validateForm(array &$form, FormStateInterface $form_state): void
+	{
+		parent::validateForm($form, $form_state);
+
+		$url = trim((string) $form_state->getValue([
+			'confirm',
+			'terms',
+			'url',
+		]));
+
+		if ($url === '') {
+			return;
+		}
+
+		$scheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
+
+		if (
+			!in_array($scheme, ['http', 'https'], TRUE)
+			|| !filter_var($url, FILTER_VALIDATE_URL)
+		) {
+			$form_state->setError(
+				$form['confirm']['terms']['url'],
+				$this->t('Ingrese un enlace válido que comience con http:// o https://.')
+			);
+		}
 	}
 
 	/**
@@ -152,6 +214,32 @@ final class SolicitudFormSettingsForm extends ConfigFormBase
 		}
 
 		$submit_confirmation = $form_state->getValue('submit_confirmation');
+		$terms = $form_state->getValue(['confirm', 'terms']) ?? [];
+
+		$old_document = (array) ($config->get('terms_resource.document') ?? []);
+		$new_document = array_values(array_filter(
+			array_map('intval', (array) ($terms['document'] ?? []))
+		));
+
+		$file_storage = \Drupal::entityTypeManager()->getStorage('file');
+		$file_usage = \Drupal::service('file.usage');
+
+		// Registrar los nuevos documentos.
+		foreach (array_diff($new_document, $old_document) as $fid) {
+			$file = $file_storage->load($fid);
+
+			if ($file) {
+				$file->setPermanent();
+				$file->save();
+
+				$file_usage->add(
+					$file,
+					'asocolderma_inscription',
+					'terms_resource',
+					1
+				);
+			}
+		}
 
 		$config
 			->set('fields', $fields)
@@ -161,7 +249,26 @@ final class SolicitudFormSettingsForm extends ConfigFormBase
 				'cancel_button' => trim((string) $submit_confirmation['cancel_button']),
 				'confirm_button' => trim((string) $submit_confirmation['confirm_button']),
 			])
+			->set('terms_resource', [
+				'url' => trim((string) ($terms['url'] ?? '')),
+				'document' => $new_document,
+				'button_text' => trim((string) ($terms['button_text'] ?? 'Ver')),
+			])
 			->save();
+
+		// Retirar la referencia de los documentos reemplazados o eliminados.
+		foreach (array_diff($old_document, $new_document) as $fid) {
+			$file = $file_storage->load($fid);
+
+			if ($file) {
+				$file_usage->delete(
+					$file,
+					'asocolderma_inscription',
+					'terms_resource',
+					1
+				);
+			}
+		}
 
 		parent::submitForm($form, $form_state);
 	}
@@ -393,6 +500,11 @@ final class SolicitudFormSettingsForm extends ConfigFormBase
 						'label' => 'Acepto los términos y condiciones',
 						'placeholder' => '',
 						'description' => 'Declaro que la información suministrada es veraz y autorizo su validación dentro del proceso institucional de evaluación y admisión.',
+					],
+					'preview' => [
+						'label' => 'Resumen',
+						'placeholder' => '',
+						'description' => 'Verifique cuidadosamente la información registrada antes de enviar su solicitud. Una vez remitida, será gestionada conforme al flujo institucional definido por la Asociación.',
 					],
 				],
 			],

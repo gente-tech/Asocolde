@@ -63,3 +63,19 @@ asocolderma_inscription.solicitud_form_settings:
         confirm_button:
           type: label
           label: 'Texto del botón confirmar'
+    terms_resource:
+      type: mapping
+      label: 'Recursos de términos y condiciones'
+      mapping:
+        url:
+          type: uri
+          label: 'Enlace de términos y condiciones'
+        document:
+          type: sequence
+          label: 'Documento de términos y condiciones'
+          sequence:
+            type: integer
+            label: 'Identificador del archivo'
+        button_text:
+          type: label
+          label: 'Texto del botón Ver'
