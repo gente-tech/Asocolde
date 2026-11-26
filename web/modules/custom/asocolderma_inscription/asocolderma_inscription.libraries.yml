@@ -80,6 +80,9 @@ role_branding:
 
 solicitud_submit_confirm:
   version: 1.x
+  css:
+    theme:
+      assets/css/solicitud-submit-confirm.css: {}
   js:
     assets/js/solicitud-submit-confirm.js: {}
   dependencies:
