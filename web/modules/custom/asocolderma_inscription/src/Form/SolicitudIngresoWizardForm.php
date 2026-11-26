@@ -891,9 +891,8 @@ final class SolicitudIngresoWizardForm extends FormBase
           )
         )->toString();
 
-        unset($form['confirm']['terms']['#field_suffix']);
+        unset($form['confirm']['terms']['#suffix']);
 
-        $form['confirm']['terms']['#suffix'] = (string) $link;
         $form['confirm']['terms']['#field_suffix'] = $link;
         $form['confirm']['terms']['#wrapper_attributes']['class'][] =
           'solicitud-terms-with-resource';

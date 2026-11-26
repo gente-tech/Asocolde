@@ -82,7 +82,47 @@
 	border-color: #146c43 !important;
 }
 
-/* Botón para consultar los términos y condiciones. */
+/* Distribución del checkbox de términos y condiciones. */
+.solicitud-terms-with-resource {
+	display: flex !important;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-start;
+	column-gap: 8px;
+	row-gap: 6px;
+}
+
+/* Checkbox. */
+.solicitud-terms-with-resource>input[type="checkbox"] {
+	order: 1;
+	margin: 0;
+	flex-shrink: 0;
+}
+
+/* Label y asterisco obligatorio. */
+.solicitud-terms-with-resource>label {
+	order: 2;
+	margin: 0;
+}
+
+/* Contenedor del botón Ver. */
+.solicitud-terms-with-resource>.field-suffix {
+	order: 3;
+	display: inline-flex;
+	align-items: center;
+	margin: 0;
+}
+
+/* Descripción debajo del checkbox. */
+.solicitud-terms-with-resource>.description {
+	order: 4;
+	flex: 0 0 100%;
+	padding-left: 24px;
+	box-sizing: border-box;
+}
+
+/* Botón institucional Ver. */
 .solicitud-terms-with-resource a.solicitud-terms-link {
 	display: inline-flex;
 	align-items: center;
@@ -91,13 +131,12 @@
 	border: 1px solid #008b8b;
 	color: #ffffff !important;
 	padding: 6px 18px;
-	margin-left: 12px;
+	margin: 0;
 	border-radius: 8px;
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 1.4;
 	text-decoration: none !important;
-	vertical-align: middle;
 	cursor: pointer;
 	transition: background-color 0.2s ease;
 }
@@ -106,32 +145,4 @@
 	background-color: #007575;
 	border-color: #007575;
 	color: #ffffff !important;
-}
-
-/* Alineación del checkbox, label y botón de términos. */
-.solicitud-terms-with-resource {
-	display: inline-block;
-	vertical-align: middle;
-}
-
-.solicitud-terms-with-resource+a.solicitud-terms-link {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	background-color: #008b8b;
-	border: 1px solid #008b8b;
-	color: #ffffff !important;
-	padding: 6px 18px;
-	margin-left: 12px;
-	border-radius: 8px;
-	font-size: 14px;
-	font-weight: 600;
-	line-height: 1.4;
-	text-decoration: none !important;
-	vertical-align: middle;
-}
-
-.solicitud-terms-with-resource+a.solicitud-terms-link:hover {
-	background-color: #007575;
-	border-color: #007575;
 }
