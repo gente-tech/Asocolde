@@ -50,6 +50,7 @@
 					);
 
 					const dialog = Drupal.dialog($content, {
+						dialogClass: 'asocolderma-submit-confirm-modal',
 						title: Drupal.t('Confirmar envío de solicitud'),
 						modal: true,
 						width: 600,
@@ -60,14 +61,14 @@
 						buttons: [
 							{
 								text: Drupal.t('Cancelar'),
-								class: 'button',
+								class: 'btn solicitud-confirm-cancel',
 								click: function () {
 									dialog.close();
 								}
 							},
 							{
 								text: Drupal.t('Confirmar envío'),
-								class: 'button button--primary',
+								class: 'btn solicitud-confirm-submit',
 								click: function () {
 									confirmed = true;
 									dialog.close();
