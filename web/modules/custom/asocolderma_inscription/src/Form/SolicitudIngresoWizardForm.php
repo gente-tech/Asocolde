@@ -884,9 +884,6 @@ final class SolicitudIngresoWizardForm extends FormBase
                 'target' => '_blank',
                 'rel' => 'noopener noreferrer',
                 'class' => [
-                  'btn',
-                  'btn-outline-primary',
-                  'btn-sm',
                   'solicitud-terms-link',
                 ],
               ],
@@ -894,6 +891,12 @@ final class SolicitudIngresoWizardForm extends FormBase
           )
         )->toString();
 
+        $form['confirm']['terms']['#title'] =
+          \Drupal\Core\Render\Markup::create(
+            \Drupal\Component\Utility\Html::escape(
+              (string) $form['confirm']['terms']['#title']
+            ) . ' ' . (string) $link
+          );
         $form['confirm']['terms']['#field_suffix'] = $link;
         $form['confirm']['terms']['#wrapper_attributes']['class'][] =
           'solicitud-terms-with-resource';
