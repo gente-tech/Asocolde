@@ -107,3 +107,31 @@
 	border-color: #007575;
 	color: #ffffff !important;
 }
+
+/* Alineación del checkbox, label y botón de términos. */
+.solicitud-terms-with-resource {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.solicitud-terms-with-resource+a.solicitud-terms-link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #008b8b;
+	border: 1px solid #008b8b;
+	color: #ffffff !important;
+	padding: 6px 18px;
+	margin-left: 12px;
+	border-radius: 8px;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.4;
+	text-decoration: none !important;
+	vertical-align: middle;
+}
+
+.solicitud-terms-with-resource+a.solicitud-terms-link:hover {
+	background-color: #007575;
+	border-color: #007575;
+}
