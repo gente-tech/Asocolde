@@ -82,48 +82,88 @@
 	border-color: #146c43 !important;
 }
 
-/* Distribución del checkbox de términos y condiciones. */
-.solicitud-terms-with-resource {
+/* ==========================================================
+   PASO 5: CONFIRMACIÓN
+   ========================================================== */
+
+/* Distribución de las dos columnas en desktop. */
+details>.details-wrapper:has(> #edit-confirm-preview) {
+	display: grid !important;
+	grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+	align-items: start;
+	gap: 24px 48px !important;
+}
+
+/* Contenedores de términos y resumen. */
+details>.details-wrapper>.form-item-confirm-terms,
+details>.details-wrapper>#edit-confirm-preview {
+	min-width: 0;
+	width: 100%;
+	max-width: 100%;
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box;
+}
+
+/* Distribución del checkbox, label y botón Ver. */
+.form-item-confirm-terms {
 	display: flex !important;
 	flex-direction: row;
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: flex-start;
-	column-gap: 8px;
-	row-gap: 6px;
+	gap: 8px;
 }
 
 /* Checkbox. */
-.solicitud-terms-with-resource>input[type="checkbox"] {
+.form-item-confirm-terms>input[type="checkbox"] {
 	order: 1;
-	margin: 0;
-	flex-shrink: 0;
+	flex: 0 0 auto;
+	margin: 0 !important;
 }
 
 /* Label y asterisco obligatorio. */
-.solicitud-terms-with-resource>label {
+.form-item-confirm-terms>label {
 	order: 2;
-	margin: 0;
+	width: auto !important;
+	max-width: 100%;
+	margin: 0 !important;
+	padding: 0 !important;
 }
 
 /* Contenedor del botón Ver. */
-.solicitud-terms-with-resource>.field-suffix {
+.form-item-confirm-terms>.field-suffix {
 	order: 3;
 	display: inline-flex;
 	align-items: center;
-	margin: 0;
+	margin: 0 !important;
+	padding: 0 !important;
 }
 
-/* Descripción debajo del checkbox. */
-.solicitud-terms-with-resource>.description {
+/* Descripción de términos y condiciones, sin sangría. */
+.form-item-confirm-terms>.description {
 	order: 4;
 	flex: 0 0 100%;
-	padding-left: 24px;
+	width: 100% !important;
+	max-width: 100% !important;
+	margin: 4px 0 0 !important;
+	padding: 0 !important;
+	text-indent: 0 !important;
 	box-sizing: border-box;
+	white-space: normal;
+	word-break: normal;
+	overflow-wrap: break-word;
+}
+
+/* Resumen. */
+#edit-confirm-preview {
+	white-space: normal;
+	word-break: normal;
+	overflow-wrap: break-word;
 }
 
 /* Botón institucional Ver. */
-.solicitud-terms-with-resource a.solicitud-terms-link {
+.form-item-confirm-terms a.solicitud-terms-link {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -141,83 +181,60 @@
 	transition: background-color 0.2s ease;
 }
 
-.solicitud-terms-with-resource a.solicitud-terms-link:hover {
+.form-item-confirm-terms a.solicitud-terms-link:hover {
 	background-color: #007575;
 	border-color: #007575;
 	color: #ffffff !important;
-}/* Separación entre términos y condiciones y resumen. */
-.details-wrapper:has(> .solicitud-terms-with-resource) {
-  column-gap: 32px;
 }
 
-/* Evitar que el texto desborde su columna. */
-.solicitud-terms-with-resource,
-#edit-confirm-preview {
-  min-width: 0;
-  box-sizing: border-box;
-}
+/* ==========================================================
+   RESPONSIVE: TABLET Y MOBILE
+   ========================================================== */
 
-/* Ajustar la descripción de términos y condiciones. */
-.solicitud-terms-with-resource > .description {
-  width: 100%;
-  max-width: 100%;
-  padding-left: 24px;
-  padding-right: 0;
-  margin-left: 0;
-  overflow-wrap: break-word;
-}
-
-/* Ajustes responsive del paso 5: Confirmación. */
 @media (max-width: 768px) {
 
-  .details-wrapper:has(> .solicitud-terms-with-resource) {
-    grid-template-columns: minmax(0, 1fr) !important;
-    row-gap: 24px !important;
-    column-gap: 0 !important;
-  }
+	details>.details-wrapper:has(> #edit-confirm-preview) {
+		display: grid !important;
+		grid-template-columns: minmax(0, 1fr) !important;
+		gap: 24px !important;
+		padding: 16px !important;
+	}
 
-  .solicitud-terms-with-resource {
-    display: grid !important;
-    grid-template-columns: 18px minmax(0, 1fr);
-    align-items: start;
-    gap: 8px;
-    width: 100%;
-    padding: 0 !important;
-  }
+	.form-item-confirm-terms {
+		display: grid !important;
+		grid-template-columns: 18px minmax(0, 1fr);
+		align-items: start;
+		gap: 8px;
+	}
 
-  .solicitud-terms-with-resource > input[type="checkbox"] {
-    grid-column: 1;
-    grid-row: 1;
-    margin: 5px 0 0 !important;
-  }
+	.form-item-confirm-terms>input[type="checkbox"] {
+		grid-column: 1;
+		grid-row: 1;
+		margin: 5px 0 0 !important;
+	}
 
-  .solicitud-terms-with-resource > label {
-    grid-column: 2;
-    grid-row: 1;
-    width: auto !important;
-    margin: 0 !important;
-  }
+	.form-item-confirm-terms>label {
+		grid-column: 2;
+		grid-row: 1;
+		min-width: 0;
+	}
 
-  .solicitud-terms-with-resource > .field-suffix {
-    grid-column: 2;
-    grid-row: 2;
-    justify-self: start;
-    margin: 0 !important;
-  }
+	.form-item-confirm-terms>.field-suffix {
+		grid-column: 2;
+		grid-row: 2;
+		justify-self: start;
+	}
 
-  .solicitud-terms-with-resource > .description {
-    grid-column: 1 / -1;
-    grid-row: 3;
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 0 !important;
-    margin: 4px 0 0 !important;
-  }
+	.form-item-confirm-terms>.description {
+		grid-column: 1 / -1;
+		grid-row: auto;
+		margin: 8px 0 0 !important;
+		padding: 0 !important;
+	}
 
-  #edit-confirm-preview {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
+	#edit-confirm-preview {
+		width: 100% !important;
+		margin: 0 !important;
+		padding: 0 !important;
+	}
 }
