@@ -145,4 +145,79 @@
 	background-color: #007575;
 	border-color: #007575;
 	color: #ffffff !important;
+}/* Separación entre términos y condiciones y resumen. */
+.details-wrapper:has(> .solicitud-terms-with-resource) {
+  column-gap: 32px;
+}
+
+/* Evitar que el texto desborde su columna. */
+.solicitud-terms-with-resource,
+#edit-confirm-preview {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* Ajustar la descripción de términos y condiciones. */
+.solicitud-terms-with-resource > .description {
+  width: 100%;
+  max-width: 100%;
+  padding-left: 24px;
+  padding-right: 0;
+  margin-left: 0;
+  overflow-wrap: break-word;
+}
+
+/* Ajustes responsive del paso 5: Confirmación. */
+@media (max-width: 768px) {
+
+  .details-wrapper:has(> .solicitud-terms-with-resource) {
+    grid-template-columns: minmax(0, 1fr) !important;
+    row-gap: 24px !important;
+    column-gap: 0 !important;
+  }
+
+  .solicitud-terms-with-resource {
+    display: grid !important;
+    grid-template-columns: 18px minmax(0, 1fr);
+    align-items: start;
+    gap: 8px;
+    width: 100%;
+    padding: 0 !important;
+  }
+
+  .solicitud-terms-with-resource > input[type="checkbox"] {
+    grid-column: 1;
+    grid-row: 1;
+    margin: 5px 0 0 !important;
+  }
+
+  .solicitud-terms-with-resource > label {
+    grid-column: 2;
+    grid-row: 1;
+    width: auto !important;
+    margin: 0 !important;
+  }
+
+  .solicitud-terms-with-resource > .field-suffix {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: start;
+    margin: 0 !important;
+  }
+
+  .solicitud-terms-with-resource > .description {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 4px 0 0 !important;
+  }
+
+  #edit-confirm-preview {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
 }
