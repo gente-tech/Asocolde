@@ -90,3 +90,4 @@ solicitud_submit_confirm:
     - core/drupal
     - core/once
     - core/drupal.dialog
+    - core/drupalSettings

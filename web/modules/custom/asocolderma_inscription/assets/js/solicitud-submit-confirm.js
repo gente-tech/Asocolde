@@ -1,4 +1,4 @@
-(function ($, Drupal, once) {
+(function ($, Drupal, once, drupalSettings) {
 	'use strict';
 
 	Drupal.behaviors.asocoldermaSolicitudSubmitConfirm = {
@@ -17,6 +17,8 @@
 				let confirmed = false;
 				let dialogOpen = false;
 				let submitting = false;
+				const settings =
+					drupalSettings.asocoldermaInscription?.submitConfirmation || {};
 
 				form.addEventListener('submit', function (event) {
 					if (event.submitter !== button) {
@@ -45,7 +47,7 @@
 						class: 'asocolderma-submit-confirm-dialog'
 					}).append(
 						$('<p>').text(
-							Drupal.t('Antes de enviar la solicitud, verifique que toda la información suministrada sea correcta y que los soportes correspondan a lo requerido y en sus versiones actualizadas. Una vez enviados no podrán ser modificados')
+							settings.message || Drupal.t('Antes de enviar la solicitud, verifique que toda la información suministrada sea correcta y que los soportes correspondan a lo requerido y en sus versiones actualizadas. Una vez enviados no podrán ser modificados')
 						)
 					);
 
@@ -53,7 +55,7 @@
 						classes: {
 							'ui-dialog': 'asocolderma-submit-confirm-modal'
 						},
-						title: Drupal.t('Confirmar envío de solicitud'),
+						title: settings.title || Drupal.t('Confirmar envío de solicitud'),
 						modal: true,
 						width: 600,
 						maxWidth: '95%',
@@ -62,14 +64,14 @@
 						closeOnEscape: true,
 						buttons: [
 							{
-								text: Drupal.t('Cancelar'),
+								text: settings.cancel_button || Drupal.t('Cancelar'),
 								class: 'btn solicitud-confirm-cancel',
 								click: function () {
 									dialog.close();
 								}
 							},
 							{
-								text: Drupal.t('Confirmar envío'),
+								text: settings.confirm_button || Drupal.t('Confirmar envío'),
 								class: 'btn solicitud-confirm-submit',
 								click: function () {
 									confirmed = true;
@@ -94,4 +96,4 @@
 			});
 		}
 	};
-})(jQuery, Drupal, once);
+})(jQuery, Drupal, once, drupalSettings);

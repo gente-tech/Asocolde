@@ -29,6 +29,32 @@ final class SolicitudFormTextManager
 	}
 
 	/**
+	 * Retorna los textos configurables del modal de confirmación de envío.
+	 */
+	public function getSubmitConfirmationSettings(): array
+	{
+		$defaults = [
+			'title' => 'Confirmar envío de solicitud',
+			'message' => 'Antes de enviar la solicitud, verifique que toda la información suministrada sea correcta y que los soportes correspondan a lo requerido y en sus versiones actualizadas. Una vez enviados no podrán ser modificados',
+			'cancel_button' => 'Cancelar',
+			'confirm_button' => 'Confirmar envío',
+		];
+
+		$settings = $this->configFactory
+			->get(self::CONFIG_NAME)
+			->get('submit_confirmation');
+
+		$settings = is_array($settings) ? $settings : [];
+
+		foreach ($defaults as $key => $default) {
+			$value = trim((string) ($settings[$key] ?? ''));
+			$defaults[$key] = $value !== '' ? $value : $default;
+		}
+
+		return $defaults;
+	}
+
+	/**
 	 * Retorna la configuración de un campo.
 	 */
 	public function getFieldSettings(string $group, string $field): array

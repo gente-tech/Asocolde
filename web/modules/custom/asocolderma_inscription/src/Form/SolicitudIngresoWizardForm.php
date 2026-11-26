@@ -842,6 +842,9 @@ final class SolicitudIngresoWizardForm extends FormBase
       ];
 
       $form['#attached']['library'][] = 'asocolderma_inscription/solicitud_submit_confirm';
+      $form['#attached']['drupalSettings']['asocoldermaInscription']['submitConfirmation'] =
+        \Drupal::service('asocolderma_inscription.solicitud_form_text_manager')
+        ->getSubmitConfirmationSettings();
     }
 
     if ($form_state->get('show_underage_modal')) {

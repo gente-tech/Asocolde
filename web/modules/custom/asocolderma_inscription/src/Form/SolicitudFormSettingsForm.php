@@ -86,6 +86,45 @@ final class SolicitudFormSettingsForm extends ConfigFormBase
 			}
 		}
 
+		$form['submit_confirmation'] = [
+			'#type' => 'details',
+			'#title' => $this->t('Modal de confirmación de envío'),
+			'#group' => 'fields',
+			'#tree' => TRUE,
+		];
+
+		$form['submit_confirmation']['title'] = [
+			'#type' => 'textfield',
+			'#title' => $this->t('Título del modal'),
+			'#default_value' => $config->get('submit_confirmation.title') ?? 'Confirmar envío de solicitud',
+			'#required' => TRUE,
+			'#maxlength' => 255,
+		];
+
+		$form['submit_confirmation']['message'] = [
+			'#type' => 'textarea',
+			'#title' => $this->t('Mensaje de confirmación'),
+			'#default_value' => $config->get('submit_confirmation.message') ?? 'Antes de enviar la solicitud, verifique que toda la información suministrada sea correcta y que los soportes correspondan a lo requerido y en sus versiones actualizadas. Una vez enviados no podrán ser modificados',
+			'#required' => TRUE,
+			'#rows' => 5,
+		];
+
+		$form['submit_confirmation']['cancel_button'] = [
+			'#type' => 'textfield',
+			'#title' => $this->t('Texto del botón cancelar'),
+			'#default_value' => $config->get('submit_confirmation.cancel_button') ?? 'Cancelar',
+			'#required' => TRUE,
+			'#maxlength' => 100,
+		];
+
+		$form['submit_confirmation']['confirm_button'] = [
+			'#type' => 'textfield',
+			'#title' => $this->t('Texto del botón confirmar'),
+			'#default_value' => $config->get('submit_confirmation.confirm_button') ?? 'Confirmar envío',
+			'#required' => TRUE,
+			'#maxlength' => 100,
+		];
+
 		return parent::buildForm($form, $form_state);
 	}
 
@@ -112,8 +151,16 @@ final class SolicitudFormSettingsForm extends ConfigFormBase
 			}
 		}
 
+		$submit_confirmation = $form_state->getValue('submit_confirmation');
+
 		$config
 			->set('fields', $fields)
+			->set('submit_confirmation', [
+				'title' => trim((string) $submit_confirmation['title']),
+				'message' => trim((string) $submit_confirmation['message']),
+				'cancel_button' => trim((string) $submit_confirmation['cancel_button']),
+				'confirm_button' => trim((string) $submit_confirmation['confirm_button']),
+			])
 			->save();
 
 		parent::submitForm($form, $form_state);

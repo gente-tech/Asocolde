@@ -47,3 +47,19 @@ asocolderma_inscription.solicitud_form_settings:
             description:
               type: text
               label: 'Description'
+    submit_confirmation:
+      type: mapping
+      label: 'Modal de confirmación de envío'
+      mapping:
+        title:
+          type: label
+          label: 'Título del modal'
+        message:
+          type: text
+          label: 'Mensaje de confirmación'
+        cancel_button:
+          type: label
+          label: 'Texto del botón cancelar'
+        confirm_button:
+          type: label
+          label: 'Texto del botón confirmar'
