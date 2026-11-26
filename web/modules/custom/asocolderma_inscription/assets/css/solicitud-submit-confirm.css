@@ -44,11 +44,18 @@
 
 /* Estilos comunes de los botones. */
 .asocolderma-submit-confirm-modal .ui-dialog-buttonpane button {
-	padding: 10px 20px;
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	text-align: center;
+	padding: 0 20px !important;
+	height: 44px;
+	line-height: 1.2 !important;
 	border-radius: 6px;
 	font-size: 14px;
 	font-weight: 600;
 	cursor: pointer;
+	box-sizing: border-box;
 	transition: background-color 0.2s ease;
 }
 
