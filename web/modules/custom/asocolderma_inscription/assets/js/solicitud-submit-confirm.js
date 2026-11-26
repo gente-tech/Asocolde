@@ -36,6 +36,7 @@
 					}
 
 					event.preventDefault();
+					event.stopImmediatePropagation();
 
 					if (dialogOpen || !form.reportValidity()) {
 						return;
@@ -92,7 +93,7 @@
 					});
 
 					dialog.showModal();
-				});
+				}, true);
 			});
 		}
 	};
