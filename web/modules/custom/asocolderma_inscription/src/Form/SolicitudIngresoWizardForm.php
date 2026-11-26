@@ -874,7 +874,14 @@ final class SolicitudIngresoWizardForm extends FormBase
 
   public function saveExitSubmit(array &$form, FormStateInterface $form_state): void
   {
+    $values = $form_state->get('save_exit_values');
+
+    if (is_array($values)) {
+      $form_state->setValues($values);
+    }
+
     $this->persistWizardValues($form_state);
+
     $this->messenger()->addStatus($this->t('Borrador guardado. Puedes continuar luego.'));
     $form_state->setRedirect('asocolderma_inscription.user_zone_requests');
   }
@@ -884,6 +891,16 @@ final class SolicitudIngresoWizardForm extends FormBase
     $step = (int) $form_state->get('step');
     $trigger = $form_state->getTriggeringElement();
     $trigger_name = $trigger['#name'] ?? '';
+
+    // Conservar los valores procesados del paso actual al guardar el borrador.
+    if ($trigger_name === 'save_exit') {
+      $form_state->set(
+        'save_exit_values',
+        $form_state->getValues()
+      );
+
+      return;
+    }
 
     if ($step === 1 && $trigger_name !== 'back') {
       $values = (array) $form_state->getValues();
